@@ -101,3 +101,7 @@ body::-webkit-scrollbar-thumb,
 * {
   -webkit-tap-highlight-color: var(--main-color-fluo);
 }
+
+img {
+  object-fit: cover;
+}

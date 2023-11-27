@@ -7,6 +7,7 @@ export default function Home() {
       <Twemoji options={{ className: 'emoji' }}>
         はろはろめぇめぇ！🐏
         ホットだね！
+        <a href="gallery">イラスト</a>
       </Twemoji>
     </main>
   )

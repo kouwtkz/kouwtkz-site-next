@@ -1,3 +1,4 @@
+export interface ImageMapGroup extends Map<string, ImageDataObject> { }
 export interface ImageDataGroup {
   [name: string]: ImageDataObject
 }
@@ -12,6 +13,13 @@ export interface ImageDataObject {
   share?: string
   timeFormat?: string
   timeReplace?: string
+  absolutePath?:string
+}
+export interface ImageSize {
+  width: number
+  height: number
+  type: string
+  wide: boolean
 }
 export interface ImageDataInfo {
   src: string
@@ -30,6 +38,7 @@ export interface ImageDataInfo {
   timeReplace?: string
   thumbnail?: string
   topImage?: boolean
+  size?: ImageSize
 }
 export interface soundItem {
   title: string
