@@ -1,0 +1,56 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "yarn: setup",
+      "type": "shell",
+      "command": "yarn"
+    },
+    {
+      "label": "yarn: dev",
+      "type": "shell",
+      "command": "yarn dev"
+    },
+    {
+      "label": "yarn: preview",
+      "type": "shell",
+      "command": "yarn preview"
+    },
+    {
+      "label": "yarn: build",
+      "type": "shell",
+      "command": "yarn build",
+      "problemMatcher": []
+    },
+    {
+      "label": "yarn: generate",
+      "type": "shell",
+      "command": "yarn generate"
+    },
+    {
+      "label": "yarn: export",
+      "type": "shell",
+      "command": "yarn export"
+    },
+    {
+      "label": "yarn: start",
+      "type": "shell",
+      "command": "yarn start"
+    },
+    {
+      "label": "yarn: serve",
+      "type": "shell",
+      "command": "yarn serve"
+    },
+    {
+      "label": "yarn: lint",
+      "type": "shell",
+      "command": "yarn lint"
+    },
+    {
+      "label": "yarn: prisma studio",
+      "type": "shell",
+      "command": "yarn run prisma studio"
+    }
+  ]
+}
