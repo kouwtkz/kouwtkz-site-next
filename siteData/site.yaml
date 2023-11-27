@@ -19,6 +19,3 @@ manifest:
 
 enableEmoji: true
 enableRobotsTXT: true
-tweet:
-  width: 300
-  height: 500

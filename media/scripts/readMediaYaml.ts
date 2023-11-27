@@ -1,13 +1,9 @@
-export const rootPath = process.cwd();
+import { setPath } from "@/app/functions/general"
 import { load } from "js-yaml";
 import { readFileSync } from "fs";
 import { ImageDataObject, ImageMapGroup } from "./media"
 import fs from "fs"
 import Path from "path"
-
-function setPath(path: string) {
-  return path.replace(/^@/, rootPath);
-}
 
 export function ReadImageData(path: string, dir?: string) {
   return <ImageDataObject>load(readFileSync(setPath((dir || "") + path), "utf8"));
