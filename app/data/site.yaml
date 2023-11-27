@@ -1,0 +1,24 @@
+title: "こっとんうぃんど"
+description: "『わたかぜコウ』のポートフォリオサイト。気まぐれに様々なイラストや作品を載せてます。"
+short:
+  description: "わたかぜコウのポートフォリオサイト"
+author:
+  account: 'kouwtkz'
+  ename: 'Kou Watakaze'
+  mail: 'kouwtkz@cottonwind.com'
+  smail: 'kouwtkz🐏cottonwind.com'
+  name: 'わたかぜコウ'
+  since: 2017
+  x:
+    main: 'kouwtkz'
+    v: 'kouwtkz_v'
+manifest:
+  path: "/manifest.json"
+  background_color: "#c1d64c"
+  display: "minimal-ui"
+
+enableEmoji: true
+enableRobotsTXT: true
+tweet:
+  width: 300
+  height: 500
