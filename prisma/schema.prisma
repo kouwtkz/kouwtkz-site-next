@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  password      String?
+  icon          String?
+  point         Int?
+  bio           String?
+  link          String?
+  description   String?
+  authority     String?
+  birthday      DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime? @updatedAt
+  accessedAt    DateTime?
+  lastLogin     DateTime?
+  Posts         Posts[]
+}
+
+model UserRemember {
+  rememberToken String    @id @default(uuid())
+  userId        String
+  device        String?
+  disableDate   DateTime?
+}
+
+model Posts {
+  id       Int       @id @default(autoincrement())
+  postId   String    @default(uuid())
+  userId   String
+  title    String    @default("")
+  body     String
+  category String?
+  pin      Int?
+  noindex  Boolean?
+  draft    Boolean?
+  date     DateTime  @default(now())
+  update   DateTime? @updatedAt
+  flags    Int?
+  memo     String?
+  user     User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+
+  @@index([userId], map: "Posts_userId_fkey")
+}
