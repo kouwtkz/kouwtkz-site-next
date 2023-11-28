@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { CharaProp } from "@/app/character/chara.d";
 import Link from "next/link";
-// import microCMSLoader from "@/app/lib/microCMSLoader";
+import microCMSLoader from "@/app/lib/microCMSLoader";
 
 type CharaListItemProps = {
   chara: CharaProp;
@@ -15,7 +15,7 @@ const CharaListItem: React.FC<CharaListItemProps> = ({ chara }) => {
     <Link href={`character/${chara.id}`}>
       {icon ? (
         <Image
-          // loader={microCMSLoader}
+          loader={microCMSLoader}
           className="inline-block mr-2"
           src={icon}
           alt={chara.name}

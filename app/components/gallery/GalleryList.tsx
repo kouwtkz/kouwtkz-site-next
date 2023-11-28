@@ -2,7 +2,7 @@
 
 import { ImageDataObject } from "@/media/scripts/media.d";
 import { dammyImageSize } from "@/media/scripts/dammy";
-// import microCMSLoader from "@/app/lib/microCMSLoader"
+import microCMSLoader from "@/app/lib/microCMSLoader"
 
 import React from "react";
 import Image from "next/image";
@@ -46,7 +46,7 @@ const GalleryList: React.FC<GalleryPageProps> = (Props) => {
                 className="w-[24.532%] pt-[24.532%] m-[0.234%] relative"
               >
                 <Image
-                  // loader={microCMSLoader}
+                  loader={microCMSLoader}
                   src={`${group.path}/${image.src || ""}`}
                   alt={image.name || image.src}
                   width={thumb.width}
