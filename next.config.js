@@ -5,8 +5,15 @@ const strictConfig = {
   reactStrictMode: false
 }
 
+// 環境変数定義
+const envConfig = {
+  env: {
+    // OUTPUT_MODE: "export"
+  }
+}
+
 // SSGでImageを出力する際はローダーが必要
-const outputMode = process.env.OUTPUT_MODE || null;
+const outputMode = envConfig.env.OUTPUT_MODE || null;
 
 const exportConfig =
   outputMode === 'export' ?
@@ -22,6 +29,7 @@ const exportConfig =
 
 const nextConfig = {
   ...strictConfig,
+  ...envConfig,
   ...exportConfig,
 }
 
