@@ -1,28 +1,14 @@
-"use client";
-import Link from "next/link";
-import { useEffect } from "react";
-import Twemoji from "react-twemoji";
+import TopPage from "@/app/components/client/TopPage";
+import { isStatic } from "@/siteData/site";
+import { imageList } from "@/media/scripts/MediaData";
 
 export default function Page() {
-  useEffect(() => {
-    console.log("けいこくめぇめぇ");
-  })
   return (
-    <main className="p-8">
-      <Twemoji options={{ className: "emoji" }}>
-        <div className="text-4xl [&>*]:m-4">
-          <h1>はろはろめぇめぇ</h1>
-          <div>
-            <Link href="gallery">イラスト</Link>
-          </div>
-          <div>
-            <Link href="character">キャラクター</Link>
-          </div>
-          <div>
-            <Link href="blog">ブログ</Link>
-          </div>
-        </div>
-      </Twemoji>
-    </main>
+    <>
+      <TopPage
+        isStatic={isStatic}
+        topImage={imageList.find((image) => image.topImage)}
+      />
+    </>
   );
 }

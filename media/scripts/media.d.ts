@@ -31,7 +31,9 @@ export interface ImageDataInfo {
   time: number | Date
   link?: string
   dir?: string
-  base?: string
+  baseUrl?: string
+  imageUrl?: string
+  fullPath?: string
   group?: string
   share?: string
   timeFormat?: string

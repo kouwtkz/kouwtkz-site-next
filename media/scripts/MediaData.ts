@@ -7,8 +7,10 @@ const imageDataGroupMap = ReadImageDataGroupFromDir("@/media/data/gallery/")
 
 imageDataGroupMap.forEach((group) => {
   group.list.forEach((image) => {
-    const path = setPath(`@/public${group.path}/${image.src}`);
-    const dimensions = sizeOf(path)
+    image.baseUrl = group.path + "/"
+    image.imageUrl = image.baseUrl + image.src
+    image.fullPath = setPath(`@/public${image.imageUrl}`)
+    const dimensions = sizeOf(image.fullPath)
     const width = <number>dimensions.width;
     const height = <number>dimensions.height;
     image.size = { width: width, height: height, type: <string>dimensions.type, wide: width > height };
