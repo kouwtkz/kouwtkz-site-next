@@ -1,31 +1,36 @@
-"use client"
+"use client";
 
 import { ImageDataObject } from "@/media/scripts/media.d";
 import { dammyImageSize } from "@/media/scripts/dammy";
-import microCMSLoader from "@/app/lib/microCMSLoader"
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import loaderSet from "@/app/lib/loaderSet";
 type GalleryPageProps = {
   group: ImageDataObject | null;
   size?: number;
   label?: string;
   showLabel?: boolean;
   max?: number;
+  isStatic?: boolean;
 };
 
-const GalleryList: React.FC<GalleryPageProps> = (Props) => {
-  const group = Props.group;
+const GalleryList: React.FC<GalleryPageProps> = ({
+  group,
+  label,
+  size = 320,
+  showLabel = true,
+  max = 1000,
+  isStatic = false
+}) => {
   if (group === null) return null;
-  const thumb_size = Props.size || 320;
-  const showLabel = Props.showLabel !== undefined ? Props.showLabel : true;
-  const max = Props.max || 1000;
+  const thumb_size = size;
   return (
     <div className="w-[100%]">
       {showLabel ? (
         <h2 className="pt-12 mb-6 text-6xl font-LuloClean text-center text-main">
-          {Props.label || group.name}
+          {label || group.name}
         </h2>
       ) : null}
       <div className="flex flex-wrap max-w-[1120px] mx-auto">
@@ -46,7 +51,7 @@ const GalleryList: React.FC<GalleryPageProps> = (Props) => {
                 className="w-[24.532%] pt-[24.532%] m-[0.234%] relative"
               >
                 <Image
-                  loader={microCMSLoader}
+                  loader={loaderSet(isStatic)}
                   src={`${group.path}/${image.src || ""}`}
                   alt={image.name || image.src}
                   width={thumb.width}

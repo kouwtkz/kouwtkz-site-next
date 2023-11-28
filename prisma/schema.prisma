@@ -37,7 +37,7 @@ model UserRemember {
 
 model Posts {
   id       Int       @id @default(autoincrement())
-  postId   String    @default(uuid())
+  postId   String    @unique @default(uuid())
   userId   String
   title    String    @default("")
   body     String
@@ -49,7 +49,7 @@ model Posts {
   update   DateTime? @updatedAt
   flags    Int?
   memo     String?
-  user     User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@index([userId], map: "Posts_userId_fkey")
 }

@@ -1,11 +1,11 @@
 import prisma from "@/app/lib/prisma";
-type postProps = {
+type getPostsProps = {
   max?: number
   page?: number
   q?: string
 }
 
-const getPosts = async (args? :postProps) => {
+const getPosts = async (args? :getPostsProps) => {
   const max = args && args.max ? args.max : 0xffff;
   const page = args && args.page ? args.page : 1;
   const q = args && args.q ? args.q : "";

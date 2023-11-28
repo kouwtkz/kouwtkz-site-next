@@ -2,19 +2,20 @@
 
 import { CharaProp } from "@/app/character/chara";
 import Image from "next/image";
-import microCMSLoader from "@/app/lib/microCMSLoader";
+import loaderSet from "@/app/lib/loaderSet";
 
 type DetailProps = {
   chara: CharaProp;
+  isStatic?: boolean;
 };
 
-const CharaDetail: React.FC<DetailProps> = ({ chara }) => {
+const CharaDetail: React.FC<DetailProps> = ({ chara, isStatic = false }) => {
   const image = chara.image || chara.icon || "";
   return (
     <div className="p-0">
       <div>
         <Image
-          loader={microCMSLoader}
+          loader={loaderSet(isStatic)}
           className="inline-block m-4"
           src={image}
           alt={chara.name}

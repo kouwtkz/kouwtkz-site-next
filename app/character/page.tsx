@@ -3,7 +3,7 @@ import { charaList } from "./[name]/getList";
 import Image from "next/image";
 import Link from "next/link";
 import CharaListItem from "../components/character/listItem";
-// import microCMSLoader from "../lib/microCMSLoader";
+import { isStatic } from "@/siteData/site";
 
 export default function Page() {
   return (
@@ -14,7 +14,7 @@ export default function Page() {
       {Object.entries(charaList).map(([name, chara], index) => {
         return (
           <div key={index} className="m-4 h-8 inline-block">
-            <CharaListItem chara={chara} />
+            <CharaListItem chara={chara} isStatic={isStatic} />
           </div>
         );
       })}

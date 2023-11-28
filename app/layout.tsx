@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/app/components/header";
-import site from "@/siteData/site"
+import { site } from "@/siteData/site";
 
 import {
   KosugiMaruFont,
