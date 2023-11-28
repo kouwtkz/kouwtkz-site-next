@@ -11,7 +11,7 @@ export default function CheckPostId() {
   useEffect(() => {
     if (postId) {
       console.log(postId);
-      router.replace(`/blog/${postId}`)
+      router.replace(`/blog/post/${postId}`)
       router.refresh()
     }
   })

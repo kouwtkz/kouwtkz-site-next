@@ -16,7 +16,7 @@ export default async function BlogPage({
   const postId =
     !isStatic && searchParams.postId ? searchParams.postId : undefined;
   if (postId) {
-    redirect(`/blog/${postId}`);
+    redirect(`/blog/post/${postId}`);
   } else if (isStatic) {
     renderList.push(<CheckPostId />);
   }
@@ -39,7 +39,7 @@ export default async function BlogPage({
           return (
             <div key={index} className="m-4">
               <h3 className="text-2xl text-main-dark font-bold inline-block m-4">
-                <Link href={`/blog/${post.postId}`}>{post.title}</Link>
+                <Link href={`/blog/post/${post.postId}`}>{post.title}</Link>
               </h3>
               <span>
                 <Link href={`/blog/?q=%23${post.category}`}>

@@ -9,7 +9,6 @@ const getPosts = async (args? :getPostsProps) => {
   const max = args && args.max ? args.max : 0xffff;
   const page = args && args.page ? args.page : 1;
   const q = args && args.q ? args.q : "";
-  console.log(q)
   try {
     const posts = await prisma.posts.findMany({
       orderBy: {
