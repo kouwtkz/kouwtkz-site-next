@@ -51,6 +51,11 @@
       "label": "yarn: prisma studio",
       "type": "shell",
       "command": "yarn run prisma studio"
-    }
+    },
+    {
+      "label": "rm: cache webpack",
+      "type": "shell",
+      "command": "rm -r .next/cache/webpack"
+    },
   ]
 }

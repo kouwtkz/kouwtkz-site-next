@@ -5,9 +5,9 @@ import site from "@/siteData/site"
 
 import {
   KosugiMaruFont,
-  MandaliFont,
   MochiyPopOneFont,
-  ZenMaruFont,
+  // MandaliFont,
+  // ZenMaruFont,
   LuloCleanFont,
 } from "@/app/fonts/list";
 
@@ -25,16 +25,15 @@ export default async function RootLayout({
     <html lang="ja">
       <body
         className={[
-          "font-KosugiMaru",
           KosugiMaruFont.variable,
           MochiyPopOneFont.variable,
-          MandaliFont.variable,
-          ZenMaruFont.variable,
+          // MandaliFont.variable,
+          // ZenMaruFont.variable,
           LuloCleanFont.variable,
         ].join(" ")}
       >
         <Header site={site} />
-        <div className="pt-24 pb-8">
+        <div className="pt-24 pb-8 font-KosugiMaru">
           <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
             {children}
           </div>
