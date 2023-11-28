@@ -15,9 +15,9 @@ const CharaDetail: React.FC<DetailProps> = ({ chara, isStatic = false }) => {
     <div className="p-0">
       <div>
         <Image
+          src={image}
           loader={loaderSet(isStatic)}
           className="inline-block m-4"
-          src={image}
           alt={chara.name}
           width={64}
           height={64}

@@ -22,7 +22,7 @@ const GalleryList: React.FC<GalleryPageProps> = ({
   size = 320,
   showLabel = true,
   max = 1000,
-  isStatic = false
+  isStatic = false,
 }) => {
   if (group === null) return null;
   const thumb_size = size;
@@ -51,8 +51,8 @@ const GalleryList: React.FC<GalleryPageProps> = ({
                 className="w-[24.532%] pt-[24.532%] m-[0.234%] relative"
               >
                 <Image
+                  src={`${image.imageUrl}`}
                   loader={loaderSet(isStatic)}
-                  src={`${group.path}/${image.src || ""}`}
                   alt={image.name || image.src}
                   width={thumb.width}
                   height={thumb.height}

@@ -16,8 +16,8 @@ const TopPage: React.FC<TopPageProps> = ({ topImage, isStatic = false }) => {
     <>
       {topImage ? (
         <Image
+        src={`${topImage.imageUrl}`}
           loader={loaderSet(isStatic)}
-          src={`${topImage.imageUrl}`}
           alt={topImage.name || topImage.src}
           width={topImage.size?.width}
           height={topImage.size?.height}

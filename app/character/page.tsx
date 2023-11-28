@@ -1,7 +1,5 @@
 import React from "react";
 import { charaList } from "./[name]/getList";
-import Image from "next/image";
-import Link from "next/link";
 import CharaListItem from "../components/character/listItem";
 import { isStatic } from "@/siteData/site";
 

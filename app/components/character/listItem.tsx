@@ -10,15 +10,18 @@ type CharaListItemProps = {
   isStatic?: boolean;
 };
 
-const CharaListItem: React.FC<CharaListItemProps> = ({ chara, isStatic = false }) => {
+const CharaListItem: React.FC<CharaListItemProps> = ({
+  chara,
+  isStatic = false,
+}) => {
   const icon = chara.icon || "";
   return (
     <Link href={`character/${chara.id}`}>
       {icon ? (
         <Image
+          src={icon}
           loader={loaderSet(isStatic)}
           className="inline-block mr-2"
-          src={icon}
           alt={chara.name}
           width={24}
           height={24}
