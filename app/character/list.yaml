@@ -1,0 +1,91 @@
+watakaze:
+  name: わたかぜくん
+  description: 代理キャラクター
+  icon: /character/icons/watakaze.png
+maffoon:
+  name: マフーン
+  honorific: くん
+  description: まほうのぬいぐるみマフ！
+  icon: /character/icons/maffoon.png
+como:
+  name: コモ
+  honorific: くん
+  description: 蚕の虫人、もこもこしている
+  icon: /character/icons/como.png
+cottoness:
+  name: コトネス
+  honorific: ちゃん
+  description: メカクレな綿の妖精
+  icon: ''
+flon:
+  name: フロン
+  honorific: くん
+  description: 寒いところが好きなおばけ
+  icon: /character/icons/flon.png
+hyugo:
+  name: ヒューゴ
+  honorific: くん
+  description: 静かなところが好きな樹木の子
+  icon: /character/icons/hyugo.png
+konushi:
+  name: コヌシ
+  honorific: くん
+  description: キツネの神主っ子
+  icon: ''
+lax:
+  name: ラックス
+  honorific: くん
+  description: まったり系の犬の子
+  icon: ''
+mauve:
+  name: モーブ
+  honorific: ちゃん
+  description: ふわふわすみれ色の子
+  icon: ''
+mego:
+  name: メゴ
+  honorific: ちゃん
+  description: ふわふわなメンダコの子
+  icon: ''
+midoriameushi:
+  name: ミドリアメウシ
+  description: 雨降る森で暮らす軟体動物
+  icon: ''
+monitorn:
+  name: モニタン
+  description: 猫っぽい液晶顔のロボット
+  icon: /character/icons/monitorn.png
+popo:
+  name: ポポ
+  description: ふわふわななにか
+  icon: /character/icons/popo.png
+ramet:
+  name: ラメット
+  honorific: くん
+  description: ラムネが好きな彗星の子🌠
+  icon: /character/icons/ramet.png
+rig:
+  name: リグ
+  honorific: くん
+  description: お芋が好きなモグラの子
+  icon: /character/icons/rig.png
+rio:
+  name: リオ
+  honorific: くん
+  description: リスのような白い生き物
+  icon: /character/icons/rio.png
+ritona:
+  name: リトナ
+  honorific: ちゃん
+  description: 旅が好きな女の子
+  icon: ''
+saku:
+  name: サク
+  honorific: ちゃん
+  description: 桜色のペガサスユニコーンの子
+  icon: ''
+tail:
+  name: テイル
+  honorific: くん
+  description: もふもふな尻尾の子
+  icon: /character/icons/tail.png
