@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect } from "react";
 import Twemoji from "react-twemoji";
 
@@ -9,13 +10,16 @@ export default function Page() {
   return (
     <main>
       <Twemoji options={{ className: "emoji" }}>
-        <div className="text-4xl">
+        <div className="text-4xl [&>*]:m-4">
           <h1>はろはろめぇめぇ</h1>
           <div>
-            <a href="gallery">イラスト</a>
+            <Link href="gallery">イラスト</Link>
           </div>
           <div>
-            <a href="blog">ブログ</a>
+            <Link href="character">キャラクター</Link>
+          </div>
+          <div>
+            <Link href="blog">ブログ</Link>
           </div>
         </div>
       </Twemoji>

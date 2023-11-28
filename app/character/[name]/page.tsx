@@ -11,6 +11,7 @@ export default function Page({
 }) {
   const chara = charaMap.get(params.name);
   if (!chara) return null;
+  console.log(chara);
   const icon = chara.icon || "";
   return (
     <div>
