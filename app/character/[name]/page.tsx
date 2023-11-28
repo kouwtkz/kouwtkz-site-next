@@ -11,12 +11,11 @@ export default function Page({
 }) {
   const chara = charaMap.get(params.name);
   if (!chara) return null;
-  console.log(chara);
-  const icon = chara.icon || "";
+  const image = chara.image || chara.icon || "";
   return (
-    <div>
+    <div className="p-0">
       <div>
-        <Image className="inline-block m-4" src={icon} alt={chara.name} width={48} height={48} />
+        <Image className="inline-block m-4" src={image} alt={chara.name} width={64} height={64} />
         <span>おなまえ: {chara.name}</span>
       </div>
       <div>{chara.description}</div>

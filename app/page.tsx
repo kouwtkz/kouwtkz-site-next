@@ -8,7 +8,7 @@ export default function Page() {
     console.log("けいこくめぇめぇ");
   })
   return (
-    <main>
+    <main className="p-8">
       <Twemoji options={{ className: "emoji" }}>
         <div className="text-4xl [&>*]:m-4">
           <h1>はろはろめぇめぇ</h1>

@@ -11,7 +11,7 @@ export default function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   return (
-    <div className="text-center">
+    <div className="p-8">
       <h1 className="font-LuloClean text-4xl text-main pt-8 mb-12">
         CHARACTER
       </h1>

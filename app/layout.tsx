@@ -34,7 +34,7 @@ export default async function RootLayout({
       >
         <Header site={site} />
         <div className="text-center pt-24 pb-8 font-KosugiMaru">
-          <div className="mx-auto [&>*]:p-8 bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
+          <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
             {children}
           </div>
         </div>
