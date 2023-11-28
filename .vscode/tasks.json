@@ -48,9 +48,24 @@
       "command": "yarn lint"
     },
     {
-      "label": "yarn: prisma studio",
+      "label": "prisma: studio",
       "type": "shell",
-      "command": "yarn run prisma studio"
+      "command": "yarn prisma studio"
+    },
+    {
+      "label": "prisma: pull",
+      "type": "shell",
+      "command": "yarn prisma pull"
+    },
+    {
+      "label": "prisma: push",
+      "type": "shell",
+      "command": "yarn prisma push"
+    },
+    {
+      "label": "prisma: migrate dev",
+      "type": "shell",
+      "command": "yarn prisma migrate dev"
     },
     {
       "label": "rm: cache webpack",
