@@ -1,6 +1,6 @@
 import React from "react";
-import { charaMap } from "./getList";
-import Image from "next/image";
+import { charaMap, charaList } from "./getList";
+import CharaDetail from "@/app/components/character/detail";
 
 export default function Page({
   params,
@@ -9,16 +9,15 @@ export default function Page({
   params: { [key: string]: string };
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const chara = charaMap.get(params.name);
+  const { name } = params;
+  const chara = charaMap.get(name);
   if (!chara) return null;
-  const image = chara.image || chara.icon || "";
-  return (
-    <div className="p-0">
-      <div>
-        <Image className="inline-block m-4" src={image} alt={chara.name} width={64} height={64} />
-        <span>おなまえ: {chara.name}</span>
-      </div>
-      <div>{chara.description}</div>
-    </div>
-  );
+  return <CharaDetail chara={chara} />
+}
+
+// 静的ビルド時にこれが実行される
+export async function generateStaticParams() {
+  return Object.keys(charaList).map((name) => {
+    return { name }
+  });
 }

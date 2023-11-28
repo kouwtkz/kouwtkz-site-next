@@ -4,11 +4,11 @@ import React from "react";
 import Link from "next/link";
 import siteProp from "@/siteData/site.d"
 
-type Props = {
+type HeaderProps = {
   site: siteProp
 };
 
-const Header: React.FC<Props> = (Props) => {
+const Header: React.FC<HeaderProps> = (Props) => {
   return (
     <header className="fixed z-10 text-center w-[100vw]">
       <div className="container mt-4 mb-2 inline-block">

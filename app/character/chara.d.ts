@@ -1,5 +1,6 @@
 
 export interface CharaProp {
+  id?: string
   name: string,
   honorific?: string,
   description?: string,

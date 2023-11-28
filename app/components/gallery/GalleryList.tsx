@@ -1,10 +1,13 @@
-import { ImageDataObject } from "@/media/scripts/media";
+"use client"
+
+import { ImageDataObject } from "@/media/scripts/media.d";
 import { dammyImageSize } from "@/media/scripts/dammy";
+// import microCMSLoader from "@/app/lib/microCMSLoader"
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-type Props = {
+type GalleryPageProps = {
   group: ImageDataObject | null;
   size?: number;
   label?: string;
@@ -12,7 +15,7 @@ type Props = {
   max?: number;
 };
 
-const GalleryList: React.FC<Props> = (Props) => {
+const GalleryList: React.FC<GalleryPageProps> = (Props) => {
   const group = Props.group;
   if (group === null) return null;
   const thumb_size = Props.size || 320;
@@ -43,6 +46,7 @@ const GalleryList: React.FC<Props> = (Props) => {
                 className="w-[24.532%] pt-[24.532%] m-[0.234%] relative"
               >
                 <Image
+                  // loader={microCMSLoader}
                   src={`${group.path}/${image.src || ""}`}
                   alt={image.name || image.src}
                   width={thumb.width}

@@ -1,6 +1,5 @@
 // オリジナルタグを使用したい場合は定義元は必ずuse clientのものとなる
 import getPosts from "@/app/actions/getPosts";
-import { useSearchParams } from "next/navigation";
 
 export default async function Page({
   params,
@@ -9,9 +8,9 @@ export default async function Page({
   params: { slug: string }
   searchParams: { [key: string]: string | string[] | undefined }
 }) {
-  const q = searchParams.q ? searchParams.q.toString() : undefined;
+  // const q = searchParams.q ? searchParams.q.toString() : undefined;
   // 投稿一覧取得
-  const posts = await getPosts({max: 10, q});
+  const posts = await getPosts({max: 10});
 
   // 投稿がない場合
   if (posts.length === 0) {
