@@ -105,3 +105,30 @@ body::-webkit-scrollbar-thumb,
 img {
   object-fit: cover;
 }
+
+a,
+a * {
+    color: var(--main-color-strong);
+}
+
+a:hover,
+a:hover * {
+    color: var(--main-color);
+}
+
+h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+h3 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+h4 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}

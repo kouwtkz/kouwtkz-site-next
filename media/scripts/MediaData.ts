@@ -1,10 +1,11 @@
-import { ReadImageDataGroupFromDir, rootPath } from "./readMediaYaml";
+import { setPath } from "@/app/functions/general";
+import { ReadImageDataGroupFromDir } from "./readMediaYaml";
 import sizeOf from "image-size"
 const imageDataGroupMap = ReadImageDataGroupFromDir("@/media/data/gallery/")
 
 imageDataGroupMap.forEach((group) => {
   group.list.forEach((image) => {
-    const path = `${rootPath}/public${group.path}/${image.src}`;
+    const path = setPath(`@/public${group.path}/${image.src}`);
     const dimensions = sizeOf(path)
     const width = <number>dimensions.width;
     const height = <number>dimensions.height;
