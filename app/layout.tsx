@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import Header from "@/app/components/header";
+import Header from "@/app/components/navigation/header";
 import { site } from "@/siteData/site";
 
 import {
