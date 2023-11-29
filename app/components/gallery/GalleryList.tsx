@@ -14,6 +14,7 @@ type GalleryPageProps = {
   showLabel?: boolean;
   max?: number;
   isStatic?: boolean;
+  autoDisable?: boolean;
 };
 
 const GalleryList: React.FC<GalleryPageProps> = ({
@@ -23,8 +24,9 @@ const GalleryList: React.FC<GalleryPageProps> = ({
   showLabel = true,
   max = 1000,
   isStatic = false,
+  autoDisable = false,
 }) => {
-  if (group === null) return null;
+  if (group === null || (autoDisable && group.list.length === 0)) return null;
   const thumb_size = size;
   return (
     <div className="w-[100%]">

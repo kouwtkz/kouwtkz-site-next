@@ -15,7 +15,6 @@ type PostDetailProps = {
 
 const TopPage: React.FC<PostDetailProps> = ({ post, isStatic = false }) => {
   if (!post) return null;
-  console.log();
   return (
     <div className="text-lg">
       <Link href="/blog">

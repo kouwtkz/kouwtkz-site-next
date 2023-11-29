@@ -2,6 +2,7 @@ import React from "react";
 import { charaMap, charaList } from "./getList";
 import CharaDetail from "@/app/components/character/detail";
 import { isStatic } from "@/siteData/site";
+import { imageList } from "@/media/scripts/MediaData";
 
 export default function Page({
   params,
@@ -13,7 +14,7 @@ export default function Page({
   const { name } = params;
   const chara = charaMap.get(name);
   if (!chara) return null;
-  return <CharaDetail chara={chara} isStatic={isStatic} />
+  return <CharaDetail chara={chara} isStatic={isStatic} imageList={imageList} />
 }
 
 // 静的ビルド時にこれが実行される
