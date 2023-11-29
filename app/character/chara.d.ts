@@ -13,5 +13,5 @@ export interface CharaProps {
 }
 
 export interface CharaListProps {
-  [name: string]: CharaProp
+  [name: string]: CharaProps
 }

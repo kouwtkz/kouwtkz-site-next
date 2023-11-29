@@ -1,13 +1,13 @@
 "use client";
 
-import { CharaProp } from "@/app/character/chara";
+import { CharaProps } from "@/app/character/chara";
 import Image from "next/image";
 import loaderSet from "@/app/lib/loaderSet";
 import { ImageDataInfo } from "@/media/scripts/media";
 import GalleryList from "../gallery/GalleryList";
 
 type DetailProps = {
-  chara: CharaProp;
+  chara: CharaProps;
   imageList: Array<ImageDataInfo>;
   isStatic?: boolean;
 };
@@ -59,6 +59,7 @@ const CharaDetail: React.FC<DetailProps> = ({
             ),
             name: "ART",
           }}
+          isStatic={isStatic}
           autoDisable={true}
         />
         <GalleryList
@@ -70,6 +71,7 @@ const CharaDetail: React.FC<DetailProps> = ({
             ),
             name: "GOODS",
           }}
+          isStatic={isStatic}
           autoDisable={true}
         />
         <GalleryList
@@ -81,6 +83,7 @@ const CharaDetail: React.FC<DetailProps> = ({
             ),
             name: "FAN ART",
           }}
+          isStatic={isStatic}
           autoDisable={true}
         />
       </div>

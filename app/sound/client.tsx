@@ -1,7 +1,7 @@
 "use client";
 import { SoundData } from "@/media/scripts/media";
 import React, { useEffect } from "react";
-import { AudioPlay } from "./soundPlayer";
+import { AudioPlay } from "./SoundPlayer";
 
 type SoundPageProps = {
   soundData: SoundData;

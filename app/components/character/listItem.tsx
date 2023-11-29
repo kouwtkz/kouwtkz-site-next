@@ -1,12 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import { CharaProp } from "@/app/character/chara.d";
+import { CharaProps } from "@/app/character/chara.d";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
 
 type CharaListItemProps = {
-  chara: CharaProp;
+  chara: CharaProps;
   isStatic?: boolean;
 };
 
