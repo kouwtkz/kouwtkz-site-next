@@ -25,11 +25,11 @@ export const MochiyPopOneFont = Mochiy_Pop_One({
 //   display: "swap",
 //   variable: "--font-ZenMaru",
 // });
-// export const MandaliFont = Mandali({
-//   weight: "400",
-//   subsets: ["latin"],
-//   variable: "--font-Mandali",
-// });
+export const MandaliFont = Mandali({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-Mandali",
+});
 export const LuloCleanFont = localFont({
   src: "LuloCleanOneBold.woff2",
   variable: "--font-LuloClean",
