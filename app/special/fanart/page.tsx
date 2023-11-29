@@ -5,13 +5,15 @@ import { isStatic } from "@/siteData/site";
 
 export default function Home() {
   return (
-    <div className="">
-      {["art", "fanart", "works"].map((name, i) => {
+    <div className="pt-8">
+      <h2 className="my-4 text-4xl text-main font-MochiyPopOne">描いてくれてありがとめぇ！</h2>
+      <h4 className="text-main-soft">#わたかぜメ絵</h4>
+      {["given"].map((name, i) => {
         return (
           <GalleryList
             key={i}
+            label="FANART"
             group={imageDataGroupMap.get(name) || null}
-            max={20}
             isStatic={isStatic}
           />
         );

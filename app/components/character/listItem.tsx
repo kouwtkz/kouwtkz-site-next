@@ -16,15 +16,15 @@ const CharaListItem: React.FC<CharaListItemProps> = ({
 }) => {
   const icon = chara.icon || "";
   return (
-    <Link href={`character/${chara.id}`}>
+    <Link className="text-3xl m-2" href={`character/${chara.id}`}>
       {icon ? (
         <Image
           src={icon}
           loader={loaderSet(isStatic)}
           className="inline-block mr-2"
           alt={chara.name}
-          width={24}
-          height={24}
+          width={40}
+          height={40}
         />
       ) : null}
       <span className="align-middle">{chara.name}</span>

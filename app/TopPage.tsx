@@ -47,6 +47,9 @@ const TopPage: React.FC<TopPageProps> = ({
               <div>
                 <Link href="sound">サウンド</Link>
               </div>
+              <div>
+                <Link href="special">スペシャルページ</Link>
+              </div>
             </div>
           </div>
           <div className="my-8">
