@@ -1,5 +1,5 @@
 
-export interface CharaProp {
+export interface CharaProps {
   id?: string
   name: string,
   honorific?: string,
@@ -12,6 +12,6 @@ export interface CharaProp {
   time?: Date,
 }
 
-export interface CharaListProp {
+export interface CharaListProps {
   [name: string]: CharaProp
 }

@@ -1,7 +1,7 @@
 import { setPath } from "@/app/functions/general"
 import { load } from "js-yaml";
 import { readFileSync } from "fs";
-import { ImageDataObject, ImageMapGroup } from "./media"
+import { ImageDataObject, ImageMapGroup, SoundData } from "./media"
 import fs from "fs"
 import Path from "path"
 
@@ -31,4 +31,8 @@ export function ReadImageDataGroupFromDir(dir: string) {
     }
   })
   return groups;
+}
+
+export function ReadSoundData(path: string) {
+  return <SoundData>load(readFileSync(setPath(path), "utf8"));
 }

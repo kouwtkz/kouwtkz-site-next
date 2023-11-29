@@ -42,18 +42,18 @@ export interface ImageDataInfo {
   topImage?: boolean
   size?: ImageSize
 }
-export interface soundItem {
+export interface SoundData {
   title: string
   path: string
   name: string
-  albums: Array<albumsItem>
+  albums: Array<SoundAlbumData>
   setupSound?: string
 }
-export interface albumsItem {
+export interface SoundAlbumData {
   title: string
-  list: Array<listItem>
+  list: Array<SoundItemData>
 }
-export interface listItem {
+export interface SoundItemData {
   src: string
   title: string
   setup?: boolean

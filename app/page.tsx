@@ -1,5 +1,5 @@
 import prisma from "@/app/lib/prisma";
-import TopPage from "@/app/components/client/TopPage";
+import TopPage from "@/app/TopPage";
 import { isStatic } from "@/siteData/site";
 import { imageList } from "@/media/scripts/MediaData";
 

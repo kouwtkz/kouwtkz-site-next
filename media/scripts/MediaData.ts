@@ -1,5 +1,5 @@
 import { setPath } from "@/app/functions/general";
-import { ReadImageDataGroupFromDir } from "./readMediaYaml";
+import { ReadImageDataGroupFromDir, ReadSoundData } from "./readMediaYaml";
 import sizeOf from "image-size"
 import { ImageDataInfo } from "./media";
 
@@ -21,4 +21,7 @@ const imageDataGroup = Object.fromEntries(imageDataGroupMap);
 
 const imageList = Object.entries(imageDataGroup).reduce((p, c) => [...p, ...c[1].list.map((e) => { return { ...e, group: c[0], base: c[1].path } })], <Array<ImageDataInfo>>[])
 
-export { imageDataGroupMap, imageDataGroup, imageList };
+const soundData = ReadSoundData("@/media/data/sound.yaml");
+soundData.albums.forEach(album => album.list.forEach(sound => { sound.src = `/sound/${sound.src}` }))
+
+export { imageDataGroupMap, imageDataGroup, imageList, soundData };
