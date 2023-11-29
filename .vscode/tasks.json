@@ -55,12 +55,12 @@
     {
       "label": "prisma: pull",
       "type": "shell",
-      "command": "yarn prisma pull"
+      "command": "yarn prisma db pull"
     },
     {
       "label": "prisma: push",
       "type": "shell",
-      "command": "yarn prisma push"
+      "command": "yarn prisma db push"
     },
     {
       "label": "prisma: migrate dev",

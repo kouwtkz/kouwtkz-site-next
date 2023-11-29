@@ -25,7 +25,7 @@ model User {
   updatedAt     DateTime? @updatedAt
   accessedAt    DateTime?
   lastLogin     DateTime?
-  Posts         Posts[]
+  Posts         Post[]
 }
 
 model UserRemember {
@@ -35,12 +35,12 @@ model UserRemember {
   disableDate   DateTime?
 }
 
-model Posts {
+model Post {
   id       Int       @id @default(autoincrement())
-  postId   String    @unique @default(uuid())
+  postId   String    @default(uuid())
   userId   String
   title    String    @default("")
-  body     String
+  body     String    @db.LongText
   category String?
   pin      Int?
   noindex  Boolean?
@@ -48,7 +48,7 @@ model Posts {
   date     DateTime  @default(now())
   update   DateTime? @updatedAt
   flags    Int?
-  memo     String?
+  memo     String?   @db.Text
   user     User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@index([userId], map: "Posts_userId_fkey")

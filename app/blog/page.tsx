@@ -41,7 +41,7 @@ export default async function BlogPage({
               <h3 className="text-2xl text-main-dark font-bold inline-block m-4">
                 <Link href={`/blog/post/${post.postId}`}>{post.title}</Link>
               </h3>
-              <span>
+              <span className="underline">
                 <Link href={`/blog/?q=%23${post.category}`}>
                   {post.category}
                 </Link>

@@ -1,6 +1,7 @@
 import React from "react";
 import getPostDetail from "@/app/api/blog/getPostDetail";
 import getPosts from "@/app/api/blog/getPosts";
+import PostDetail from "./postDetail";
 
 export default async function Page({
   params,
@@ -11,20 +12,14 @@ export default async function Page({
 }) {
   const { postId } = params;
   const post = await getPostDetail({ postId });
-  if (!post) return <></>
-  return (
-    <div>
-      <h1>{post.title}</h1>
-      <div>{post.body}</div>
-    </div>
-  );
+  if (!post) return <></>;
+  return <PostDetail post={post} />;
 }
 
 export async function generateStaticParams() {
-  const posts = await getPosts({max: 0xffff});
+  const posts = await getPosts({ max: 0xffff });
   const v = Object.values(posts).map((post) => {
-    return { postId: post.postId }
+    return { postId: post.postId };
   });
-  // console.log(v);
   return v;
 }

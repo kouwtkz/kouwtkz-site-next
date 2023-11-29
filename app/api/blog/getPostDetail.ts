@@ -6,7 +6,7 @@ type getPostDetailProps = {
 const getPostDetail = async (args: getPostDetailProps) => {
   const { postId } = args;
   try {
-    const post = await prisma.posts.findFirst({
+    const post = await prisma.post.findFirst({
       where: {
         postId: postId
       },

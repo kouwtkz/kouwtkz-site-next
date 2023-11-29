@@ -10,7 +10,7 @@ const getPosts = async (args? :getPostsProps) => {
   const page = args && args.page ? args.page : 1;
   const q = args && args.q ? args.q : "";
   try {
-    const posts = await prisma.posts.findMany({
+    const posts = await prisma.post.findMany({
       orderBy: {
         // 降順
         date: "desc",

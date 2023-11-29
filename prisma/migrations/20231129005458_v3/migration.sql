@@ -34,12 +34,12 @@ CREATE TABLE `UserRemember` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `Posts` (
+CREATE TABLE `Post` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `postId` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(191) NOT NULL DEFAULT '',
-    `body` VARCHAR(191) NOT NULL,
+    `body` LONGTEXT NOT NULL,
     `category` VARCHAR(191) NULL,
     `pin` INTEGER NULL,
     `noindex` BOOLEAN NULL,
@@ -47,11 +47,11 @@ CREATE TABLE `Posts` (
     `date` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `update` DATETIME(3) NULL,
     `flags` INTEGER NULL,
-    `memo` VARCHAR(191) NULL,
+    `memo` TEXT NULL,
 
     INDEX `Posts_userId_fkey`(`userId`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Posts` ADD CONSTRAINT `Posts_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `Post` ADD CONSTRAINT `Post_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`userId`) ON DELETE CASCADE ON UPDATE CASCADE;
