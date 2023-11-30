@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { AudioPlay } from "./SoundPlayer";
 
 type SoundPageProps = {
-  soundAlbum: SoundAlbumProps;
+  soundAlbum: SoundAlbumProps | null;
 };
 
 
@@ -15,7 +15,7 @@ const SoundPage: React.FC<SoundPageProps> = ({ soundAlbum }) => {
         <h1 className="font-LuloClean text-4xl text-main pt-8 mb-8">
           SOUND ROOM
         </h1>
-        {soundAlbum.playlist?.map((album, i) => (
+        {soundAlbum?.playlist?.map((album, i) => (
           <div key={i} className="my-6">
             <h3 className="my-4 text-main-deep">{album.title}</h3>
             {album.list.map((sound, i) => (
@@ -25,7 +25,7 @@ const SoundPage: React.FC<SoundPageProps> = ({ soundAlbum }) => {
                 onClick={(e) => {
                   AudioPlay(sound.src);
                 }}
-              >
+                >
                 {sound.title}
               </div>
             ))}

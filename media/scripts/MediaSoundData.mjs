@@ -29,7 +29,7 @@ export function ReadSoundDataFromYaml() {
   readYamlList.forEach((yamlItem) => {
     /** @type SoundAlbumProps */
     const album = load(readFileSync(`${workDir}/${yamlItem}`), "utf8");
-    album.playlist?.forEach(sound => { sound.src = `/sound/${sound.src}` })
+    album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `/sound/${sound.src}` }) })
     AlbumList.push(album);
   })
   return AlbumList;
