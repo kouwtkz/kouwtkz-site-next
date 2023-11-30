@@ -5,7 +5,5 @@ import { SiteProps } from "./site.d"
 
 const rawData = readFileSync(setPath("@/siteData/site.yaml"), "utf8");
 const site = <SiteProps>load(rawData);
-const isStatic = process.env.OUTPUT_MODE === "export";
-const currentDate = new Date();
 
-export { site, isStatic, currentDate };
+export { site };

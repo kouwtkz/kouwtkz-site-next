@@ -1,7 +1,7 @@
 import prisma from "@/app/lib/prisma";
 import TopPage from "@/app/TopPage";
-import { isStatic } from "@/siteData/site";
-import { imageList } from "@/media/scripts/MediaData";
+import { isStatic } from "@/app/functions/general";
+import { getImageItem } from "@/media/scripts/MediaImageData.mjs";
 
 export default async function Page() {
   const topPosts = await prisma.post.findMany({
@@ -17,7 +17,7 @@ export default async function Page() {
     <>
       <TopPage
         isStatic={isStatic}
-        topImage={imageList.find((image) => image.topImage)}
+        topImage={getImageItem({filter: {topImage: true}})}
         topPosts={topPosts}
       />
     </>

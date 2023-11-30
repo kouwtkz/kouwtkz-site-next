@@ -1,7 +1,7 @@
 import React from "react";
-import { imageDataGroupMap } from "@/media/scripts/MediaData";
+import { getImageAlbum } from "@/media/scripts/MediaImageData.mjs";
 import GalleryList from "@/app/components/gallery/GalleryList";
-import { isStatic } from "@/siteData/site";
+import { isStatic } from "@/app/functions/general";
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
         return (
           <GalleryList
             key={i}
-            group={imageDataGroupMap.get(name) || null}
+            group={getImageAlbum({filter: {albumName: name}})}
             max={20}
             isStatic={isStatic}
           />

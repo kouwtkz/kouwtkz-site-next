@@ -1,10 +1,14 @@
-import { soundData } from "@/media/scripts/MediaData";
+import { soundAlbums } from "@/media/scripts/MediaSoundData.mjs";
 import SoundPage from "./client";
 
 export default async function Page() {
   return (
     <>
-      <SoundPage soundData={soundData} />
+      {soundAlbums.map((album, i) => {
+        {
+          <SoundPage key={i} soundAlbum={album} />;
+        }
+      })}
     </>
   );
 }

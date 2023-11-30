@@ -1,6 +1,6 @@
 "use client";
 
-import { ImageDataObject } from "@/media/scripts/media.d";
+import { MediaImageAlbumProps } from "@/media/scripts/MediaImageData.mjs";
 import { dammyImageSize } from "@/media/scripts/dammy";
 
 import React from "react";
@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
 type GalleryPageProps = {
-  group: ImageDataObject | null;
+  group: MediaImageAlbumProps | null;
   size?: number;
   label?: string;
   showLabel?: boolean;
@@ -38,7 +38,7 @@ const GalleryList: React.FC<GalleryPageProps> = ({
       <div className="flex flex-wrap max-w-[1120px] mx-auto">
         {group.list
           .map((image, key) => {
-            const size = image.size || dammyImageSize;
+            const size = image.info || dammyImageSize;
             const thumb = {
               width: !size.wide
                 ? thumb_size
@@ -54,7 +54,12 @@ const GalleryList: React.FC<GalleryPageProps> = ({
               >
                 <Image
                   src={`${image.imageUrl}`}
-                  loader={loaderSet(isStatic)}
+                  loader={loaderSet(
+                    isStatic,
+                    image.resized?.find(
+                      (item) => item.option.mode === "thumbnail"
+                    )?.src
+                  )}
                   alt={image.name || image.src}
                   width={thumb.width}
                   height={thumb.height}

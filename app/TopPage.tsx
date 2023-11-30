@@ -1,14 +1,14 @@
 "use client";
 
 import loaderSet from "@/app/lib/loaderSet";
-import { ImageDataInfo } from "@/media/scripts/media";
+import { MediaImageItemProps } from "@/media/scripts/MediaImageData.mjs";
 import { Post } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Twemoji from "react-twemoji";
 type TopPageProps = {
-  topImage?: ImageDataInfo;
+  topImage?: MediaImageItemProps | null;
   isStatic?: boolean;
   topPosts?: Array<Post>;
 };
@@ -25,8 +25,8 @@ const TopPage: React.FC<TopPageProps> = ({
           src={`${topImage.imageUrl}`}
           loader={loaderSet(isStatic)}
           alt={topImage.name || topImage.src}
-          width={topImage.size?.width}
-          height={topImage.size?.height}
+          width={topImage.info?.width}
+          height={topImage.info?.height}
           className="w-[100%] h-80"
         />
       ) : null}

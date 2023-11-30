@@ -5,31 +5,28 @@ const strictConfig = {
   reactStrictMode: false
 }
 
-// 環境変数定義
-const envConfig = {
-  env: {
-    // OUTPUT_MODE: "export"
-  }
-}
-
 // SSGでImageを出力する際はローダーが必要
-const outputMode = envConfig.env.OUTPUT_MODE || null;
+const outputMode = process.env.OUTPUT_MODE || null;
 
-const exportConfig =
-  outputMode === 'export' ?
-    {
+const exportConfig = (() => {
+  if (outputMode === 'export') {
+    try {
+      const fs = require("fs"), cwd = process.cwd();
+      fs.mkdirSync(`${cwd}/${process.env.CACHE_DIR}`)
+    } catch { }
+    return {
       output: 'export',
-      distDir: 'out/dist/',
-      images: {
-        loader: 'custom',
-        domains: ['images.microcms-assets.io'],
-      }
-
-    } : {}
+      distDir: process.env.DICT_DIR,
+      images: { loader: 'custom' },
+      // domains: ['images.microcms-assets.io'],
+    }
+  } else {
+    return {}
+  }
+})();
 
 const nextConfig = {
   ...strictConfig,
-  ...envConfig,
   ...exportConfig,
 }
 

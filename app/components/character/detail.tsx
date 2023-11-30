@@ -3,12 +3,12 @@
 import { CharaProps } from "@/app/character/chara";
 import Image from "next/image";
 import loaderSet from "@/app/lib/loaderSet";
-import { ImageDataInfo } from "@/media/scripts/media";
 import GalleryList from "../gallery/GalleryList";
+import { MediaImageItemProps } from "@/media/scripts/MediaImageData.mjs";
 
 type DetailProps = {
   chara: CharaProps;
-  imageList: Array<ImageDataInfo>;
+  imageList: Array<MediaImageItemProps>;
   isStatic?: boolean;
 };
 
@@ -30,8 +30,8 @@ const CharaDetail: React.FC<DetailProps> = ({
             loader={loaderSet(isStatic)}
             className="inline-block w-[100%]"
             alt={chara.name}
-            width={headerImageInfo.size?.width}
-            height={headerImageInfo.size?.height}
+            width={headerImageInfo.info?.width}
+            height={headerImageInfo.info?.height}
           />
         </div>
       ) : null}
@@ -55,7 +55,7 @@ const CharaDetail: React.FC<DetailProps> = ({
             list: imageList.filter(
               (image) =>
                 image.group?.match("art") &&
-                image.tags.some((v) => v === chara.id)
+                image.tags?.some((v) => v === chara.id)
             ),
             name: "ART",
           }}
@@ -67,7 +67,7 @@ const CharaDetail: React.FC<DetailProps> = ({
             list: imageList.filter(
               (image) =>
                 image.group === "goods" &&
-                image.tags.some((v) => v === chara.id)
+                image.tags?.some((v) => v === chara.id)
             ),
             name: "GOODS",
           }}
@@ -79,7 +79,7 @@ const CharaDetail: React.FC<DetailProps> = ({
             list: imageList.filter(
               (image) =>
                 image.group === "given" &&
-                image.tags.some((v) => v === chara.id)
+                image.tags?.some((v) => v === chara.id)
             ),
             name: "FAN ART",
           }}

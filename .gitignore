@@ -4,7 +4,12 @@
 /public/sound/
 /public/images/
 /public/character/
+/public/resized/
 /media/data/
+
+# キャッシュ
+/.cache
+*.check
 
 # dependencies
 /node_modules

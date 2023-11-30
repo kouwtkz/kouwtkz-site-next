@@ -3,17 +3,21 @@ export interface ImageDataGroup {
   [name: string]: ImageDataObject
 }
 export interface ImageMapList extends Map<string, ImageDataInfo> { }
+export interface ImageGroupOptions {
+  thumbnail?: boolean
+  icon?: boolean
+}
 export interface ImageDataObject {
   list: Array<ImageDataInfo>
-  gallery?: string
   title?: string
   name?: string
   description?: string
-  path?: string
+  dir?: string
   share?: string
   timeFormat?: string
   timeReplace?: string
   absolutePath?:string
+  imageGroupOptions?: ImageGroupOptions
 }
 export interface ImageSize {
   width: number
@@ -24,37 +28,21 @@ export interface ImageSize {
 export interface ImageDataInfo {
   src: string
   path?: string
-  title: string
+  title?: string
   name?: string
-  description: string
-  tags: Array<string>
-  time: number | Date
+  description?: string
+  tags?: Array<string>
+  time?: number | Date
   link?: string
   dir?: string
-  baseUrl?: string
   imageUrl?: string
   fullPath?: string
   group?: string
   share?: string
   timeFormat?: string
   timeReplace?: string
-  thumbnail?: string
   topImage?: boolean
-  size?: ImageSize
-}
-export interface SoundData {
-  title: string
-  path: string
-  name: string
-  albums: Array<SoundAlbumData>
-  setupSound?: string
-}
-export interface SoundAlbumData {
-  title: string
-  list: Array<SoundItemData>
-}
-export interface SoundItemData {
-  src: string
-  title: string
-  setup?: boolean
+  thumbnail?: string
+  icon?: string
+  info?: ImageSize
 }

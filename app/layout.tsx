@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
-import { site, currentDate } from "@/siteData/site";
+import { site } from "@/siteData/site";
+import { currentDate } from "@/app/functions/general";
 
 import {
   KosugiMaruFont,

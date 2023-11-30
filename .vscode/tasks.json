@@ -72,5 +72,10 @@
       "type": "shell",
       "command": "rm -r .next/cache/webpack"
     },
+    {
+      "label": "test: test.mjs",
+      "type": "shell",
+      "command": "node test/test.mjs"
+    },
   ]
 }
