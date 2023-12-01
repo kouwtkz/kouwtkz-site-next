@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * @typedef {{
  * title: string;
@@ -22,13 +24,13 @@ import { load } from "js-yaml";
 const workDir = `${process.env.PWD}`, publicDir = `${process.env.PUBLIC_DIR}`;
 
 const readYamlList = ["media/data/sound.yaml"];
-/** @param {string} path; */
 export function ReadSoundDataFromYaml() {
   /** @type SoundAlbumProps[] */
   const AlbumList = [];
   readYamlList.forEach((yamlItem) => {
     /** @type SoundAlbumProps */
-    const album = load(readFileSync(`${workDir}/${yamlItem}`), "utf8");
+    // @ts-ignore
+    const album = load(String(readFileSync(`${workDir}/${yamlItem}`, "utf8")));
     album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `/sound/${sound.src}` }) })
     AlbumList.push(album);
   })
