@@ -9,7 +9,7 @@
     {
       "label": "npm: dev",
       "type": "shell",
-      "command": "npm run dev -p 3001"
+      "command": "PORT=3001 npm run dev"
     },
     {
       "label": "npm: preview",

@@ -1,5 +1,5 @@
 // オリジナルタグを使用したい場合は定義元は必ずuse clientのものとなる
-import getPosts from "@/app/api/blog/getPosts";
+import getPosts from "./functions/getPosts";
 import { isStatic } from "@/app/functions/general";
 import Link from "next/link";
 import { redirect } from "next/navigation";

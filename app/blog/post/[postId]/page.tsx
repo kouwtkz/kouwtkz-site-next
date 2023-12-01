@@ -1,6 +1,6 @@
 import React from "react";
-import getPostDetail from "@/app/api/blog/getPostDetail";
-import getPosts from "@/app/api/blog/getPosts";
+import getPostDetail from "../../functions/getPostDetail";
+import getPosts from "../../functions/getPosts";
 import PostDetail from "./postDetail";
 
 export default async function Page({
