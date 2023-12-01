@@ -2,70 +2,60 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "yarn: setup",
+      "label": "npm: setup",
       "type": "shell",
-      "command": "yarn"
+      "command": "npm run"
     },
     {
-      "label": "yarn: dev",
+      "label": "npm: dev",
       "type": "shell",
-      "command": "yarn dev"
+      "command": "npm run dev -p 3001"
     },
     {
-      "label": "yarn: preview",
+      "label": "npm: preview",
       "type": "shell",
-      "command": "yarn preview"
+      "command": "npm run preview"
     },
     {
-      "label": "yarn: build",
+      "label": "npm: build",
       "type": "shell",
-      "command": "yarn build",
+      "command": "npm run build",
       "problemMatcher": []
     },
     {
-      "label": "yarn: generate",
+      "label": "npm: static build",
       "type": "shell",
-      "command": "yarn generate"
+      "command": "OUTPUT_MODE=export npm run build"
     },
     {
-      "label": "yarn: export",
+      "label": "npm: start",
       "type": "shell",
-      "command": "yarn export"
+      "command": "npm run start"
     },
     {
-      "label": "yarn: start",
+      "label": "npm: lint",
       "type": "shell",
-      "command": "yarn start"
-    },
-    {
-      "label": "yarn: serve",
-      "type": "shell",
-      "command": "yarn serve"
-    },
-    {
-      "label": "yarn: lint",
-      "type": "shell",
-      "command": "yarn lint"
+      "command": "npm run lint"
     },
     {
       "label": "prisma: studio",
       "type": "shell",
-      "command": "yarn prisma studio"
+      "command": "npm run prisma studio"
     },
     {
       "label": "prisma: pull",
       "type": "shell",
-      "command": "yarn prisma db pull"
+      "command": "npm run prisma db pull"
     },
     {
       "label": "prisma: push",
       "type": "shell",
-      "command": "yarn prisma db push"
+      "command": "npm run prisma db push"
     },
     {
       "label": "prisma: migrate dev",
       "type": "shell",
-      "command": "yarn prisma migrate dev"
+      "command": "npm run prisma migrate dev"
     },
     {
       "label": "rm: cache webpack",
@@ -76,6 +66,16 @@
       "label": "test: test.mjs",
       "type": "shell",
       "command": "node test/test.mjs"
+    },
+    {
+      "label": "deploy: rs static",
+      "type": "shell",
+      "command": "rsync -au -e ssh --delete ./out/dist/ rs:~/mysite_next_static/dist/"
+    },
+    {
+      "label": "deploy: rs static lite",
+      "type": "shell",
+      "command": "rsync -au -e ssh --size-only --delete ./out/dist/ rs:~/mysite_next_static/dist/"
     },
   ]
 }
