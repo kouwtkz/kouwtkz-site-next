@@ -4,7 +4,7 @@ import Image from "next/image";
 import { CharaProps } from "@/app/character/chara.d";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
-import { MediaImageItemProps } from "@/media/scripts/MediaImageData.mjs";
+import { MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
 
 type CharaListItemProps = {
   chara: CharaProps;
@@ -17,12 +17,11 @@ const CharaListItem: React.FC<CharaListItemProps> = ({
   isStatic = false,
   iconImage,
 }) => {
-  const icon = chara.icon || "";
   return (
     <Link className="text-3xl m-2" href={`character/${chara.id}`}>
-      {icon ? (
+      {iconImage ? (
         <Image
-          src={icon}
+          src={`${iconImage.innerURL}`}
           loader={loaderSet(
             isStatic,
             iconImage?.resized?.find((item) => item.option.mode === "icon")?.src

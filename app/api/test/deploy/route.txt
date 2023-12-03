@@ -1,0 +1,26 @@
+import { NextResponse } from "next/server"
+import { exec } from "child_process"
+import { isStatic } from "@/app/functions/general";
+
+async function doCommand() {
+  return await new Promise((callback) => {
+    exec("OUTPUT_MODE=export npm run build", (err, stdout, stderr) => {
+      exec("rsync -au -e ssh --size-only --delete ./out/dist/ rs:~/mysite_next_static/dist/", (err, stdout) => {
+        console.log(stdout);
+        callback(stdout);
+      })
+      console.log(stdout);
+    })
+  })
+}
+
+export async function GET(req: Request) {
+  if (!isStatic) {
+    if (/\?/.test(req.url)) {
+      return NextResponse.json(await doCommand());
+    } else {
+      return NextResponse.json("");
+    }
+  }
+  return NextResponse.json("mee");
+}

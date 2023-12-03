@@ -1,7 +1,7 @@
 "use client";
 
-import { MediaImageAlbumProps } from "@/media/scripts/MediaImageData.mjs";
-import { dammyImageSize } from "@/media/scripts/dammy";
+import { MediaImageAlbumProps } from "@/app/media/MediaImageData.mjs";
+import { dammyImageSize } from "@/app/media/dammy";
 
 import React from "react";
 import Image from "next/image";
@@ -35,7 +35,11 @@ const GalleryList: React.FC<GalleryPageProps> = ({
           {label || group.name}
         </h2>
       ) : null}
-      <div className="flex flex-wrap max-w-[1120px] mx-auto">
+      <div
+        className={`max-w-[1120px] mx-auto flex flex-wrap${
+          group.list.length < 3 ? " justify-center" : ""
+        }`}
+      >
         {group.list
           .map((image, key) => {
             const size = image.info || dammyImageSize;
@@ -53,7 +57,7 @@ const GalleryList: React.FC<GalleryPageProps> = ({
                 className="w-[24.532%] pt-[24.532%] m-[0.234%] relative"
               >
                 <Image
-                  src={`${image.imageUrl}`}
+                  src={`${image.innerURL}`}
                   loader={loaderSet(
                     isStatic,
                     image.resized?.find(

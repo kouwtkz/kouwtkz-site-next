@@ -1,6 +1,6 @@
 import React from "react";
-import { getImageAlbum } from "@/media/scripts/MediaImageData.mjs";
-import GalleryList from "@/app/components/gallery/GalleryList";
+import { getImageAlbum } from "@/app/media/MediaImageData.mjs";
+import GalleryList from "./GalleryList";
 import { isStatic } from "@/app/functions/general";
 
 export default function Home() {

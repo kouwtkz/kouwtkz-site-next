@@ -1,11 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # 主にメディア関連
-/public/sound/
-/public/images/
-/public/character/
-/public/resized/
-/media/data/
+_media/
+_data/
 
 # キャッシュ
 /.cache

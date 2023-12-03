@@ -1,8 +1,8 @@
 import React from "react";
-import { charaList } from "./[name]/getList";
-import CharaListItem from "../components/character/listItem";
+import { charaList } from "./getList";
+import CharaListItem from "./client/listItem";
 import { isStatic } from "@/app/functions/general";
-import { getImageItem } from "@/media/scripts/MediaImageData.mjs";
+import { getImageItem } from "@/app/media/MediaImageData.mjs";
 
 export default function Page() {
   return (

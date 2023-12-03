@@ -1,4 +1,4 @@
-import { soundAlbums } from "@/media/scripts/MediaSoundData.mjs";
+import { soundAlbums } from "@/app/media/MediaSoundData.mjs";
 import SoundPage from "./client";
 const soundAlbum = soundAlbums.find(album => album.name === "sound") || null;
 

@@ -16,10 +16,11 @@ export default async function Page({
   return <PostDetail post={post} />;
 }
 
-export async function generateStaticParams() {
+async function generateStaticParams() {
   const posts = await getPosts({ max: 0xffff });
   const v = Object.values(posts).map((post) => {
     return { postId: post.postId };
   });
   return v;
 }
+export { generateStaticParams }

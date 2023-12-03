@@ -1,7 +1,7 @@
 "use client";
 
 import loaderSet from "@/app/lib/loaderSet";
-import { MediaImageItemProps } from "@/media/scripts/MediaImageData.mjs";
+import { MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
 import { Post } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,8 +22,8 @@ const TopPage: React.FC<TopPageProps> = ({
     <>
       {topImage ? (
         <Image
-          src={`${topImage.imageUrl}`}
-          loader={loaderSet(isStatic)}
+          src={`${topImage.innerURL}`}
+          loader={loaderSet(isStatic, topImage.path)}
           alt={topImage.name || topImage.src}
           width={topImage.info?.width}
           height={topImage.info?.height}
@@ -34,7 +34,7 @@ const TopPage: React.FC<TopPageProps> = ({
         <main className="pb-8">
           <div className="my-8">
             <div className="text-4xl [&>*]:m-4 mb-8">
-              <h1>はろはろめぇめぇ</h1>
+              <h1>はろはろめぇめぇ？</h1>
               <div>
                 <Link href="gallery">イラスト</Link>
               </div>

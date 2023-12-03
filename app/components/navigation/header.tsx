@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { SiteProps } from "@/siteData/site.d";
+import { SiteProps } from "@/app/site/SiteData.mjs";
 
 type HeaderProps = {
   site: SiteProps;

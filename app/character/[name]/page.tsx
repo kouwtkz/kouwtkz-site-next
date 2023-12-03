@@ -1,8 +1,8 @@
 import React from "react";
-import { charaMap, charaList } from "./getList";
-import CharaDetail from "@/app/components/character/detail";
+import { charaMap, charaList } from "../getList";
+import CharaDetail from "../client/detail";
 import { isStatic } from "@/app/functions/general";
-import { getImageItems } from "@/media/scripts/MediaImageData.mjs";
+import { getImageItems } from "@/app/media/MediaImageData.mjs";
 
 export default function Page({
   params,
@@ -23,8 +23,9 @@ export default function Page({
 }
 
 // 静的ビルド時にこれが実行される
-export async function generateStaticParams() {
+async function generateStaticParams() {
   return Object.keys(charaList).map((name) => {
     return { name };
   });
 }
+export { generateStaticParams }

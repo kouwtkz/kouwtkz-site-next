@@ -3,8 +3,8 @@
 import { CharaProps } from "@/app/character/chara";
 import Image from "next/image";
 import loaderSet from "@/app/lib/loaderSet";
-import GalleryList from "../gallery/GalleryList";
-import { MediaImageItemProps } from "@/media/scripts/MediaImageData.mjs";
+import GalleryList from "@/app/gallery/GalleryList";
+import { MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
 
 type DetailProps = {
   chara: CharaProps;
@@ -17,17 +17,21 @@ const CharaDetail: React.FC<DetailProps> = ({
   imageList,
   isStatic = false,
 }) => {
-  const image = chara.image || chara.icon || "";
-  const headerImageInfo = chara.headerImage
-    ? imageList.find((image) => image.imageUrl === chara.headerImage)
+  const charaImage = chara.image || chara.icon || "";
+  const charaImageInfo = charaImage
+    ? imageList.find((image) => image.path?.endsWith(charaImage))
+    : null;
+    const headerImage = `${chara.headerImage}`;
+    const headerImageInfo = chara.headerImage
+    ? imageList.find((image) => image.path?.endsWith(headerImage))
     : null;
   return (
     <div className="p-0">
-      {headerImageInfo && headerImageInfo.imageUrl ? (
+      {headerImageInfo ? (
         <div>
           <Image
-            src={headerImageInfo.imageUrl}
-            loader={loaderSet(isStatic)}
+            src={`${headerImageInfo.innerURL}`}
+            loader={loaderSet(isStatic, headerImageInfo.path)}
             className="inline-block w-[100%]"
             alt={chara.name}
             width={headerImageInfo.info?.width}
@@ -35,16 +39,23 @@ const CharaDetail: React.FC<DetailProps> = ({
           />
         </div>
       ) : null}
-      <div>
-        <Image
-          src={image}
-          loader={loaderSet(isStatic)}
-          className="inline-block m-4"
-          alt={chara.name}
-          width={256}
-          height={256}
-        />
-      </div>
+      {charaImageInfo ? (
+        <div>
+          <Image
+            src={`${charaImageInfo.innerURL}`}
+            loader={loaderSet(
+              isStatic,
+              charaImageInfo.resized?.find(
+                (item) => item.option.mode === "thumbnail"
+              )?.src
+            )}
+            className="inline-block m-4"
+            alt={chara.name}
+            width={256}
+            height={256}
+          />
+        </div>
+      ) : null}
       <h1 className="text-main-deep font-bold text-3xl">{`${chara.name}${
         chara.honorific || ""
       }`}</h1>

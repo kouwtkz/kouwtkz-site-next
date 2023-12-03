@@ -9,79 +9,31 @@ import path from "path"
 import { load } from "js-yaml";
 import RetouchImage from "./RetouchImage.mjs"
 
-/**
- * @comments ディレクトリ指定のオプション
- * @typedef {{
- * path: string;
- * yaml?: boolean;
- * name?: string;
- * recursive?: boolean;
- * resizeOption?: ResizeOptionProps | ResizeOptionProps[];
- * }} MediaImageDirProps;
- * 
- * @typedef { "icon" | "thumbnail" | "simple" } ResizeMode
- * @typedef {"contain" | "cover" | "fill" | "outside" | "inside"} FitMethod
- * 
- * @typedef {{
- *  mode?: ResizeMode;
- *  ext?: string;
- *  size?: number | { w: number, h: number };
- *  quality?: number;
- *  fit?: FitMethod;
- * }} ResizeOptionProps;
- * 
- * @comments ひとつのアルバムの変数
- * @typedef {{
- *  dir?: string;
- *  name: string;
- *  list: MediaImageItemProps[];
- *  [key: string]: any;
- * }} MediaImageAlbumProps;
- * 
- * @comments ひとつの画像用の変数
- * @typedef {{
- *  name: string;
- *  src: string;
- *  dir?: string;
- *  fullPath?: string;
- *  tags?: string[];
- *  group?: string;
- *  title?: string;
- *  description?: string;
- *  time?: number | Date;
- *  timeFormat?: string;
- *  timeReplace?: string;
- *  topImage?: boolean;
- *  [key: string]: any;
- *  info?: MediaImageInfoProps;
- *  resized?: {
- *   src: string;
- *   option: ResizeOptionProps;
- *  }[]
- * }} MediaImageItemProps;
- * 
- * @comments 画像そのもののプロパティ
- * @typedef {{
- *  width: number;
- *  height: number;
- *  type: string;
- *  wide: boolean;
- * }} MediaImageInfoProps;
-*/
+const isStatic = process.env.OUTPUT_MODE === 'export';
+
+const projectRoot = `${process.env.PWD}`, publicDir = `${process.env.PUBLIC_DIR}`, publicRoot = `${projectRoot}/${publicDir}`;
+const mediaDir = `${process.env.MEDIA_DIR}`, mediaRoot = `${projectRoot}/${mediaDir}`;
+const dataDir = `${process.env.DATA_DIR}`, mediaDataDir = `${dataDir}/media`;
+
+const mediaHostPath = `${process.env.MEDIA_HOST_PATH}`;
+const sMediaHostPath = `${mediaHostPath ? `/${mediaHostPath}` : ''}`;
+const innerHost = `${isStatic ? '' : process.env.MEDIA_HOST_CONTAINER}${sMediaHostPath}`;
+const imageHost = `${process.env.MEDIA_HOST_PUBLIC}${sMediaHostPath}`;
+
+const resizedDir = `${process.env.RESIZED_DIR}`, resizedURLRoot = `${mediaHostPath ? `${mediaHostPath}/` : ''}${resizedDir}`, resizedFullDir = `${mediaRoot}/${resizedDir}`;
+const defaultImageRoot = mediaRoot;
 
 /**
  * @summary デフォルトで画像ディレクトリ、サムネイルサイズでリサイズ
  * @type {MediaImageDirProps[]}
  * */
 const readDirList = [
-  { path: "../media/data/gallery", yaml: true, resizeOption: { mode: 'thumbnail', fit: 'outside' } },
-  { path: "icons", recursive: true, resizeOption: { mode: 'icon' } },
-  { path: "character/images", resizeOption: { mode: 'thumbnail' } },
-  { path: "character/icons", name: "charaIcon", resizeOption: { mode: "icon" } },
+  { path: 'gallery', root: mediaDataDir, yaml: true, resizeOption: { mode: 'thumbnail', fit: 'outside' } },
+  { path: 'icons', recursive: true, resizeOption: { mode: 'icon' } },
+  { path: 'character/images', resizeOption: { mode: 'thumbnail' } },
+  { path: 'character/icons', name: 'charaIcon', resizeOption: { mode: 'icon' } },
 ]
 
-// publicディレクトリのみを対象にする
-const workDir = `${process.env.PWD}`, publicDir = `${process.env.PUBLIC_DIR}`, resizedDir = `${process.env.RESIZED_DIR}`;
 const imageRe = /\.(png|jpe?g|gif)$/i;
 
 /**
@@ -91,9 +43,12 @@ const imageRe = /\.(png|jpe?g|gif)$/i;
  * @param {getImageListProps} getImageOption[]
  */
 function readImage(image, dirItem, getImageOption = {}) {
-  image.imageUrl = `/${image.dir}/${image.src}`;
-  image.fullPath = `${workDir}/${publicDir}${image.imageUrl}`;
-  const dimensions = sizeOf(image.fullPath);
+  const imagePath = `/${image.dir}/${image.src}`;
+  image.path = `${sMediaHostPath}${imagePath}`;
+  image.URL = `${imageHost}${imagePath}`;
+  image.innerURL = `${innerHost}${imagePath}`;
+  const fullPath = `${dirItem.imageRoot || projectRoot}${imagePath}`;
+  const dimensions = sizeOf(fullPath);
   const width = Number(dimensions.width);
   const height = Number(dimensions.height);
   image.info = { width, height, type: `${dimensions.type}`, wide: width > height }
@@ -113,12 +68,12 @@ function readImage(image, dirItem, getImageOption = {}) {
           if (!resizeOption.ext) resizeOption.ext = "webp"
           break;
       }
-      const resuzedBase = resizeOption.ext ? image.imageUrl.replace(/[^\.]+$/, resizeOption.ext) : image.imageUrl;
-      const resizedUrl = `/${resizedDir}/${resizeOption.mode}${resuzedBase}`;
-      const resizedFullPath = `${workDir}/${publicDir}${resizedUrl}`;
-      if (getImageOption.doRetouch) RetouchImage({ ...{ src: `${image.fullPath}`, output: resizedFullPath }, ...resizeOption });
+      const resizedBase = resizeOption.ext ? imagePath?.replace(/[^\.]+$/, resizeOption.ext) : imagePath;
+      const resizedUrl = `/${resizedURLRoot}/${resizeOption.mode}${resizedBase}`;
+      const resizedFullPath = `${resizedFullDir}/${resizeOption.mode}${resizedBase}`;
+      if (getImageOption.doRetouch) RetouchImage({ ...{ src: `${fullPath}`, output: resizedFullPath }, ...resizeOption });
       if (!image.resized) image.resized = [];
-      image.resized.push({ src: resizedUrl, option: resizeOption });
+      image.resized?.push({ src: resizedUrl, option: resizeOption });
     });
   }
   return image;
@@ -126,7 +81,6 @@ function readImage(image, dirItem, getImageOption = {}) {
 
 /**
  * @typedef {{ albumName?: string; imageName?: string; tagName?: string, pathMatch?: string | RegExp, topImage?: boolean }} FilterOptionProps;
- * @typedef {{ filter?: FilterOptionProps | string; doRetouch?: boolean; onceAlbum?: boolean; onceImage?: boolean; }} getImageListProps;
  * @param {getImageListProps | string} [getImageOptionArgs];
  * @returns {MediaImageAlbumProps[]};
  */
@@ -143,7 +97,9 @@ export function getImageAlbums(getImageOptionArgs = {}) {
   readDirList.some(
     (dirItem) => {
       const dirName = dirItem.name || path.parse(dirItem.path).name;
+      const dirRoot = dirItem.root ? dirItem.root : defaultImageRoot;
       if (!dirItem.yaml && filter.albumName && filter.albumName !== dirName) return null;
+      if (!dirItem.imageRoot) dirItem.imageRoot = defaultImageRoot;
       /** @type MediaImageAlbumProps | null */
       const dirAlbum = dirItem.yaml ? null : {
         dir: dirItem.path,
@@ -153,7 +109,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
 
       /** @param {string} dir */
       const itemFor = (dir) => {
-        const itemFullDir = `${workDir}/${publicDir}/${dir}`;
+        const itemFullDir = `${dirRoot}/${dir}`;
         fs.readdirSync(itemFullDir).some((childName) => {
           const parsedPath = path.parse(childName);
           if (parsedPath.ext === "") {
@@ -242,3 +198,75 @@ export function getImageItem(getImageOption = {}) {
   else
     return null;
 }
+
+/**
+ * @typedef {{
+ *  filter?: FilterOptionProps | string;
+ *  doRetouch?: boolean;
+ *  onceAlbum?: boolean;
+ *  onceImage?: boolean;
+ * }} getImageListProps;
+ * 
+ * @comments ディレクトリ指定のオプション
+ * @typedef {{
+ * path: string;
+ * root?: string;
+ * yaml?: boolean;
+ * imageRoot?: string;
+ * name?: string;
+ * recursive?: boolean;
+ * resizeOption?: ResizeOptionProps | ResizeOptionProps[];
+ * }} MediaImageDirProps;
+ * 
+ * @typedef { "icon" | "thumbnail" | "simple" } ResizeMode
+ * @typedef {"contain" | "cover" | "fill" | "outside" | "inside"} FitMethod
+ * 
+ * @typedef {{
+ *  mode?: ResizeMode;
+ *  ext?: string;
+ *  size?: number | { w: number, h: number };
+ *  quality?: number;
+ *  fit?: FitMethod;
+ * }} ResizeOptionProps;
+ * 
+ * @comments ひとつのアルバムの変数
+ * @typedef {{
+ *  dir?: string;
+ *  name: string;
+ *  list: MediaImageItemProps[];
+ *  [key: string]: any;
+ * }} MediaImageAlbumProps;
+ * 
+ * @comments ひとつの画像用の変数
+ * @typedef {{
+ *  name: string;
+ *  src: string;
+ *  dir?: string;
+ *  path?: string;
+ *  URL?: string;
+ *  innerURL?: string;
+ *  tags?: string[];
+ *  group?: string;
+ *  title?: string;
+ *  description?: string;
+ *  time?: number | Date;
+ *  timeFormat?: string;
+ *  timeReplace?: string;
+ *  topImage?: boolean;
+ *  [key: string]: any;
+ *  info?: MediaImageInfoProps;
+ *  resized?: {
+ *   src: string;
+ *   option: ResizeOptionProps;
+ *  }[]
+ * }} MediaImageItemProps;
+ * 
+ * @comments 画像そのもののプロパティ
+ * @typedef {{
+ *  width: number;
+ *  height: number;
+ *  type: string;
+ *  wide: boolean;
+ * }} MediaImageInfoProps;
+ * 
+*/

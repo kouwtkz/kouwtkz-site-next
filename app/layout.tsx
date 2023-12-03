@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
-import { site } from "@/siteData/site";
+import { site } from "@/app/site/SiteData.mjs";
 import { currentDate } from "@/app/functions/general";
 
 import {

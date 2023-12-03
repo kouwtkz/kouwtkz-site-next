@@ -5,6 +5,18 @@ const strictConfig = {
   reactStrictMode: false
 }
 
+const imageConfig = { images: { remotePatterns: [] } }
+
+const mediaHost = process.env.MEDIA_HOST_CONTAINER;
+if (mediaHost) {
+  const mediaHostURL = new URL(mediaHost);
+  imageConfig.images.remotePatterns.push({
+    protocol: mediaHostURL.protocol.slice(0, -1),
+    hostname: mediaHostURL.hostname,
+    port: mediaHostURL.port,
+  });
+}
+
 // SSGでImageを出力する際はローダーが必要
 const outputMode = process.env.OUTPUT_MODE || null;
 
@@ -27,6 +39,7 @@ const exportConfig = (() => {
 
 const nextConfig = {
   ...strictConfig,
+  ...imageConfig,
   ...exportConfig,
 }
 
