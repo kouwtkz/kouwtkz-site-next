@@ -80,7 +80,7 @@ function readImage(image, dirItem, getImageOption = {}) {
 }
 
 /**
- * @typedef {{ albumName?: string; imageName?: string; tagName?: string, pathMatch?: string | RegExp, topImage?: boolean }} FilterOptionProps;
+ * @typedef {{ albumName?: string | string[]; imageName?: string; tagName?: string, pathMatch?: string | RegExp, topImage?: boolean }} FilterOptionProps;
  * @param {getImageListProps | string} [getImageOptionArgs];
  * @returns {MediaImageAlbumProps[]};
  */
@@ -90,6 +90,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
   const filter = ((typeof (getImageOption.filter) === "string") ? { albumName: getImageOption.filter } : getImageOption.filter) || {};
   const onceAlbum = getImageOption.onceAlbum || false;
   const onceImage = getImageOption.onceImage || false;
+  const filterAlbumNames = filter.albumName ? (Array.isArray(filter.albumName) ? filter.albumName : [filter.albumName]) : [];
 
   /** @type MediaImageAlbumProps[] */
   const allResult = [];
@@ -98,7 +99,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
     (dirItem) => {
       const dirName = dirItem.name || path.parse(dirItem.path).name;
       const dirRoot = dirItem.root ? dirItem.root : defaultImageRoot;
-      if (!dirItem.yaml && filter.albumName && filter.albumName !== dirName) return null;
+      if (!dirItem.yaml && filterAlbumNames.length > 0 && !filterAlbumNames.some(fname => fname === dirName)) return null;
       if (!dirItem.imageRoot) dirItem.imageRoot = defaultImageRoot;
       /** @type MediaImageAlbumProps | null */
       const dirAlbum = dirItem.yaml ? null : {
@@ -116,7 +117,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
             if (dirItem.recursive) itemFor(`${dir}/${childName}`)
           } else {
             if (/\.ya?ml/i.test(parsedPath.ext)) {
-              if (dirItem.yaml && (!filter.albumName || filter.albumName === parsedPath.name)) {
+              if (dirItem.yaml && (filterAlbumNames.length === 0 || filterAlbumNames.some(fname => fname === parsedPath.name))) {
                 /** @type MediaImageAlbumProps */
                 // @ts-ignore
                 const album = load(String(fs.readFileSync(`${itemFullDir}/${childName}`, "utf8")));

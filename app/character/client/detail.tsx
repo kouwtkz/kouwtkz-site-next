@@ -4,48 +4,44 @@ import { CharaProps } from "@/app/character/chara";
 import Image from "next/image";
 import loaderSet from "@/app/lib/loaderSet";
 import GalleryList from "@/app/gallery/GalleryList";
-import { MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
+import { MediaImageAlbumProps, MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
 
 type DetailProps = {
   chara: CharaProps;
-  imageList: Array<MediaImageItemProps>;
+  headerImage?: MediaImageItemProps | null;
+  charaImage?: MediaImageItemProps | null;
+  galleryGroups: Array<MediaImageAlbumProps>;
   isStatic?: boolean;
 };
 
 const CharaDetail: React.FC<DetailProps> = ({
   chara,
-  imageList,
+  headerImage,
+  charaImage,
+  galleryGroups,
   isStatic = false,
 }) => {
-  const charaImage = chara.image || chara.icon || "";
-  const charaImageInfo = charaImage
-    ? imageList.find((image) => image.path?.endsWith(charaImage))
-    : null;
-    const headerImage = `${chara.headerImage}`;
-    const headerImageInfo = chara.headerImage
-    ? imageList.find((image) => image.path?.endsWith(headerImage))
-    : null;
   return (
     <div className="p-0">
-      {headerImageInfo ? (
+      {headerImage ? (
         <div>
           <Image
-            src={`${headerImageInfo.innerURL}`}
-            loader={loaderSet(isStatic, headerImageInfo.path)}
+            src={`${headerImage.innerURL}`}
+            loader={loaderSet(isStatic, headerImage.path)}
             className="inline-block w-[100%]"
             alt={chara.name}
-            width={headerImageInfo.info?.width}
-            height={headerImageInfo.info?.height}
+            width={headerImage.info?.width}
+            height={headerImage.info?.height}
           />
         </div>
       ) : null}
-      {charaImageInfo ? (
+      {charaImage ? (
         <div>
           <Image
-            src={`${charaImageInfo.innerURL}`}
+            src={`${charaImage.innerURL}`}
             loader={loaderSet(
               isStatic,
-              charaImageInfo.resized?.find(
+              charaImage.resized?.find(
                 (item) => item.option.mode === "thumbnail"
               )?.src
             )}
@@ -60,44 +56,13 @@ const CharaDetail: React.FC<DetailProps> = ({
         chara.honorific || ""
       }`}</h1>
       <div className="text-main text-xl">{chara.description}</div>
-      <div>
-        <GalleryList
-          group={{
-            list: imageList.filter(
-              (image) =>
-                image.group?.match("art") &&
-                image.tags?.some((v) => v === chara.id)
-            ),
-            name: "ART",
-          }}
-          isStatic={isStatic}
-          autoDisable={true}
-        />
-        <GalleryList
-          group={{
-            list: imageList.filter(
-              (image) =>
-                image.group === "goods" &&
-                image.tags?.some((v) => v === chara.id)
-            ),
-            name: "GOODS",
-          }}
-          isStatic={isStatic}
-          autoDisable={true}
-        />
-        <GalleryList
-          group={{
-            list: imageList.filter(
-              (image) =>
-                image.group === "given" &&
-                image.tags?.some((v) => v === chara.id)
-            ),
-            name: "FAN ART",
-          }}
-          isStatic={isStatic}
-          autoDisable={true}
-        />
-      </div>
+      {galleryGroups.map((group, i) => {
+        return (
+          <div key={i}>
+            <GalleryList group={group} isStatic={isStatic} autoDisable={true} />
+          </div>
+        );
+      })}
     </div>
   );
 };
