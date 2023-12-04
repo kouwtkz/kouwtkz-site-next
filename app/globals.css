@@ -231,7 +231,7 @@ code {
   opacity: 1;
 }
 
-.bg-background-top, .bg-background-bottom {
+.bg-background-top, .bg-background-bottom, :root {
   transition: background-color 1s;
 }
 .audio_play .bg-background-top {
