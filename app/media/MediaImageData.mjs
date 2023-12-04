@@ -52,7 +52,9 @@ function readImage(image, dirItem, getImageOption = {}) {
   const width = Number(dimensions.width);
   const height = Number(dimensions.height);
   image.info = { width, height, type: `${dimensions.type}`, wide: width > height }
-  if (imageRe.test(image.src)) {
+  if (/\.svg$/i.test(image.src)) {
+    image.innerURL = `${sMediaHostPath}${imagePath}`;
+  } else if (imageRe.test(image.src)) {
     const resizeOptions = dirItem.resizeOption ? (Array.isArray(dirItem.resizeOption) ? dirItem.resizeOption : [dirItem.resizeOption]) : [];
     resizeOptions.forEach((v) => {
       const resizeOption = Object.assign({}, v);

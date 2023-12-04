@@ -54,7 +54,10 @@ const GalleryList: React.FC<GalleryPageProps> = ({
             return (
               <div
                 key={key}
-                className="w-[24.532%] pt-[24.532%] m-[0.234%] relative"
+                className={
+                  `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` 
+                  + ` hover:brightness-90 transition cursor-pointer`
+                }
               >
                 <Image
                   src={`${image.innerURL}`}
@@ -68,7 +71,7 @@ const GalleryList: React.FC<GalleryPageProps> = ({
                   width={thumb.width}
                   height={thumb.height}
                   style={{ objectFit: "cover" }}
-                  className="absolute w-[100%] h-[100%] top-0"
+                  className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                 />
               </div>
             );
