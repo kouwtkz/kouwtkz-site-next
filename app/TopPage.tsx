@@ -18,6 +18,7 @@ const TopPage: React.FC<TopPageProps> = ({
   isStatic = false,
   topPosts = [],
 }) => {
+  const html = document.documentElement;
   return (
     <>
       {topImage ? (
@@ -49,6 +50,9 @@ const TopPage: React.FC<TopPageProps> = ({
               </div>
               <div>
                 <Link href="special">スペシャルページ</Link>
+              </div>
+              <div>
+                <p onClick={() => html.classList.toggle("theme-orange")} className="cursor-pointer text-main">テーマきりかえ</p>
               </div>
             </div>
           </div>
