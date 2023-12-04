@@ -1,13 +1,13 @@
 "use client";
 
-const html = document?.documentElement;
+const html = (typeof window === 'object') ? document?.documentElement : null;
 let audio: HTMLAudioElement
 
 export function AudioSync() {
   if (audio.paused) {
-    html.classList.remove("audio_play");
+    html?.classList.remove("audio_play");
   } else {
-    html.classList.add("audio_play");
+    html?.classList.add("audio_play");
   }
 
 }

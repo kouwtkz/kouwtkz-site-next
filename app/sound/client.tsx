@@ -9,7 +9,6 @@ type SoundPageProps = {
 
 
 const SoundPage: React.FC<SoundPageProps> = ({ soundAlbum }) => {
-  const html = document.documentElement;
   return (
     <div>
       <div className="">

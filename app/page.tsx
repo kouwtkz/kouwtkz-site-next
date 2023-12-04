@@ -17,7 +17,6 @@ export default async function Page() {
     take: 3,
   });
   const topImage = getImageItem({ filter: { topImage: true } });
-  console.log(topImage);
   return (
     <>
       <TopPage isStatic={isStatic} topImage={topImage} topPosts={topPosts} />
