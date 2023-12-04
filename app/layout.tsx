@@ -41,6 +41,7 @@ export default async function RootLayout({
             <Footer site={site} currentDate={currentDate} />
           </div>
         </div>
+        <div id='audio_background'></div>
       </body>
     </html>
   );

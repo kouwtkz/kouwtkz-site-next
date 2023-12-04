@@ -37,6 +37,18 @@
 }
 
 :root {
+  --play-background-color-top: #ecfffe;
+  --play-background-color-bottom: #f4ffd1;
+  --play-background: linear-gradient(var(--play-background-color-top) 30%,
+          var(--play-background-color-bottom));
+  --playing-mark: "▶";
+}
+:root.theme-orange {
+  --play-background-color-top: #fff9d4;
+  --play-background-color-bottom: #ffead4;
+}
+
+:root {
   --background: linear-gradient(
     var(--background-top) 30%,
     var(--background-bottom)
@@ -196,4 +208,32 @@ code {
   box-sizing: border-box;
   width: 99%;
   min-width: unset;
+}
+
+#audio_background {
+  overflow: hidden;
+  opacity: 0;
+  position: fixed;
+  background-attachment: fixed;
+  z-index: -50;
+  top: 0;
+  transition: opacity 1s;
+  width: 100vw;
+  height: 100vh;
+  background: var(--play-background);
+}
+
+.audio_play body::-webkit-scrollbar-track {
+  background: var(--play-background);
+}
+
+.audio_play #audio_background {
+  opacity: 1;
+}
+
+.bg-background-top .bg-background-bottom {
+  transition: background-color 1s;
+}
+.audio_play .bg-background-top {
+  background-color: var(--play-background-color-top);
 }
