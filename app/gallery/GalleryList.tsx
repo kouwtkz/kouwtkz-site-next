@@ -1,19 +1,19 @@
 "use client";
 
-import { MediaImageAlbumProps } from "@/app/media/MediaImageData.mjs";
-import { dammyImageSize } from "@/app/media/dammy";
+import { MediaImageAlbumType } from "@/app/media/MediaImageData.mjs";
+import { useImageViewer } from "@/app/components/Modal/ImageViewer";
 
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
+import { useServerData } from "../components/System/ServerData";
 type GalleryPageProps = {
-  group: MediaImageAlbumProps | null;
+  group: MediaImageAlbumType | null;
   size?: number;
   label?: string;
   showLabel?: boolean;
   max?: number;
-  isStatic?: boolean;
   autoDisable?: boolean;
 };
 
@@ -23,9 +23,10 @@ const GalleryList: React.FC<GalleryPageProps> = ({
   size = 320,
   showLabel = true,
   max = 1000,
-  isStatic = false,
   autoDisable = false,
 }) => {
+  const { isStatic } = useServerData();
+  const { setImageItem } = useImageViewer();
   if (group === null || (autoDisable && group.list.length === 0)) return null;
   const thumb_size = size;
   return (
@@ -42,21 +43,21 @@ const GalleryList: React.FC<GalleryPageProps> = ({
       >
         {group.list
           .map((image, key) => {
-            const size = image.info || dammyImageSize;
+            const size = image.info;
             const thumb = {
-              width: !size.wide
+              width: !size?.wide
                 ? thumb_size
-                : (thumb_size * size.width) / size.height,
-              height: size.wide
+                : Math.floor((thumb_size * size.width) / size.height),
+              height: size?.wide
                 ? thumb_size
-                : (thumb_size * size.height) / size.width,
+                : Math.floor((thumb_size * Number(size?.height)) / Number(size?.width)),
             };
             return (
               <div
                 key={key}
                 className={
-                  `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` 
-                  + ` hover:brightness-90 transition cursor-pointer`
+                  `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` +
+                  ` hover:brightness-90 transition cursor-pointer`
                 }
               >
                 <Image
@@ -72,6 +73,7 @@ const GalleryList: React.FC<GalleryPageProps> = ({
                   height={thumb.height}
                   style={{ objectFit: "cover" }}
                   className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
+                  onClick={() => {setImageItem(image);}}
                 />
               </div>
             );

@@ -1,8 +1,8 @@
-import { MediaImageItemProps } from "./MediaImageData.mjs";
-export const publicParam = { list: <Array<MediaImageItemProps>>[] };
+import { MediaImageItemType } from "./MediaImageData.mjs";
+export const publicParam = { list: <Array<MediaImageItemType>>[] };
 const buildTime = new Date();
 
-export function getFilterImageList(option: { sort?: "asc" | "desc", filter?: string, list?: Array<MediaImageItemProps> } = {}) {
+export function getFilterImageList(option: { sort?: "asc" | "desc", filter?: string, list?: Array<MediaImageItemType> } = {}) {
   const { sort = "desc" } = option;
   return filterImageList(option).sort((a, b) => {
     const at = a.time || 0, bt = b.time || 0;
@@ -10,7 +10,7 @@ export function getFilterImageList(option: { sort?: "asc" | "desc", filter?: str
   });
 }
 
-export function filterImageList(option: { filter?: string, list?: Array<any> } = {}): Array<MediaImageItemProps> {
+export function filterImageList(option: { filter?: string, list?: Array<any> } = {}): Array<MediaImageItemType> {
   const { list = publicParam.list, filter = '' } = option;
   if (filter) {
     // ページ検索と同じような記述でタグ指定できる処理

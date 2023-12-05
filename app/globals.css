@@ -42,6 +42,9 @@
   --play-background: linear-gradient(var(--play-background-color-top) 30%,
           var(--play-background-color-bottom));
   --playing-mark: "▶";
+  --lightbox-background: rgba(0, 0, 0, 0.3);
+  --lightbox-background-preview: rgba(146, 147, 127, 0.8);
+  --lightbox-background-text: rgb(255 255 255 / 90%);
 }
 :root.theme-orange {
   --play-background-color-top: #fff9d4;
@@ -217,7 +220,7 @@ code {
   background-attachment: fixed;
   z-index: -50;
   top: 0;
-  transition: opacity 1s;
+  /* transition: opacity 1s; */
   width: 100vw;
   height: 100vh;
   background: var(--play-background);
@@ -232,8 +235,12 @@ code {
 }
 
 .bg-background-top, .bg-background-bottom, :root {
-  transition: background-color 1s;
+  /* transition: background-color 1s; */
 }
 .audio_play .bg-background-top {
   background-color: var(--play-background-color-top);
+}
+
+body.overflow-y-hidden {
+  margin-right: var(--scroll-margin) !important;
 }

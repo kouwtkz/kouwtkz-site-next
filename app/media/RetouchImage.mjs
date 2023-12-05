@@ -9,7 +9,7 @@ import { parse } from "path";
  *  height: number;
  *  type: string;
  *  wide: boolean;
- * }} MediaImageInfoProps;
+ * }} MediaImageInfoType;
 
  * @typedef {"contain" | "cover" | "fill" | "outside" | "inside"} FitMethod
 
@@ -22,7 +22,7 @@ export default function RetouchImage({ src, output, size = null, quality, fit = 
   /** @type sharp.Sharp */
   const retouchImage = sharp(src);
 
-  const { w, h } = typeof (size) === "number" ? { w: size, h: size } : (size !== null ? size : {w: null, h: null});
+  const { w, h } = typeof (size) === "number" ? { w: size, h: size } : (size !== null ? size : { w: null, h: null });
 
   if (w && h) retouchImage.resize(w, h, { fit: fit })
 
@@ -45,6 +45,7 @@ export default function RetouchImage({ src, output, size = null, quality, fit = 
       break;
   }
 
-  try { fs.mkdirSync(outputPath.dir, { recursive: true }) } catch { }
-  retouchImage.toFile(output);
+  fs.mkdir(outputPath.dir, { recursive: true }, () => {
+    retouchImage.toFile(output);
+  })
 }

@@ -1,7 +1,6 @@
 import React from "react";
-import { charaList } from "./getList";
+import { charaList } from "./getCharaData";
 import CharaListItem from "./client/listItem";
-import { isStatic } from "@/app/functions/general";
 import { getImageItem } from "@/app/media/MediaImageData.mjs";
 
 export default function Page() {
@@ -10,19 +9,11 @@ export default function Page() {
       <h1 className="font-LuloClean text-4xl text-main pt-8 mb-12">
         CHARACTER
       </h1>
-      {Object.entries(charaList).map(([name, chara], index) => {
+      {Object.entries(charaList).map(async ([name, chara], index) => {
         return (
           <div key={index} className="m-4 h-8 inline-block">
             <CharaListItem
               chara={chara}
-              isStatic={isStatic}
-              iconImage={
-                chara.icon
-                  ? getImageItem({
-                      filter: { albumName: "charaIcon", pathMatch: chara.icon },
-                    })
-                  : null
-              }
             />
           </div>
         );

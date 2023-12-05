@@ -1,9 +1,8 @@
 import React from "react";
 import { getImageAlbum } from "@/app/media/MediaImageData.mjs";
 import GalleryList from "./GalleryList";
-import { isStatic } from "@/app/functions/general";
 
-export default function Home() {
+export default async function Home() {
   return (
     <div className="">
       {["art", "fanart", "works"].map((name, i) => {
@@ -12,7 +11,6 @@ export default function Home() {
             key={i}
             group={getImageAlbum({filter: {albumName: name}})}
             max={20}
-            isStatic={isStatic}
           />
         );
       })}

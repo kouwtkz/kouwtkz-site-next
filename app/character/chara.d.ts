@@ -1,5 +1,7 @@
 
-export interface CharaProps {
+import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
+
+export interface CharaType {
   id?: string
   name: string,
   honorific?: string,
@@ -8,10 +10,15 @@ export interface CharaProps {
   icon?: string,
   image?: string,
   headerImage?: string,
+  media?: {
+    icon?: MediaImageItemType | null,
+    image?: MediaImageItemType | null,
+    headerImage?: MediaImageItemType | null,
+  }
   playlist?: [string] | string,
   time?: Date,
 }
 
-export interface CharaListProps {
-  [name: string]: CharaProps
+export interface CharaObjectType {
+  [name: string]: CharaType
 }

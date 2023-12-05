@@ -1,17 +1,17 @@
 "use client";
 
-import { CharaProps } from "@/app/character/chara";
+import { CharaType } from "@/app/character/chara";
 import Image from "next/image";
 import loaderSet from "@/app/lib/loaderSet";
 import GalleryList from "@/app/gallery/GalleryList";
-import { MediaImageAlbumProps, MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
+import { MediaImageAlbumType, MediaImageItemType } from "@/app/media/MediaImageData.mjs";
+import { useServerData } from "@/app/components/System/ServerData";
 
 type DetailProps = {
-  chara: CharaProps;
-  headerImage?: MediaImageItemProps | null;
-  charaImage?: MediaImageItemProps | null;
-  galleryGroups: Array<MediaImageAlbumProps>;
-  isStatic?: boolean;
+  chara: CharaType;
+  headerImage?: MediaImageItemType | null;
+  charaImage?: MediaImageItemType | null;
+  galleryGroups: Array<MediaImageAlbumType>;
 };
 
 const CharaDetail: React.FC<DetailProps> = ({
@@ -19,8 +19,8 @@ const CharaDetail: React.FC<DetailProps> = ({
   headerImage,
   charaImage,
   galleryGroups,
-  isStatic = false,
 }) => {
+  const { isStatic } = useServerData();
   return (
     <div className="p-0">
       {headerImage ? (
@@ -59,7 +59,7 @@ const CharaDetail: React.FC<DetailProps> = ({
       {galleryGroups.map((group, i) => {
         return (
           <div key={i}>
-            <GalleryList group={group} isStatic={isStatic} autoDisable={true} />
+            <GalleryList group={group} autoDisable={true} />
           </div>
         );
       })}

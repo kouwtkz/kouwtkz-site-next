@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 import { exec } from "child_process"
-import { isStatic } from "@/app/functions/general";
+import { isStatic } from "@/app/components/System/ServerDataMake";
 
 async function doCommand() {
   return await new Promise((callback) => {

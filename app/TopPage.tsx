@@ -1,23 +1,20 @@
 "use client";
 
 import loaderSet from "@/app/lib/loaderSet";
-import { MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
 import { Post } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Twemoji from "react-twemoji";
+import { useServerData } from "./components/System/ServerData";
 type TopPageProps = {
-  topImage?: MediaImageItemProps | null;
-  isStatic?: boolean;
+  topImage?: MediaImageItemType | null;
   topPosts?: Array<Post>;
 };
 
-const TopPage: React.FC<TopPageProps> = ({
-  topImage,
-  isStatic = false,
-  topPosts = [],
-}) => {
+const TopPage: React.FC<TopPageProps> = ({ topImage, topPosts = [] }) => {
+  const { isStatic } = useServerData();
   return (
     <>
       {topImage ? (
@@ -51,7 +48,14 @@ const TopPage: React.FC<TopPageProps> = ({
                 <Link href="special">スペシャルページ</Link>
               </div>
               <div>
-                <p onClick={() => document?.documentElement.classList.toggle("theme-orange")} className="cursor-pointer text-main">テーマきりかえ</p>
+                <p
+                  onClick={() =>
+                    document?.documentElement.classList.toggle("theme-orange")
+                  }
+                  className="cursor-pointer text-main"
+                >
+                  テーマきりかえ
+                </p>
               </div>
             </div>
           </div>

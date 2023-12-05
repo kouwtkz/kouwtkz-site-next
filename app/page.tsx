@@ -1,6 +1,6 @@
 import prisma from "@/app/lib/prisma";
 import TopPage from "@/app/TopPage";
-import { isStatic } from "@/app/functions/general";
+import { isStatic } from "@/app/components/System/ServerDataMake";
 import { getImageItem } from "@/app/media/MediaImageData.mjs";
 
 // export const dynamicParams = true;
@@ -19,7 +19,7 @@ export default async function Page() {
   const topImage = getImageItem({ filter: { topImage: true } });
   return (
     <>
-      <TopPage isStatic={isStatic} topImage={topImage} topPosts={topPosts} />
+      <TopPage topImage={topImage} topPosts={topPosts} />
     </>
   );
 }

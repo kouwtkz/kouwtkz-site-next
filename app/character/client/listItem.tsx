@@ -1,30 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { CharaProps } from "@/app/character/chara.d";
+import { CharaType } from "@/app/character/chara.d";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
-import { MediaImageItemProps } from "@/app/media/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
+import { useCharaData } from "../CharaData";
+import { useServerData } from "@/app/components/System/ServerData";
 
 type CharaListItemProps = {
-  chara: CharaProps;
-  isStatic?: boolean;
-  iconImage?: MediaImageItemProps | null;
+  chara: CharaType;
 };
 
-const CharaListItem: React.FC<CharaListItemProps> = ({
-  chara,
-  isStatic = false,
-  iconImage,
-}) => {
+const CharaListItem = ({ chara }: CharaListItemProps) => {
+  const { isStatic } = useServerData();
+  const charaData = useCharaData();
+  const currentChara =
+    charaData.charaObject && chara.id ? charaData.charaObject[chara.id] : null;
   return (
     <Link className="text-3xl m-2" href={`character/${chara.id}`}>
-      {iconImage ? (
+      {currentChara?.media?.icon ? (
         <Image
-          src={`${iconImage.innerURL}`}
+          src={`${currentChara.media.icon.innerURL}`}
           loader={loaderSet(
             isStatic,
-            iconImage?.resized?.find((item) => item.option.mode === "icon")?.src
+            chara?.media?.icon?.resized?.find((v) => v.option.mode === "icon")
+              ?.src
           )}
           className="inline-block mr-2"
           alt={chara.name}

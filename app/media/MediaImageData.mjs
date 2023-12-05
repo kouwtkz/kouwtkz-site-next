@@ -25,7 +25,7 @@ const defaultImageRoot = mediaRoot;
 
 /**
  * @summary デフォルトで画像ディレクトリ、サムネイルサイズでリサイズ
- * @type {MediaImageDirProps[]}
+ * @type {MediaImageDirType[]}
  * */
 const readDirList = [
   { path: 'gallery', root: mediaDataDir, yaml: true, resizeOption: { mode: 'thumbnail', fit: 'outside' } },
@@ -38,9 +38,9 @@ const imageRe = /\.(png|jpe?g|gif)$/i;
 
 /**
  * @summary 参照渡しで加工する関数
- * @param {MediaImageItemProps} image
- * @param {MediaImageDirProps} dirItem
- * @param {getImageListProps} getImageOption[]
+ * @param {MediaImageItemType} image
+ * @param {MediaImageDirType} dirItem
+ * @param {getImageListType} getImageOption[]
  */
 function readImage(image, dirItem, getImageOption = {}) {
   const imagePath = `/${image.dir}/${image.src}`;
@@ -83,8 +83,8 @@ function readImage(image, dirItem, getImageOption = {}) {
 
 /**
  * @typedef {{ albumName?: string | string[]; imageName?: string; tagName?: string, pathMatch?: string | RegExp, topImage?: boolean }} FilterOptionProps;
- * @param {getImageListProps | string} [getImageOptionArgs];
- * @returns {MediaImageAlbumProps[]};
+ * @param {getImageListType | string} [getImageOptionArgs];
+ * @returns {MediaImageAlbumType[]};
  */
 export function getImageAlbums(getImageOptionArgs = {}) {
   const getImageOption = (typeof (getImageOptionArgs) === "string") ? { filter: { albumName: getImageOptionArgs } } : getImageOptionArgs;
@@ -94,7 +94,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
   const onceImage = getImageOption.onceImage || false;
   const filterAlbumNames = filter.albumName ? (Array.isArray(filter.albumName) ? filter.albumName : [filter.albumName]) : [];
 
-  /** @type MediaImageAlbumProps[] */
+  /** @type MediaImageAlbumType[] */
   const allResult = [];
 
   readDirList.some(
@@ -103,7 +103,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
       const dirRoot = dirItem.root ? dirItem.root : defaultImageRoot;
       if (!dirItem.yaml && filterAlbumNames.length > 0 && !filterAlbumNames.some(fname => fname === dirName)) return null;
       if (!dirItem.imageRoot) dirItem.imageRoot = defaultImageRoot;
-      /** @type MediaImageAlbumProps | null */
+      /** @type MediaImageAlbumType | null */
       const dirAlbum = dirItem.yaml ? null : {
         dir: dirItem.path,
         name: dirName,
@@ -120,7 +120,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
           } else {
             if (/\.ya?ml/i.test(parsedPath.ext)) {
               if (dirItem.yaml && (filterAlbumNames.length === 0 || filterAlbumNames.some(fname => fname === parsedPath.name))) {
-                /** @type MediaImageAlbumProps */
+                /** @type MediaImageAlbumType */
                 // @ts-ignore
                 const album = load(String(fs.readFileSync(`${itemFullDir}/${childName}`, "utf8")));
                 album.list = album.list.filter((item) => {
@@ -158,8 +158,8 @@ export function getImageAlbums(getImageOptionArgs = {}) {
 }
 
 /**
- * @param {getImageListProps | string} [getImageOption];
- * @returns {MediaImageAlbumProps | null};
+ * @param {getImageListType | string} [getImageOption];
+ * @returns {MediaImageAlbumType | null};
  */
 export function getImageAlbum(getImageOption = {}) {
   if (typeof (getImageOption) === "string") getImageOption = { filter: { albumName: getImageOption } }
@@ -172,13 +172,13 @@ export function getImageAlbum(getImageOption = {}) {
 
 
 /**
- * @param {getImageListProps | string} [getImageOption];
- * @returns {MediaImageItemProps[]};
+ * @param {getImageListType | string} [getImageOption];
+ * @returns {MediaImageItemType[]};
  */
 export function getImageItems(getImageOption = {}) {
   if (typeof (getImageOption) === "string") getImageOption = { filter: { imageName: getImageOption } }
   const albums = getImageAlbums(getImageOption);
-  /** @type {MediaImageItemProps[]} */
+  /** @type {MediaImageItemType[]} */
   const imageList = [];
   albums.forEach((album => {
     album.list.forEach(item => {
@@ -190,8 +190,8 @@ export function getImageItems(getImageOption = {}) {
 }
 
 /**
- * @param {getImageListProps | string} [getImageOption];
- * @returns {MediaImageItemProps | null};
+ * @param {getImageListType | string} [getImageOption];
+ * @returns {MediaImageItemType | null};
  */
 export function getImageItem(getImageOption = {}) {
   if (typeof (getImageOption) === "string") getImageOption = { filter: { imageName: getImageOption } }
@@ -208,7 +208,7 @@ export function getImageItem(getImageOption = {}) {
  *  doRetouch?: boolean;
  *  onceAlbum?: boolean;
  *  onceImage?: boolean;
- * }} getImageListProps;
+ * }} getImageListType;
  * 
  * @comments ディレクトリ指定のオプション
  * @typedef {{
@@ -218,8 +218,8 @@ export function getImageItem(getImageOption = {}) {
  * imageRoot?: string;
  * name?: string;
  * recursive?: boolean;
- * resizeOption?: ResizeOptionProps | ResizeOptionProps[];
- * }} MediaImageDirProps;
+ * resizeOption?: ResizeOptionType | ResizeOptionType[];
+ * }} MediaImageDirType;
  * 
  * @typedef { "icon" | "thumbnail" | "simple" } ResizeMode
  * @typedef {"contain" | "cover" | "fill" | "outside" | "inside"} FitMethod
@@ -230,15 +230,15 @@ export function getImageItem(getImageOption = {}) {
  *  size?: number | { w: number, h: number };
  *  quality?: number;
  *  fit?: FitMethod;
- * }} ResizeOptionProps;
+ * }} ResizeOptionType;
  * 
  * @comments ひとつのアルバムの変数
  * @typedef {{
  *  dir?: string;
  *  name: string;
- *  list: MediaImageItemProps[];
+ *  list: MediaImageItemType[];
  *  [key: string]: any;
- * }} MediaImageAlbumProps;
+ * }} MediaImageAlbumType;
  * 
  * @comments ひとつの画像用の変数
  * @typedef {{
@@ -246,6 +246,7 @@ export function getImageItem(getImageOption = {}) {
  *  src: string;
  *  dir?: string;
  *  path?: string;
+ *  link?: string;
  *  URL?: string;
  *  innerURL?: string;
  *  tags?: string[];
@@ -257,12 +258,12 @@ export function getImageItem(getImageOption = {}) {
  *  timeReplace?: string;
  *  topImage?: boolean;
  *  [key: string]: any;
- *  info?: MediaImageInfoProps;
+ *  info?: MediaImageInfoType;
  *  resized?: {
  *   src: string;
- *   option: ResizeOptionProps;
+ *   option: ResizeOptionType;
  *  }[]
- * }} MediaImageItemProps;
+ * }} MediaImageItemType;
  * 
  * @comments 画像そのもののプロパティ
  * @typedef {{
@@ -270,6 +271,6 @@ export function getImageItem(getImageOption = {}) {
  *  height: number;
  *  type: string;
  *  wide: boolean;
- * }} MediaImageInfoProps;
+ * }} MediaImageInfoType;
  * 
 */

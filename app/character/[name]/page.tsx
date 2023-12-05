@@ -1,10 +1,9 @@
 import React from "react";
-import { charaMap, charaList } from "../getList";
+import { charaMap, charaList, charaObject } from "../getCharaData";
 import CharaDetail from "../client/detail";
-import { isStatic } from "@/app/functions/general";
 import { getImageItems } from "@/app/media/MediaImageData.mjs";
 
-export default function Page({
+export default async function Page({
   params,
   searchParams,
 }: {
@@ -51,13 +50,13 @@ export default function Page({
 
   if (!chara) return null;
   return (
-    <CharaDetail chara={chara} isStatic={isStatic} charaImage={charaImage} headerImage={headerImage} galleryGroups={galleryGroups} />
+    <CharaDetail chara={chara} charaImage={charaImage} headerImage={headerImage} galleryGroups={galleryGroups} />
   );
 }
 
 // 静的ビルド時にこれが実行される
 async function generateStaticParams() {
-  return Object.keys(charaList).map((name) => {
+  return Object.keys(charaObject).map((name) => {
     return { name };
   });
 }

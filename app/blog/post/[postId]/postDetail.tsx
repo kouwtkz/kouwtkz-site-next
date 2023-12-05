@@ -7,13 +7,14 @@ import Twemoji from "react-twemoji";
 import { Post } from "@prisma/client";
 import HtmlParse from "html-react-parser";
 import { parse } from "marked";
+import { useServerData } from "@/app/components/System/ServerData";
 
 type PostDetailProps = {
   post?: Post;
-  isStatic?: boolean;
 };
 
-const TopPage: React.FC<PostDetailProps> = ({ post, isStatic = false }) => {
+const TopPage: React.FC<PostDetailProps> = ({ post }) => {
+  const { isStatic } = useServerData();
   if (!post) return null;
   return (
     <div className="text-lg">

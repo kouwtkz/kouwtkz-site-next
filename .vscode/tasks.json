@@ -70,12 +70,12 @@
     {
       "label": "deploy: rs static",
       "type": "shell",
-      "command": "rsync -au -e ssh --delete ./out/html/ rs:~/mysite_next_static/dist/"
+      "command": "rsync -au -e ssh --delete ./out/html/ rs:~/mysite_next_static/html/"
     },
     {
       "label": "deploy: rs static lite",
       "type": "shell",
-      "command": "rsync -au -e ssh --size-only --delete ./out/html/ rs:~/mysite_next_static/dist/"
+      "command": "rsync -au -e ssh --size-only --delete ./out/html/ rs:~/mysite_next_static/html/"
     },
   ]
 }

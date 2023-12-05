@@ -5,18 +5,18 @@
  * title: string;
  * src: string;
  * name: string;
- * playlist?: PlaylistProps[];
+ * playlist?: PlaylistType[];
  * setupSound?: string
- * }} SoundAlbumProps;
+ * }} SoundAlbumType;
  * @typedef {{
  * title?: string;
- * list: SoundItemProps[];
- * }} PlaylistProps;
+ * list: SoundItemType[];
+ * }} PlaylistType;
  * @typedef {{
  * src: string;
  * title: string;
  * list: [];
- * }} SoundItemProps;
+ * }} SoundItemType;
  */
 
 import { readFileSync } from "fs";
@@ -28,10 +28,10 @@ const defaultSoundPath = `${mediaHostPath ? `/${mediaHostPath}` : ''}/sound`;
 
 const readYamlList = [`${mediaDataDir}/sound.yaml`];
 export function ReadSoundDataFromYaml() {
-  /** @type SoundAlbumProps[] */
+  /** @type SoundAlbumType[] */
   const AlbumList = [];
   readYamlList.forEach((yamlItem) => {
-    /** @type SoundAlbumProps */
+    /** @type SoundAlbumType */
     // @ts-ignore
     const album = load(String(readFileSync(`${projectRoot}/${yamlItem}`, "utf8")));
     album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `${defaultSoundPath}/${sound.src}` }) })

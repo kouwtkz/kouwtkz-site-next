@@ -1,7 +1,6 @@
 import React from "react";
 import { getImageAlbum } from "@/app/media/MediaImageData.mjs";
 import GalleryList from "@/app/gallery/GalleryList";
-import { isStatic } from "@/app/functions/general";
 
 export default function Home() {
   return (
@@ -10,13 +9,12 @@ export default function Home() {
         描いてくれてありがとめぇ！
       </h2>
       <h4 className="text-main-soft">#わたかぜメ絵</h4>
-      {["given"].map((name, i) => {
+      {["given"].map(async (name, i) => {
         return (
           <GalleryList
             key={i}
             label="FANART"
             group={getImageAlbum({ filter: { albumName: name } })}
-            isStatic={isStatic}
           />
         );
       })}

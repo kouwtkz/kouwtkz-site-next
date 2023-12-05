@@ -16,5 +16,3 @@ export function getUrlFromPath(path: string) {
 }
 
 export const currentDate = new Date();
-
-export const isStatic = process.env.OUTPUT_MODE === "export";

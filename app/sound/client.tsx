@@ -1,10 +1,10 @@
 "use client";
-import { SoundAlbumProps } from "@/app/media/MediaSoundData.mjs";
+import { SoundAlbumType } from "@/app/media/MediaSoundData.mjs";
 import React, { useEffect } from "react";
 import { AudioPlay, AudioStop } from "./SoundPlayer";
 
 type SoundPageProps = {
-  soundAlbum: SoundAlbumProps | null;
+  soundAlbum: SoundAlbumType | null;
 };
 
 
