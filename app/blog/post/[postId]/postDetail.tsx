@@ -3,18 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import Twemoji from "react-twemoji";
 import { Post } from "@prisma/client";
-import HtmlParse from "html-react-parser";
-import { parse } from "marked";
-import { useServerData } from "@/app/components/System/ServerData";
+import MultiParser from "@/app/functions/MultiParser";
 
 type PostDetailProps = {
   post?: Post;
 };
 
-const TopPage: React.FC<PostDetailProps> = ({ post }) => {
-  const { isStatic } = useServerData();
+const TopPage = ({ post }: PostDetailProps) => {
   if (!post) return null;
   return (
     <div className="text-lg">
@@ -23,19 +19,24 @@ const TopPage: React.FC<PostDetailProps> = ({ post }) => {
           MINI BLOG
         </h2>
       </Link>
-      <Twemoji options={{ className: "emoji" }}>
-        <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
-          <div>
+      <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
+        <div>
+          <MultiParser twemoji={true}>
             <h1 className="text-4xl text-main-deep font-bold mx-2 my-4 inline-block">
               {post.title}
             </h1>
-            <span className="mx-3 underline">
-              <Link href={`/blog/?q=%23${post.category}`}>{post.category}</Link>
-            </span>
-          </div>
-          <div className="[&_p]:my-4 [&_p]:whitespace-pre-line">{HtmlParse(parse(post.body))}</div>
+          </MultiParser>
+          <span className="mx-3 underline">
+            <Link href={`/blog/?q=%23${post.category}`}>{post.category}</Link>
+          </span>
         </div>
-      </Twemoji>
+        <MultiParser
+          all={true}
+          className="[&_p]:my-4 [&_p]:whitespace-pre-line"
+        >
+          {post.body}
+        </MultiParser>
+      </div>
     </div>
   );
 };

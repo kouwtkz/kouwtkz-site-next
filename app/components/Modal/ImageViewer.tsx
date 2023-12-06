@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
 import { useServerData } from "../System/ServerData";
+import MultiParser from "@/app/functions/MultiParser";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -81,8 +82,13 @@ const ImageViewer = () => {
                 <h2 className="my-8 text-4xl font-MochiyPopOne text-main-dark">
                   {image.title}
                 </h2>
-                <div className="mx-2 md:mx-8 text-2xl break-words">
-                  {image.description}
+                <div className="mx-2 md:mx-8 text-2xl">
+                  <MultiParser
+                    all={true}
+                    className="[&_p]:my-4 [&_p]:whitespace-pre-line"
+                  >
+                    {image.description}
+                  </MultiParser>
                 </div>
                 <div className="m-2 mb-8 text-2xl">
                   {charaData.charaList
