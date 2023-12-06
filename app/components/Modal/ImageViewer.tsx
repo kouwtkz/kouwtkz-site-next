@@ -64,7 +64,7 @@ const ImageViewer = () => {
           }}
           id={imageViewerWindowID}
         >
-          <div className="window flex flex-wrap flex-row mb-20 max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%] md:mb-0">
+          <div className="window flex flex-wrap flex-row max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%]">
             <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%]">
               <Image
                 src={`${image.innerURL}`}
@@ -76,56 +76,68 @@ const ImageViewer = () => {
                 className="w-[100%] h-[100%]"
               />
             </div>
-            <div className="flex-auto p-0 md:pl-12 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
-              <h2 className="my-8 text-4xl font-MochiyPopOne text-main-dark">
-                {image.title}
-              </h2>
-              <div className="mx-2 md:mx-8 text-2xl break-words">{image.description}</div>
-              <div className="m-2 mb-8 text-2xl">
-                {charaData.charaList
-                  .filter((chara) =>
-                    image.tags?.find((tag) => tag === chara.id)
-                  )
-                  .map((chara, i) => (
-                    <Link
-                      className="mx-2 my-2 whitespace-nowrap inline-block"
-                      href={`/character/${chara.id}`}
-                      onClick={() => {
-                        imageViewer.onClose();
-                        return true;
-                      }}
-                      key={i}
-                    >
-                      {chara?.media?.icon ? (
-                        <Image
-                          src={`${chara.media.icon.innerURL}`}
-                          loader={loaderSet(
-                            isStatic,
-                            chara?.media?.icon?.resized?.find(
-                              (v) => v.option.mode === "icon"
-                            )?.src
-                          )}
-                          className="inline-block mr-1"
-                          alt={chara.name}
-                          width={40}
-                          height={40}
-                        />
-                      ) : null}
-                      <span className="align-middle">{chara.name}</span>
-                    </Link>
-                  ))}
-              </div>
-              {image.link ? (
-                <div className="text-xl">
-                  <Link
-                    target="_blank"
-                    className="underline font-sans break-all"
-                    href={image.link}
-                  >
-                    {image.link}
-                  </Link>
+            <div className="flex-auto pb-4 md:pb-0 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
+              <div className="pl-0 md:pl-12">
+                <h2 className="my-8 text-4xl font-MochiyPopOne text-main-dark">
+                  {image.title}
+                </h2>
+                <div className="mx-2 md:mx-8 text-2xl break-words">
+                  {image.description}
                 </div>
-              ) : null}
+                <div className="m-2 mb-8 text-2xl">
+                  {charaData.charaList
+                    .filter((chara) =>
+                      image.tags?.find((tag) => tag === chara.id)
+                    )
+                    .map((chara, i) => (
+                      <Link
+                        className="mx-2 my-2 whitespace-nowrap inline-block"
+                        href={`/character/${chara.id}`}
+                        onClick={() => {
+                          imageViewer.onClose();
+                          return true;
+                        }}
+                        key={i}
+                      >
+                        {chara?.media?.icon ? (
+                          <Image
+                            src={`${chara.media.icon.innerURL}`}
+                            loader={loaderSet(
+                              isStatic,
+                              chara?.media?.icon?.resized?.find(
+                                (v) => v.option.mode === "icon"
+                              )?.src
+                            )}
+                            className="inline-block mr-1"
+                            alt={chara.name}
+                            width={40}
+                            height={40}
+                          />
+                        ) : null}
+                        <span className="align-middle">{chara.name}</span>
+                      </Link>
+                    ))}
+                </div>
+                {image.link ? (
+                  <div className="text-xl">
+                    <Link
+                      target="_blank"
+                      className="underline font-sans break-all"
+                      href={image.link}
+                    >
+                      {image.link}
+                    </Link>
+                  </div>
+                ) : null}
+              </div>
+              <div className="m-4">
+                <button
+                  className="m-auto block text-xl"
+                  onClick={() => imageViewer.onClose()}
+                >
+                  とじる
+                </button>
+              </div>
             </div>
           </div>
         </div>

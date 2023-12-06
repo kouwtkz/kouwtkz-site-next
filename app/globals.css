@@ -172,6 +172,12 @@ button {
   border-radius: 0.5em;
 }
 
+input[type="submit"]:hover,
+input[type="button"]:hover,
+button:hover {
+  background-color: var(--main-color-soft);
+}
+
 details > summary {
   display: list-item;
   width: fit-content;

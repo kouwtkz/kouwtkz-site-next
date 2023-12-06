@@ -34,7 +34,7 @@ export default async function BlogPage({
       <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
         MINI BLOG
       </h2>
-      <div className="w-[80%] mx-auto">
+      <div className="w-[100%] md:w-[80%] mx-auto">
         {posts.map((post, index) => {
           return (
             <div key={index} className="m-4">
