@@ -128,7 +128,7 @@ const ImageViewer = () => {
                   <div className="text-xl">
                     <Link
                       target="_blank"
-                      className="underline font-sans break-all"
+                      className="underline font-sans"
                       href={image.link}
                     >
                       {image.link}
