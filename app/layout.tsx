@@ -15,6 +15,7 @@ import {
 } from "@/app/fonts/list";
 import CharaDataMake from "./character/CharaDataMake";
 import ServerDataMake from "./components/System/ServerDataMake";
+import ClientSetup from "./components/System/ClientSetup";
 
 
 export const metadata: Metadata = {
@@ -38,10 +39,11 @@ export default async function RootLayout({
           LuloCleanFont.variable,
         ].join(" ")}
       >
-        <Header site={site} />
-        <ImageViewer />
+        <ClientSetup />
         <CharaDataMake />
         <ServerDataMake />
+        <ImageViewer />
+        <Header site={site} />
         <div className="text-center pt-24 pb-8 font-KosugiMaru">
           <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
             {children}
