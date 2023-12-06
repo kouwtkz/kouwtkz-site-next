@@ -1,7 +1,7 @@
 "use client";
 
 import { MediaImageAlbumType } from "@/app/media/MediaImageData.mjs";
-import { useImageViewer } from "@/app/components/Modal/ImageViewer";
+import { useImageViewer } from "@/app/gallery/ImageViewer";
 
 import React from "react";
 import Image from "next/image";

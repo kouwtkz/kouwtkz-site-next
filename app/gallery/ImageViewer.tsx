@@ -7,7 +7,7 @@ import { useCharaData } from "@/app/character/CharaData";
 import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
-import { useServerData } from "../System/ServerData";
+import { useServerData } from "@/app/components/System/ServerData";
 import MultiParser from "@/app/functions/MultiParser";
 
 const body = typeof window === "object" ? document?.body : null;
