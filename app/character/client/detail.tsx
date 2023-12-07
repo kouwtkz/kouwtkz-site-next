@@ -11,7 +11,7 @@ type DetailProps = {
   chara: CharaType;
 };
 
-const CharaDetail: React.FC<DetailProps> = ({ chara }) => {
+const CharaDetail = ({ chara }: DetailProps) => {
   const { isStatic } = useServerState();
   const { imageItemList } = useMediaImageState();
   const galleryGroups = [
@@ -38,7 +38,9 @@ const CharaDetail: React.FC<DetailProps> = ({ chara }) => {
     },
   ];
   const imageList = imageItemList.filter((image) =>
-    ["art", "goods", "given"].find((fg) => fg === image.group)
+    ["art", "goods", "given", "charaImages", "charaIcon"].find(
+      (fg) => fg === image.group
+    )
   );
   const headerImagePath = `${chara.headerImage}`;
   const headerImage = chara.headerImage

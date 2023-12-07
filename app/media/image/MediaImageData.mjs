@@ -23,16 +23,7 @@ const imageHost = `${process.env.MEDIA_HOST_PUBLIC}${sMediaHostPath}`;
 const resizedDir = `${process.env.RESIZED_DIR}`, resizedURLRoot = `${mediaHostPath ? `${mediaHostPath}/` : ''}${resizedDir}`, resizedFullDir = `${mediaRoot}/${resizedDir}`;
 const defaultImageRoot = mediaRoot;
 
-/**
- * @summary デフォルトで画像ディレクトリ、サムネイルサイズでリサイズ
- * @type {MediaImageDirType[]}
- * */
-const readDirList = [
-  { path: 'gallery', root: mediaDataDir, yaml: true, resizeOption: { mode: 'thumbnail', fit: 'outside' } },
-  { path: 'icons', recursive: true, resizeOption: { mode: 'icon' } },
-  { path: 'character/images', resizeOption: { mode: 'thumbnail' } },
-  { path: 'character/icons', name: 'charaIcon', resizeOption: { mode: 'icon' } },
-]
+import imageDirList from "../../../_data/image/imageDirList.mjs"
 
 const imageRe = /\.(png|jpe?g|gif)$/i;
 
@@ -97,7 +88,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
   /** @type MediaImageAlbumType[] */
   const allResult = [];
 
-  readDirList.some(
+  imageDirList.some(
     (dirItem) => {
       const dirName = dirItem.name || path.parse(dirItem.path).name;
       const dirRoot = dirItem.root ? dirItem.root : defaultImageRoot;
