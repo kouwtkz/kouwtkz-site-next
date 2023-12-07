@@ -1,6 +1,6 @@
 // オリジナルタグを使用したい場合は定義元は必ずuse clientのものとなる
 import getPosts from "./functions/getPosts";
-import { isStatic } from "@/app/components/System/ServerDataMake";
+import isStatic from "@/app/components/System/isStatic.mjs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import CheckPostId from "./CheckPostId";

@@ -1,11 +1,10 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/app/lib/prisma";
 
-export async function GET(request: Request, { params }: {
-  params: { [key: string]: string };
-}) {
+export async function GET(request: NextRequest) {
   if (process.env.NODE_ENV === "development") {
-    switch (params.table.toLocaleLowerCase()) {
+    const table = request.nextUrl.searchParams.get("table");
+    switch (table?.toLocaleLowerCase()) {
       case "post":
         return NextResponse.json(await prisma.post.findMany());
       case "user":
@@ -13,7 +12,6 @@ export async function GET(request: Request, { params }: {
       case "userremember":
         return NextResponse.json(await prisma.userRemember.findMany());
     }
-  } else {
-    return NextResponse.json("")
   }
+  return NextResponse.json("")
 }

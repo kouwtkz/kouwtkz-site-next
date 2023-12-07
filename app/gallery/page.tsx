@@ -2,10 +2,10 @@
 
 import React from "react";
 import GalleryList from "./GalleryList";
-import { useDataMediaImage } from "../media/DataMediaImage";
+import { useMediaImageState } from "../media/image/MediaImageState";
 
 export default function Home() {
-  const { imageAlbumList } = useDataMediaImage();
+  const { imageAlbumList } = useMediaImageState();
   return (
     <div className="">
       {["art", "fanart", "works"].map((name, i) => {

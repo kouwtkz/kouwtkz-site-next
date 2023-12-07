@@ -1,6 +1,6 @@
 import prisma from "@/app/lib/prisma";
 import TopPage from "@/app/TopPage";
-import { isStatic } from "@/app/components/System/ServerDataMake";
+import isStatic from "@/app/components/System/isStatic.mjs";
 
 // export const dynamicParams = true;
 export const dynamic = isStatic ? "auto" : "force-dynamic";

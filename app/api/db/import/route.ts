@@ -1,13 +1,11 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import fs from "fs";
 import prisma from "@/app/lib/prisma";
 import { Post, User, UserRemember } from "@prisma/client";
 
-export async function GET(request: Request, { params }: {
-  params: { [key: string]: string };
-}) {
+export async function GET(request: NextRequest) {
   if (process.env.NODE_ENV === "development") {
-    const table = params.table.toLocaleLowerCase();
+    const table = String(request.nextUrl.searchParams.get('table')).toLocaleLowerCase();
     const jsonDir = `${process.env.PWD}/_data/json/${table}.json`;
     const doneRecord = [] as any[];
     let done = fs.existsSync(jsonDir);

@@ -25,7 +25,7 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
   return imageList;
 }
 
-export const useDataMediaImage = create<ImageDataType>((set) => ({
+export const useMediaImageState = create<ImageDataType>((set) => ({
   imageItemList: [],
   imageAlbumList: [],
   set: false,
@@ -38,10 +38,10 @@ export const useDataMediaImage = create<ImageDataType>((set) => ({
   },
 }));
 
-const MediaImageData = () => {
-  const imageData = useDataMediaImage();
+const MediaImageState = () => {
+  const imageData = useMediaImageState();
   useEffect(() => {
-    fetch(`${location?.origin}/api/data/getImageData`)
+    fetch(`${location?.origin}/media/get`)
       .then((d) => d.json())
       .then((json) => {
         if (!imageData.set) imageData.setImageAlbum(json);
@@ -51,4 +51,4 @@ const MediaImageData = () => {
   return <></>;
 };
 
-export default MediaImageData;
+export default MediaImageState;
