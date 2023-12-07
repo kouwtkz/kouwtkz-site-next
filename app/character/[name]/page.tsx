@@ -1,7 +1,6 @@
 import React from "react";
-import { charaMap, charaList, charaObject } from "../getCharaData";
+import { charaMap, charaObject } from "../getCharaData";
 import CharaDetail from "../client/detail";
-import { getImageItems } from "@/app/media/MediaImageData.mjs";
 
 export default async function Page({
   params,
@@ -13,44 +12,10 @@ export default async function Page({
   const { name } = params;
   const chara = charaMap.get(name);
   if (!chara) return null;
-  const imageList = getImageItems({
-    filter: { albumName: ["art", "goods", "given"], tagName: name },
-  });
-  const headerImagePath = `${chara.headerImage}`;
-  const headerImage = chara.headerImage
-    ? imageList.find((image) => image.path?.endsWith(headerImagePath))
-    : null;
-  const charaImagePath = chara?.image || chara?.icon || "";
-  const charaImage = charaImagePath
-    ? imageList.find((image) => image.path?.endsWith(charaImagePath))
-    : null;
-  const galleryGroups = [
-    {
-      list: imageList.filter(
-        (image) =>
-          image.group?.match("art") && image.tags?.some((v) => v === chara.id)
-      ),
-      name: "ART",
-    },
-    {
-      list: imageList.filter(
-        (image) =>
-          image.group?.match("goods") && image.tags?.some((v) => v === chara.id)
-      ),
-      name: "GOODS",
-    },
-    {
-      list: imageList.filter(
-        (image) =>
-          image.group?.match("given") && image.tags?.some((v) => v === chara.id)
-      ),
-      name: "FAN ART",
-    },
-  ];
 
   if (!chara) return null;
   return (
-    <CharaDetail chara={chara} charaImage={charaImage} headerImage={headerImage} galleryGroups={galleryGroups} />
+    <CharaDetail chara={chara} />
   );
 }
 

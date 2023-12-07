@@ -1,7 +1,7 @@
 "use client";
 import { CharaType, CharaObjectType } from "./chara.d";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { create } from "zustand";
 type CharaDataType = {
   charaList: Array<CharaType>;
@@ -22,9 +22,16 @@ export const useCharaData = create<CharaDataType>((set) => ({
   },
 }));
 
-const CharaData = ({ charaObject }: CharaDataProps) => {
+const CharaData = () => {
   const charaData = useCharaData();
-  if (!charaData.charaObject) charaData.setCharaObject(charaObject);
+  useEffect(() => {
+    fetch(`${location?.origin}/character/data`)
+      .then((d) => d.json())
+      .then((json) => {
+        if (!charaData.charaObject) charaData.setCharaObject(json);
+      });
+  });
+
   return <></>;
 };
 

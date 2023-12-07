@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
 import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
 import { useCharaData } from "@/app/character/CharaData";
@@ -9,6 +9,9 @@ import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
 import { useServerData } from "@/app/components/System/ServerData";
 import MultiParser from "@/app/functions/MultiParser";
+import { useSearchParams } from "next/navigation";
+import { useDataMediaImage } from "../media/DataMediaImage";
+import { useRouter } from "next/navigation";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -24,44 +27,67 @@ type ImageViewerType = {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
-  onToggle: () => void;
-  imageItem?: MediaImageItemType | null;
-  setImageItem: (imageItem: MediaImageItemType) => void;
+  imagePath: string;
+  setImagePath: (path: string) => void;
 };
 const useImageViewer = create<ImageViewerType>((set) => ({
   isOpen: false,
+  imagePath: "",
   onOpen: () => {
     set(() => ({ isOpen: true }));
     bodyLock(true);
   },
   onClose: () => {
-    set(() => ({ isOpen: false }));
+    set(() => ({ isOpen: false, imagePath: "" }));
     bodyLock(false);
   },
-  onToggle: () =>
-    set((state) => {
-      bodyLock(state.isOpen);
-      return { isOpen: !state.isOpen };
-    }),
-  setImageItem: (item) => {
-    set({ imageItem: item, isOpen: true });
+  setImagePath: (path) => {
+    set(() => ({ imagePath: path, isOpen: true }));
     bodyLock(true);
   },
 }));
 export { useImageViewer };
 
-const ImageViewer = () => {
+const ImageViewerWindow = () => {
+  const router = useRouter();
   const imageViewer = useImageViewer();
+  const search = useSearchParams();
+  const { imageItemList } = useDataMediaImage();
   const charaData = useCharaData();
   const { isStatic } = useServerData();
-  const image = imageViewer.imageItem;
+  const [backCheck, setBackCheck] = useState(false);
+  const imageParam = search.get("image");
+
+  const backAction = () => {
+    router.back();
+    setBackCheck(true);
+  };
+  useEffect(() => {
+    if (backCheck) {
+      router.push(location.pathname, { scroll: false });
+      setBackCheck(false);
+    }
+  }, [backCheck, imageParam, router]);
+
+  useEffect(() => {
+    if (!imageParam) {
+      if (imageViewer.isOpen) imageViewer.onClose();
+    } else if (imageParam !== imageViewer.imagePath) {
+      imageViewer.setImagePath(imageParam);
+    }
+  });
+
+  const image = imageViewer.imagePath
+    ? imageItemList.find((image) => image.path === imageParam) || null
+    : null;
+
   return (
     <div className="fixed z-[40]" id="image_viewer">
       {imageViewer.isOpen && image ? (
         <div
           className="bg-lightbox-background w-[100vw] h-[100vh] flex justify-center items-center"
           onClick={(e) => {
-            if (e.target === e.currentTarget) imageViewer.onClose();
+            if (e.target === e.currentTarget) backAction();
           }}
           id={imageViewerWindowID}
         >
@@ -79,7 +105,7 @@ const ImageViewer = () => {
             </div>
             <div className="flex-auto pb-4 md:pb-0 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
               <div className="pl-0 md:pl-12">
-                <h2 className="my-8 text-4xl font-MochiyPopOne text-main-dark">
+                <h2 className="my-8 text-4xl font-MochiyPopOne text-main-dark break-all">
                   {image.title}
                 </h2>
                 <div className="mx-2 md:mx-8 text-2xl">
@@ -137,10 +163,7 @@ const ImageViewer = () => {
                 ) : null}
               </div>
               <div className="m-4">
-                <button
-                  className="m-auto block text-xl"
-                  onClick={() => imageViewer.onClose()}
-                >
+                <button className="m-auto block text-xl" onClick={backAction}>
                   とじる
                 </button>
               </div>
@@ -151,4 +174,13 @@ const ImageViewer = () => {
     </div>
   );
 };
+
+const ImageViewer = () => {
+  return (
+    <Suspense>
+      <ImageViewerWindow />
+    </Suspense>
+  );
+};
+
 export default ImageViewer;

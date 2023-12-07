@@ -8,8 +8,9 @@ import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
 import { useServerData } from "../components/System/ServerData";
+import { useRouter } from "next/navigation";
 type GalleryPageProps = {
-  group: MediaImageAlbumType | null;
+  album: MediaImageAlbumType | null;
   size?: number;
   label?: string;
   showLabel?: boolean;
@@ -17,31 +18,32 @@ type GalleryPageProps = {
   autoDisable?: boolean;
 };
 
-const GalleryList: React.FC<GalleryPageProps> = ({
-  group,
+const GalleryList = ({
+  album,
   label,
   size = 320,
   showLabel = true,
   max = 1000,
   autoDisable = false,
-}) => {
+}: GalleryPageProps) => {
+  const router = useRouter();
   const { isStatic } = useServerData();
-  const { setImageItem } = useImageViewer();
-  if (group === null || (autoDisable && group.list.length === 0)) return null;
+  // const { setImageItem } = useImageViewer();
+  if (!album || (autoDisable && album.list.length === 0)) return null;
   const thumb_size = size;
   return (
     <div className="w-[100%]">
       {showLabel ? (
         <h2 className="pt-12 mb-6 text-6xl font-LuloClean text-center text-main">
-          {label || group.name}
+          {label || album.name}
         </h2>
       ) : null}
       <div
         className={`max-w-[1120px] mx-auto flex flex-wrap${
-          group.list.length < 3 ? " justify-center" : ""
+          album.list.length < 3 ? " justify-center" : ""
         }`}
       >
-        {group.list
+        {album.list
           .map((image, key) => {
             const size = image.info;
             const thumb = {
@@ -50,7 +52,9 @@ const GalleryList: React.FC<GalleryPageProps> = ({
                 : Math.floor((thumb_size * size.width) / size.height),
               height: size?.wide
                 ? thumb_size
-                : Math.floor((thumb_size * Number(size?.height)) / Number(size?.width)),
+                : Math.floor(
+                    (thumb_size * Number(size?.height)) / Number(size?.width)
+                  ),
             };
             return (
               <div
@@ -73,7 +77,10 @@ const GalleryList: React.FC<GalleryPageProps> = ({
                   height={thumb.height}
                   style={{ objectFit: "cover" }}
                   className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
-                  onClick={() => {setImageItem(image);}}
+                  onClick={() => {
+                    router.push(`?image=${image.path}`, { scroll: false });
+                    // setImageItem(image);
+                  }}
                 />
               </div>
             );

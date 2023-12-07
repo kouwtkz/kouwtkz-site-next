@@ -2,19 +2,24 @@
 
 import loaderSet from "@/app/lib/loaderSet";
 import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
-import { Post } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Twemoji from "react-twemoji";
 import { useServerData } from "./components/System/ServerData";
+import { useDataMediaImage } from "./media/DataMediaImage";
 type TopPageProps = {
-  topImage?: MediaImageItemType | null;
-  topPosts?: Array<Post>;
+  topPosts?: Array<{
+    postId: string;
+    title: string;
+    date: Date;
+  }>;
 };
 
-const TopPage: React.FC<TopPageProps> = ({ topImage, topPosts = [] }) => {
+const TopPage: React.FC<TopPageProps> = ({ topPosts = [] }) => {
   const { isStatic } = useServerData();
+  const { imageItemList } = useDataMediaImage();
+  const topImage = imageItemList.find((image) => image.topImage) || null;
   return (
     <>
       {topImage ? (

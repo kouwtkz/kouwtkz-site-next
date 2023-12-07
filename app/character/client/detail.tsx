@@ -4,23 +4,51 @@ import { CharaType } from "@/app/character/chara";
 import Image from "next/image";
 import loaderSet from "@/app/lib/loaderSet";
 import GalleryList from "@/app/gallery/GalleryList";
-import { MediaImageAlbumType, MediaImageItemType } from "@/app/media/MediaImageData.mjs";
 import { useServerData } from "@/app/components/System/ServerData";
+import { useDataMediaImage } from "@/app/media/DataMediaImage";
 
 type DetailProps = {
   chara: CharaType;
-  headerImage?: MediaImageItemType | null;
-  charaImage?: MediaImageItemType | null;
-  galleryGroups: Array<MediaImageAlbumType>;
 };
 
-const CharaDetail: React.FC<DetailProps> = ({
-  chara,
-  headerImage,
-  charaImage,
-  galleryGroups,
-}) => {
+const CharaDetail: React.FC<DetailProps> = ({ chara }) => {
   const { isStatic } = useServerData();
+  const { imageItemList } = useDataMediaImage();
+  const galleryGroups = [
+    {
+      list: imageItemList.filter(
+        (image) =>
+          image.group?.match("art") && image.tags?.some((v) => v === chara.id)
+      ),
+      name: "ART",
+    },
+    {
+      list: imageItemList.filter(
+        (image) =>
+          image.group?.match("goods") && image.tags?.some((v) => v === chara.id)
+      ),
+      name: "GOODS",
+    },
+    {
+      list: imageItemList.filter(
+        (image) =>
+          image.group?.match("given") && image.tags?.some((v) => v === chara.id)
+      ),
+      name: "FAN ART",
+    },
+  ];
+  const imageList = imageItemList.filter((image) =>
+    ["art", "goods", "given"].find((fg) => fg === image.group)
+  );
+  const headerImagePath = `${chara.headerImage}`;
+  const headerImage = chara.headerImage
+    ? imageList.find((image) => image.path?.endsWith(headerImagePath))
+    : null;
+  const charaImagePath = chara?.image || chara?.icon || "";
+  const charaImage = charaImagePath
+    ? imageList.find((image) => image.path?.endsWith(charaImagePath))
+    : null;
+
   return (
     <div className="p-0">
       {headerImage ? (
@@ -59,7 +87,7 @@ const CharaDetail: React.FC<DetailProps> = ({
       {galleryGroups.map((group, i) => {
         return (
           <div key={i}>
-            <GalleryList group={group} autoDisable={true} />
+            <GalleryList album={group} autoDisable={true} />
           </div>
         );
       })}

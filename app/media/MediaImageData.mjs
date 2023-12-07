@@ -178,15 +178,7 @@ export function getImageAlbum(getImageOption = {}) {
 export function getImageItems(getImageOption = {}) {
   if (typeof (getImageOption) === "string") getImageOption = { filter: { imageName: getImageOption } }
   const albums = getImageAlbums(getImageOption);
-  /** @type {MediaImageItemType[]} */
-  const imageList = [];
-  albums.forEach((album => {
-    album.list.forEach(item => {
-      item.group = album.name;
-      imageList.push(item);
-    })
-  }))
-  return imageList;
+  return parseImageItems(albums);
 }
 
 /**
@@ -197,9 +189,26 @@ export function getImageItem(getImageOption = {}) {
   if (typeof (getImageOption) === "string") getImageOption = { filter: { imageName: getImageOption } }
   const images = getImageItems({ ...getImageOption, ...{ onceAlbum: true } });
   if (images.length > 0)
-    return images[0];
-  else
-    return null;
+  return images[0];
+else
+return null;
+}
+
+
+/**
+ * @param {MediaImageAlbumType[]} imageAlbums;
+ * @returns {MediaImageItemType[]};
+ */
+export function parseImageItems(imageAlbums) {
+  /** @type {MediaImageItemType[]} */
+  const imageList = [];
+  imageAlbums.forEach((album => {
+    album.list.forEach(item => {
+      item.group = album.name;
+      imageList.push(item);
+    })
+  }))
+  return imageList;
 }
 
 /**
