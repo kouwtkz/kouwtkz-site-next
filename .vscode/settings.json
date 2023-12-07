@@ -7,5 +7,6 @@
     "**/.next": true, // Next.js サーバーのキャッシュ
     "**/node_modules": true,
     "out": true // Next.js の export 先
-  }
+  },
+  "references.preferredLocation": "view"
 }
