@@ -31,7 +31,7 @@ const MultiParser = ({
         if (checkMode === "1") {
           elm.querySelectorAll("a").forEach((a) => {
             const url = new URL(a.href);
-            if (url.origin === location.origin) {
+            if (url.origin === location.origin && !a.target) {
               a.addEventListener("click", (e) => {
                 router.push(url.href.replace(/\/+$/, ""));
                 e.stopPropagation();
