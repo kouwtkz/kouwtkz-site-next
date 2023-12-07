@@ -40,22 +40,22 @@
     {
       "label": "prisma: studio",
       "type": "shell",
-      "command": "npm run prisma studio"
+      "command": "npx prisma studio"
     },
     {
       "label": "prisma: pull",
       "type": "shell",
-      "command": "npm run prisma db pull"
+      "command": "npx prisma db pull"
     },
     {
       "label": "prisma: push",
       "type": "shell",
-      "command": "npm run prisma db push"
+      "command": "npx prisma db push"
     },
     {
       "label": "prisma: migrate dev",
       "type": "shell",
-      "command": "npm run prisma migrate dev"
+      "command": "npx prisma migrate dev"
     },
     {
       "label": "rm: cache webpack",
