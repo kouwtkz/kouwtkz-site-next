@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Post } from "@prisma/client";
-import MultiParser from "@/app/functions/MultiParser";
+import MultiParser from "@/app/components/functions/MultiParser";
 
 type PostDetailProps = {
   post?: Post;

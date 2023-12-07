@@ -1,6 +1,6 @@
 import { load } from "js-yaml";
 import { readFileSync } from "fs";
-import { setPath } from "@/app/functions/general";
+import { setPath } from "@/app/components/functions/general";
 import { CharaType, CharaObjectType } from "./chara.d";
 
 const dataDir = `${process.env.DATA_DIR}`;

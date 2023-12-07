@@ -8,7 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
 import { useServerState } from "@/app/components/System/ServerState";
-import MultiParser from "@/app/functions/MultiParser";
+import MultiParser from "@/app/components/functions/MultiParser";
 import { useSearchParams } from "next/navigation";
 import { useMediaImageState } from "../media/image/MediaImageState";
 import { useRouter } from "next/navigation";
