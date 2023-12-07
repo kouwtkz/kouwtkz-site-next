@@ -1,4 +1,4 @@
-export const isStatic = process.env.OUTPUT_MODE === "export";
+import isStatic from "./isStatic.mjs";
 import ServerData from "./ServerData";
 
 const ServerDataMake = () => {
