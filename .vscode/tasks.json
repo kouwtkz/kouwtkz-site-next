@@ -4,7 +4,7 @@
     {
       "label": "npm: setup",
       "type": "shell",
-      "command": "npm run"
+      "command": "npm install"
     },
     {
       "label": "npm: dev",
