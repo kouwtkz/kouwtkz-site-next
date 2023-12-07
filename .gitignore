@@ -2,7 +2,8 @@
 
 # 主にメディア関連
 _media/
-_data/
+_data/**/*.yaml
+_data/db/
 
 # キャッシュ
 /.cache
