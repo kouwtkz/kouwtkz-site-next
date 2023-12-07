@@ -30,10 +30,10 @@ const MultiParser = ({
         elm.removeAttribute("data-a-check");
         if (checkMode === "1") {
           elm.querySelectorAll("a").forEach((a) => {
-            if (!a.target) {
+            const url = new URL(a.href);
+            if (url.origin === location.origin) {
               a.addEventListener("click", (e) => {
-                const ta = e.target as HTMLAnchorElement;
-                router.push(ta.href);
+                router.push(url.href.replace(/\/+$/, ""));
                 e.stopPropagation();
                 e.preventDefault();
               });
