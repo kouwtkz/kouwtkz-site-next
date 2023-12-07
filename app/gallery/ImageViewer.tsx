@@ -2,7 +2,7 @@
 
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
-import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/image/MediaImageData.mjs";
 import { useCharaData } from "@/app/character/CharaData";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,7 +10,7 @@ import loaderSet from "@/app/lib/loaderSet";
 import { useServerData } from "@/app/components/System/ServerData";
 import MultiParser from "@/app/functions/MultiParser";
 import { useSearchParams } from "next/navigation";
-import { useDataMediaImage } from "../media/DataMediaImage";
+import { useMediaImageState } from "../media/image/MediaImageState";
 import { useRouter } from "next/navigation";
 
 const body = typeof window === "object" ? document?.body : null;
@@ -52,7 +52,7 @@ const ImageViewerWindow = () => {
   const router = useRouter();
   const imageViewer = useImageViewer();
   const search = useSearchParams();
-  const { imageItemList } = useDataMediaImage();
+  const { imageItemList } = useMediaImageState();
   const charaData = useCharaData();
   const { isStatic } = useServerData();
   const [backCheck, setBackCheck] = useState(false);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 import { charaList, charaObject } from "../getCharaData";
-import { getImageItem } from "../../media/MediaImageData.mjs";
+import { getImageItem } from "../../media/image/MediaImageData.mjs";
 
 export async function GET() {
   charaList.forEach((chara) => {

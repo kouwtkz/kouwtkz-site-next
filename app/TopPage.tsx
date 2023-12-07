@@ -1,13 +1,13 @@
 "use client";
 
 import loaderSet from "@/app/lib/loaderSet";
-import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/image/MediaImageData.mjs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import Twemoji from "react-twemoji";
 import { useServerData } from "./components/System/ServerData";
-import { useDataMediaImage } from "./media/DataMediaImage";
+import { useMediaImageState } from "./media/image/MediaImageState";
 type TopPageProps = {
   topPosts?: Array<{
     postId: string;
@@ -18,7 +18,7 @@ type TopPageProps = {
 
 const TopPage: React.FC<TopPageProps> = ({ topPosts = [] }) => {
   const { isStatic } = useServerData();
-  const { imageItemList } = useDataMediaImage();
+  const { imageItemList } = useMediaImageState();
   const topImage = imageItemList.find((image) => image.topImage) || null;
   return (
     <>

@@ -1,5 +1,5 @@
 
-import { MediaImageItemType } from "@/app/media/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/image/MediaImageData.mjs";
 
 export interface CharaType {
   id?: string

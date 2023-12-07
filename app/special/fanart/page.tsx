@@ -1,12 +1,12 @@
 "use client"
 
 import React from "react";
-import { getImageAlbum } from "@/app/media/MediaImageData.mjs";
+import { getImageAlbum } from "@/app/media/image/MediaImageData.mjs";
 import GalleryList from "@/app/gallery/GalleryList";
-import { useDataMediaImage } from "@/app/media/DataMediaImage";
+import { useMediaImageState } from "@/app/media/image/MediaImageState";
 
 export default function Home() {
-  const { imageAlbumList } = useDataMediaImage();
+  const { imageAlbumList } = useMediaImageState();
   return (
     <div className="pt-8">
       <h2 className="my-4 text-4xl text-main font-MochiyPopOne">
