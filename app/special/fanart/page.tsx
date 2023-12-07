@@ -13,7 +13,7 @@ export default function Home() {
         描いてくれてありがとめぇ！
       </h2>
       <h4 className="text-main-soft">#わたかぜメ絵</h4>
-      {["given"].map(async (name, i) => {
+      {["given"].map((name, i) => {
         const groupAlbum =
           imageAlbumList.find((album) => album.name === name) || null;
         return <GalleryList key={i} label="FANART" album={groupAlbum} />;
