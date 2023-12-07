@@ -7,7 +7,7 @@ import { useCharaData } from "@/app/character/CharaData";
 import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
-import { useServerData } from "@/app/components/System/ServerData";
+import { useServerState } from "@/app/components/System/ServerState";
 import MultiParser from "@/app/functions/MultiParser";
 import { useSearchParams } from "next/navigation";
 import { useMediaImageState } from "../media/image/MediaImageState";
@@ -54,7 +54,7 @@ const ImageViewerWindow = () => {
   const search = useSearchParams();
   const { imageItemList } = useMediaImageState();
   const charaData = useCharaData();
-  const { isStatic } = useServerData();
+  const { isStatic } = useServerState();
   const [backCheck, setBackCheck] = useState(false);
   const imageParam = search.get("image");
 

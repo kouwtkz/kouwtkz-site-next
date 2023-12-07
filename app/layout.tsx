@@ -15,7 +15,7 @@ import {
   // ZenMaruFont,
   LuloCleanFont,
 } from "@/app/fonts/list";
-import ServerDataMake from "./components/System/ServerDataMake";
+import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 
 
@@ -41,7 +41,7 @@ export default async function RootLayout({
         ].join(" ")}
       >
         <ClientSetup />
-        <ServerDataMake />
+        <ServerStateMake />
         <ImageViewer />
         <CharaData />
         <MediaImageState />

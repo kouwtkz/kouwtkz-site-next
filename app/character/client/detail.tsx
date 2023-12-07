@@ -4,7 +4,7 @@ import { CharaType } from "@/app/character/chara";
 import Image from "next/image";
 import loaderSet from "@/app/lib/loaderSet";
 import GalleryList from "@/app/gallery/GalleryList";
-import { useServerData } from "@/app/components/System/ServerData";
+import { useServerState } from "@/app/components/System/ServerState";
 import { useMediaImageState } from "@/app/media/image/MediaImageState";
 
 type DetailProps = {
@@ -12,7 +12,7 @@ type DetailProps = {
 };
 
 const CharaDetail: React.FC<DetailProps> = ({ chara }) => {
-  const { isStatic } = useServerData();
+  const { isStatic } = useServerState();
   const { imageItemList } = useMediaImageState();
   const galleryGroups = [
     {

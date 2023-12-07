@@ -2,13 +2,13 @@
 import React from "react";
 import { create } from "zustand";
 
-type ServerDataType = {
+type ServerStateType = {
   set: boolean;
   isStatic: boolean;
   setIsStatic: (value: boolean) => void;
 };
 
-export const useServerData = create<ServerDataType>((set) => ({
+export const useServerState = create<ServerStateType>((set) => ({
   set: false,
   isStatic: false,
   setIsStatic: (value) => {
@@ -16,14 +16,14 @@ export const useServerData = create<ServerDataType>((set) => ({
   },
 }));
 
-type ServerDataProps = {
+type ServerStateProps = {
   isStatic: boolean;
 };
 
-const ServerData = ({ isStatic }: ServerDataProps) => {
-  const serverData = useServerData();
+const ServerState = ({ isStatic }: ServerStateProps) => {
+  const serverData = useServerState();
   if (!serverData.set) serverData.setIsStatic(isStatic);
   return <></>;
 };
 
-export default ServerData;
+export default ServerState;

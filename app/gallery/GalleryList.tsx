@@ -7,7 +7,7 @@ import React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
-import { useServerData } from "../components/System/ServerData";
+import { useServerState } from "../components/System/ServerState";
 import { useRouter } from "next/navigation";
 type GalleryPageProps = {
   album: MediaImageAlbumType | null;
@@ -27,7 +27,7 @@ const GalleryList = ({
   autoDisable = false,
 }: GalleryPageProps) => {
   const router = useRouter();
-  const { isStatic } = useServerData();
+  const { isStatic } = useServerState();
   // const { setImageItem } = useImageViewer();
   if (!album || (autoDisable && album.list.length === 0)) return null;
   const thumb_size = size;

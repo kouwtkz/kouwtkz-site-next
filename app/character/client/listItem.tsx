@@ -6,27 +6,26 @@ import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
 import { MediaImageItemType } from "@/app/media/image/MediaImageData.mjs";
 import { useCharaData } from "../CharaData";
-import { useServerData } from "@/app/components/System/ServerData";
+import { useServerState } from "@/app/components/System/ServerState";
 
 type CharaListItemProps = {
   chara: CharaType;
 };
 
 const CharaListItem = ({ chara }: CharaListItemProps) => {
-  const { isStatic } = useServerData();
-  const charaData = useCharaData();
-  const currentChara =
-    charaData.charaObject && chara.id ? charaData.charaObject[chara.id] : null;
+  const { isStatic } = useServerState();
+  const { charaObject } = useCharaData();
+  const currentChara = charaObject && chara.id ? charaObject[chara.id] : null;
+  const iconResizedSrc = isStatic
+    ? currentChara?.media?.icon?.resized?.find((v) => v.option.mode === "icon")
+        ?.src
+    : "";
   return (
     <Link className="text-3xl m-2" href={`character/${chara.id}`}>
       {currentChara?.media?.icon ? (
         <Image
           src={`${currentChara.media.icon.innerURL}`}
-          loader={loaderSet(
-            isStatic,
-            chara?.media?.icon?.resized?.find((v) => v.option.mode === "icon")
-              ?.src
-          )}
+          loader={loaderSet(isStatic, iconResizedSrc)}
           className="inline-block mr-2"
           alt={chara.name}
           width={40}

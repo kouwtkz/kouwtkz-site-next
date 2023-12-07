@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import { create } from "zustand";
 import { MediaImageItemType, MediaImageAlbumType } from "./MediaImageData.mjs";
+import { useSystemState } from "@/app/components/System/SystemState";
 
 type ImageDataType = {
   imageItemList: Array<MediaImageItemType>;
@@ -40,8 +41,9 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
 
 const MediaImageState = () => {
   const imageData = useMediaImageState();
+  const { date } = useSystemState();
   useEffect(() => {
-    fetch(`${location?.origin}/media/get`)
+    fetch(`${location?.origin}/media/image/get?v=${date.getTime()}`)
       .then((d) => d.json())
       .then((json) => {
         if (!imageData.set) imageData.setImageAlbum(json);
