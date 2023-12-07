@@ -1,7 +1,7 @@
 import React from "react";
 import getPostDetail from "../../functions/getPostDetail";
 import getPosts from "../../functions/getPosts";
-import PostDetail from "./postDetail";
+import PostDetail from "./PostDetail";
 
 export default async function Page({
   params,

@@ -39,8 +39,10 @@
 :root {
   --play-background-color-top: #ecfffe;
   --play-background-color-bottom: #f4ffd1;
-  --play-background: linear-gradient(var(--play-background-color-top) 30%,
-          var(--play-background-color-bottom));
+  --play-background: linear-gradient(
+    var(--play-background-color-top) 30%,
+    var(--play-background-color-bottom)
+  );
   --playing-mark: "▶";
   --lightbox-background: rgba(0, 0, 0, 0.3);
   --lightbox-background-preview: rgba(146, 147, 127, 0.8);
@@ -171,6 +173,12 @@ h4 {
   content: "もっと読む";
   cursor: pointer;
 }
+button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  background-color: var(--main-color);
+}
 
 details > summary,
 input[type="submit"],
@@ -254,7 +262,9 @@ code {
   opacity: 1;
 }
 
-.bg-background-top, .bg-background-bottom, :root {
+.bg-background-top,
+.bg-background-bottom,
+:root {
   /* transition: background-color 1s; */
 }
 .audio_play .bg-background-top {

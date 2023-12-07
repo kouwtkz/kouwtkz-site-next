@@ -5,6 +5,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CheckPostId from "./CheckPostId";
 import { Suspense } from "react";
+import PostButton from "./PostButton";
+import PostTop from "./PostTop";
 
 export default async function BlogPage({
   params,
@@ -26,6 +28,8 @@ export default async function BlogPage({
           <CheckPostId />
         </Suspense>
       ) : null}
+      {!isStatic ? <PostButton /> : null}
+      <PostTop />
       <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
         MINI BLOG
       </h2>
