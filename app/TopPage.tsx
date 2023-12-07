@@ -7,8 +7,8 @@ import Link from "next/link";
 import React from "react";
 import Twemoji from "react-twemoji";
 import { useServerState } from "./components/System/ServerState";
-import { useMediaImageState } from "./media/image/MediaImageState";
 type TopPageProps = {
+  topImage?: MediaImageItemType | null;
   topPosts?: Array<{
     postId: string;
     title: string;
@@ -16,10 +16,8 @@ type TopPageProps = {
   }>;
 };
 
-const TopPage: React.FC<TopPageProps> = ({ topPosts = [] }) => {
+const TopPage = ({ topImage, topPosts = [] } : TopPageProps) => {
   const { isStatic } = useServerState();
-  const { imageItemList } = useMediaImageState();
-  const topImage = imageItemList.find((image) => image.topImage) || null;
   return (
     <>
       {topImage ? (
