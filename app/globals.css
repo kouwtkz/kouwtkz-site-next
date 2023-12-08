@@ -270,3 +270,20 @@ code {
 .audio_play .bg-background-top {
   background-color: var(--play-background-color-top);
 }
+
+form input,
+form textarea,
+form #preview_area,
+form select {
+  border: solid 1px var(--main-color-deep);
+  border-radius: 0.5em;
+  box-sizing: border-box;
+}
+
+form select {
+  padding: 0.25rem;
+}
+
+*:focus-visible {
+  outline: solid 1px var(--main-color-dark);
+}

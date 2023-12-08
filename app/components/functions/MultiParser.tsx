@@ -34,7 +34,6 @@ const MultiParser = ({
             if (url.origin === location.origin && !a.target) {
               a.addEventListener("click", (e) => {
                 router.push(url.href.replace(/\/+$/, ""));
-                e.stopPropagation();
                 e.preventDefault();
               });
             }
