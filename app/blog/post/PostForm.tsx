@@ -6,7 +6,12 @@ import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FormTags } from "react-hotkeys-hook/dist/types";
 import { useRouter } from "next/navigation";
-import { setCategory, setDecoration } from "./PostFormFunctions";
+import {
+  setCategory,
+  setColorChange,
+  setDecoration,
+  setPostInsert,
+} from "./PostFormFunctions";
 
 const InputTags: FormTags[] = ["INPUT", "TEXTAREA", "SELECT"];
 
@@ -26,6 +31,9 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   const categoryNewRef = useRef<HTMLOptionElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const decorationRef = useRef<HTMLSelectElement>(null);
+  const colorChangerRef = useRef<HTMLInputElement>(null);
+  const colorChangeValueRef = useRef("");
+  const InsertTextRef = useRef<HTMLSelectElement>(null);
 
   const PostSend = () => {
     if (!formRef.current) return;
@@ -159,8 +167,10 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
           title="日付"
           step={1}
           defaultValue={postTarget?.date.toISOString().replace(/:[^:]+$/, "")}
-          className="p-1"
+          className="px-1"
         />
+      </div>
+      <div className="mx-auto max-w-2xl flex justify-around">
         <select
           title="メディア"
           // onChange={() => {}}
@@ -170,14 +180,16 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
           <option value="gallery">ギャラリー</option>
           <option value="link">リンク</option>
         </select>
-      </div>
-      <div className="mx-auto max-w-2xl flex justify-around">
         <input
           id="colorChanger"
           type="color"
-          className="hidden"
+          className="invisible absolute"
           placeholder="色"
           title="色"
+          ref={colorChangerRef}
+          onChange={() => {
+            colorChangeValueRef.current = colorChangerRef.current?.value || "";
+          }}
         />
         <select
           title="装飾"
@@ -186,8 +198,18 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
             setDecoration({
               selectDecoration: decorationRef.current,
               textarea: textareaRef.current,
+              colorChanger: colorChangerRef.current,
             })
           }
+          onBlur={() => {
+            if (colorChangeValueRef.current !== "") {
+              setColorChange({
+                colorChanger: colorChangerRef.current,
+                textarea: textareaRef.current,
+              });
+            }
+            colorChangeValueRef.current = "";
+          }}
         >
           <option value="">装飾</option>
           <option value="color">色変え</option>
@@ -195,7 +217,16 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
           <option value="strikethrough">打消し線</option>
           <option value="italic">イタリック体</option>
         </select>
-        <select title="追加">
+        <select
+          title="追加"
+          ref={InsertTextRef}
+          onChange={() =>
+            setPostInsert({
+              selectInsert: InsertTextRef.current,
+              textarea: textareaRef.current,
+            })
+          }
+        >
           <option value="">追加</option>
           <option value="br">改行</option>
           <option value="more">もっと読む</option>

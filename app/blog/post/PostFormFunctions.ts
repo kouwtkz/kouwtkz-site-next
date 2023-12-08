@@ -47,17 +47,18 @@ export function replacePostTextarea({ textarea, before = '', after }: { textarea
 export function setDecoration(
   {
     selectDecoration,
-    textarea
+    textarea,
+    colorChanger
   }: {
     selectDecoration: HTMLSelectElement | null,
     textarea: HTMLTextAreaElement | null
+    colorChanger: HTMLInputElement | null
   }
 ) {
   if (!selectDecoration || !textarea) return;
   switch (selectDecoration.value) {
     case 'color':
-      // const colorChanger = document.getElementById("colorChanger");
-      // if (colorChanger) colorChanger.click();
+      if (colorChanger) colorChanger.click();
       break;
     case 'italic':
       replacePostTextarea({ textarea, before: '*' })
@@ -72,39 +73,57 @@ export function setDecoration(
   selectDecoration.value = '';
 }
 
-// export function post_insert(select) {
-//   switch (select.value) {
-//     case 'br':
-//       post_replaceBody(select.form.body, "\n<br/>\n\n", "")
-//       break;
-//     case 'more':
-//       post_replaceBody(select.form.body, "\n<details>\n<summary>もっと読む</summary>\n\n", "\n</details>")
-//       break;
-//     case 'h2':
-//       post_replaceBody(select.form.body, '## ', '')
-//       break;
-//     case 'h3':
-//       post_replaceBody(select.form.body, '### ', '')
-//       break;
-//     case 'h4':
-//       post_replaceBody(select.form.body, '#### ', '')
-//       break;
-//     case 'li':
-//       post_replaceBody(select.form.body, '- ', '')
-//       break;
-//     case 'ol':
-//       post_replaceBody(select.form.body, '+ ', '')
-//       break;
-//     case 'code':
-//       post_replaceBody(select.form.body, "```\n", "\n```")
-//       break;
-//   }
-//   select.value = '';
-// }
+export function setColorChange(
+  {
+    textarea,
+    colorChanger
+  }: {
+    textarea: HTMLTextAreaElement | null
+    colorChanger: HTMLInputElement | null
+  }
+) {
+  if (colorChanger && textarea) replacePostTextarea({ textarea, before: `<span style="color:${colorChanger.value}">`, after: '</span>' })
+}
 
-// export function post_colorChange(colorChanger) {
-//   post_replaceBody(colorChanger.form.body, `<span style="color:${colorChanger.value}">`, '</span>')
-// }
+export function setPostInsert(
+  {
+    selectInsert,
+    textarea,
+  }: {
+    selectInsert: HTMLSelectElement | null,
+    textarea: HTMLTextAreaElement | null
+  }
+) {
+  if (!selectInsert || !textarea) return;
+  switch (selectInsert.value) {
+    case 'br':
+      replacePostTextarea({ textarea, before: "\n<br/>\n\n", after: "" })
+      break;
+    case 'more':
+      replacePostTextarea({ textarea, before: "\n<details>\n<summary>もっと読む</summary>\n\n", after: "\n</details>" })
+      break;
+    case 'h2':
+      replacePostTextarea({ textarea, before: '## ', after: '' })
+      break;
+    case 'h3':
+      replacePostTextarea({ textarea, before: '### ', after: '' })
+      break;
+    case 'h4':
+      replacePostTextarea({ textarea, before: '#### ', after: '' })
+      break;
+    case 'li':
+      replacePostTextarea({ textarea, before: '- ', after: '' })
+      break;
+    case 'ol':
+      replacePostTextarea({ textarea, before: '+ ', after: '' })
+      break;
+    case 'code':
+      replacePostTextarea({ textarea, before: "```\n", after: "\n```" })
+      break;
+  }
+  selectInsert.value = '';
+}
+
 
 // export function moreRead_switch(detail) {
 //   const beforeScrollY = window.scrollY;
@@ -146,7 +165,7 @@ export function setDecoration(
 //       window.open('/gallery/', 'gallery');
 //       break;
 //     case 'link':
-//       post_replaceBody(select.form.body, '[', ']()')
+//       replacePostTextarea(select.form.body, '[', ']()')
 //       break;
 //   }
 //   select.value = '';
