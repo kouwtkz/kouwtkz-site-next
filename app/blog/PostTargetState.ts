@@ -9,7 +9,6 @@ type PostTargetState = {
 export const usePostTargetState = create<PostTargetState>((set) => ({
   postTarget: null,
   setPostTarget: (post) => {
-    console.log(post);
     set({ postTarget: post || null });
   },
 }));
