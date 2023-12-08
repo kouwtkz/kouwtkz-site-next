@@ -1,11 +1,12 @@
 "use client";
 
 import { Post } from "@prisma/client";
-import React, { MutableRefObject, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FormTags } from "react-hotkeys-hook/dist/types";
 import { useRouter } from "next/navigation";
+import { setCategory, setDecoration } from "./PostFormFunctions";
 
 const InputTags: FormTags[] = ["INPUT", "TEXTAREA", "SELECT"];
 
@@ -20,25 +21,17 @@ type PostFormProps = {
 const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   const router = useRouter();
   const { togglePreviewMode } = usePreviewMode();
-  const form = useRef() as MutableRefObject<HTMLFormElement>;
-
-  const RunHotkeyEvent = (e: KeyboardEvent) => {
-    const activeElement = (document.activeElement ||
-      document.body) as HTMLElement;
-    switch (e.code) {
-      case "Enter":
-        PostSend();
-        e.preventDefault();
-        break;
-      case "Escape":
-        activeElement.blur();
-    }
-  };
+  const formRef = useRef<HTMLFormElement>(null);
+  const categorySelectRef = useRef<HTMLSelectElement>(null);
+  const categoryNewRef = useRef<HTMLOptionElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const decorationRef = useRef<HTMLSelectElement>(null);
 
   const PostSend = () => {
-    fetch(form.current.action, {
-      method: form.current.method,
-      body: new FormData(form.current),
+    if (!formRef.current) return;
+    fetch(formRef.current.action, {
+      method: formRef.current.method,
+      body: new FormData(formRef.current),
     })
       .then((r) => r.json())
       .then((j) => {
@@ -48,14 +41,42 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   };
 
   useHotkeys("b", () => router.back());
-  useHotkeys("ctrl+enter", RunHotkeyEvent, { enableOnFormTags: InputTags });
-  useHotkeys("escape", RunHotkeyEvent, { enableOnFormTags: InputTags });
+
+  useHotkeys(
+    "ctrl+enter",
+    (e) => {
+      PostSend();
+      e.preventDefault();
+    },
+    { enableOnFormTags: InputTags }
+  );
+
+  useHotkeys(
+    "escape",
+    () => {
+      ((document.activeElement || document.body) as HTMLElement).blur();
+    },
+    { enableOnFormTags: InputTags }
+  );
+
+  useHotkeys(
+    "ctrl+period",
+    () => {
+      togglePreviewMode(textareaRef.current?.value);
+    },
+    { enableOnFormTags: ["TEXTAREA"] }
+  );
+  useHotkeys("n", (e) => {
+    textareaRef.current?.focus();
+    e.preventDefault();
+  });
+
   return (
     <form
       method="POST"
       action="post/write"
       id="postForm"
-      ref={form}
+      ref={formRef}
       className="pt-2 [&>*]:my-2"
       onSubmit={(e) => {
         PostSend();
@@ -90,13 +111,21 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
         <select
           title="カテゴリ"
           name="category"
-          data-before=""
           className="w-[30%]"
           defaultValue={postTarget?.category || undefined}
-          // onChange="post_category(this)"
+          data-before={postTarget?.category || undefined}
+          ref={categorySelectRef}
+          onChange={() =>
+            setCategory({
+              selectCategory: categorySelectRef.current,
+              newCategoryBase: categoryNewRef.current,
+            })
+          }
         >
           <option value="">カテゴリ</option>
-          <option value="new">新規作成</option>
+          <option value="new" ref={categoryNewRef}>
+            新規作成
+          </option>
           {categoryCount.map((r, i) => (
             <option key={i} value={r.category}>
               {r.category} ({r.count})
@@ -150,7 +179,16 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
           placeholder="色"
           title="色"
         />
-        <select title="装飾">
+        <select
+          title="装飾"
+          ref={decorationRef}
+          onChange={() =>
+            setDecoration({
+              selectDecoration: decorationRef.current,
+              textarea: textareaRef.current,
+            })
+          }
+        >
           <option value="">装飾</option>
           <option value="color">色変え</option>
           <option value="bold">強調</option>
@@ -169,7 +207,7 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
           <option value="code">コード</option>
         </select>
       </div>
-      <PostTextarea body={postTarget?.body} />
+      <PostTextarea body={postTarget?.body} ref={textareaRef} />
       <input
         name="attached[]"
         type="file"

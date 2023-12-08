@@ -1,5 +1,5 @@
 import MultiParser from "@/app/components/functions/MultiParser";
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { MutableRefObject, forwardRef, useEffect, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { create } from "zustand";
 
@@ -27,48 +27,40 @@ export const usePreviewMode = create<PreviewModeStateType>((set) => ({
   },
 }));
 
-export default function PostTextarea({ body }: { body?: string }) {
-  const { previewMode, previewBody, togglePreviewMode, setPreviewMode } =
-    usePreviewMode();
-  const textarea = useRef() as MutableRefObject<HTMLTextAreaElement>;
-  const firstCheckMode = useRef(true);
+const PostTextarea = forwardRef<HTMLTextAreaElement, { body?: string }>(
+  function PostTextarea({ body }, ref) {
+    const { previewMode, previewBody, togglePreviewMode, setPreviewMode } =
+      usePreviewMode();
+    const firstCheckMode = useRef(true);
 
-  useEffect(() => {
-    if (firstCheckMode.current) {
-      setPreviewMode({ previewMode: false, previewBody: "" });
-      firstCheckMode.current = false;
-    }
-  });
-  useHotkeys(
-    "ctrl+period",
-    () => {
-      togglePreviewMode(textarea.current.value);
-    },
-    { enableOnFormTags: ["TEXTAREA"] }
-  );
-  useHotkeys("n", (e) => {
-    textarea.current.focus();
-    e.preventDefault();
-  });
+    useEffect(() => {
+      if (firstCheckMode.current) {
+        setPreviewMode({ previewMode: false, previewBody: "" });
+        firstCheckMode.current = false;
+      }
+    });
 
-  const bodyClass = "mx-auto w-[85%] max-w-2xl min-h-[12rem] p-2 text-start";
-  return (
-    <>
-      <textarea
-        name="body"
-        ref={textarea}
-        id="post_body_area"
-        placeholder="今何してる？"
-        defaultValue={body}
-        className={bodyClass + (previewMode ? " hidden" : " block")}
-      />
-      <div
-        className={
-          bodyClass + " preview-area" + (previewMode ? " block" : " hidden")
-        }
-      >
-        <MultiParser all={true}>{previewBody}</MultiParser>
-      </div>
-    </>
-  );
-}
+    const bodyClass = "mx-auto w-[85%] max-w-2xl min-h-[12rem] p-2 text-start";
+    return (
+      <>
+        <textarea
+          name="body"
+          ref={ref}
+          id="post_body_area"
+          placeholder="今何してる？"
+          defaultValue={body}
+          className={bodyClass + (previewMode ? " hidden" : " block")}
+        />
+        <div
+          className={
+            bodyClass + " preview-area" + (previewMode ? " block" : " hidden")
+          }
+        >
+          <MultiParser all={true}>{previewBody}</MultiParser>
+        </div>
+      </>
+    );
+  }
+);
+
+export default PostTextarea;
