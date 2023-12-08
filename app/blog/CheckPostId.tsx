@@ -10,7 +10,6 @@ export default function CheckPostId() {
   const postId = search.get("postId");
   useEffect(() => {
     if (postId) {
-      console.log(postId);
       router.replace(`/blog/post/${postId}`)
       router.refresh()
     }

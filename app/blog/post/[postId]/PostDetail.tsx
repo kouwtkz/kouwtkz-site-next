@@ -8,12 +8,16 @@ import MultiParser from "@/app/components/functions/MultiParser";
 import isStatic from "@/app/components/System/isStatic.mjs";
 import PostButton from "../../PostButton";
 import { usePostTargetState } from "../../PostTargetState";
+import { useRouter } from "next/navigation";
+import { useHotkeys } from "react-hotkeys-hook";
 
 type PostDetailProps = {
   post?: Post;
 };
 
 const TopPage = ({ post }: PostDetailProps) => {
+  const router = useRouter();
+  useHotkeys("b", () => router.back());
   const { postTarget, setPostTarget } = usePostTargetState();
   useEffect(() => {
     if (!post) {

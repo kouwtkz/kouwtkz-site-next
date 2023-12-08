@@ -2,18 +2,53 @@
 
 import { Post } from "@prisma/client";
 import React from "react";
+import posts from "./posts.mjs";
+import { useHotkeys } from "react-hotkeys-hook";
+import { FormTags } from "react-hotkeys-hook/dist/types";
+import { useRouter } from "next/navigation";
+
+const InputTags: FormTags[] = ["INPUT", "TEXTAREA", "SELECT"];
+
+const RunHotkeyEvent = (e: KeyboardEvent) => {
+  if (typeof document === "undefined") return;
+  const activeElement = document.activeElement || document.body;
+  const form = (document.querySelector("form#postForm") ||
+    null) as HTMLFormElement | null;
+  switch (e.code) {
+    case "Enter":
+      form?.submit();
+      e.preventDefault();
+      break;
+    case "Period":
+      if (e.ctrlKey) {
+        // if (document.forms[0]) post_preview(document.forms[0]);
+      }
+      break;
+    case "KeyN":
+      document.getElementById("post_body_area")?.focus();
+      e.preventDefault();
+      break;
+    case "Escape":
+      (activeElement as any).blur();
+  }
+};
 
 type PostFormProps = {
   categoryCount: {
     category: string;
     count: number;
   }[];
-  postTarget?: Post | null
+  postTarget?: Post | null;
 };
 
 const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
+  const router = useRouter();
+  useHotkeys("b", () => router.back());
+  useHotkeys("n", RunHotkeyEvent);
+  useHotkeys("ctrl+enter", RunHotkeyEvent, { enableOnFormTags: InputTags });
+  useHotkeys("escape", RunHotkeyEvent, { enableOnFormTags: InputTags });
   return (
-    <form method="POST" action="post/write">
+    <form method="POST" action="post/write" id="postForm">
       <input
         name="title"
         type="text"
