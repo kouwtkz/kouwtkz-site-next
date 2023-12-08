@@ -1,5 +1,3 @@
-import MultiParser from "@/app/components/functions/MultiParser";
-
 // export function moreRead_switch(detail) {
 //   const beforeScrollY = window.scrollY;
 //   const detailHeight = detail.scrollHeight;

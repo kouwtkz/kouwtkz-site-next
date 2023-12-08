@@ -15,7 +15,7 @@ const PostButton = () => {
       className="fixed right-0 bottom-0 m-8 w-12 h-12 text-xl rounded-full p-0"
       onClick={() => router.push(link)}
     >
-      🖊
+      {postTarget ? "📝" : "🖊"}
     </button>
   );
 };

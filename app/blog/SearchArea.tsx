@@ -1,34 +1,42 @@
 "use client";
 
-import React, { Suspense, useEffect, useState } from "react";
+import React, {
+  MutableRefObject,
+  Suspense,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
 const Main = () => {
+  const el = useRef() as MutableRefObject<HTMLInputElement>;
   useHotkeys("slash", (e) => {
-    (document.querySelector("input#post_search") as HTMLElement).focus();
+    el.current.focus();
     e.preventDefault();
   });
   useHotkeys(
     "escape",
     (e) => {
-      (document.activeElement as HTMLElement).blur();
-      e.preventDefault();
+      if (document.activeElement === el.current) {
+        el.current.blur();
+        e.preventDefault();
+      }
     },
     { enableOnFormTags: ["INPUT"] }
   );
   const search = useSearchParams();
   const q = search.get("q") || "";
   return (
-    <form
-    className="fixed z-10 right-28 bottom-8"
-    >
+    <form className="fixed z-10 right-28 bottom-8">
       <input
         id="post_search"
         name="q"
         type="search"
         placeholder="検索"
         defaultValue={q}
+        ref={el}
         className="w-48 px-2"
       />
     </form>

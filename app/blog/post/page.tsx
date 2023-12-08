@@ -29,12 +29,15 @@ export default async function postPage({
     },
   });
   return (
-    <PostForm
-      categoryCount={CategoryCount.map((r) => ({
-        category: String(r.category),
-        count: r._count._all,
-      }))}
-      postTarget={targetPost}
-    />
+    <>
+      {/* <BeforePostForm /> */}
+      <PostForm
+        categoryCount={CategoryCount.map((r) => ({
+          category: String(r.category),
+          count: r._count._all,
+        }))}
+        postTarget={targetPost}
+      />
+    </>
   );
 }

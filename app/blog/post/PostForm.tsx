@@ -1,7 +1,7 @@
 "use client";
 
 import { Post } from "@prisma/client";
-import React from "react";
+import React, { MutableRefObject, useRef } from "react";
 import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FormTags } from "react-hotkeys-hook/dist/types";
@@ -20,6 +20,7 @@ type PostFormProps = {
 const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   const router = useRouter();
   const { togglePreviewMode } = usePreviewMode();
+  const form = useRef() as MutableRefObject<HTMLFormElement>;
 
   const RunHotkeyEvent = (e: KeyboardEvent) => {
     const activeElement = (document.activeElement ||
@@ -29,33 +30,24 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
         PostSend();
         e.preventDefault();
         break;
-      case "KeyN":
-        document.getElementById("post_body_area")?.focus();
-        e.preventDefault();
-        break;
       case "Escape":
         activeElement.blur();
     }
   };
 
   const PostSend = () => {
-    const form = (document.querySelector("form#postForm") ||
-      null) as HTMLFormElement | null;
-    if (form) {
-      fetch(form.action, {
-        method: form.method,
-        body: new FormData(form),
-      })
-        .then((r) => r.json())
-        .then((j) => {
-          console.log(j);
-          router.push(`/blog/post/${postTarget?.postId}`, { scroll: false });
-        });
-    }
+    fetch(form.current.action, {
+      method: form.current.method,
+      body: new FormData(form.current),
+    })
+      .then((r) => r.json())
+      .then((j) => {
+        console.log(j);
+        router.push(`/blog/post/${postTarget?.postId}`, { scroll: false });
+      });
   };
 
   useHotkeys("b", () => router.back());
-  useHotkeys("n", RunHotkeyEvent);
   useHotkeys("ctrl+enter", RunHotkeyEvent, { enableOnFormTags: InputTags });
   useHotkeys("escape", RunHotkeyEvent, { enableOnFormTags: InputTags });
   return (
@@ -63,6 +55,7 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
       method="POST"
       action="post/write"
       id="postForm"
+      ref={form}
       className="pt-2 [&>*]:my-2"
       onSubmit={(e) => {
         PostSend();
@@ -99,6 +92,7 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
           name="category"
           data-before=""
           className="w-[30%]"
+          defaultValue={postTarget?.category || undefined}
           // onChange="post_category(this)"
         >
           <option value="">カテゴリ</option>

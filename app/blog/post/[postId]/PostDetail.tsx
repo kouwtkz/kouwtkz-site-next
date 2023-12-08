@@ -42,9 +42,7 @@ const TopPage = ({ post }: PostDetailProps) => {
               <Link href={`/blog/?q=%23${post.category}`}>{post.category}</Link>
             </span>
           </div>
-          <MultiParser all={true}>
-            {post.body}
-          </MultiParser>
+          <MultiParser all={true}>{post.body}</MultiParser>
         </div>
       </div>
     </>

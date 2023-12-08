@@ -1,5 +1,5 @@
 import MultiParser from "@/app/components/functions/MultiParser";
-import React from "react";
+import React, { MutableRefObject, useEffect, useRef } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { create } from "zustand";
 
@@ -28,21 +28,35 @@ export const usePreviewMode = create<PreviewModeStateType>((set) => ({
 }));
 
 export default function PostTextarea({ body }: { body?: string }) {
-  const { previewMode, previewBody, togglePreviewMode } = usePreviewMode();
-  useHotkeys("ctrl+period", ()=>{
-    togglePreviewMode(
-      (
-        document.querySelector(
-          "textarea#post_body_area"
-        ) as HTMLTextAreaElement
-      )?.value
-    );
-  }, { enableOnFormTags: ["TEXTAREA"] });
+  const { previewMode, previewBody, togglePreviewMode, setPreviewMode } =
+    usePreviewMode();
+  const textarea = useRef() as MutableRefObject<HTMLTextAreaElement>;
+  const firstCheckMode = useRef(true);
+
+  useEffect(() => {
+    if (firstCheckMode.current) {
+      setPreviewMode({ previewMode: false, previewBody: "" });
+      firstCheckMode.current = false;
+    }
+  });
+  useHotkeys(
+    "ctrl+period",
+    () => {
+      togglePreviewMode(textarea.current.value);
+    },
+    { enableOnFormTags: ["TEXTAREA"] }
+  );
+  useHotkeys("n", (e) => {
+    textarea.current.focus();
+    e.preventDefault();
+  });
+
   const bodyClass = "mx-auto w-[85%] max-w-2xl min-h-[12rem] p-2 text-start";
   return (
     <>
       <textarea
         name="body"
+        ref={textarea}
         id="post_body_area"
         placeholder="今何してる？"
         defaultValue={body}
@@ -53,9 +67,7 @@ export default function PostTextarea({ body }: { body?: string }) {
           bodyClass + " preview-area" + (previewMode ? " block" : " hidden")
         }
       >
-        <MultiParser all={true}>
-          {previewBody}
-        </MultiParser>
+        <MultiParser all={true}>{previewBody}</MultiParser>
       </div>
     </>
   );

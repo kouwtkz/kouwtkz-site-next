@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { MutableRefObject, useEffect, useRef, useState } from "react";
 import Twemoji from "react-twemoji";
 import HtmlParse from "html-react-parser";
 import { parse } from "marked";
@@ -11,6 +11,7 @@ type MultiParserProps = {
   twemoji?: boolean;
   all?: boolean;
   className?: string;
+  linkPush?: boolean;
   children?: React.ReactNode | string;
 };
 const MultiParser = ({
@@ -18,41 +19,39 @@ const MultiParser = ({
   toDom,
   twemoji,
   all,
+  linkPush,
   className,
   children,
 }: MultiParserProps) => {
   const router = useRouter();
+  const divRef = useRef() as MutableRefObject<HTMLDivElement>;
+  if (all) {
+    markdown = true;
+    toDom = true;
+    twemoji = true;
+    linkPush = true;
+  }
   useEffect(() => {
-    if (window) {
-      const aCheckList = document.querySelectorAll("[data-a-check]");
-      aCheckList.forEach((elm) => {
-        const checkMode = elm.getAttribute("data-a-check");
-        elm.removeAttribute("data-a-check");
-        if (checkMode === "1") {
-          elm.querySelectorAll("a").forEach((a) => {
-            const url = new URL(a.href);
-            if (url.origin === location.origin && !a.target) {
-              a.addEventListener("click", (e) => {
-                router.push(url.href.replace(/\/+$/, ""));
-                e.preventDefault();
-              });
-            }
+    if (linkPush && window) {
+      const aList = divRef.current.querySelectorAll(
+        "a:not([data-a-push])"
+      ) as NodeListOf<HTMLAnchorElement>;
+      aList.forEach((a) => {
+        const url = new URL(a.href);
+        if (url.origin === location.origin && !a.target) {
+          a.dataset.aPush = "";
+          a.addEventListener("click", (e) => {
+            router.push(url.href.replace(/\/+$/, ""));
+            e.preventDefault();
           });
         }
       });
     }
   });
-  let checkMode = "0";
   if (typeof children === "string") {
-    if (all) {
-      markdown = true;
-      toDom = true;
-      twemoji = true;
-    }
     let childString = children;
     if (markdown) childString = parse(childString);
     if (toDom) {
-      checkMode = "1";
       children = HtmlParse(childString);
     } else children = childString;
   }
@@ -60,7 +59,7 @@ const MultiParser = ({
     children = <Twemoji options={{ className: "emoji" }}>{children}</Twemoji>;
   className = (className ? `${className} ` : "") + "parsed";
   children = (
-    <div className={className} data-a-check={checkMode}>
+    <div className={className} ref={divRef}>
       {children}
     </div>
   );
