@@ -21,7 +21,7 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   const router = useRouter();
 
   const RunHotkeyEvent = (e: KeyboardEvent) => {
-    const activeElement = document.activeElement || document.body;
+    const activeElement = (document.activeElement || document.body) as HTMLElement;
     switch (e.code) {
       case "Enter":
         PostSend();
@@ -37,7 +37,7 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
         e.preventDefault();
         break;
       case "Escape":
-        (activeElement as any).blur();
+        activeElement.blur();
     }
   };
 
