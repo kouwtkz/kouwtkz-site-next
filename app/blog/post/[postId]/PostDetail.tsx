@@ -5,8 +5,6 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { Post } from "@prisma/client";
 import MultiParser from "@/app/components/functions/MultiParser";
-import isStatic from "@/app/components/System/isStatic.mjs";
-import PostButton from "../../PostButton";
 import { usePostTargetState } from "../../PostTargetState";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
@@ -27,7 +25,6 @@ const TopPage = ({ post }: PostDetailProps) => {
   if (!post) return null;
   return (
     <>
-      {!isStatic ? <PostButton /> : null}
       <div className="text-lg">
         <Link href="/blog">
           <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">

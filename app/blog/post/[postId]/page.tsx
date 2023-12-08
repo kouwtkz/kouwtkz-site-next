@@ -2,6 +2,8 @@ import React from "react";
 import getPostDetail from "../../functions/getPostDetail";
 import getPosts from "../../functions/getPosts";
 import PostDetail from "./PostDetail";
+import isStatic from "@/app/components/System/isStatic.mjs";
+import PostButton from "../../PostButton";
 
 export default async function Page({
   params,
@@ -13,7 +15,12 @@ export default async function Page({
   const { postId } = params;
   const post = await getPostDetail({ postId });
   if (!post) return <></>;
-  return <PostDetail post={post} />;
+  return (
+    <>
+      {!isStatic ? <PostButton /> : null}
+      <PostDetail post={post} />
+    </>
+  );
 }
 
 async function generateStaticParams() {
@@ -23,4 +30,4 @@ async function generateStaticParams() {
   });
   return v;
 }
-export { generateStaticParams }
+export { generateStaticParams };
