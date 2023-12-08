@@ -1,18 +1,25 @@
-"use client"
+"use client";
 
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
-export default function CheckPostId() {
+function Main() {
   const router = useRouter();
   const search = useSearchParams();
   const postId = search.get("postId");
   useEffect(() => {
     if (postId) {
-      router.replace(`/blog/post/${postId}`)
-      router.refresh()
+      router.replace(`/blog/post/${postId}`);
+      router.refresh();
     }
-  })
+  });
   return null;
-} 
+}
+export default function CheckPostId() {
+  return (
+    <Suspense>
+      <Main />
+    </Suspense>
+  );
+}

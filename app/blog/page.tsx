@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import CheckPostId from "./CheckPostId";
 import { Suspense } from "react";
 import PostButton from "./PostButton";
+import SearchArea from "./SearchArea";
 import PostTop from "./PostTop";
 
 export default async function BlogPage({
@@ -23,12 +24,9 @@ export default async function BlogPage({
 
   return (
     <div>
-      {isStatic ? (
-        <Suspense>
-          <CheckPostId />
-        </Suspense>
-      ) : null}
+      {isStatic ? <CheckPostId /> : null}
       {!isStatic ? <PostButton /> : null}
+      {!isStatic ? <SearchArea /> : null}
       <PostTop />
       <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
         MINI BLOG
