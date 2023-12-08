@@ -108,7 +108,7 @@ const ImageViewerWindow = () => {
                 <h2 className="my-8 text-4xl font-MochiyPopOne text-main-dark break-all">
                   {image.title}
                 </h2>
-                <div className="mx-2 md:mx-8 text-2xl">
+                <div className="mx-2 md:mr-6 text-2xl">
                   <MultiParser
                     all={true}
                     className="[&_p]:my-4 [&_p]:whitespace-pre-line"

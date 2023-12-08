@@ -273,7 +273,7 @@ code {
 
 form input,
 form textarea,
-form #preview_area,
+form .preview-area,
 form select {
   border: solid 1px var(--main-color-deep);
   border-radius: 0.5em;
@@ -286,4 +286,13 @@ form select {
 
 *:focus-visible {
   outline: solid 1px var(--main-color-dark);
+}
+
+.parsed p {
+  margin: 1.5rem auto;
+  white-space: pre-line;
+}
+
+.preview-area .parsed p:first-child {
+  margin-top: 0;
 }

@@ -2,7 +2,7 @@
 
 import { Post } from "@prisma/client";
 import React from "react";
-import posts from "./posts.mjs";
+import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FormTags } from "react-hotkeys-hook/dist/types";
 import { useRouter } from "next/navigation";
@@ -19,18 +19,15 @@ type PostFormProps = {
 
 const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   const router = useRouter();
+  const { togglePreviewMode } = usePreviewMode();
 
   const RunHotkeyEvent = (e: KeyboardEvent) => {
-    const activeElement = (document.activeElement || document.body) as HTMLElement;
+    const activeElement = (document.activeElement ||
+      document.body) as HTMLElement;
     switch (e.code) {
       case "Enter":
         PostSend();
         e.preventDefault();
-        break;
-      case "Period":
-        if (e.ctrlKey) {
-          // if (document.forms[0]) post_preview(document.forms[0]);
-        }
         break;
       case "KeyN":
         document.getElementById("post_body_area")?.focus();
@@ -51,8 +48,8 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
       })
         .then((r) => r.json())
         .then((j) => {
-          console.log(j)
-          router.push(`/blog/post/${postTarget?.postId}`, { scroll: false })
+          console.log(j);
+          router.push(`/blog/post/${postTarget?.postId}`, { scroll: false });
         });
     }
   };
@@ -178,17 +175,7 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
           <option value="code">コード</option>
         </select>
       </div>
-      <textarea
-        name="body"
-        id="post_body_area"
-        placeholder="今何してる？"
-        defaultValue={postTarget?.body}
-        className="block mx-auto w-[85%] max-w-2xl min-w-fit min-h-[12rem] p-2"
-      />
-      <div
-        id="preview_area"
-        className="hidden mx-auto w-[85%] max-w-2xl min-w-fit min-h-[12rem] p-2"
-      />
+      <PostTextarea body={postTarget?.body} />
       <input
         name="attached[]"
         type="file"
@@ -199,7 +186,20 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
         // onChange={()=>{}}
       />
       <div className="[&>button]:mx-4 pt-2">
-        <button type="button">プレビュー</button>
+        <button
+          type="button"
+          onClick={() =>
+            togglePreviewMode(
+              (
+                document.querySelector(
+                  "textarea#post_body_area"
+                ) as HTMLTextAreaElement
+              )?.value
+            )
+          }
+        >
+          プレビュー
+        </button>
         <button type="submit">{postTarget ? "更新する" : "投稿する"}</button>
       </div>
     </form>

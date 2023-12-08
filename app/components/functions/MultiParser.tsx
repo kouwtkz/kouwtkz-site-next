@@ -58,6 +58,7 @@ const MultiParser = ({
   }
   if (twemoji)
     children = <Twemoji options={{ className: "emoji" }}>{children}</Twemoji>;
+  className = (className ? `${className} ` : "") + "parsed";
   children = (
     <div className={className} data-a-check={checkMode}>
       {children}
