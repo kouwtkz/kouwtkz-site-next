@@ -207,24 +207,3 @@ export function setOperation({
   }
   selectOperation.value = '';
 }
-
-
-// export function moreRead_switch(detail) {
-//   const beforeScrollY = window.scrollY;
-//   const detailHeight = detail.scrollHeight;
-//   let opened = true;
-//   if (detail.tagName === 'DETAILS') {
-//     opened = detail.toggleAttribute('open');
-//   } else {
-//     opened = detail.parentElement.classList.toggle('moreOpen');
-//   }
-//   const afterScrollY = window.scrollY;
-//   if (!opened && detail.offsetTop < afterScrollY) {
-//     window.scrollBy({top: (beforeScrollY - afterScrollY) - detailHeight + detail.scrollHeight});
-//   }
-//   innerLoad.history.setCurrent();
-//   return false;
-// }
-
-
-
