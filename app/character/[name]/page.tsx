@@ -2,6 +2,7 @@ import React from "react";
 import { charaMap, charaObject } from "../getCharaData";
 import CharaDetail from "../client/detail";
 import isStatic from "@/app/components/System/isStatic.mjs";
+import LikeButton from "@/app/components/button/LikeButton";
 
 // ↓ 静的ビルドする際のみコメントアウトを外すこと
 // export { generateStaticParams };
@@ -23,5 +24,10 @@ export default async function Page({
   if (!chara) return null;
 
   if (!chara) return null;
-  return <CharaDetail chara={chara} />;
+  return (
+    <>
+      {!isStatic ? <LikeButton /> : null}
+      <CharaDetail chara={chara} />
+    </>
+  );
 }

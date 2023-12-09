@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CheckPostId from "./CheckPostId";
 import { Suspense } from "react";
+import LikeButton from "@/app/components/button/LikeButton";
 import PostButton from "./PostButton";
 import SearchArea from "./SearchArea";
 

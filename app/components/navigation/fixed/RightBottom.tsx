@@ -19,7 +19,7 @@ export default function FixedRightBottom() {
   return (
     <>
       {arrayChilren.length > 0 ? (
-        <div className="fixed z-30 bottom-0 right-0 flex flex-row-reverse">
+        <div className="fixed right z-30 bottom-2 right-2 flex flex-row-reverse">
           {arrayChilren.map((rows, rowi) => (
             <div className="flex flex-col-reverse" key={rowi}>
               {rows.map((columns) =>

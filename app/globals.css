@@ -98,11 +98,13 @@ body::-webkit-scrollbar,
   height: 0;
 }
 
-body.overflow-y-hidden {
+body.overflow-y-hidden,
+body.overflow-y-hidden .fixed {
   margin-right: var(--scroll-margin) !important;
 }
 
-.mobile body.overflow-y-hidden {
+.mobile body.overflow-y-hidden,
+.mobile body.overflow-y-hidden .fixed.right {
   margin-right: 0 !important;
 }
 
