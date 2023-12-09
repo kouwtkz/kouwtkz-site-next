@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useEffect } from "react";
+import React, { useLayoutEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useFixedRightBottom } from "../components/navigation/fixed/RightBottom";
 
@@ -10,7 +10,7 @@ export default function PostButton({ postId }: { postId?: string }) {
   const { setChildren } = useFixedRightBottom();
   const link = `/blog/post${postId ? `?target=${postId}` : ""}`;
   useHotkeys("n", () => router.push(link));
-  useEffect(() => {
+  useLayoutEffect(() => {
     setChildren("PostButton", {
       row: 0,
       column: 0,

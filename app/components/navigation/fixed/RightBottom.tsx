@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { GetArrayChildren, createFixedState } from "./State";
 import { usePathname } from "next/navigation";
 export const useFixedRightBottom = createFixedState();
@@ -9,11 +9,9 @@ export default function FixedRightBottom() {
   const { childrenMap, clearChildren } = useFixedRightBottom();
   const pathname = usePathname();
   const stockPathnameRef = useRef("");
-  const already = useRef(false);
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (stockPathnameRef.current !== pathname) {
-      if (already.current) clearChildren();
-      else already.current = true;
+      clearChildren();
       stockPathnameRef.current = pathname;
     }
   });
