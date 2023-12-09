@@ -7,9 +7,11 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { FormTags } from "react-hotkeys-hook/dist/types";
 import { useRouter } from "next/navigation";
 import {
+  setAttached,
   setCategory,
   setColorChange,
   setDecoration,
+  setMedia,
   setPostInsert,
 } from "./PostFormFunctions";
 
@@ -34,6 +36,8 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   const colorChangerRef = useRef<HTMLInputElement>(null);
   const colorChangeValueRef = useRef("");
   const InsertTextRef = useRef<HTMLSelectElement>(null);
+  const selectMediaRef = useRef<HTMLSelectElement>(null);
+  const AttachedRef = useRef<HTMLInputElement>(null);
 
   const PostSend = () => {
     if (!formRef.current) return;
@@ -173,7 +177,14 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
       <div className="mx-auto max-w-2xl flex justify-around">
         <select
           title="メディア"
-          // onChange={() => {}}
+          ref={selectMediaRef}
+          onChange={() =>
+            setMedia({
+              selectMedia: selectMediaRef.current,
+              inputAttached: AttachedRef.current,
+              textarea: textareaRef.current,
+            })
+          }
         >
           <option value="">メディア</option>
           <option value="attached">添付</option>
@@ -245,8 +256,14 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
         accept="image/*"
         placeholder="画像選択"
         multiple
-        className="hidden"
-        // onChange={()=>{}}
+        style={{ display: "none" }}
+        ref={AttachedRef}
+        onChange={() =>
+          setAttached({
+            inputAttached: AttachedRef.current,
+            textarea: textareaRef.current,
+          })
+        }
       />
       <div className="[&>button]:mx-4 pt-2">
         <button

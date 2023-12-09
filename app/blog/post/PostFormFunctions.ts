@@ -124,6 +124,48 @@ export function setPostInsert(
   selectInsert.value = '';
 }
 
+export function setAttached({ inputAttached, textarea }: { inputAttached: HTMLInputElement | null, textarea: HTMLTextAreaElement | null }) {
+  if (!inputAttached || !textarea) return;
+  const files = inputAttached.files || [];
+  Array.from(files).forEach((file) => {
+    const filename = file.name;
+    const uploadname = filename.replaceAll(' ', '_');
+    if (!textarea.value.match(uploadname)) {
+      textarea.value = `${textarea.value}\n![${filename.replace(/\.[^.]+$/, '')}](/_media/images/blog/uploads/${uploadname})`
+    }
+  })
+  inputAttached.style.display = (files.length === 0) ? 'none' : '';
+}
+
+export function setMedia(
+  {
+    selectMedia,
+    inputAttached,
+    textarea,
+  }: {
+    selectMedia: HTMLSelectElement | null,
+    inputAttached: HTMLInputElement | null,
+    textarea: HTMLTextAreaElement | null
+  }
+) {
+  if (!selectMedia || !textarea) return;
+  switch (selectMedia.value) {
+    case 'attached':
+      if (inputAttached) {
+        if (inputAttached.style.display === 'none') inputAttached.value = '';
+        inputAttached.click();
+      }
+      break;
+    case 'gallery':
+      // ここはモーダルモードでもよきかも
+      window.open('/gallery/', 'gallery');
+      break;
+    case 'link':
+      replacePostTextarea({ textarea, before: '[', after: ']()' })
+      break;
+  }
+  selectMedia.value = '';
+}
 
 // export function moreRead_switch(detail) {
 //   const beforeScrollY = window.scrollY;
@@ -142,34 +184,7 @@ export function setPostInsert(
 //   return false;
 // }
 
-// export function post_attached(input) {
-//   const body = input.form.body;
-//   Array.from(input.files).forEach((file) => {
-//     const filename = file.name;
-//     const uploadname = filename.replaceAll(' ', '_');
-//     if (!body.value.match(uploadname)) {
-//       body.value = `${body.value}\n![${filename.replace(/\.[^.]+$/, '')}](/images/blog/uploads/${uploadname})`
-//     }
-//   })
-//   input.style.display = (input.files.length === 0) ? 'none' : '';
-// }
 
-// export function post_media(select) {
-//   switch (select.value) {
-//     case 'attached':
-//       const attached = select.form.querySelector('input[name^="attach"]');
-//       if (attached.style.display === 'none') attached.value = '';
-//       attached.click();
-//       break;
-//     case 'gallery':
-//       window.open('/gallery/', 'gallery');
-//       break;
-//     case 'link':
-//       replacePostTextarea(select.form.body, '[', ']()')
-//       break;
-//   }
-//   select.value = '';
-// }
 
 // export function post_operation(select) {
 //   switch (select.value) {
