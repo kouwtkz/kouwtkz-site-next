@@ -10,7 +10,7 @@ type FooterProps = {
   currentDate: Date;
 };
 
-const Footer: React.FC<FooterProps> = ({ site, currentDate }) => {
+export default function Footer({ site, currentDate }: FooterProps) {
   const snsList = site.menu?.sns || [];
   return (
     <footer className="pt-8 pb-12">
@@ -38,8 +38,6 @@ const Footer: React.FC<FooterProps> = ({ site, currentDate }) => {
           ))}
         </div>
       ) : null}
-      </footer>
+    </footer>
   );
-};
-
-export default Footer;
+}

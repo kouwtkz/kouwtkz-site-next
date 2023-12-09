@@ -7,7 +7,7 @@ type SoundPageProps = {
   soundAlbum: SoundAlbumType | null;
 };
 
-const SoundPage: React.FC<SoundPageProps> = ({ soundAlbum }) => {
+export default function SoundPage({ soundAlbum }: SoundPageProps) {
   return (
     <div>
       <div className="">
@@ -37,6 +37,4 @@ const SoundPage: React.FC<SoundPageProps> = ({ soundAlbum }) => {
       </div>
     </div>
   );
-};
-
-export default SoundPage;
+}

@@ -3,7 +3,7 @@ type getPostDetailProps = {
   postId: string
 }
 
-const getPostDetail = async (args: getPostDetailProps) => {
+export default async function getPostDetail(args: getPostDetailProps) {
   const { postId } = args;
   try {
     const post = await prisma.post.findFirst({
@@ -27,5 +27,3 @@ const getPostDetail = async (args: getPostDetailProps) => {
     return null
   }
 }
-
-export default getPostDetail;

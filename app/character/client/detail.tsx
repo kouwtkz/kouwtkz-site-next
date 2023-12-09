@@ -11,7 +11,7 @@ type DetailProps = {
   chara: CharaType;
 };
 
-const CharaDetail = ({ chara }: DetailProps) => {
+export default function CharaDetail({ chara }: DetailProps) {
   const { isStatic } = useServerState();
   const { imageItemList } = useMediaImageState();
   const galleryGroups = [
@@ -95,6 +95,4 @@ const CharaDetail = ({ chara }: DetailProps) => {
       })}
     </div>
   );
-};
-
-export default CharaDetail;
+}

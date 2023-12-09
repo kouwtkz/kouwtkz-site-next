@@ -2,8 +2,17 @@ import React from "react";
 import getPostDetail from "../../functions/getPostDetail";
 import getPosts from "../../functions/getPosts";
 import PostDetail from "./PostDetail";
-import isStatic from "@/app/components/System/isStatic.mjs";
 import PostButton from "../../PostButton";
+import isStatic from "@/app/components/System/isStatic.mjs";
+
+// ↓ 静的ビルドする際のみコメントアウトを外すこと
+// export { generateStaticParams };
+async function generateStaticParams() {
+  const posts = await getPosts({ max: 0xffff });
+  return Object.values(posts).map((post) => {
+    return { postId: post.postId };
+  });
+}
 
 export default async function Page({
   params,
@@ -22,12 +31,3 @@ export default async function Page({
     </>
   );
 }
-
-async function generateStaticParams() {
-  const posts = await getPosts({ max: 0xffff });
-  const v = Object.values(posts).map((post) => {
-    return { postId: post.postId };
-  });
-  return v;
-}
-export { generateStaticParams };

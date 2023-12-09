@@ -10,7 +10,7 @@ import React, {
 import { useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
-const Main = () => {
+function Main() {
   const el = useRef() as MutableRefObject<HTMLInputElement>;
   useHotkeys("slash", (e) => {
     el.current.focus();
@@ -41,7 +41,7 @@ const Main = () => {
       />
     </form>
   );
-};
+}
 
 export default function SearchArea() {
   return (

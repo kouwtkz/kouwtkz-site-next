@@ -1,6 +1,15 @@
 import React from "react";
 import { charaMap, charaObject } from "../getCharaData";
 import CharaDetail from "../client/detail";
+import isStatic from "@/app/components/System/isStatic.mjs";
+
+// ↓ 静的ビルドする際のみコメントアウトを外すこと
+// export { generateStaticParams };
+async function generateStaticParams() {
+  return Object.keys(charaObject).map((name) => {
+    return { name };
+  });
+}
 
 export default async function Page({
   params,
@@ -14,15 +23,5 @@ export default async function Page({
   if (!chara) return null;
 
   if (!chara) return null;
-  return (
-    <CharaDetail chara={chara} />
-  );
+  return <CharaDetail chara={chara} />;
 }
-
-// 静的ビルド時にこれが実行される
-async function generateStaticParams() {
-  return Object.keys(charaObject).map((name) => {
-    return { name };
-  });
-}
-export { generateStaticParams };

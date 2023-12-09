@@ -12,7 +12,7 @@ type CharaListItemProps = {
   chara: CharaType;
 };
 
-const CharaListItem = ({ chara }: CharaListItemProps) => {
+export default function CharaListItem({ chara }: CharaListItemProps) {
   const { isStatic } = useServerState();
   const { charaObject } = useCharaData();
   const currentChara = charaObject && chara.id ? charaObject[chara.id] : null;
@@ -35,6 +35,4 @@ const CharaListItem = ({ chara }: CharaListItemProps) => {
       <span className="align-middle">{chara.name}</span>
     </Link>
   );
-};
-
-export default CharaListItem;
+}

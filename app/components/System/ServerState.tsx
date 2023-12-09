@@ -20,10 +20,8 @@ type ServerStateProps = {
   isStatic: boolean;
 };
 
-const ServerState = ({ isStatic }: ServerStateProps) => {
+export default function ServerState({ isStatic }: ServerStateProps) {
   const serverData = useServerState();
   if (!serverData.set) serverData.setIsStatic(isStatic);
   return <></>;
-};
-
-export default ServerState;
+}

@@ -16,7 +16,7 @@ type TopPageProps = {
   }>;
 };
 
-const TopPage = ({ topImage, topPosts = [] } : TopPageProps) => {
+export default function TopPage({ topImage, topPosts = [] } : TopPageProps) {
   const { isStatic } = useServerState();
   return (
     <>
@@ -77,5 +77,3 @@ const TopPage = ({ topImage, topPosts = [] } : TopPageProps) => {
     </>
   );
 };
-
-export default TopPage;

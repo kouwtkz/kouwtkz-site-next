@@ -5,7 +5,7 @@ type getPostsProps = {
   q?: string
 }
 
-const getPosts = async (args? :getPostsProps) => {
+export default async function getPosts(args?: getPostsProps) {
   const max = args && args.max ? args.max : 0xffff;
   const page = args && args.page ? args.page : 1;
   const q = args && args.q ? args.q : "";
@@ -30,5 +30,3 @@ const getPosts = async (args? :getPostsProps) => {
     return []
   }
 }
-
-export default getPosts;
