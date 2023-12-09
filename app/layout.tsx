@@ -7,6 +7,7 @@ import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
 import CharaData from "./character/CharaData";
 import MediaImageState from "./media/image/MediaImageState";
+import FixedRightBottom from "./components/navigation/fixed/RightBottom";
 
 import {
   KosugiMaruFont,
@@ -46,6 +47,7 @@ export default async function RootLayout({
         <CharaData />
         <MediaImageState />
         <Header site={site} />
+        <FixedRightBottom />
         <div className="text-center pt-24 pb-8 font-KosugiMaru">
           <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
             {children}

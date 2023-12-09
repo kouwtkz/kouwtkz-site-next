@@ -26,7 +26,7 @@ export default async function Page({
   if (!post) return <></>;
   return (
     <>
-      {!isStatic ? <PostButton /> : null}
+      {!isStatic ? <PostButton postId={postId} /> : null}
       <PostDetail post={post} />
     </>
   );

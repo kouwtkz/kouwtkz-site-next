@@ -5,7 +5,6 @@ import Link from "next/link";
 import React, { useEffect } from "react";
 import { Post } from "@prisma/client";
 import MultiParser from "@/app/components/functions/MultiParser";
-import { usePostTargetState } from "../../PostTargetState";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -16,12 +15,6 @@ type PostDetailProps = {
 const TopPage = ({ post }: PostDetailProps) => {
   const router = useRouter();
   useHotkeys("b", () => router.back());
-  const { postTarget, setPostTarget } = usePostTargetState();
-  useEffect(() => {
-    if (!post) {
-      if (postTarget !== null) setPostTarget();
-    } else if (!postTarget || postTarget.id !== post.id) setPostTarget(post);
-  });
   if (!post) return null;
   return (
     <>

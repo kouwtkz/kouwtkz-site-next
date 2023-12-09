@@ -1,21 +1,28 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React from "react";
-import { usePostTargetState } from "./PostTargetState";
+import React, { useEffect } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
+import { useFixedRightBottom } from "../components/navigation/fixed/RightBottom";
 
-export default function PostButton() {
+export default function PostButton({ postId }: { postId?: string }) {
   const router = useRouter();
-  const { postTarget } = usePostTargetState();
-  const link = `/blog/post${postTarget ? `?target=${postTarget.postId}` : ""}`;
+  const { setChildren } = useFixedRightBottom();
+  const link = `/blog/post${postId ? `?target=${postId}` : ""}`;
   useHotkeys("n", () => router.push(link));
-  return (
-    <button
-      className="fixed right-0 bottom-0 m-4 w-16 h-16 text-2xl rounded-full p-0"
-      onClick={() => router.push(link)}
-    >
-      {postTarget ? "📝" : "🖊"}
-    </button>
-  );
-};
+  useEffect(() => {
+    setChildren("PostButton", {
+      row: 0,
+      column: 0,
+      children: (
+        <button
+          className="m-4 w-16 h-16 text-2xl rounded-full p-0"
+          onClick={() => router.push(link)}
+        >
+          {postId ? "📝" : "🖊"}
+        </button>
+      ),
+    });
+  });
+  return <></>;
+}
