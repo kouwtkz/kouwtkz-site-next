@@ -1,3 +1,5 @@
+import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+
 export function setCategory(
   {
     selectCategory,
@@ -167,6 +169,46 @@ export function setMedia(
   selectMedia.value = '';
 }
 
+export function setOperation({
+  selectOperation,
+  postIdInput,
+  router,
+}: {
+  selectOperation: HTMLSelectElement | null,
+  postIdInput: HTMLInputElement | null,
+  router?: AppRouterInstance,
+}
+) {
+  if (!selectOperation || !postIdInput) return;
+  switch (selectOperation.value) {
+    case 'postid':
+      const answer = prompt("記事のID名の変更", postIdInput.value);
+      if (answer !== null) {
+        postIdInput.value = answer;
+      }
+      break;
+    case 'duplication':
+      if (router) {
+        if (confirm("記事を複製しますか？")) {
+          router.replace(location.pathname + location.search.replace("target=", "base="));
+        }
+      }
+      break;
+    case 'delete':
+      if (/target=/.test(location.search) && confirm("本当に削除しますか？")) {
+        fetch("/blog/post/send", { method: "DELETE", body: JSON.stringify({ postId: postIdInput.value }) })
+          .then((r) => r.json())
+          .then((r) => {
+            console.log(r);
+            if (router) { router.push("/blog") } else { location.href = "/blog" }
+          })
+      }
+      break;
+  }
+  selectOperation.value = '';
+}
+
+
 // export function moreRead_switch(detail) {
 //   const beforeScrollY = window.scrollY;
 //   const detailHeight = detail.scrollHeight;
@@ -186,41 +228,3 @@ export function setMedia(
 
 
 
-// export function post_operation(select) {
-//   switch (select.value) {
-//     case 'postid':
-//       const answer = prompt("記事のID名の変更", select.form.postId.value);
-//       if (answer !== null) {
-//         select.form.postId.value = answer;
-//       }
-//       break;
-//     case 'duplication':
-//       if (confirm("記事を複製しますか？")) {
-//         select.form.update.value = '';
-//         select.form.postId.value = '';
-//         select.form.querySelector('[type="submit"]').value = '投稿する';
-//         history.replaceState(0, null, './');
-//       }
-//       break;
-//     case 'delete':
-//       const form = select.form;
-//       if (form.update.value && confirm("本当に削除しますか？")) {
-//         const deleteForm = document.createElement('form');
-//         deleteForm.style.display = 'none';
-//         deleteForm.method = 'POST';
-//         deleteForm.action = '/blog/';
-//         const deleteIdElm = document.createElement('input');
-//         deleteIdElm.name = 'postId';
-//         deleteIdElm.value = form.update.value;
-//         deleteForm.append(deleteIdElm);
-//         const deleteProcessElm = document.createElement('input');
-//         deleteProcessElm.name = 'process';
-//         deleteProcessElm.value = 'delete';
-//         deleteForm.append(deleteProcessElm);
-//         document.body.append(deleteForm);
-//         deleteForm.submit();
-//       }
-//       break;
-//   }
-//   select.value = '';
-// }

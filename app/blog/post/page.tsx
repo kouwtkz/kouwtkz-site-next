@@ -11,9 +11,11 @@ export default async function postPage({
   params: { slug: string };
   searchParams: { [key: string]: string | undefined };
 }) {
-  if (isStatic) redirect(`/blog`);
-  const targetPostId =
-    !isStatic && searchParams.target ? searchParams.target : undefined;
+  if (isStatic) {
+    redirect(`/blog`);
+  }
+  if (isStatic) return;
+  const targetPostId = searchParams.target || searchParams.base;
   const targetPost = targetPostId
     ? await getPostDetail({ postId: targetPostId })
     : null;
@@ -30,13 +32,13 @@ export default async function postPage({
   });
   return (
     <>
-      {/* <BeforePostForm /> */}
       <PostForm
         categoryCount={CategoryCount.map((r) => ({
           category: String(r.category),
           count: r._count._all,
         }))}
         postTarget={targetPost}
+        mode={{ duplication: Boolean(searchParams.base) }}
       />
     </>
   );

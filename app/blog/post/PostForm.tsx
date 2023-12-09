@@ -1,7 +1,7 @@
 "use client";
 
 import { Post } from "@prisma/client";
-import React, { forwardRef, useRef } from "react";
+import React, { useRef } from "react";
 import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FormTags } from "react-hotkeys-hook/dist/types";
@@ -12,6 +12,7 @@ import {
   setColorChange,
   setDecoration,
   setMedia,
+  setOperation,
   setPostInsert,
 } from "./PostFormFunctions";
 
@@ -23,11 +24,16 @@ type PostFormProps = {
     count: number;
   }[];
   postTarget?: Post | null;
+  mode?: {
+    duplication?: boolean;
+  };
 };
 
-const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
+const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
   const router = useRouter();
   const { togglePreviewMode } = usePreviewMode();
+  const duplicationMode = mode?.duplication || false;
+  const updateMode = postTarget && !duplicationMode;
   const formRef = useRef<HTMLFormElement>(null);
   const categorySelectRef = useRef<HTMLSelectElement>(null);
   const categoryNewRef = useRef<HTMLOptionElement>(null);
@@ -38,11 +44,13 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
   const InsertTextRef = useRef<HTMLSelectElement>(null);
   const selectMediaRef = useRef<HTMLSelectElement>(null);
   const AttachedRef = useRef<HTMLInputElement>(null);
+  const postIdRef = useRef<HTMLInputElement>(null);
+  const operationRef = useRef<HTMLSelectElement>(null);
 
   const PostSend = () => {
     if (!formRef.current) return;
     fetch(formRef.current.action, {
-      method: formRef.current.method,
+      method: formRef.current.getAttribute("method") || formRef.current.method,
       body: new FormData(formRef.current),
     })
       .then((r) => r.json())
@@ -85,8 +93,8 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
 
   return (
     <form
-      method="POST"
-      action="post/write"
+      method={updateMode ? "PATCH" : "POST"}
+      action="post/send"
       id="postForm"
       ref={formRef}
       className="pt-2 [&>*]:my-2"
@@ -98,6 +106,17 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
       <h1 className="font-LuloClean text-3xl text-main my-6 pt-2 pb-8">
         Post form
       </h1>
+      <input
+        type="hidden"
+        name="update"
+        defaultValue={duplicationMode ? "" : postTarget?.postId}
+      />
+      <input
+        type="hidden"
+        name="postId"
+        ref={postIdRef}
+        defaultValue={postTarget?.postId}
+      />
       <input
         name="title"
         type="text"
@@ -146,7 +165,14 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
         </select>
         <select
           title="操作"
-          // onChange="post_operation(this)"
+          ref={operationRef}
+          onChange={() =>
+            setOperation({
+              selectOperation: operationRef.current,
+              postIdInput: postIdRef.current,
+              router,
+            })
+          }
         >
           <option value="">操作</option>
           <option value="postid">ID名</option>
@@ -280,7 +306,7 @@ const PostForm = ({ categoryCount, postTarget }: PostFormProps) => {
         >
           プレビュー
         </button>
-        <button type="submit">{postTarget ? "更新する" : "投稿する"}</button>
+        <button type="submit">{updateMode ? "更新する" : "投稿する"}</button>
       </div>
     </form>
   );
