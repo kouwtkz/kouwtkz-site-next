@@ -13,6 +13,7 @@ export type FixedChildrenStateType = {
   setN: () => void
   childrenMap: ChildrenMapType
   setChildren: (key: string, value: ChildrenType) => void
+  replaceChildren: (key: string, value: ChildrenType) => void
   deleteChildren: (key: string) => void
   clearChildren: () => void
 }
@@ -25,8 +26,11 @@ export function createFixedState() {
     setChildren(key, value) {
       set((state) => { if (!state.childrenMap.has(key)) { state.childrenMap.set(key, value); return { childrenMap: state.childrenMap }; } else return state; })
     },
+    replaceChildren(key, value) {
+      set((state) => { state.childrenMap.set(key, value); return { childrenMap: state.childrenMap }; })
+    },
     deleteChildren(key) {
-      set((state) => { state.childrenMap.delete(key); return state; })
+      set((state) => { state.childrenMap.delete(key); return { childrenMap: state.childrenMap } })
     },
     clearChildren() {
       set((state) => { state.childrenMap.clear(); return { childrenMap: state.childrenMap }; })
