@@ -8,8 +8,8 @@ type props = { isStatic: boolean; postId: string };
 
 function Main({ isStatic, postId }: props) {
   return (
-    <div className="fixed z-30 right-2 bottom-2">
-      <div className="flex flex-row">
+    <div className="fixed z-30 right right-0 bottom-0">
+      <div className="flex flex-row m-2">
         <div className="flex flex-col">
           {!isStatic ? <LikeButton /> : null}
           {!isStatic ? <PostButton postId={postId} /> : null}
