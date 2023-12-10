@@ -16,7 +16,7 @@ type TopPageProps = {
   }>;
 };
 
-export default function TopPage({ topImage, topPosts = [] } : TopPageProps) {
+export default function TopPage({ topImage, topPosts = [] }: TopPageProps) {
   const { isStatic } = useServerState();
   return (
     <>
@@ -76,4 +76,4 @@ export default function TopPage({ topImage, topPosts = [] } : TopPageProps) {
       </Twemoji>
     </>
   );
-};
+}

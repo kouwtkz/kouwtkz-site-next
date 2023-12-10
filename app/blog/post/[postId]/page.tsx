@@ -2,9 +2,8 @@ import React from "react";
 import getPostDetail from "../../functions/getPostDetail";
 import getPosts from "../../functions/getPosts";
 import PostDetail from "./PostDetail";
-import PostButton from "../../PostButton";
 import isStatic from "@/app/components/System/isStatic.mjs";
-import LikeButton from "@/app/components/button/LikeButton";
+import Fixed from "./Fixed";
 
 // ↓ 静的ビルドする際のみコメントアウトを外すこと
 // export { generateStaticParams };
@@ -27,8 +26,7 @@ export default async function Page({
   if (!post) return <></>;
   return (
     <>
-      {!isStatic ? <PostButton postId={postId} /> : null}
-      {!isStatic ? <LikeButton /> : null}
+      <Fixed isStatic={isStatic} postId={postId} />
       <PostDetail post={post} />
     </>
   );

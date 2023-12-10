@@ -3,13 +3,10 @@
 import React, { Suspense, useLayoutEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useFixedRightBottom } from "@/app/components/navigation/fixed/RightBottom";
 
-type SearchAreaProps = {
-  flex?: boolean;
-};
+type SearchAreaProps = {};
 
-function Main({ flex = true }: SearchAreaProps) {
+function Main({}: SearchAreaProps) {
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   useHotkeys("slash", (e) => {
@@ -28,8 +25,7 @@ function Main({ flex = true }: SearchAreaProps) {
   );
   const search = useSearchParams();
   const q = search.get("q") || "";
-  const { setChildren } = useFixedRightBottom();
-  const searchArea = (
+  return (
     <form
       className="my-5 mx-4"
       onSubmit={(e) => {
@@ -51,21 +47,12 @@ function Main({ flex = true }: SearchAreaProps) {
       />
     </form>
   );
-  useLayoutEffect(() => {
-    if (flex)
-      setChildren("searchArea", {
-        row: 1,
-        column: 0,
-        children: searchArea,
-      });
-  });
-  return flex ? null : searchArea;
 }
 
-export default function SearchArea({ flex }: SearchAreaProps) {
+export default function SearchArea({}: SearchAreaProps) {
   return (
     <Suspense>
-      <Main flex={flex} />
+      <Main />
     </Suspense>
   );
 }

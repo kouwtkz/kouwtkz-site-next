@@ -4,10 +4,7 @@ import isStatic from "@/app/components/System/isStatic.mjs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import CheckPostId from "./CheckPostId";
-import { Suspense } from "react";
-import LikeButton from "@/app/components/button/LikeButton";
-import PostButton from "./PostButton";
-import SearchArea from "./SearchArea";
+import Fixed from "./Fixed";
 
 export default async function BlogPage({
   params,
@@ -23,33 +20,34 @@ export default async function BlogPage({
   const posts = await getPosts({ max: 10 });
 
   return (
-    <div>
+    <>
       {isStatic ? <CheckPostId /> : null}
-      {!isStatic ? <PostButton /> : null}
-      {!isStatic ? <SearchArea /> : null}
-      <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
-        MINI BLOG
-      </h2>
-      <div className="w-[100%] md:w-[80%] mx-auto">
-        {posts.length > 0 ? (
-          posts.map((post, index) => {
-            return (
-              <div key={index} className="m-4">
-                <h3 className="text-2xl text-main-dark font-bold inline-block m-4">
-                  <Link href={`/blog/post/${post.postId}`}>{post.title}</Link>
-                </h3>
-                <span className="underline">
-                  <Link href={`/blog/?q=%23${post.category}`}>
-                    {post.category}
-                  </Link>
-                </span>
-              </div>
-            );
-          })
-        ) : (
-          <div className="text-center">投稿はありません</div>
-        )}
+      {!isStatic ? <Fixed isStatic={isStatic} /> : null}
+      <div>
+        <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
+          MINI BLOG
+        </h2>
+        <div className="w-[100%] md:w-[80%] mx-auto">
+          {posts.length > 0 ? (
+            posts.map((post, index) => {
+              return (
+                <div key={index} className="m-4">
+                  <h3 className="text-2xl text-main-dark font-bold inline-block m-4">
+                    <Link href={`/blog/post/${post.postId}`}>{post.title}</Link>
+                  </h3>
+                  <span className="underline">
+                    <Link href={`/blog/?q=%23${post.category}`}>
+                      {post.category}
+                    </Link>
+                  </span>
+                </div>
+              );
+            })
+          ) : (
+            <div className="text-center">投稿はありません</div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
