@@ -3,13 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { Post } from "@prisma/client";
+import { Post, User } from "@prisma/client";
 import MultiParser from "@/app/components/functions/MultiParser";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
+import date_format from "@/app/components/functions/date_format";
 
 type PostDetailProps = {
-  post?: Post;
+  post?: Post & { user: User };
 };
 
 const TopPage = ({ post }: PostDetailProps) => {
@@ -26,16 +27,26 @@ const TopPage = ({ post }: PostDetailProps) => {
         </Link>
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           <div>
-            <MultiParser twemoji={true}>
+            <MultiParser only={{ twemoji: true }} className="inline-block">
               <h1 className="text-4xl text-main-deep font-bold mx-2 my-4 inline-block">
                 {post.title}
               </h1>
             </MultiParser>
-            <span className="mx-3 underline">
-              <Link href={`/blog/?q=%23${post.category}`}>{post.category}</Link>
-            </span>
+            <div className="inline-block">
+              <span className="mx-3 underline">
+                <Link href={`/blog/?q=%23${post.category}`}>
+                  {post.category}
+                </Link>
+              </span>
+            </div>
           </div>
           <MultiParser>{post.body}</MultiParser>
+          <div className="text-right [&>*]:ml-4">
+            <span className="text-main">{post.user.name}</span>
+            <span className="text-main-grayish">
+              {date_format("Y/m/d H:i", post.date, true)}
+            </span>
+          </div>
         </div>
       </div>
     </>

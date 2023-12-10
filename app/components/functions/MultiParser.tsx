@@ -1,6 +1,6 @@
 "use client";
 
-import React, { MutableRefObject, useEffect, useRef, useState } from "react";
+import React, { MutableRefObject, useEffect, useRef } from "react";
 import Twemoji from "react-twemoji";
 import HtmlParse from "html-react-parser";
 import { parse } from "marked";
@@ -15,9 +15,12 @@ type MultiParserOptions = {
 type MultiParserProps = MultiParserOptions & {
   only?: MultiParserOptions;
   className?: string;
+  twemojiTag?: string;
+  tag?: string;
   children?: React.ReactNode | string;
 };
-const MultiParser = ({
+
+function MultiParser({
   markdown = true,
   toDom = true,
   twemoji = true,
@@ -25,10 +28,12 @@ const MultiParser = ({
   hashtag = true,
   only,
   className,
+  tag = "div",
+  twemojiTag,
   children,
-}: MultiParserProps) => {
+}: MultiParserProps) {
   const router = useRouter();
-  const divRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const parsedRef = useRef() as MutableRefObject<HTMLDivElement>;
   if (only) {
     markdown = only.markdown === undefined ? false : only.markdown;
     toDom = only.toDom === undefined ? false : only.toDom;
@@ -38,7 +43,7 @@ const MultiParser = ({
   }
   useEffect(() => {
     if (linkPush && window) {
-      const aList = divRef.current.querySelectorAll(
+      const aList = parsedRef.current.querySelectorAll(
         "a:not([data-a-push])"
       ) as NodeListOf<HTMLAnchorElement>;
       aList.forEach((a) => {
@@ -75,14 +80,13 @@ const MultiParser = ({
     } else children = childString;
   }
   if (twemoji)
-    children = <Twemoji options={{ className: "emoji" }}>{children}</Twemoji>;
+    children = (
+      <Twemoji options={{ className: "emoji" }} tag={twemojiTag}>
+        {children}
+      </Twemoji>
+    );
   className = (className ? `${className} ` : "") + "parsed";
-  children = (
-    <div className={className} ref={divRef}>
-      {children}
-    </div>
-  );
-  return <>{children}</>;
-};
+  return React.createElement(tag, { className, ref: parsedRef }, children);
+}
 
 export default MultiParser;

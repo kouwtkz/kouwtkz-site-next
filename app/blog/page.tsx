@@ -29,7 +29,7 @@ export default async function BlogPage({
             MINI BLOG
           </h2>
         </Link>
-        <div className="w-[100%] md:w-[80%] mx-auto">
+        <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           {posts.length > 0 ? (
             posts.map((post, index) => {
               return (
