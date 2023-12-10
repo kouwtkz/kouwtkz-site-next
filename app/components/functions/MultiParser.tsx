@@ -55,12 +55,21 @@ const MultiParser = ({
   });
   if (typeof children === "string") {
     let childString = children;
-    if (hashtag)
-      childString = childString.replace(
-        /#([^#\s]+)(\s?)/g,
-        `<a href="/blog?q=%23$1">#$1</a>`
-      );
     if (markdown) childString = parse(childString);
+    if (hashtag) {
+      childString = childString.replace(
+        /(^|<.+>)([^<]+)(<|$)/g,
+        (m, start, main, end) => {
+          if (/^\s+$/.test(main) || /^<\s*(code)[\s>]/.test(start)) return m;
+          else {
+            main = main
+              .replace(/#([^#\s]+)\s?/g, `<a href="/blog?q=%23$1">#$1</a>`)
+              .replace(/(<\/a>)(<a)/g, "$1 $2");
+            return `${start}${main}${end}`;
+          }
+        }
+      );
+    }
     if (toDom) {
       children = HtmlParse(childString);
     } else children = childString;
