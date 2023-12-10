@@ -110,7 +110,6 @@ const ImageViewerWindow = () => {
                 </h2>
                 <div className="mx-2 md:mr-6 text-2xl">
                   <MultiParser
-                    all={true}
                     className="[&_p]:my-4 [&_p]:whitespace-pre-line"
                   >
                     {image.description}

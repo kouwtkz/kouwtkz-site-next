@@ -56,7 +56,7 @@ const PostTextarea = forwardRef<HTMLTextAreaElement, { body?: string }>(
             bodyClass + " preview-area" + (previewMode ? " block" : " hidden")
           }
         >
-          <MultiParser all={true}>{previewBody}</MultiParser>
+          <MultiParser>{previewBody}</MultiParser>
         </div>
       </>
     );

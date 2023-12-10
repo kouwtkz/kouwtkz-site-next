@@ -5,31 +5,36 @@ import Twemoji from "react-twemoji";
 import HtmlParse from "html-react-parser";
 import { parse } from "marked";
 import { useRouter } from "next/navigation";
-type MultiParserProps = {
+type MultiParserOptions = {
   markdown?: boolean;
   toDom?: boolean;
   twemoji?: boolean;
-  all?: boolean;
-  className?: string;
   linkPush?: boolean;
+  hashtag?: boolean;
+};
+type MultiParserProps = MultiParserOptions & {
+  only?: MultiParserOptions;
+  className?: string;
   children?: React.ReactNode | string;
 };
 const MultiParser = ({
-  markdown,
-  toDom,
-  twemoji,
-  all,
-  linkPush,
+  markdown = true,
+  toDom = true,
+  twemoji = true,
+  linkPush = true,
+  hashtag = true,
+  only,
   className,
   children,
 }: MultiParserProps) => {
   const router = useRouter();
   const divRef = useRef() as MutableRefObject<HTMLDivElement>;
-  if (all) {
-    markdown = true;
-    toDom = true;
-    twemoji = true;
-    linkPush = true;
+  if (only) {
+    markdown = only.markdown === undefined ? false : only.markdown;
+    toDom = only.toDom === undefined ? false : only.toDom;
+    twemoji = only.twemoji === undefined ? false : only.twemoji;
+    linkPush = only.linkPush === undefined ? false : only.linkPush;
+    hashtag = only.hashtag === undefined ? false : only.hashtag;
   }
   useEffect(() => {
     if (linkPush && window) {
@@ -50,6 +55,11 @@ const MultiParser = ({
   });
   if (typeof children === "string") {
     let childString = children;
+    if (hashtag)
+      childString = childString.replace(
+        /#([^#\s]+)(\s?)/g,
+        `<a href="/blog?q=%23$1">#$1</a>`
+      );
     if (markdown) childString = parse(childString);
     if (toDom) {
       children = HtmlParse(childString);

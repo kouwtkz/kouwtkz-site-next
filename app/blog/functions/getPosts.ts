@@ -55,15 +55,15 @@ function setWhere(q: string, options: WhereOptionsType) {
       OR_skip = true;
     }
     else if (item.slice(0, 1) === "#") {
-      const hashWord = item.slice(1);
+      const filterValue = item.slice(1);
       where.push({
         OR: [{
           category: {
-            equals: hashWord
+            equals: filterValue
           }
         }, {
           body: {
-            contains: `#${hashWord}`
+            contains: `#${filterValue}`
           }
         }]
       })
