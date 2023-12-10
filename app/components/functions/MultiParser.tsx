@@ -58,7 +58,7 @@ const MultiParser = ({
     if (markdown) childString = parse(childString);
     if (hashtag) {
       childString = childString.replace(
-        /(^|<.+>)([^<]+)(<|$)/g,
+        /(^|<[^>]+>)([^<]+)(<|$)/g,
         (m, start, main, end) => {
           if (/^\s+$/.test(main) || /^<\s*(code)[\s>]/.test(start)) return m;
           else {
