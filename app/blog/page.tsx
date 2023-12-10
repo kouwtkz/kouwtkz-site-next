@@ -13,20 +13,22 @@ export default async function BlogPage({
   params: { slug: string };
   searchParams: { [key: string]: string | undefined };
 }) {
-  const redirectPostId =
-    !isStatic && searchParams.postId ? searchParams.postId : undefined;
+  const redirectPostId = isStatic ? undefined : searchParams.postId;
   if (redirectPostId) redirect(`/blog/post/${redirectPostId}`);
+  const q = isStatic ? undefined : searchParams.q;
   // 投稿一覧取得
-  const posts = await getPosts({ max: 10 });
+  const posts = await getPosts({ max: 10, q });
 
   return (
     <>
       {isStatic ? <CheckPostId /> : null}
       {!isStatic ? <Fixed isStatic={isStatic} /> : null}
       <div>
-        <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
-          MINI BLOG
-        </h2>
+        <Link href="/blog">
+          <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
+            MINI BLOG
+          </h2>
+        </Link>
         <div className="w-[100%] md:w-[80%] mx-auto">
           {posts.length > 0 ? (
             posts.map((post, index) => {
@@ -36,7 +38,7 @@ export default async function BlogPage({
                     <Link href={`/blog/post/${post.postId}`}>{post.title}</Link>
                   </h3>
                   <span className="underline">
-                    <Link href={`/blog/?q=%23${post.category}`}>
+                    <Link href={`/blog/?q=category:${post.category}`}>
                       {post.category}
                     </Link>
                   </span>

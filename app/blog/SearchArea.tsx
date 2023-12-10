@@ -27,10 +27,11 @@ function Main({}: SearchAreaProps) {
   const q = search.get("q") || "";
   return (
     <form
-      className="my-5 mx-4"
+      className="m-4"
       onSubmit={(e) => {
         if (searchRef.current) {
-          router.push(`${location.pathname}?q=${searchRef.current.value}`);
+          const q = searchRef.current.value.replace("#", "%23");
+          router.push(`${location.pathname}?q=${q}`);
           (document.activeElement as HTMLElement).blur();
           e.preventDefault();
         }
