@@ -17,6 +17,7 @@ import {
 } from "@/app/fonts/list";
 import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
+import EmbedSync from "./components/System/EmbedSync";
 
 
 export const metadata: Metadata = {
@@ -41,6 +42,7 @@ export default async function RootLayout({
         ].join(" ")}
       >
         <ClientSetup />
+        <EmbedSync />
         <ServerStateMake />
         <ImageViewer />
         <CharaData />

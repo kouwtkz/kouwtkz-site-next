@@ -298,3 +298,7 @@ form select {
 .preview-area .parsed p:first-child {
   margin-top: 0;
 }
+
+iframe {
+  max-width: 100%;
+}

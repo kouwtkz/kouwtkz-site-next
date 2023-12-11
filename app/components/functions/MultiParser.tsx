@@ -1,6 +1,6 @@
 "use client";
 
-import React, { MutableRefObject, useEffect, useRef } from "react";
+import React, { MutableRefObject, useLayoutEffect, useRef } from "react";
 import HtmlParse from "html-react-parser";
 import { parse } from "marked";
 import { useRouter } from "next/navigation";
@@ -49,7 +49,7 @@ function MultiParser({
     detailsClosable =
       only.detailsClosable === undefined ? false : only.detailsClosable;
   }
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (window) {
       if (linkPush) {
         const aList = parsedRef.current.querySelectorAll(
