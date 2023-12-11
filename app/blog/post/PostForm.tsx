@@ -1,7 +1,7 @@
 "use client";
 
 import { Post } from "@prisma/client";
-import React, { useRef } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { FormTags } from "react-hotkeys-hook/dist/types";
@@ -47,16 +47,48 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
   const postIdRef = useRef<HTMLInputElement>(null);
   const operationRef = useRef<HTMLSelectElement>(null);
 
+  const beginFormDataRef = useRef<any>(null);
+  useEffect(() => {
+    if (!beginFormDataRef.current && formRef.current)
+      beginFormDataRef.current = new FormData(formRef.current);
+  }, []);
+
   const PostSend = () => {
     if (!formRef.current) return;
+    const formData = new FormData(formRef.current);
+    const beginData = beginFormDataRef.current as FormData;
+    const deleteKeys: string[] = [];
+
+    formData.forEach((item, key) => {
+      const beginItem = beginData.get(key);
+      switch (key) {
+        case "postId":
+        case "update":
+          break;
+        case "attached[]":
+          if ((item as File).name === "") deleteKeys.push(key);
+          break;
+        default:
+          if (item === beginItem) deleteKeys.push(key);
+          break;
+      }
+    });
+    deleteKeys.forEach((key) => formData.delete(key));
     fetch(formRef.current.action, {
       method: formRef.current.getAttribute("method") || formRef.current.method,
-      body: new FormData(formRef.current),
+      body: formData,
     })
       .then((r) => r.json())
       .then((j) => {
-        console.log(j);
-        router.push(`/blog/post/${postTarget?.postId}`, { scroll: false });
+        if (j.postId) {
+          router.push(`/blog/post/${j.postId}`);
+        } else {
+          router.push(`/blog`);
+        }
+        router.refresh();
+      })
+      .catch((err) => {
+        console.log("送信に失敗しました", err);
       });
   };
 
@@ -93,10 +125,11 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
 
   return (
     <form
-      method={updateMode ? "PATCH" : "POST"}
+      method={"POST"}
       action="post/send"
       id="postForm"
       ref={formRef}
+      encType="multipart/form-data"
       className="pt-2 [&>*]:my-2"
       onSubmit={(e) => {
         PostSend();

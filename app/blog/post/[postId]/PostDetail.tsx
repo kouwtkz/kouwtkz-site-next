@@ -10,7 +10,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import date_format from "@/app/components/functions/date_format";
 
 type PostDetailProps = {
-  post?: Post & { user: User };
+  post?: Post & { user: { name: string | null; icon: string | null } | null };
 };
 
 const TopPage = ({ post }: PostDetailProps) => {
@@ -42,7 +42,7 @@ const TopPage = ({ post }: PostDetailProps) => {
           </div>
           <MultiParser>{post.body}</MultiParser>
           <div className="text-right [&>*]:ml-4">
-            <span className="text-main">{post.user.name}</span>
+            <span className="text-main">{post.user?.name}</span>
             <span className="text-main-grayish">
               {date_format("Y/m/d H:i", post.date, true)}
             </span>

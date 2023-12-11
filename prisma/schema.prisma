@@ -41,20 +41,20 @@ model UserRemember {
 }
 
 model Post {
-  id       Int       @id @default(autoincrement())
-  postId   String    @default(uuid())
-  userId   String
-  title    String    @default("")
-  body     String
-  category String?
-  pin      Int?
-  noindex  Boolean?
-  draft    Boolean?
-  date     DateTime  @default(now())
-  update   DateTime? @updatedAt
-  flags    Int?
-  memo     String?
-  user     User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
+  id        Int       @id @default(autoincrement())
+  postId    String    @default(uuid())
+  userId    String
+  title     String    @default("")
+  body      String
+  category  String?
+  pin       Int?
+  noindex   Boolean?
+  draft     Boolean?
+  date      DateTime  @default(now())
+  updatedAt DateTime? @updatedAt
+  flags     Int?
+  memo      String?
+  user      User      @relation(fields: [userId], references: [userId], onDelete: Cascade)
 
   @@index([userId], map: "Posts_userId_fkey")
 }

@@ -6,7 +6,7 @@ import { Post, User, UserRemember } from "@prisma/client";
 export async function GET(request: NextRequest) {
   if (process.env.NODE_ENV === "development") {
     const table = String(request.nextUrl.searchParams.get('table')).toLocaleLowerCase();
-    const jsonDir = `${process.env.PWD}/_data/json/${table}.json`;
+    const jsonDir = `${process.env.PWD}/_data/db/json/${table}.json`;
     const doneRecord = [] as any[];
     let done = fs.existsSync(jsonDir);
     if (done) {
@@ -16,8 +16,8 @@ export async function GET(request: NextRequest) {
         case "post":
           const posts = jsonData as Post[];
           for (const post of posts) {
-            const checkUser = await prisma.post.findFirst({ where: { postId: post.postId }, select: { postId: true } });
-            if (!checkUser) {
+            const checkPost = await prisma.post.findFirst({ where: { postId: { equals: post.postId } }, select: { postId: true } });
+            if (!checkPost) {
               const response = await prisma.post.create({ data: post });
               doneRecord.push(response);
             }
@@ -38,8 +38,13 @@ export async function GET(request: NextRequest) {
           break;
       }
     }
-    return NextResponse.json(done ? (doneRecord.length > 0 ? `${doneRecord.length}件インポートしました！` : "インポートしたデータはありませんでした") : "");
+    return NextResponse.json({
+      result:
+        done ? (doneRecord.length > 0 ?
+          `${doneRecord.length}件インポートしました！` : "インポートしたデータはありませんでした")
+          : "たぶんパスを間違えてます、インポートできませんでした"
+    });
   } else {
-    return NextResponse.json("")
+    return NextResponse.json({ result: "なんかエラーになりました" })
   }
 }
