@@ -1,4 +1,3 @@
-"use client";
 import { Post, User } from "@prisma/client";
 import MultiParser from "@/app/components/functions/MultiParser";
 import Link from "next/link";
