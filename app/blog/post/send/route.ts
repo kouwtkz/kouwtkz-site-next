@@ -31,10 +31,10 @@ export async function POST(req: NextRequest) {
     const update = String(formData.get("update"));
 
     const title = formData.get("title");
-    if (!update || title) data.title = String(title);
+    if (title) data.title = String(title);
 
     const body = formData.get("body");
-    if (!update || body) data.body = String(body);
+    if (!update) data.body = String(body || "");
 
     const category = formData.get("category");
     if (category) data.category = String(category);
