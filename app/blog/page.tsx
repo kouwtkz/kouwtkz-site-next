@@ -19,7 +19,7 @@ export default async function BlogPage({
   const page = isStatic ? undefined : Number(searchParams.p);
   const q = isStatic ? undefined : searchParams.q;
   // 投稿一覧取得
-  const take = isStatic ? 200 : 5;
+  const take = isStatic ? 200 : 10;
   const { posts, count, max } = await getPosts({ take, page, q });
 
   return (
