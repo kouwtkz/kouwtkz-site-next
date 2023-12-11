@@ -1,13 +1,14 @@
 import prisma from "@/app/lib/prisma";
 type getPostsProps = {
-  max?: number
+  take?: number
   page?: number
   q?: string
 }
 
 export default async function getPosts(args?: getPostsProps) {
-  const max = args && args.max ? args.max : 0xffff;
-  const page = args && args.page ? args.page : 1;
+  const take = (args && args.take) ? args.take : undefined;
+  const page = (args && args.page && take) ? (args.page - 1) : undefined;
+  const skip = (take && page) ? take * page : undefined;
   const q = args && args.q ? args.q : "";
   const options = {};
 
@@ -18,7 +19,8 @@ export default async function getPosts(args?: getPostsProps) {
       where: {
         AND: where,
       },
-
+      take,
+      skip,
       orderBy: {
         // 降順
         date: "desc",
@@ -33,9 +35,15 @@ export default async function getPosts(args?: getPostsProps) {
         },
       },
     });
-    return posts;
+    const count = await prisma.post.count({
+      where: {
+        AND: where,
+      },
+    });
+    const max = Math.ceil(count / (take || 1));
+    return { posts, count, max };
   } catch {
-    return []
+    return { posts: [], count: 0, max: 0 }
   }
 }
 

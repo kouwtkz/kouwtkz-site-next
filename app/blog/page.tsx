@@ -15,14 +15,16 @@ export default async function BlogPage({
 }) {
   const redirectPostId = isStatic ? undefined : searchParams.postId;
   if (redirectPostId) redirect(`/blog/post/${redirectPostId}`);
+  const page = isStatic ? undefined : Number(searchParams.p);
   const q = isStatic ? undefined : searchParams.q;
   // 投稿一覧取得
-  const posts = await getPosts({ max: 10, q });
+  const take = 5;
+  const { posts, count, max } = await getPosts({ take, page, q });
 
   return (
     <>
       {isStatic ? <CheckPostId /> : null}
-      {!isStatic ? <Fixed isStatic={isStatic} /> : null}
+      {!isStatic ? <Fixed isStatic={isStatic} max={max} /> : null}
       <div>
         <Link href="/blog">
           <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">

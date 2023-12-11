@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useLayoutEffect, useRef } from "react";
+import React, { Suspense, useEffect, useLayoutEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
@@ -25,6 +25,18 @@ function Main({}: SearchAreaProps) {
   );
   const search = useSearchParams();
   const q = search.get("q") || "";
+  const qRef = useRef(q);
+  useEffect(() => {
+    if (qRef.current !== q) {
+      if (searchRef.current) {
+        const strq = String(q);
+        if (searchRef.current.value !== strq)
+          searchRef.current.value = strq;
+      }
+      if (qRef.current !== q) qRef.current = q;
+    }
+  });
+
   return (
     <form
       className="m-4"
@@ -44,7 +56,7 @@ function Main({}: SearchAreaProps) {
         placeholder="検索"
         defaultValue={q}
         ref={searchRef}
-        className="w-48 px-2"
+        className="w-48 py-1 px-2"
       />
     </form>
   );

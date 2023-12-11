@@ -8,7 +8,7 @@ import Fixed from "./Fixed";
 // ↓ 静的ビルドする際のみコメントアウトを外すこと
 // export { generateStaticParams };
 async function generateStaticParams() {
-  const posts = await getPosts({ max: 0xffff });
+  const posts = await getPosts({ take: 0xffff });
   return Object.values(posts).map((post) => {
     return { postId: post.postId };
   });
