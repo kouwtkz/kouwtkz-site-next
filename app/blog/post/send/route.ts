@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma";
+import isStatic from "@/app/components/System/isStatic.mjs";
 
 type PostFormType = {
   title?: string,
@@ -12,7 +13,7 @@ type PostFormType = {
 }
 export async function GET(req: NextRequest) {
   const header = Object.fromEntries(req.headers);
-  return Response.json(header);
+  return Response.json(isStatic ? {} : header);
 }
 
 // 投稿または更新
@@ -55,7 +56,6 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    console.log(postId);
     return NextResponse.json({ postId });
   } else {
     return NextResponse.json({ error: "許可されてません" }, { status: 500 });
@@ -72,7 +72,7 @@ export async function DELETE(req: NextRequest) {
   }
 }
 
-export function autoPostId() {
+function autoPostId() {
   const now = new Date();
   const days = Math.floor((now.getTime() - new Date("2000-1-1").getTime()) / 86400000);
   const todayBegin = new Date(Math.floor(now.getTime() / 86400000) * 86400000);
