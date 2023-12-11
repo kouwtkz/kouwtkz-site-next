@@ -11,6 +11,7 @@ type MultiParserOptions = {
   markdown?: boolean;
   toDom?: boolean;
   toTwemoji?: boolean;
+  detailsClosable?: boolean;
   linkPush?: boolean;
   hashtag?: boolean;
 };
@@ -30,6 +31,7 @@ function MultiParser({
   linkPush = true,
   hashtag = true,
   detailsOpen = false,
+  detailsClosable = true,
   only,
   className,
   twemojiTag,
@@ -44,6 +46,8 @@ function MultiParser({
     toDom = only.toDom === undefined ? toTwemoji : only.toDom;
     linkPush = only.linkPush === undefined ? false : only.linkPush;
     hashtag = only.hashtag === undefined ? false : only.hashtag;
+    detailsClosable =
+      only.detailsClosable === undefined ? false : only.detailsClosable;
   }
   useEffect(() => {
     if (window) {
@@ -66,6 +70,19 @@ function MultiParser({
         parsedRef.current
           .querySelectorAll("details:not([manual]):not([open])")
           .forEach((details) => details.setAttribute("open", ""));
+      }
+      if (detailsClosable) {
+        parsedRef.current
+          .querySelectorAll("details:not([added-close])")
+          .forEach((details) => {
+            const closeButton = document.createElement("button");
+            closeButton.classList.add("close");
+            closeButton.innerText = "たたむ";
+            closeButton.title = "折りたたむ";
+            closeButton.onclick = () => details.removeAttribute("open");
+            details.appendChild(closeButton);
+            details.setAttribute("added-close", "");
+          });
       }
     }
   });
