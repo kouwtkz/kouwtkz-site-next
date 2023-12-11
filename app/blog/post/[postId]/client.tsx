@@ -33,11 +33,11 @@ const TopPage = ({ post }: PostDetailProps) => {
               </h1>
             </MultiParser>
             <div className="inline-block">
-              <span className="mx-3 underline">
+              <div className="mx-3 underline inline-block">
                 <Link href={`/blog/?q=%23${post.category}`}>
                   {post.category}
                 </Link>
-              </span>
+              </div>
             </div>
           </div>
           <MultiParser detailsOpen={true}>{post.body}</MultiParser>

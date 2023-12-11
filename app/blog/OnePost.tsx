@@ -16,9 +16,9 @@ export default function OnePost({ post, isStatic }: Props) {
           {post.title || formattedDate}
         </Link>
       </h3>
-      <span className="underline">
+      <div className="underline inline-block">
         <Link href={`/blog/?q=category:${post.category}`}>{post.category}</Link>
-      </span>
+      </div>
       {isStatic ? null : <MultiParser>{post.body}</MultiParser>}
       <div className="text-right [&>*]:ml-4">
         <span className="text-main">{post.user?.name}</span>
