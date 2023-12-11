@@ -34,9 +34,27 @@ export default async function BlogPage({
         </Link>
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           {posts.length > 0 ? (
-            posts.map((post, index) => (
-              <OnePost post={post} isStatic={isStatic} key={index} />
-            ))
+            <>
+              {posts.map((post, index) => (
+                <OnePost post={post} isStatic={isStatic} key={index} />
+              ))}
+              {max > 1 && (page || 1) < max ? (
+                <div className="text-center">
+                  <Link
+                    className="inline-block mt-4 mb-2 text-xl"
+                    href={`/blog?${Object.entries({
+                      p: String((page || 1) + 1),
+                      q: q,
+                    })
+                      .filter((v) => v[1])
+                      .map((v) => v.join("="))
+                      .join("&")}`}
+                  >
+                    次のページ ▽
+                  </Link>
+                </div>
+              ) : null}
+            </>
           ) : (
             <div className="text-center">投稿はありません</div>
           )}
