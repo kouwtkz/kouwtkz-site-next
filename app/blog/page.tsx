@@ -19,7 +19,7 @@ export default async function BlogPage({
   const page = isStatic ? undefined : Number(searchParams.p);
   const q = isStatic ? undefined : searchParams.q;
   // 投稿一覧取得
-  const take = 5;
+  const take = isStatic ? 200 : 5;
   const { posts, count, max } = await getPosts({ take, page, q });
 
   return (
@@ -34,7 +34,9 @@ export default async function BlogPage({
         </Link>
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           {posts.length > 0 ? (
-            posts.map((post, index) => <OnePost post={post} key={index} />)
+            posts.map((post, index) => (
+              <OnePost post={post} isStatic={isStatic} key={index} />
+            ))
           ) : (
             <div className="text-center">投稿はありません</div>
           )}
