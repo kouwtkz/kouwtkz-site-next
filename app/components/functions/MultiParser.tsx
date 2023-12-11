@@ -1,20 +1,23 @@
 "use client";
 
 import React, { MutableRefObject, useEffect, useRef } from "react";
-import Twemoji from "react-twemoji";
 import HtmlParse from "html-react-parser";
 import { parse } from "marked";
 import { useRouter } from "next/navigation";
+import twemoji from "twemoji";
+import Twemoji from "react-twemoji";
+
 type MultiParserOptions = {
   markdown?: boolean;
   toDom?: boolean;
-  twemoji?: boolean;
+  toTwemoji?: boolean;
   linkPush?: boolean;
   hashtag?: boolean;
 };
 type MultiParserProps = MultiParserOptions & {
   only?: MultiParserOptions;
   className?: string;
+  detailsOpen?: boolean;
   twemojiTag?: string;
   tag?: string;
   children?: React.ReactNode | string;
@@ -23,39 +26,47 @@ type MultiParserProps = MultiParserOptions & {
 function MultiParser({
   markdown = true,
   toDom = true,
-  twemoji = true,
+  toTwemoji = true,
   linkPush = true,
   hashtag = true,
+  detailsOpen = false,
   only,
   className,
-  tag = "div",
   twemojiTag,
+  tag = "div",
   children,
 }: MultiParserProps) {
   const router = useRouter();
   const parsedRef = useRef() as MutableRefObject<HTMLDivElement>;
   if (only) {
     markdown = only.markdown === undefined ? false : only.markdown;
-    toDom = only.toDom === undefined ? false : only.toDom;
-    twemoji = only.twemoji === undefined ? false : only.twemoji;
+    toTwemoji = only.toTwemoji === undefined ? false : only.toTwemoji;
+    toDom = only.toDom === undefined ? toTwemoji : only.toDom;
     linkPush = only.linkPush === undefined ? false : only.linkPush;
     hashtag = only.hashtag === undefined ? false : only.hashtag;
   }
   useEffect(() => {
-    if (linkPush && window) {
-      const aList = parsedRef.current.querySelectorAll(
-        "a:not([data-a-push])"
-      ) as NodeListOf<HTMLAnchorElement>;
-      aList.forEach((a) => {
-        const url = new URL(a.href);
-        if (url.origin === location.origin && !a.target) {
-          a.dataset.aPush = "";
-          a.addEventListener("click", (e) => {
-            router.push(url.href.replace(/\/+$/, ""));
-            e.preventDefault();
-          });
-        }
-      });
+    if (window) {
+      if (linkPush) {
+        const aList = parsedRef.current.querySelectorAll(
+          "a:not([data-a-push])"
+        ) as NodeListOf<HTMLAnchorElement>;
+        aList.forEach((a) => {
+          const url = new URL(a.href);
+          if (url.origin === location.origin && !a.target) {
+            a.dataset.aPush = "";
+            a.addEventListener("click", (e) => {
+              router.push(url.href.replace(/\/+$/, ""));
+              e.preventDefault();
+            });
+          }
+        });
+      }
+      if (detailsOpen) {
+        parsedRef.current
+          .querySelectorAll("details:not([manual]):not([open])")
+          .forEach((details) => details.setAttribute("open", ""));
+      }
     }
   });
   if (typeof children === "string") {
@@ -75,16 +86,17 @@ function MultiParser({
         }
       );
     }
+    if (toTwemoji) childString = twemoji.parse(childString);
     if (toDom) {
       children = HtmlParse(childString);
     } else children = childString;
-  }
-  if (twemoji)
+  } else {
     children = (
-      <Twemoji options={{ className: "emoji" }} tag={twemojiTag}>
+      <Twemoji tag={twemojiTag} options={{ className: "emoji" }}>
         {children}
       </Twemoji>
     );
+  }
   className = (className ? `${className} ` : "") + "parsed";
   return React.createElement(tag, { className, ref: parsedRef }, children);
 }

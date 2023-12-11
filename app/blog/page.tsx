@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import CheckPostId from "./CheckPostId";
 import Fixed from "./Fixed";
+import OnePost from "./OnePost";
 
 export default async function BlogPage({
   params,
@@ -33,20 +34,7 @@ export default async function BlogPage({
         </Link>
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           {posts.length > 0 ? (
-            posts.map((post, index) => {
-              return (
-                <div key={index} className="m-4">
-                  <h3 className="text-2xl text-main-dark font-bold inline-block m-4">
-                    <Link href={`/blog/post/${post.postId}`}>{post.title}</Link>
-                  </h3>
-                  <span className="underline">
-                    <Link href={`/blog/?q=category:${post.category}`}>
-                      {post.category}
-                    </Link>
-                  </span>
-                </div>
-              );
-            })
+            posts.map((post, index) => <OnePost post={post} key={index} />)
           ) : (
             <div className="text-center">投稿はありません</div>
           )}

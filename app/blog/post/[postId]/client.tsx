@@ -27,7 +27,7 @@ const TopPage = ({ post }: PostDetailProps) => {
         </Link>
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           <div>
-            <MultiParser only={{ twemoji: true }} className="inline-block">
+            <MultiParser only={{ toTwemoji: true }} className="inline-block">
               <h1 className="text-4xl text-main-deep font-bold mx-2 my-4 inline-block">
                 {post.title}
               </h1>
@@ -40,7 +40,7 @@ const TopPage = ({ post }: PostDetailProps) => {
               </span>
             </div>
           </div>
-          <MultiParser>{post.body}</MultiParser>
+          <MultiParser detailsOpen={true}>{post.body}</MultiParser>
           <div className="text-right [&>*]:ml-4">
             <span className="text-main">{post.user?.name}</span>
             <span className="text-main-grayish">
