@@ -2,35 +2,30 @@ generator client {
   provider = "prisma-client-js"
 }
 
-// datasource db {
-//   provider = "mysql"
-//   url      = env("DATABASE_URL")
-// }
-
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(uuid())
-  userId        String    @unique
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String?
-  icon          String?
-  point         Int?
-  bio           String?
-  link          String?
-  description   String?
-  authority     String?
-  birthday      DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime? @updatedAt
-  accessedAt    DateTime?
-  lastLogin     DateTime?
-  Posts         Post[]
+  id             String    @id @default(uuid())
+  userId         String    @unique
+  name           String?
+  email          String?   @unique
+  emailVerified  DateTime?
+  hashedPassword String?
+  icon           String?
+  point          Int?
+  bio            String?
+  link           String?
+  description    String?
+  authority      String?
+  birthday       DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime? @updatedAt
+  accessedAt     DateTime?
+  lastLogin      DateTime?
+  Posts          Post[]
 }
 
 model UserRemember {
