@@ -42,7 +42,8 @@ export default async function getPosts(args?: getPostsProps) {
     });
     const max = Math.ceil(count / (take || 1));
     return { posts, count, max };
-  } catch {
+  } catch (e) {
+    console.log(e);
     return { posts: [], count: 0, max: 0 }
   }
 }
