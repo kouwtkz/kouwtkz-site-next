@@ -36,12 +36,12 @@ export const authOptions: NextAuthOptions = {
         })
 
         // ユーザーが存在しない場合はエラー
-        if (!user || !user?.password) {
+        if (!user || !user?.hashedPassword) {
           throw new Error('ユーザーが存在しません')
         }
 
         // パスワードが一致しない場合はエラー
-        const isCorrectPassword = await bcrypt.compare(credentials.password, user.password)
+        const isCorrectPassword = await bcrypt.compare(credentials.password, user.hashedPassword)
 
         if (!isCorrectPassword) {
           throw new Error('パスワードが一致しません')
