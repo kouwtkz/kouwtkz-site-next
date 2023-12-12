@@ -1,10 +1,18 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useRef } from "react";
+import React, { Suspense, useEffect, useRef } from "react";
 import { useLayoutEffect } from "react";
 
 export default function EmbedSync() {
+  return (
+    <Suspense>
+      <Main />
+    </Suspense>
+  );
+}
+
+function Main() {
   useSearchParams();
   const already = useRef(false);
   const iframeIdMap = useRef(new Map<string, HTMLIFrameElement>());
