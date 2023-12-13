@@ -9,7 +9,6 @@ export async function POST(request: Request) {
       const body = await request.json();
 
       const { email, userId, password } = body
-      console.log(email, userId, password);
 
       // パスワードのハッシュ化
       const hashedPassword = await bcrypt.hash(String(password), 12)

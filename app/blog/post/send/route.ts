@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma";
 import isStatic from "@/app/components/System/isStatic.mjs";
+import getCurrentUser from "@/app/actions/getCurrentUser";
 
 type PostFormType = {
   title?: string,
@@ -19,11 +20,14 @@ export async function GET(req: NextRequest) {
 // 投稿または更新
 export async function POST(req: NextRequest) {
   if (process.env.NODE_ENV === "development" && req.headers.get("host") === "dev.local") {
+    const currentUser = await getCurrentUser();
+    if (!currentUser) return NextResponse.json({ error: "ログインしてません" }, { status: 500 });
     const formData = await req.formData();
     const attached = (formData.getAll("attached[]") || []) as File[];
     attached.forEach((file) => {
       console.log(file);
     })
+    const userId = currentUser.userId;
 
     const data = {} as PostFormType;
 
@@ -47,11 +51,16 @@ export async function POST(req: NextRequest) {
 
     if (Object.keys(data).length > 0) {
       if (update) {
-        await prisma.post.updateMany({ where: { postId: { equals: postId } }, data })
+        await prisma.post.updateMany({
+          where: {
+            AND: [{ postId }, { userId }]
+          },
+          data
+        })
       } else {
-        data.userId = "root";
         postId = postId || autoPostId();
         data.postId = postId;
+        data.userId = userId;
         await prisma.post.create({ data: (data as any) })
       }
     }

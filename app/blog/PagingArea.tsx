@@ -7,10 +7,11 @@ import { useHotkeys } from "react-hotkeys-hook";
 type PagingAreaProps = { max?: number };
 
 function Main({ max }: PagingAreaProps) {
+  const _min = 1;
   const _max = max || 999;
+  const pagingInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const FormRef = useRef<HTMLFormElement>(null);
-  const pagingInputRef = useRef<HTMLInputElement>(null);
   useHotkeys(
     "escape",
     (e) => {
@@ -54,17 +55,20 @@ function Main({ max }: PagingAreaProps) {
       e?.preventDefault();
     }
   };
+
   return (
     <form ref={FormRef} className="flex flex-row" onSubmit={submit}>
       <button
         type="button"
-        className="mx-2 my-3 w-10 h-10 text-xl rounded-full p-0"
+        className={
+          "mx-2 my-3 w-10 h-10 text-xl rounded-full p-0" +
+          (_min >= p ? " opacity-40" : "")
+        }
+        disabled={_min >= p}
         onClick={() => {
           if (pagingInputRef.current) {
-            const min = Number(pagingInputRef.current.min);
-            const value = Number(pagingInputRef.current.value);
-            if (min < value) {
-              pagingInputRef.current.value = String(value - 1);
+            if (_min < p) {
+              pagingInputRef.current.value = String(p - 1);
               submit();
             }
           }
@@ -83,13 +87,15 @@ function Main({ max }: PagingAreaProps) {
       />
       <button
         type="button"
-        className="mx-2 my-3 w-10 h-10 text-xl rounded-full p-0"
+        className={
+          "mx-2 my-3 w-10 h-10 text-xl rounded-full p-0" +
+          (_max <= p ? " opacity-40" : "")
+        }
+        disabled={_max <= p}
         onClick={() => {
           if (pagingInputRef.current) {
-            const max = Number(pagingInputRef.current.max);
-            const value = Number(pagingInputRef.current.value);
-            if (value < max) {
-              pagingInputRef.current.value = String(value + 1);
+            if (p < _max) {
+              pagingInputRef.current.value = String(p + 1);
               submit();
             }
           }

@@ -21,7 +21,7 @@ export default async function Page() {
         ) : (
         <li>
           <Link href="setting/login" className="button text-2xl">
-            かんりにんログイン
+            ログイン
           </Link>
         </li>
         ) }
