@@ -4,7 +4,6 @@ import { Post } from "@prisma/client";
 import React, { useEffect, useMemo, useRef } from "react";
 import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
-import { FormTags } from "react-hotkeys-hook/dist/types";
 import { useRouter } from "next/navigation";
 import {
   setAttached,
@@ -16,8 +15,7 @@ import {
   setPostInsert,
 } from "./PostFormFunctions";
 import toast from "react-hot-toast";
-
-const InputTags: FormTags[] = ["INPUT", "TEXTAREA", "SELECT"];
+import { HotkeyRunEvent } from "@/app/components/form/event/EventSet";
 
 type PostFormProps = {
   categoryCount: {
@@ -100,23 +98,20 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
 
   useHotkeys("b", () => router.back());
 
-  useHotkeys(
-    "ctrl+enter",
-    (e) => {
-      formRef.current?.dispatchEvent(
-        new Event("submit", { bubbles: true, cancelable: true })
-      );
-      e.preventDefault();
-    },
-    { enableOnFormTags: InputTags }
-  );
+  HotkeyRunEvent({
+    keys: "ctrl+enter",
+    element: formRef.current,
+    type: "submit",
+    enableOnFormTags: true,
+  });
 
   useHotkeys(
     "escape",
-    () => {
+    (e) => {
       ((document.activeElement || document.body) as HTMLElement).blur();
+      e.preventDefault();
     },
-    { enableOnFormTags: InputTags }
+    { enableOnFormTags: true }
   );
 
   useHotkeys(
@@ -126,6 +121,7 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
     },
     { enableOnFormTags: ["TEXTAREA"] }
   );
+
   useHotkeys("n", (e) => {
     textareaRef.current?.focus();
     e.preventDefault();

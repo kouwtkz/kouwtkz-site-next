@@ -1,5 +1,9 @@
 "use client";
 
+import AutoInput, {
+  AutoInputItemType,
+  MakeSchemaObject,
+} from "@/app/components/form/input/AutoInput";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import { signIn } from "next-auth/react";
@@ -10,13 +14,7 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
 
-const formInputList: {
-  label: string;
-  name?: string;
-  id?: string;
-  type: string;
-  schema: z.ZodString;
-}[] = [
+const autoInputList: AutoInputItemType[] = [
   {
     label: "ユーザーID",
     name: "userId",
@@ -46,14 +44,8 @@ const formInputList: {
       .min(1, { message: "パスワードをもう一度入力してください" }),
   },
 ];
-const schema = z
-  .object(
-    formInputList.reduce(
-      (a, c) => ({ ...a, ...{ [c.name || c.id || ""]: c.schema } }),
-      {} as any
-    )
-  )
-  .superRefine(({ password, check_password }, ctx) => {
+const schema = MakeSchemaObject(autoInputList).superRefine(
+  ({ password, check_password }, ctx) => {
     if (password !== check_password) {
       ctx.addIssue({
         path: ["check_password"],
@@ -61,28 +53,30 @@ const schema = z
         message: "パスワードが一致しません",
       });
     }
-  });
+  }
+);
 
 export default function SignupForm() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const defaultValues: { [k: string]: any } = {
+    name: "",
+    email: "",
+    password: "",
+  };
 
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FieldValues>({
-    defaultValues: {
-      name: "",
-      email: "",
-      password: "",
-    },
+    defaultValues,
     resolver: zodResolver(schema),
   });
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
     try {
-      const res = await axios.post("/api/signup", data);
+      const res = await axios.post("signup/send", data);
       if (res.status === 200) {
         toast.success("登録に成功しました！");
         await signIn("credentials", {
@@ -104,29 +98,15 @@ export default function SignupForm() {
     <div className="pt-4 m-auto">
       <h1 className="font-LuloClean text-main m-2 mb-6 text-3xl">SIGN UP</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="max-w-md m-auto">
-        {formInputList.map((item, i) => {
-          const registId = item.name || item.id || "";
-          return (
-            <div key={i}>
-              <label className="m-4 flex justify-center items-center">
-                <span className="flex-[1] text-right mr-2">{item.label}</span>
-                <input
-                  className="flex-[1.6] px-2"
-                  {...register(registId, { required: true })}
-                  {...(item.id ? { id: item.id } : {})}
-                  {...(item.name ? { name: item.name } : {})}
-                  type={item.type}
-                  disabled={loading}
-                />
-              </label>
-              {errors[registId] && (
-                <div className="my-3 text-sm text-red-500">
-                  {String(errors[registId]?.message)}
-                </div>
-              )}
-            </div>
-          );
-        })}
+        {autoInputList.map((item, i) => (
+          <AutoInput
+            item={item}
+            register={register}
+            disabled={loading}
+            errors={errors}
+            key={i}
+          />
+        ))}
         <div className="m-4">
           <button type="submit">新規作成</button>
         </div>

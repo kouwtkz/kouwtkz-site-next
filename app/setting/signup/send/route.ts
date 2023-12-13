@@ -28,5 +28,7 @@ export async function POST(request: Request) {
       console.log(error)
       return new NextResponse("Error", { status: 500 })
     }
+  } else {
+    return new NextResponse("Error", { status: 500 })
   }
 }
