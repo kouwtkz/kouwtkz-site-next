@@ -15,6 +15,7 @@ import {
   setOperation,
   setPostInsert,
 } from "./PostFormFunctions";
+import toast from "react-hot-toast";
 
 const InputTags: FormTags[] = ["INPUT", "TEXTAREA", "SELECT"];
 
@@ -59,6 +60,8 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
     const beginData = beginFormDataRef.current as FormData;
     const deleteKeys: string[] = [];
 
+    console.log(Object.fromEntries(formData));
+
     formData.forEach((item, key) => {
       const beginItem = beginData.get(key);
       switch (key) {
@@ -73,7 +76,9 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
           break;
       }
     });
+
     deleteKeys.forEach((key) => formData.delete(key));
+
     fetch(formRef.current.action, {
       method: formRef.current.getAttribute("method") || formRef.current.method,
       body: formData,
@@ -85,6 +90,7 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
         } else {
           router.push(`/blog`);
         }
+        toast(updateMode ? "更新しました" : "投稿しました", { duration: 2000 });
         router.refresh();
       })
       .catch((err) => {
@@ -97,7 +103,9 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
   useHotkeys(
     "ctrl+enter",
     (e) => {
-      PostSend();
+      formRef.current?.dispatchEvent(
+        new Event("submit", { bubbles: true, cancelable: true })
+      );
       e.preventDefault();
     },
     { enableOnFormTags: InputTags }

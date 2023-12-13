@@ -1,4 +1,5 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import toast from "react-hot-toast";
 
 export function setCategory(
   {
@@ -199,8 +200,8 @@ export function setOperation({
         fetch("/blog/post/send", { method: "DELETE", body: JSON.stringify({ postId: postIdInput.value }) })
           .then((r) => r.json())
           .then((r) => {
-            console.log(r);
-            if (router) { router.push("/blog") } else { location.href = "/blog" }
+            toast("削除しました", { duration: 2000 });
+            if (router) { router.push("/blog"); router.refresh(); } else { location.href = "/blog" }
           })
       }
       break;

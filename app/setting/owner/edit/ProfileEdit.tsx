@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { User } from "@prisma/client";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import * as z from "zod";
@@ -33,7 +33,7 @@ export default function ProfileEdit({ currentUser }: props) {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      name: currentUser?.name || ""
+      name: currentUser?.name || "",
     },
     resolver: zodResolver(schema),
   });
@@ -55,7 +55,10 @@ export default function ProfileEdit({ currentUser }: props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="max-w-md m-auto">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="max-w-md m-auto"
+    >
       {formInputList.map((item, i) => (
         <div key={i}>
           <label className="m-4 flex justify-center items-center">

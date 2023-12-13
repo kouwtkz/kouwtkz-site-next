@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/app/lib/prisma";
 import isStatic from "@/app/components/System/isStatic.mjs";
 import getCurrentUser from "@/app/actions/getCurrentUser";
+import fs from "fs";
 
 type PostFormType = {
   title?: string,
@@ -19,65 +20,77 @@ export async function GET(req: NextRequest) {
 
 // 投稿または更新
 export async function POST(req: NextRequest) {
-  if (process.env.NODE_ENV === "development" && req.headers.get("host") === "dev.local") {
-    const currentUser = await getCurrentUser();
-    if (!currentUser) return NextResponse.json({ error: "ログインしてません" }, { status: 500 });
-    const formData = await req.formData();
-    const attached = (formData.getAll("attached[]") || []) as File[];
-    attached.forEach((file) => {
-      console.log(file);
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return NextResponse.json({ error: "ログインしてません" }, { status: 500 });
+
+  const formData = await req.formData();
+  const attached = (formData.getAll("attached[]") || []) as File[];
+  const mediaDir = `${process.env.MEDIA_DIR}`;
+  attached.forEach((file) => {
+    if (!file.name) return;
+    const blogImagesDir = mediaDir + "/images/blog/uploads";
+    fs.mkdir(blogImagesDir, { recursive: true }, () => {
+      file.arrayBuffer().then((abuf) => {
+        fs.writeFileSync(`${blogImagesDir}/${file.name.replaceAll(" ", "_")}`, Buffer.from(abuf));
+      })
     })
-    const userId = currentUser.userId;
+  })
+  const userId = currentUser.userId;
 
-    const data = {} as PostFormType;
+  const data = {} as PostFormType;
 
-    let postId = String(formData.get("postId"));
-    const update = String(formData.get("update"));
+  let postId = String(formData.get("postId"));
+  const update = String(formData.get("update"));
 
-    const title = formData.get("title");
-    if (title) data.title = String(title);
+  const title = formData.get("title");
+  if (title) data.title = String(title);
 
-    const body = formData.get("body");
-    if (!update) data.body = String(body || "");
+  const body = formData.get("body");
+  if (body || !update) data.body = String(body || "");
 
-    const category = formData.get("category");
-    if (category) data.category = String(category);
+  const category = formData.get("category");
+  if (category) data.category = String(category);
 
-    const pin = formData.get("pin");
-    if (pin) data.pin = Number(pin);
+  const pin = formData.get("pin");
+  if (pin) data.pin = Number(pin);
 
-    const date = formData.get("date");
-    if (date) data.date = new Date(String(date));
+  const date = formData.get("date");
+  if (date) data.date = new Date(String(date));
 
-    if (Object.keys(data).length > 0) {
-      if (update) {
-        await prisma.post.updateMany({
-          where: {
-            AND: [{ postId }, { userId }]
-          },
-          data
-        })
-      } else {
-        postId = postId || autoPostId();
-        data.postId = postId;
-        data.userId = userId;
-        await prisma.post.create({ data: (data as any) })
-      }
+  if (Object.keys(data).length > 0) {
+    if (update) {
+      await prisma.post.updateMany({
+        where: {
+          AND: [{ postId: update }, { userId }]
+        },
+        data
+      })
+    } else {
+      postId = postId || autoPostId();
+      data.postId = postId;
+      data.userId = userId;
+      await prisma.post.create({ data: (data as any) })
     }
 
     return NextResponse.json({ postId });
-  } else {
-    return NextResponse.json({ error: "許可されてません" }, { status: 500 });
   }
 }
 
 // 削除
 export async function DELETE(req: NextRequest) {
-  if (process.env.NODE_ENV === "development" && req.headers.get("host") === "dev.local") {
-    const data = await req.json();
-    return NextResponse.json(["DELETE", data]);
+  const currentUser = await getCurrentUser();
+  if (!currentUser) return NextResponse.json({ error: "ログインしてません" }, { status: 500 });
+  const data = await req.json();
+  const postId = String(data.postId || "");
+  if (postId) {
+    await prisma.post.deleteMany({
+      where: {
+        AND: [{ postId }, { userId: currentUser.userId }]
+      },
+    })
+    return NextResponse.json({ result: "success", postId });
   } else {
-    return NextResponse.json({ error: "許可されてません" }, { status: 500 });
+    return NextResponse.json({ error: "ID未指定です" }, { status: 500 });
   }
 }
 
