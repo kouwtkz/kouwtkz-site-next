@@ -1,9 +1,11 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/lib/authOption";
 import prisma from '@/app/lib/prisma'
+import isStatic from "../components/System/isStatic.mjs";
 
 // ログインユーザー取得
 const getCurrentUser = async () => {
+  if (isStatic) return null;
   try {
     // セッション情報取得
     const session = await getServerSession(authOptions)

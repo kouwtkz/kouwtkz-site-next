@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import CheckPostId from "./CheckPostId";
 import Fixed from "./Fixed";
 import OnePost from "./OnePost";
+import getCurrentUser from "@/app/actions/getCurrentUser";
 
 export default async function BlogPage({
   params,
@@ -16,6 +17,8 @@ export default async function BlogPage({
 }) {
   const redirectPostId = isStatic ? undefined : searchParams.postId;
   if (redirectPostId) redirect(`/blog/post/${redirectPostId}`);
+  const currentUser = await getCurrentUser();
+  console.log(currentUser);
   const page = isStatic ? undefined : Number(searchParams.p);
   const q = isStatic ? undefined : searchParams.q;
   // 投稿一覧取得
