@@ -3,11 +3,12 @@
 import React, { Suspense } from "react";
 import PostButton from "../../PostButton";
 import LikeButton from "@/app/components/button/LikeButton";
-import { User } from "@prisma/client";
+import { useCurrentUser } from "@/app/context/user/CurrentUser";
 
-type props = { isStatic: boolean; postId: string; currentUser?: User | null };
+type props = { isStatic: boolean; postId: string; };
 
-export default function Main({ isStatic, postId, currentUser }: props) {
+export default function Main({ isStatic, postId }: props) {
+  const { user: currentUser } = useCurrentUser();
   return (
     <div className="fixed z-30 right right-0 bottom-0">
       <div className="flex flex-row m-2">

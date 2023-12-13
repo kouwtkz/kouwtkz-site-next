@@ -28,11 +28,6 @@ export default async function Page() {
   return (
     <>
       <TopPage topImage={topImage} topPosts={topPosts} />
-      {currentUser ? (
-        <div>ログイン中: {currentUser.name || currentUser.userId}</div>
-      ) : (
-        <></>
-      )}
     </>
   );
 }

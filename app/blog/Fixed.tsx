@@ -4,11 +4,12 @@ import React, { Suspense } from "react";
 import PagingArea from "./PagingArea";
 import SearchArea from "./SearchArea";
 import PostButton from "./PostButton";
-import { User } from "@prisma/client";
+import { useCurrentUser } from "../context/user/CurrentUser";
 
-type props = { isStatic: boolean; max?: number; currentUser?: User | null };
+type props = { isStatic: boolean; max?: number; };
 
-export default function Fixed({ isStatic, max, currentUser }: props) {
+export default function Fixed({ isStatic, max }: props) {
+  const { user: currentUser } = useCurrentUser();
   return (
     <div className="fixed z-30 right right-0 bottom-0">
       <div className="flex flex-wrap justify-end m-2 ml-36">

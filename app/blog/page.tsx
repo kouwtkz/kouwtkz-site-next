@@ -27,7 +27,7 @@ export default async function BlogPage({
   return (
     <>
       {isStatic ? <CheckPostId /> : null}
-      {!isStatic ? <Fixed isStatic={isStatic} max={max} currentUser={currentUser} /> : null}
+      {!isStatic ? <Fixed isStatic={isStatic} max={max} /> : null}
       <div>
         <Link href="/blog">
           <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">

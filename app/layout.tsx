@@ -7,9 +7,7 @@ import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
 import CharaData from "./character/CharaData";
 import MediaImageState from "./media/image/MediaImageState";
-import AuthContext from "@/app/context/AuthContext";
 import ToasterContext from "@/app/context/toastContext";
-import getCurrentUser from "@/app/actions/getCurrentUser";
 
 import {
   KosugiMaruFont,
@@ -21,6 +19,7 @@ import {
 import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
+import CurrentUserMake from "./context/user/CurrentUserMake";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -44,23 +43,22 @@ export default async function RootLayout({
           LuloCleanFont.variable,
         ].join(" ")}
       >
-        <AuthContext>
-          <ToasterContext />
-          <ClientSetup />
-          <EmbedSync />
-          <ServerStateMake />
-          <ImageViewer />
-          <CharaData />
-          <MediaImageState />
-          <Header site={site} />
-          <div className="text-center pt-24 pb-8 font-KosugiMaru">
-            <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
-              {children}
-              <Footer site={site} currentDate={currentDate} />
-            </div>
+        <ToasterContext />
+        <ClientSetup />
+        <EmbedSync />
+        <CurrentUserMake />
+        <ServerStateMake />
+        <ImageViewer />
+        <CharaData />
+        <MediaImageState />
+        <Header site={site} />
+        <div className="text-center pt-24 pb-8 font-KosugiMaru">
+          <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
+            {children}
+            <Footer site={site} currentDate={currentDate} />
           </div>
-          <div id="audio_background"></div>
-        </AuthContext>
+        </div>
+        <div id="audio_background"></div>
       </body>
     </html>
   );
