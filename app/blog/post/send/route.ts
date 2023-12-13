@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
 // 投稿または更新
 export async function POST(req: NextRequest) {
   const currentUser = await getCurrentUser();
-  if (!currentUser) return NextResponse.json({ error: "ログインしてません" }, { status: 500 });
+  if (!currentUser) return NextResponse.json({ result: "error", error: "ログインしてません" }, { status: 500 });
 
   const formData = await req.formData();
   const attached = (formData.getAll("attached[]") || []) as File[];
@@ -90,7 +90,7 @@ export async function DELETE(req: NextRequest) {
     })
     return NextResponse.json({ result: "success", postId });
   } else {
-    return NextResponse.json({ error: "ID未指定です" }, { status: 500 });
+    return NextResponse.json({ result: "error", error: "ID未指定です" }, { status: 500 });
   }
 }
 
