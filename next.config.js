@@ -5,11 +5,11 @@ const strictConfig = {
   reactStrictMode: false
 }
 
-const envConfig = {
-  env: {}
-}
-if (process.env.NODE_ENV === "production" && process.env.PUBLISH_URL) {
-  envConfig.env.NEXTAUTH_URL = process.env.PUBLISH_URL;
+const envConfig = { env: {} }
+if (process.env.NODE_ENV === "production" && process.env.PRODUCTION_URL) {
+  envConfig.env.NEXTAUTH_URL = process.env.PRODUCTION_URL;
+} else {
+  if (process.env.DEVELOPMENT_URL) envConfig.env.NEXTAUTH_URL = process.env.DEVELOPMENT_URL;
 }
 
 const imageConfig = { images: { remotePatterns: [] } }

@@ -18,7 +18,6 @@ export default async function BlogPage({
   const redirectPostId = isStatic ? undefined : searchParams.postId;
   if (redirectPostId) redirect(`/blog/post/${redirectPostId}`);
   const currentUser = await getCurrentUser();
-  console.log(currentUser);
   const page = isStatic ? undefined : Number(searchParams.p);
   const q = isStatic ? undefined : searchParams.q;
   // 投稿一覧取得
@@ -28,7 +27,7 @@ export default async function BlogPage({
   return (
     <>
       {isStatic ? <CheckPostId /> : null}
-      {!isStatic ? <Fixed isStatic={isStatic} max={max} /> : null}
+      {!isStatic ? <Fixed isStatic={isStatic} max={max} currentUser={currentUser} /> : null}
       <div>
         <Link href="/blog">
           <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">

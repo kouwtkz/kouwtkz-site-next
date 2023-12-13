@@ -2,6 +2,7 @@ import Link from "next/link";
 import React from "react";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { redirect } from "next/navigation";
+import SignoutLink from "./SignoutLink";
 
 export default async function Page() {
   const currentUser = await getCurrentUser();
@@ -14,6 +15,9 @@ export default async function Page() {
           <Link href="/setting" className="button text-2xl">
             いろいろ
           </Link>
+        </li>
+        <li>
+          <SignoutLink />
         </li>
       </ul>
     </div>

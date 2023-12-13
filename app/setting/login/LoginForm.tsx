@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useRef, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
@@ -29,6 +29,7 @@ const schema = z.object(
 
 export default function Page() {
   const router = useRouter();
+  const search = useSearchParams();
   const [loading, setLoading] = useState(false);
 
   const {
@@ -57,8 +58,10 @@ export default function Page() {
       }
 
       toast.success("ログインしました！");
-      router.push("/setting");
-      // router.refresh();
+
+      const redirect = search.get("redirect") || "/setting";
+      router.push(redirect);
+      router.refresh();
     } catch (error) {
       toast("エラーが発生しました。");
       console.error(error);

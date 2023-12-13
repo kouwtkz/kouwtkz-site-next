@@ -9,7 +9,6 @@ const getCurrentUser = async () => {
   try {
     // セッション情報取得
     const session = await getServerSession(authOptions)
-    console.log("session:", session);
     // ログインしてない場合（メールアドレスがない場合）nullを返す
     if (!session?.user?.email) {
       return null
