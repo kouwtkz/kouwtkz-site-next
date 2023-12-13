@@ -54,14 +54,7 @@ export default function TopPage({ topImage, topPosts = [] }: TopPageProps) {
               <Link href="special">スペシャルページ</Link>
             </div>
             <div>
-              <p
-                onClick={() =>
-                  document?.documentElement.classList.toggle("theme-orange")
-                }
-                className="cursor-pointer text-main"
-              >
-                テーマきりかえ
-              </p>
+              <Link href="setting">せってい</Link>
             </div>
           </div>
         </div>

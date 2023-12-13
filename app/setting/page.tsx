@@ -1,31 +1,31 @@
-"use client";
+import Link from "next/link";
+import React from "react";
+import getCurrentUser from "@/app/actions/getCurrentUser";
+import { ChangeThemeButton } from "./ChangeTheme";
 
-import { signIn } from "next-auth/react";
-import React, { useRef } from "react";
-
-export default function Page() {
-  const formRef = useRef<HTMLFormElement>(null);
+export default async function Page() {
+  const currentUser = await getCurrentUser();
   return (
-    <div>
-      <h1 className="font-LuloClean text-main">SETTING</h1>
-      <form
-        ref={formRef}
-        onSubmit={async (e) => {
-          e.preventDefault();
-          if (!formRef.current) return;
-          const data = Object.fromEntries(new FormData(formRef.current));
-          const res = await signIn("credentials", {
-            ...data,
-            redirect: false,
-          });
-          console.log(res);
-        }}
-      >
-        <input name="userId" type="text" />
-        <input name="email" type="email" />
-        <input name="password" type="password" />
-        <button type="submit">送信</button>
-      </form>
+    <div className="pt-4">
+      <h1 className="font-LuloClean text-main m-2 mb-6 text-3xl">SETTING</h1>
+      <ul className="[&>li]:m-4">
+        <li>
+          <ChangeThemeButton />
+        </li>
+        { currentUser ? (
+        <li>
+          <Link href="setting/owner" className="button text-2xl">
+            かんりしつ
+          </Link>
+        </li>
+        ) : (
+        <li>
+          <Link href="setting/login" className="button text-2xl">
+            かんりにんログイン
+          </Link>
+        </li>
+        ) }
+      </ul>
     </div>
   );
 }

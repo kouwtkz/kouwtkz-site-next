@@ -5,6 +5,13 @@ const strictConfig = {
   reactStrictMode: false
 }
 
+const envConfig = {
+  env: {}
+}
+if (process.env.NODE_ENV === "production" && process.env.PUBLISH_URL) {
+  envConfig.env.NEXTAUTH_URL = process.env.PUBLISH_URL;
+}
+
 const imageConfig = { images: { remotePatterns: [] } }
 
 const mediaHost = process.env.MEDIA_HOST_CONTAINER;
@@ -39,6 +46,7 @@ const exportConfig = (() => {
 
 const nextConfig = {
   ...strictConfig,
+  ...envConfig,
   ...imageConfig,
   ...exportConfig,
 }

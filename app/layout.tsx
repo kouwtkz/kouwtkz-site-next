@@ -7,6 +7,9 @@ import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
 import CharaData from "./character/CharaData";
 import MediaImageState from "./media/image/MediaImageState";
+import AuthContext from "@/app/context/AuthContext";
+import ToasterContext from "@/app/context/toastContext";
+import getCurrentUser from "@/app/actions/getCurrentUser";
 
 import {
   KosugiMaruFont,
@@ -19,7 +22,6 @@ import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
 
-
 export const metadata: Metadata = {
   title: site.title,
   description: site.short.description,
@@ -30,6 +32,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // const currentUser = await getCurrentUser();
   return (
     <html lang="ja">
       <body
@@ -41,20 +44,23 @@ export default async function RootLayout({
           LuloCleanFont.variable,
         ].join(" ")}
       >
-        <ClientSetup />
-        <EmbedSync />
-        <ServerStateMake />
-        <ImageViewer />
-        <CharaData />
-        <MediaImageState />
-        <Header site={site} />
-        <div className="text-center pt-24 pb-8 font-KosugiMaru">
-          <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
-            {children}
-            <Footer site={site} currentDate={currentDate} />
+        <AuthContext>
+          <ToasterContext />
+          <ClientSetup />
+          <EmbedSync />
+          <ServerStateMake />
+          <ImageViewer />
+          <CharaData />
+          <MediaImageState />
+          <Header site={site} />
+          <div className="text-center pt-24 pb-8 font-KosugiMaru">
+            <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
+              {children}
+              <Footer site={site} currentDate={currentDate} />
+            </div>
           </div>
-        </div>
-        <div id='audio_background'></div>
+          <div id="audio_background"></div>
+        </AuthContext>
       </body>
     </html>
   );

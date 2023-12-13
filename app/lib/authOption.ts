@@ -18,20 +18,21 @@ export const authOptions: NextAuthOptions = {
       name: 'credentials',
       credentials: {
         // メールアドレスとパスワード
+        id_email: { label: 'id_email', type: 'text' },
         email: { label: 'email', type: 'text' },
         password: { label: 'password', type: 'password' },
       },
 
       async authorize(credentials) {
         // メールアドレスとパスワードがない場合はエラー
-        if (!credentials?.email || !credentials?.password) {
+        if (!(credentials?.id_email || credentials?.email) || !credentials?.password) {
           throw new Error('メールアドレスとパスワードが存在しません')
         }
 
         // ユーザーを取得
-        const user = await prisma.user.findUnique({
+        const user = await prisma.user.findFirst({
           where: {
-            email: credentials.email,
+            OR: [{ email: credentials.email }, { userId: credentials.id_email }]
           }
         })
 

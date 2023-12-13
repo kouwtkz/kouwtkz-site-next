@@ -34,7 +34,7 @@ const GalleryList = ({
   return (
     <div className="w-[100%]">
       {showLabel ? (
-        <h2 className="pt-12 mb-6 text-6xl font-LuloClean text-center text-main">
+        <h2 className="pt-12 mb-6 text-4xl font-LuloClean text-center text-main">
           {label || album.name}
         </h2>
       ) : null}

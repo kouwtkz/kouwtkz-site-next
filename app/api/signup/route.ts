@@ -6,18 +6,19 @@ import prisma from "@/app/lib/prisma"
 export async function POST(request: Request) {
   if (process.env.NODE_ENV === "development") {
     try {
-      // リクエストボディの取得
-      const body = await request.json()
+      const body = await request.json();
+
       const { email, userId, password } = body
+      console.log(email, userId, password);
 
       // パスワードのハッシュ化
-      const hashedPassword = await bcrypt.hash(password, 12)
+      const hashedPassword = await bcrypt.hash(String(password), 12)
 
       // ユーザーの作成はprisma.user.createを使用する
       const response = await prisma.user.create({
         data: {
-          email,
-          userId,
+          email: String(email),
+          userId: String(userId),
           hashedPassword
         }
       })
