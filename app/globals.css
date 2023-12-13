@@ -181,6 +181,7 @@ button,
 [type="reset"],
 [type="submit"] {
   background-color: var(--main-color);
+  user-select: none;
 }
 
 details > summary,
@@ -269,11 +270,12 @@ code {
   opacity: 1;
 }
 
-.bg-background-top,
+/* .bg-background-top,
 .bg-background-bottom,
 :root {
-  /* transition: background-color 1s; */
-}
+  transition: background-color 1s;
+} */
+
 .audio_play .bg-background-top {
   background-color: var(--play-background-color-top);
 }
