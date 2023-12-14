@@ -66,6 +66,9 @@ export default async function BlogPage({
             <div className="text-center">投稿はありません</div>
           )}
         </div>
+        <div className="mt-8">
+          <Link href="/blog/rss.xml">RSSフィード</Link>
+        </div>
       </div>
     </>
   );

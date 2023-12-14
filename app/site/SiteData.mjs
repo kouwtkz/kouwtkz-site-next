@@ -6,6 +6,7 @@ import { readFileSync } from "fs";
  * title: string
  * description: string
  * short: { description: string }
+ * image: string
  * author: SiteAuthorProps
  * manifest: any
  * enableEmoji?: boolean
