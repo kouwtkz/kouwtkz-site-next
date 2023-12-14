@@ -95,7 +95,16 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
     resolver: zodResolver(schema),
   });
 
-  if (Object.keys(errors).length > 0) console.log(errors);
+  useEffect(() => {
+    if (Object.keys(errors).length > 0) {
+      toast.error(
+        Object.entries(errors)
+          .map(([key, err]) => `${key}: ${err?.message} [${err?.type}]`)
+          .join("\n"),
+        { duration: 2000 }
+      );
+    }
+  });
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
