@@ -15,7 +15,13 @@ export default function Footer({ site, currentDate }: FooterProps) {
   return (
     <footer className="pt-8 pb-12">
       <div className="font-Mandali">
-        © {site.author.since}-{currentDate.getFullYear()} {site.author.ename}
+        © {site.author.since}-
+        {
+          currentDate
+            .toLocaleDateString("ja", { timeZone: "JST" })
+            .split("/", 1)[0]
+        }{" "}
+        {site.author.ename}
       </div>
       {snsList.length > 0 ? (
         <div className="py-4">
