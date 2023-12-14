@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { create } from "zustand";
 import { User } from "@prisma/client";
 
@@ -23,6 +23,8 @@ type ServerStateProps = {
 
 export default function CurrentUser({ user }: ServerStateProps) {
   const currentUser = useCurrentUser();
-  if (!currentUser.set && user) currentUser.setUser(user);
+  useEffect(() => {
+    if (!currentUser.set && user) currentUser.setUser(user);
+  });
   return <></>;
 }
