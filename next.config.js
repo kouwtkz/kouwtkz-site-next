@@ -5,12 +5,15 @@ const strictConfig = {
   reactStrictMode: false
 }
 
+const cwd = process.cwd();
+
 const envConfig = { env: {} }
-if (process.env.NODE_ENV === "production" && process.env.PRODUCTION_URL) {
-  envConfig.env.NEXTAUTH_URL = process.env.PRODUCTION_URL;
-} else {
-  if (process.env.DEVELOPMENT_URL) envConfig.env.NEXTAUTH_URL = process.env.DEVELOPMENT_URL;
-}
+
+/// .secret/.envから環境変数取り込み
+try {
+  const secretEnv = require('dotenv').config({ path: `${cwd}/.secret/.env` });
+  envConfig.env = { ...envConfig.env, ...secretEnv.parsed };
+} catch { }
 
 const imageConfig = { images: { remotePatterns: [] } }
 
@@ -30,8 +33,7 @@ const outputMode = process.env.OUTPUT_MODE || null;
 const exportConfig = (() => {
   if (outputMode === 'export') {
     try {
-      const fs = require("fs"), cwd = process.cwd();
-      fs.mkdirSync(`${cwd}/${process.env.CACHE_DIR}`)
+      require("fs").mkdirSync(`${cwd}/${process.env.CACHE_DIR}`)
     } catch { }
     return {
       output: 'export',

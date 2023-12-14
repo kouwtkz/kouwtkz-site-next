@@ -5,6 +5,9 @@ _media/
 _data/**/*.yaml
 _data/db/
 
+# シークレットキーなど
+.secret/
+
 # キャッシュ
 /.cache
 *.check
