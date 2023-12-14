@@ -26,10 +26,9 @@ export default async function postPage({
   const targetPost = targetPostId
     ? await getPostDetail({ postId: targetPostId })
     : null;
-  const caategoryNull = { OR: [{ category: null }, { category: "" }] };
   const CategoryCount = await prisma.post.groupBy({
     by: ["category"],
-    where: { NOT: [caategoryNull] },
+    where: { category: { not: "" } },
     _count: {
       _all: true,
     },
