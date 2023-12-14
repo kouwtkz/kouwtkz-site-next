@@ -30,8 +30,7 @@ function Main({}: SearchAreaProps) {
     if (qRef.current !== q) {
       if (searchRef.current) {
         const strq = String(q);
-        if (searchRef.current.value !== strq)
-          searchRef.current.value = strq;
+        if (searchRef.current.value !== strq) searchRef.current.value = strq;
       }
       if (qRef.current !== q) qRef.current = q;
     }
@@ -42,7 +41,9 @@ function Main({}: SearchAreaProps) {
       className="m-4"
       onSubmit={(e) => {
         if (searchRef.current) {
-          const q = searchRef.current.value.replace("#", "%23");
+          const q = searchRef.current.value
+            .replace("#", "%23")
+            .replace("+", "%2B");
           router.push(`${location.pathname}?q=${q}`);
           (document.activeElement as HTMLElement).blur();
           e.preventDefault();

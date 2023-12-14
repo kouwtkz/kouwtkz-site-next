@@ -1,4 +1,6 @@
 import prisma from "@/app/lib/prisma";
+import { AutoAllotDate } from "@/app/components/System/DateFunctions";
+
 type getPostsProps = {
   take?: number
   page?: number
@@ -128,13 +130,13 @@ function setWhere(q: string, options: WhereOptionsType) {
         case 'since':
           where.push(
             {
-              date: { gte: new Date(filterValue) }
+              date: { gte: AutoAllotDate({ value: String(filterValue), dayFirst: true }) }
             })
           break;
         case 'until':
           where.push(
             {
-              date: { lte: new Date(filterValue) }
+              date: { lte: AutoAllotDate({ value: String(filterValue), dayLast: true }) }
             })
           break;
         case 'filter':
