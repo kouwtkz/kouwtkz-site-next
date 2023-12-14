@@ -80,7 +80,9 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
     postId: postTarget?.postId,
     title: postTarget?.title,
     body: postTarget?.body,
-    date: postTarget?.date.toISOString().replace(/:[^:]+$/, ""),
+    date: postTarget?.date
+      .toLocaleString("sv-SE", { timeZone: "JST" })
+      .replace(" ", "T"),
     category: postTarget?.category,
     pin: Number(postTarget?.pin || 0),
     draft: Boolean(postTarget?.draft),
@@ -117,6 +119,9 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
           case "postId":
           case "update":
             formData.append(key, item);
+            break;
+          case "date":
+            formData.append(key, new Date(`${item}+09:00`).toISOString());
             break;
           case "attached":
             for (const _item of Array.from(item) as any[]) {

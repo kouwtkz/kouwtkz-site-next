@@ -63,7 +63,13 @@ export async function POST(req: NextRequest) {
   if (pin) data.pin = Number(pin);
 
   const date = formData.get("date");
-  if (date) data.date = new Date(String(date));
+  if (date) {
+    const stringDate = String(date);
+    if (stringDate.endsWith("Z") || /\+/.test(stringDate))
+      data.date = new Date(stringDate);
+    else
+      data.date = new Date(`${stringDate}+09:00`);
+  }
 
   if (!success) success = Object.keys(data).length > 0;
   if (success) {
