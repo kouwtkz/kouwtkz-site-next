@@ -17,15 +17,19 @@ export default async function postPage({
   const currentUser = await getCurrentUser();
   if (!currentUser) {
     const redirectUrl = new URL(headersList.get("x-url") || "");
-    redirect(`/setting/login?redirect=${redirectUrl.pathname + redirectUrl.search}`);
+    redirect(
+      `/setting/login?redirect=${redirectUrl.pathname + redirectUrl.search}`
+    );
   }
 
   const targetPostId = searchParams.target || searchParams.base;
   const targetPost = targetPostId
     ? await getPostDetail({ postId: targetPostId })
     : null;
+  const caategoryNull = { OR: [{ category: null }, { category: "" }] };
   const CategoryCount = await prisma.post.groupBy({
     by: ["category"],
+    where: { NOT: [caategoryNull] },
     _count: {
       _all: true,
     },
