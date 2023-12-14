@@ -25,18 +25,21 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData();
   let success = false
-  
+
   const attached = (formData.getAll("attached[]") || []) as File[];
+  const attached_mtime = (formData.getAll("attached_mtime[]") || []) as any[];
   const mediaDir = `${process.env.MEDIA_DIR}`;
-  console.log(attached);
-  attached.forEach((file) => {
+  const now = new Date();
+  attached.forEach((file, i) => {
     if (!file.name) return;
     if (!success) success = true;
-    console.log(file);
     const blogImagesDir = mediaDir + "/images/blog/uploads";
     fs.mkdir(blogImagesDir, { recursive: true }, () => {
       file.arrayBuffer().then((abuf) => {
-        fs.writeFileSync(`${blogImagesDir}/${file.name.replaceAll(" ", "_")}`, Buffer.from(abuf));
+        const mTime = new Date(Number(attached_mtime[i]));
+        const filePath = `${blogImagesDir}/${file.name.replaceAll(" ", "_")}`;
+        fs.writeFileSync(filePath, Buffer.from(abuf));
+        fs.utimesSync(filePath, now, new Date(mTime));
       })
     })
   })

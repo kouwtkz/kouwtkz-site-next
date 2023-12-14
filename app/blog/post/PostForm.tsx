@@ -121,6 +121,8 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
           case "attached":
             for (const _item of Array.from(item) as any[]) {
               formData.append(`${key}[]`, _item);
+              if (_item.lastModified)
+                formData.append(`${key}_mtime[]`, _item.lastModified);
             }
             break;
           default:
