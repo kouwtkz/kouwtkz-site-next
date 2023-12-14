@@ -5,16 +5,18 @@ type getPostsProps = {
   take?: number
   page?: number
   q?: string
+  common?: boolean
 }
 
-export default async function getPosts(args?: getPostsProps) {
-  const take = (args && args.take) ? args.take : undefined;
-  const page = (args && args.page && take) ? (args.page - 1) : undefined;
+export default async function getPosts({ take, page, q = "", common }: getPostsProps) {
+  if (page) page--;
   const skip = (take && page) ? take * page : undefined;
-  const q = args && args.q ? args.q : "";
   const options = {};
 
   const where = setWhere(q, options);
+  if (common) where.push(
+    { draft: false, date: { lte: new Date() } }
+  )
 
   try {
     const posts = await prisma.post.findMany({

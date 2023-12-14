@@ -42,6 +42,13 @@ const TopPage = ({ post }: PostDetailProps) => {
           </div>
           <MultiParser detailsOpen={true}>{post.body}</MultiParser>
           <div className="text-right [&>*]:ml-4">
+            {post.draft ? (
+              <span className="text-main-grayish">(下書き)</span>
+            ) : post.date.getTime() > Date.now() ? (
+              <span className="text-main-grayish">(予約)</span>
+            ) : (
+              <></>
+            )}
             <span className="text-main">{post.user?.name}</span>
             {post.date ? (
               <span className="text-main-grayish">

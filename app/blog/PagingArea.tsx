@@ -8,7 +8,7 @@ type PagingAreaProps = { max?: number };
 
 function Main({ max }: PagingAreaProps) {
   const _min = 1;
-  const _max = max || 999;
+  const _max = max || 1;
   const pagingInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const FormRef = useRef<HTMLFormElement>(null);

@@ -9,6 +9,7 @@ type PostFormType = {
   body?: string,
   category?: string,
   pin?: number,
+  draft?: boolean,
   date?: Date,
   postId?: string,
   userId?: string
@@ -51,19 +52,22 @@ export async function POST(req: NextRequest) {
   const update = String(formData.get("update"));
 
   const title = formData.get("title");
-  if (title) data.title = String(title);
+  if (title !== null) data.title = String(title);
 
   const body = formData.get("body");
-  if (body || !update) data.body = String(body || "");
+  if (body !== null || !update) data.body = String(body || "");
 
   const category = formData.get("category");
-  if (category) data.category = String(category);
+  if (category !== null) data.category = String(category);
 
   const pin = formData.get("pin");
-  if (pin) data.pin = Number(pin);
+  if (pin !== null) data.pin = Number(pin);
+
+  const draft = formData.get("draft");
+  if (draft !== null) data.draft = draft !== 'false';
 
   const date = formData.get("date");
-  if (date) {
+  if (date !== null) {
     const stringDate = String(date);
     if (stringDate.endsWith("Z") || /\+/.test(stringDate))
       data.date = new Date(stringDate);

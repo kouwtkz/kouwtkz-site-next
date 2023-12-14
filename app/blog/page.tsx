@@ -22,7 +22,12 @@ export default async function BlogPage({
   const q = isStatic ? undefined : searchParams.q;
   // 投稿一覧取得
   const take = isStatic ? 200 : 10;
-  const { posts, count, max } = await getPosts({ take, page, q });
+  const { posts, count, max } = await getPosts({
+    take,
+    page,
+    q,
+    common: currentUser === null,
+  });
 
   return (
     <>

@@ -41,10 +41,10 @@ model Post {
   userId    String
   title     String    @default("")
   body      String
-  category  String?
-  pin       Int?
-  noindex   Boolean?
-  draft     Boolean?
+  category  String    @default("")
+  pin       Int?      @default(0)
+  noindex   Boolean   @default(false)
+  draft     Boolean   @default(false)
   date      DateTime  @default(now())
   updatedAt DateTime? @updatedAt
   flags     Int?

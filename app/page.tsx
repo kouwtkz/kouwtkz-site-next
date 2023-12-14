@@ -19,6 +19,8 @@ export default async function Page() {
     },
     where: {
       category: "お知らせ",
+      date: { lte: new Date() },
+      draft: false,
     },
     orderBy: {
       date: "desc",
