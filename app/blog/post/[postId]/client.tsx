@@ -7,7 +7,7 @@ import { Post, User } from "@prisma/client";
 import MultiParser from "@/app/components/functions/MultiParser";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import date_format from "@/app/components/functions/date_format";
+import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 
 type PostDetailProps = {
   post?: Post & { user: { name: string | null; icon: string | null } | null };
@@ -43,9 +43,13 @@ const TopPage = ({ post }: PostDetailProps) => {
           <MultiParser detailsOpen={true}>{post.body}</MultiParser>
           <div className="text-right [&>*]:ml-4">
             <span className="text-main">{post.user?.name}</span>
-            <span className="text-main-grayish">
-              {date_format("Y/m/d H:i", post.date, true)}
-            </span>
+            {post.date ? (
+              <span className="text-main-grayish">
+                {post.date.toLocaleString("ja", opt)}
+              </span>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       </div>

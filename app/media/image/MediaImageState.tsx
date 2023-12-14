@@ -20,6 +20,7 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
   imageAlbums.forEach((album) => {
     album.list.forEach((item) => {
       item.group = album.name;
+      item.time = item.time ? new Date(item.time) : undefined;
       imageList.push(item);
     });
   });

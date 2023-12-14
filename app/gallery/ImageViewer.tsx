@@ -12,6 +12,7 @@ import MultiParser from "@/app/components/functions/MultiParser";
 import { useSearchParams } from "next/navigation";
 import { useMediaImageState } from "../media/image/MediaImageState";
 import { useRouter } from "next/navigation";
+import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -109,9 +110,7 @@ const ImageViewerWindow = () => {
                   {image.title}
                 </h2>
                 <div className="mx-2 md:mr-6 text-2xl">
-                  <MultiParser
-                    className="[&_p]:my-4 [&_p]:whitespace-pre-line"
-                  >
+                  <MultiParser className="[&_p]:my-4 [&_p]:whitespace-pre-line">
                     {image.description}
                   </MultiParser>
                 </div>
@@ -144,7 +143,9 @@ const ImageViewerWindow = () => {
                             width={40}
                             height={40}
                           />
-                        ) : null}
+                        ) : (
+                          <></>
+                        )}
                         <span className="align-middle">{chara.name}</span>
                       </Link>
                     ))}
@@ -159,8 +160,17 @@ const ImageViewerWindow = () => {
                       {image.link}
                     </Link>
                   </div>
-                ) : null}
+                ) : (
+                  <></>
+                )}
               </div>
+              {image.time ? (
+                <div className="m-4 text-main-grayish text-right">
+                  {image.time.toLocaleString("ja", opt)}
+                </div>
+              ) : (
+                <></>
+              )}
               <div className="m-4">
                 <button className="m-auto block text-xl" onClick={backAction}>
                   とじる
@@ -169,7 +179,9 @@ const ImageViewerWindow = () => {
             </div>
           </div>
         </div>
-      ) : null}
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

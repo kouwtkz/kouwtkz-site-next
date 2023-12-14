@@ -29,7 +29,7 @@ const imageRe = /\.(png|jpe?g|gif)$/i;
 
 /**
  * @summary 参照渡しで加工する関数
- * @param {MediaImageItemType} image
+ * @param {MediaImageItemType & {time?: any}} image
  * @param {MediaImageDirType} dirItem
  * @param {getImageListType} getImageOption[]
  */
@@ -39,6 +39,7 @@ function readImage(image, dirItem, getImageOption = {}) {
   image.URL = `${imageHost}${imagePath}`;
   image.innerURL = `${innerHost}${imagePath}`;
   const fullPath = `${dirItem.imageRoot || projectRoot}${imagePath}`;
+  image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(fullPath).mtime));
   const dimensions = sizeOf(fullPath);
   const width = Number(dimensions.width);
   const height = Number(dimensions.height);
@@ -180,9 +181,9 @@ export function getImageItem(getImageOption = {}) {
   if (typeof (getImageOption) === "string") getImageOption = { filter: { imageName: getImageOption } }
   const images = getImageItems({ ...getImageOption, ...{ onceAlbum: true } });
   if (images.length > 0)
-  return images[0];
-else
-return null;
+    return images[0];
+  else
+    return null;
 }
 
 
@@ -253,9 +254,8 @@ export function parseImageItems(imageAlbums) {
  *  group?: string;
  *  title?: string;
  *  description?: string;
- *  time?: number | Date;
- *  timeFormat?: string;
- *  timeReplace?: string;
+ *  time?: Date | null;
+ *  timeOptions?: Intl.DateTimeFormatOptions;
  *  topImage?: boolean;
  *  [key: string]: any;
  *  info?: MediaImageInfoType;
