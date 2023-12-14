@@ -4,7 +4,8 @@
   },
   // Explorer で非表示にするもの
   "files.exclude": {
-    "**/.next": true, // Next.js サーバーのキャッシュ
+    "**/.next": true, // Next.jsの生成ファイル
+    "**/.cache": true, // キャッシュ
     "**/node_modules": true,
     "out": true // Next.js の export 先
   },
