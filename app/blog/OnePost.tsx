@@ -22,7 +22,12 @@ export default function OnePost({ post, isStatic }: Props) {
       {isStatic ? null : <MultiParser>{post.body}</MultiParser>}
       <div className="text-right [&>*]:ml-4">
         <span className="text-main">{post.user?.name}</span>
-        <span className="text-main-grayish">{formattedDate}</span>
+        <Link
+          className="text-main-grayish hover:text-main-grayish-fluo"
+          href={`/blog/post/${post.postId}`}
+        >
+          {formattedDate}
+        </Link>
       </div>
     </div>
   );
