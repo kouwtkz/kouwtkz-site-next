@@ -36,7 +36,7 @@ const autoInputList: AutoInputItemType[] = [
   },
   {
     label: "パスワード（再）",
-    id: "check_password",
+    name: "check_password",
     type: "password",
     schema: z.string(),
   },

@@ -1,7 +1,13 @@
 "use client";
 
 import { Post } from "@prisma/client";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, {
+  RefCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter } from "next/navigation";
@@ -16,6 +22,28 @@ import {
 } from "./PostFormFunctions";
 import toast from "react-hot-toast";
 import { HotkeyRunEvent } from "@/app/components/form/event/EventSet";
+import * as z from "zod";
+import {
+  FieldValues,
+  RefCallBack,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import SetRegister from "@/app/components/form/hook/SetRegister";
+import axios from "axios";
+
+const schema = z.object({
+  update: z.string(),
+  postId: z.string(),
+  title: z.string().nullish(),
+  body: z.string().min(1, { message: "本文を入力してください" }),
+  date: z.string().nullish(),
+  category: z.string().nullish(),
+  pin: z.number().nullish(),
+  draft: z.boolean().nullish(),
+  attached: z.custom<FileList>().nullish(),
+});
 
 type PostFormProps = {
   categoryCount: {
@@ -30,70 +58,90 @@ type PostFormProps = {
 
 const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
   const { togglePreviewMode } = usePreviewMode();
   const duplicationMode = mode?.duplication || false;
   const updateMode = postTarget && !duplicationMode;
   const formRef = useRef<HTMLFormElement>(null);
-  const categorySelectRef = useRef<HTMLSelectElement>(null);
-  const categoryNewRef = useRef<HTMLOptionElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const categorySelectRef = useRef<HTMLSelectElement | null>(null);
+  const categoryNewRef = useRef<HTMLOptionElement | null>(null);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const decorationRef = useRef<HTMLSelectElement>(null);
   const colorChangerRef = useRef<HTMLInputElement>(null);
   const colorChangeValueRef = useRef("");
   const InsertTextRef = useRef<HTMLSelectElement>(null);
   const selectMediaRef = useRef<HTMLSelectElement>(null);
-  const AttachedRef = useRef<HTMLInputElement>(null);
-  const postIdRef = useRef<HTMLInputElement>(null);
+  const AttachedRef = useRef<HTMLInputElement | null>(null);
+  const postIdRef = useRef<HTMLInputElement | null>(null);
   const operationRef = useRef<HTMLSelectElement>(null);
 
-  const beginFormDataRef = useRef<any>(null);
-  useEffect(() => {
-    if (!beginFormDataRef.current && formRef.current)
-      beginFormDataRef.current = new FormData(formRef.current);
-  }, []);
+  const defaultValues: { [k: string]: any } = {
+    update: duplicationMode ? "" : postTarget?.postId,
+    postId: postTarget?.postId,
+    title: postTarget?.title,
+    body: postTarget?.body,
+    date: postTarget?.date.toISOString().replace(/:[^:]+$/, ""),
+    category: postTarget?.category,
+    pin: Number(postTarget?.pin || 0),
+    draft: Boolean(postTarget?.draft),
+  };
 
-  const PostSend = () => {
-    if (!formRef.current) return;
-    const formData = new FormData(formRef.current);
-    const beginData = beginFormDataRef.current as FormData;
-    const deleteKeys: string[] = [];
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FieldValues>({
+    defaultValues,
+    resolver: zodResolver(schema),
+  });
 
-    console.log(Object.fromEntries(formData));
+  if (Object.keys(errors).length > 0) console.log(errors);
 
-    formData.forEach((item, key) => {
-      const beginItem = beginData.get(key);
-      switch (key) {
-        case "postId":
-        case "update":
-          break;
-        case "attached[]":
-          if ((item as File).name === "") deleteKeys.push(key);
-          break;
-        default:
-          if (item === beginItem) deleteKeys.push(key);
-          break;
-      }
-    });
+  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
+    setLoading(true);
+    const formData = new FormData();
 
-    deleteKeys.forEach((key) => formData.delete(key));
-
-    fetch(formRef.current.action, {
-      method: formRef.current.getAttribute("method") || formRef.current.method,
-      body: formData,
-    })
-      .then((r) => r.json())
-      .then((j) => {
-        if (j.postId) {
-          router.push(`/blog/post/${j.postId}`);
-        } else {
-          router.push(`/blog`);
+    try {
+      Object.entries(data).forEach(([key, item]) => {
+        const defaultItem = defaultValues[key];
+        switch (key) {
+          case "postId":
+          case "update":
+            formData.append(key, item);
+            break;
+          case "attached":
+            for (const _item of Array.from(item) as any[]) {
+              formData.append(`${key}[]`, _item);
+            }
+            break;
+          default:
+            if (item !== defaultItem && !(item === "" && !defaultItem))
+              formData.append(key, item);
+            break;
         }
-        toast(updateMode ? "更新しました" : "投稿しました", { duration: 2000 });
-        router.refresh();
-      })
-      .catch((err) => {
-        console.log("送信に失敗しました", err);
       });
+      if (Object.keys(Object.fromEntries(formData)).length > 0) {
+        const res = await axios.post("post/send", formData);
+        if (res.status === 200) {
+          toast(updateMode ? "更新しました" : "投稿しました", {
+            duration: 2000,
+          });
+          if (res.data.postId) {
+            router.push(`/blog/post/${res.data.postId}`);
+          } else {
+            router.push(`/blog`);
+          }
+          router.refresh();
+        }
+      } else {
+        toast.error("更新するデータがありませんでした", { duration: 2000 });
+      }
+    } catch (error) {
+      toast.error("エラーが発生しました", { duration: 2000 });
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useHotkeys("b", () => router.back());
@@ -135,60 +183,53 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
       ref={formRef}
       encType="multipart/form-data"
       className="pt-2 [&>*]:my-2"
-      onSubmit={(e) => {
-        PostSend();
-        e.preventDefault();
-      }}
+      onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="font-LuloClean text-3xl text-main my-6 pt-2 pb-8">
         Post form
       </h1>
+      <input {...register("update")} type="hidden" />
       <input
+        {...SetRegister({ name: "postId", ref: postIdRef, register })}
         type="hidden"
-        name="update"
-        defaultValue={duplicationMode ? "" : postTarget?.postId}
       />
       <input
-        type="hidden"
-        name="postId"
-        ref={postIdRef}
-        defaultValue={postTarget?.postId}
-      />
-      <input
-        name="title"
+        {...register("title")}
         type="text"
         placeholder="タイトル"
-        defaultValue={postTarget?.title}
+        disabled={loading}
         className="block mx-auto h-8 px-3 py-2 w-[80%] max-w-md"
       />
       <div className="mx-auto max-w-2xl flex justify-around">
         <label>
           <input
+            {...register("pin")}
             title="ピン留め"
-            name="pin"
             id="pinNumber"
             type="number"
             min="-128"
             max="127"
             placeholder="pin"
-            defaultValue="0"
+            disabled={loading}
             className="w-12 text-center"
           />
           ピン
         </label>
         <select
+          {...SetRegister({
+            name: "category",
+            ref: categorySelectRef,
+            onChange: () =>
+              setCategory({
+                selectCategory: categorySelectRef.current,
+                newCategoryBase: categoryNewRef.current,
+              }),
+            register,
+          })}
           title="カテゴリ"
-          name="category"
           className="w-[30%]"
-          defaultValue={postTarget?.category || undefined}
           data-before={postTarget?.category || undefined}
-          ref={categorySelectRef}
-          onChange={() =>
-            setCategory({
-              selectCategory: categorySelectRef.current,
-              newCategoryBase: categoryNewRef.current,
-            })
-          }
+          disabled={loading}
         >
           <option value="">カテゴリ</option>
           <option value="new" ref={categoryNewRef}>
@@ -203,6 +244,7 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
         <select
           title="操作"
           ref={operationRef}
+          disabled={loading}
           onChange={() =>
             setOperation({
               selectOperation: operationRef.current,
@@ -219,28 +261,24 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
       </div>
       <div className="mx-auto max-w-2xl flex justify-around">
         <label>
-          <input
-            name="draft"
-            type="checkbox"
-            id="draftFlag"
-            defaultChecked={Boolean(postTarget?.draft)}
-          />
+          <input {...register("draft")} type="checkbox" disabled={loading} />
           下書き
         </label>
         <input
+          {...register("date")}
           type="datetime-local"
-          name="date"
           placeholder="日付"
           title="日付"
           step={1}
-          defaultValue={postTarget?.date.toISOString().replace(/:[^:]+$/, "")}
           className="px-1"
+          disabled={loading}
         />
       </div>
       <div className="mx-auto max-w-2xl flex justify-around">
         <select
           title="メディア"
           ref={selectMediaRef}
+          disabled={loading}
           onChange={() =>
             setMedia({
               selectMedia: selectMediaRef.current,
@@ -261,6 +299,7 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
           placeholder="色"
           title="色"
           ref={colorChangerRef}
+          disabled={loading}
           onChange={() => {
             colorChangeValueRef.current = colorChangerRef.current?.value || "";
           }}
@@ -268,6 +307,7 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
         <select
           title="装飾"
           ref={decorationRef}
+          disabled={loading}
           onChange={() =>
             setDecoration({
               selectDecoration: decorationRef.current,
@@ -294,6 +334,7 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
         <select
           title="追加"
           ref={InsertTextRef}
+          disabled={loading}
           onChange={() =>
             setPostInsert({
               selectInsert: InsertTextRef.current,
@@ -312,21 +353,27 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
           <option value="code">コード</option>
         </select>
       </div>
-      <PostTextarea body={postTarget?.body} ref={textareaRef} />
+      <PostTextarea
+        registed={SetRegister({ name: "body", ref: textareaRef, register })}
+        disabled={loading}
+      />
       <input
-        name="attached[]"
+        {...SetRegister({
+          name: "attached",
+          onChange: () =>
+            setAttached({
+              inputAttached: AttachedRef.current,
+              textarea: textareaRef.current,
+            }),
+          ref: AttachedRef,
+          register,
+        })}
         type="file"
         accept="image/*"
         placeholder="画像選択"
         multiple
         style={{ display: "none" }}
-        ref={AttachedRef}
-        onChange={() =>
-          setAttached({
-            inputAttached: AttachedRef.current,
-            textarea: textareaRef.current,
-          })
-        }
+        disabled={loading}
       />
       <div className="[&>button]:mx-4 pt-2">
         <button

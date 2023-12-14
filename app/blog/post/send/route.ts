@@ -24,10 +24,15 @@ export async function POST(req: NextRequest) {
   if (!currentUser) return NextResponse.json({ result: "error", error: "ログインしてません" }, { status: 500 });
 
   const formData = await req.formData();
+  let success = false
+  
   const attached = (formData.getAll("attached[]") || []) as File[];
   const mediaDir = `${process.env.MEDIA_DIR}`;
+  console.log(attached);
   attached.forEach((file) => {
     if (!file.name) return;
+    if (!success) success = true;
+    console.log(file);
     const blogImagesDir = mediaDir + "/images/blog/uploads";
     fs.mkdir(blogImagesDir, { recursive: true }, () => {
       file.arrayBuffer().then((abuf) => {
@@ -57,7 +62,8 @@ export async function POST(req: NextRequest) {
   const date = formData.get("date");
   if (date) data.date = new Date(String(date));
 
-  if (Object.keys(data).length > 0) {
+  if (!success) success = Object.keys(data).length > 0;
+  if (success) {
     if (update) {
       await prisma.post.updateMany({
         where: {
@@ -73,6 +79,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ postId });
+  } else {
+    return NextResponse.json({ error: "更新するデータがありません" }, { status: 500 });
   }
 }
 

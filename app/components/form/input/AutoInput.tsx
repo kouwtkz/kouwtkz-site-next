@@ -6,8 +6,7 @@ import * as z from "zod";
 
 export type AutoInputItemType = {
   label?: string;
-  name?: string;
-  id?: string;
+  name: string;
   type: string;
   schema: z.ZodString;
 };
@@ -15,7 +14,7 @@ export type AutoInputItemType = {
 export function MakeSchemaObject(list: AutoInputItemType[]) {
   return z.object(
     list.reduce(
-      (a, c) => ({ ...a, ...{ [c.name || c.id || ""]: c.schema } }),
+      (a, c) => ({ ...a, ...{ [c.name]: c.schema } }),
       {} as any
     )
   );
@@ -46,7 +45,7 @@ export default function AutoInput({
   errors,
   errorClassName = "my-3 text-sm text-red-500",
 }: AutoInputProps) {
-  const registId = item.name || item.id || "";
+  const registId = item.name;
   let tag = "input";
   let tagClass = inputClassName;
   let type = "";
@@ -63,8 +62,6 @@ export default function AutoInput({
     className: tagClass,
     disabled,
     ...(type ? { type } : {}),
-    ...(item.name ? { name: item.name } : {}),
-    ...(item.id ? { id: item.id } : {}),
     ...register(registId, { required: true }),
   });
   const labeled = item.label ? (

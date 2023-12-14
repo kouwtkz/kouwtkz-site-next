@@ -34,8 +34,11 @@ export function setCategory(
   }
   selectCategory.dataset.before = selectCategory.value;
 }
-
-export function replacePostTextarea({ textarea, before = '', after }: { textarea: HTMLTextAreaElement, before: string, after?: string }) {
+type textareaType = {
+  textarea: HTMLTextAreaElement | null
+}
+export function replacePostTextarea({ textarea, before = '', after }: textareaType & { before: string, after?: string }) {
+  if (!textarea) return;
   if (after === undefined) after = before;
   const { selectionStart, selectionEnd } = textarea;
   const selection = textarea.value.slice(selectionStart, selectionEnd);
@@ -52,9 +55,8 @@ export function setDecoration(
     selectDecoration,
     textarea,
     colorChanger
-  }: {
+  }: textareaType & {
     selectDecoration: HTMLSelectElement | null,
-    textarea: HTMLTextAreaElement | null
     colorChanger: HTMLInputElement | null
   }
 ) {
@@ -80,8 +82,7 @@ export function setColorChange(
   {
     textarea,
     colorChanger
-  }: {
-    textarea: HTMLTextAreaElement | null
+  }: textareaType & {
     colorChanger: HTMLInputElement | null
   }
 ) {
@@ -92,9 +93,8 @@ export function setPostInsert(
   {
     selectInsert,
     textarea,
-  }: {
+  }: textareaType & {
     selectInsert: HTMLSelectElement | null,
-    textarea: HTMLTextAreaElement | null
   }
 ) {
   if (!selectInsert || !textarea) return;
@@ -127,14 +127,16 @@ export function setPostInsert(
   selectInsert.value = '';
 }
 
-export function setAttached({ inputAttached, textarea }: { inputAttached: HTMLInputElement | null, textarea: HTMLTextAreaElement | null }) {
+export function setAttached({ inputAttached, textarea }: textareaType & { inputAttached: HTMLInputElement | null, textarea: HTMLTextAreaElement | null }) {
   if (!inputAttached || !textarea) return;
   const files = inputAttached.files || [];
   Array.from(files).forEach((file) => {
     const filename = file.name;
     const uploadname = filename.replaceAll(' ', '_');
     if (!textarea.value.match(uploadname)) {
-      textarea.value = `${textarea.value}\n![${filename.replace(/\.[^.]+$/, '')}](/_media/images/blog/uploads/${uploadname})`
+      const value = `\n![${filename.replace(/\.[^.]+$/, '')}](/_media/images/blog/uploads/${uploadname})`;
+      textarea.setRangeText(value);
+      textarea.focus();
     }
   })
   inputAttached.style.display = (files.length === 0) ? 'none' : '';
@@ -145,10 +147,9 @@ export function setMedia(
     selectMedia,
     inputAttached,
     textarea,
-  }: {
+  }: textareaType & {
     selectMedia: HTMLSelectElement | null,
     inputAttached: HTMLInputElement | null,
-    textarea: HTMLTextAreaElement | null
   }
 ) {
   if (!selectMedia || !textarea) return;
