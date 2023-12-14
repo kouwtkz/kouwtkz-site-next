@@ -28,8 +28,11 @@ const autoInputList: AutoInputItemType[] = [
   },
 ];
 const schema = MakeSchemaObject(autoInputList);
+type LoginFormProps = {
+  redirect?: string;
+};
 
-export default function Page() {
+export default function Page({ redirect = "/setting" }: LoginFormProps) {
   const router = useRouter();
   const search = useSearchParams();
   const [loading, setLoading] = useState(false);
@@ -62,7 +65,6 @@ export default function Page() {
 
       toast.success("ログインしました！");
 
-      const redirect = search.get("redirect") || "/setting";
       router.push(redirect);
       router.refresh();
     } catch (error) {
