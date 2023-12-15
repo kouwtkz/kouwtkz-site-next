@@ -141,7 +141,12 @@ export function getImageAlbums(getImageOptionArgs = {}) {
           else if (onceImage && dirAlbum !== null && dirAlbum.list.length > 0) return true;
         });
       }
-      itemFor(dirItem.path);
+      try {
+        itemFor(dirItem.path);
+      } catch(e) {
+        // ここのエラーは定義したメディアのディレクトリがないときに出る
+        console.error(e);
+      }
       if (dirAlbum !== null && dirAlbum.list.length > 0) allResult.push(dirAlbum);
       if ((onceAlbum || onceImage) && allResult.length > 0) return true;
     }

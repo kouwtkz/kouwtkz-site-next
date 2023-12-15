@@ -47,8 +47,16 @@ import { readFileSync } from "fs";
  */
 
 const projectRoot = `${process.env.PWD}`, dataDir = `${process.env.DATA_DIR}`;
-const rawData = readFileSync(`${projectRoot}/${dataDir}/site.yaml`, "utf8");
+
+/** @type any */
+let rawData = {}
+try {
+  rawData = load(readFileSync(`${projectRoot}/${dataDir}/site.yaml`, "utf8"));
+} catch {
+  rawData = { title: "title", description: "description", short: { description: "short" }, author: { since: 2023 } }
+}
+
 /** @type SiteProps */
-const site = load(rawData);
+const site = rawData;
 
 export { site };

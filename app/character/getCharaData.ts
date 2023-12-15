@@ -4,9 +4,12 @@ import { setPath } from "@/app/components/functions/general";
 import { CharaType, CharaObjectType } from "./chara.d";
 
 const dataDir = `${process.env.DATA_DIR}`;
-const rawData = readFileSync(setPath(`@/${dataDir}/characters.yaml`), "utf8");
+let rawData: any = {}
+try {
+  rawData = load(readFileSync(setPath(`@/${dataDir}/characters.yaml`), "utf8"));
+} catch { }
 
-export const charaObject = <CharaObjectType>load(rawData);
+export const charaObject = <CharaObjectType>rawData;
 export const charaList = <Array<CharaType>>Object.values(charaObject);
 export const charaMap = <Map<string, CharaType>>new Map(Object.entries(charaObject));
 
