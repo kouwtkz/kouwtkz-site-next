@@ -6,7 +6,7 @@ import isStatic from "@/app/components/System/isStatic.mjs";
 import Fixed from "./Fixed";
 
 // ↓ 静的ビルドする際のみコメントアウトを外すこと
-// export { generateStaticParams };
+export { generateStaticParams };
 async function generateStaticParams() {
   const { posts } = await getPosts({ take: 0xffff });
   return Object.values(posts).map((post) => {
