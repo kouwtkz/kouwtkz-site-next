@@ -83,6 +83,21 @@
       "command": "rsync -au -e ssh --size-only --delete ./out/html/ rs:~/mysite_next_static/html/"
     },
     {
+      "label": "docker: down (.docker/)",
+      "type": "shell",
+      "command": "docker compose -f .docker/docker-compose.yml down"
+    },
+    {
+      "label": "docker: up backgorund (.docker/)",
+      "type": "shell",
+      "command": "docker compose -f .docker/docker-compose.yml up -d"
+    },
+    {
+      "label": "docker: up build (.docker/)",
+      "type": "shell",
+      "command": "docker compose -f .docker/docker-compose.yml up --build"
+    },
+    {
       "type": "npm",
       "script": "build",
       "group": "build",
