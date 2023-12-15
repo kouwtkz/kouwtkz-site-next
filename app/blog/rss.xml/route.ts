@@ -5,7 +5,7 @@ import { site } from "@/app/site/SiteData.mjs";
 const SITE_URL = process.env.PRODUCTION_URL || "http://localhost";
 
 export async function GET() {
-  const { posts } = await getPosts({ take: 30 });
+  const { posts } = await getPosts({ take: 30, common: true });
 
   const feed = new Rss({
     title: site.title,
