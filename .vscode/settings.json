@@ -7,7 +7,6 @@
     "**/.next": true, // Next.jsの生成ファイル
     "**/.cache": true, // キャッシュ
     "**/node_modules": true,
-    "out": true // Next.js の export 先
   },
   "references.preferredLocation": "view"
 }
