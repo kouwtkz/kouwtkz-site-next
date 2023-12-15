@@ -11,7 +11,7 @@ services:
     tty: true #ポートがなくても動くようにする
     volumes:
       - ../:/mysite-next:delegated
-      - next:/mysite-next/out:cached
+      - next:/mysite-next/.next:cached
       - node_modules:/mysite-next/node_modules
       - ~/docker/default.ssh:/root/.ssh
       - ~/docker/next.vscode-server:/root/.vscode-server
