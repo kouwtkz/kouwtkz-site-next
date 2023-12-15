@@ -6,23 +6,27 @@ import getPostDetail from "../functions/getPostDetail";
 import getCurrentUser from "@/app/actions/getCurrentUser";
 import { headers } from "next/headers";
 
+type ParamsType = { [key: string]: string | undefined };
 export default async function postPage({
   params,
   searchParams,
 }: {
   params: { slug: string };
-  searchParams: { [key: string]: string | undefined };
+  searchParams: ParamsType;
 }) {
-  const headersList = headers();
   const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    const redirectUrl = new URL(headersList.get("x-url") || "");
-    redirect(
-      `/setting/login?redirect=${redirectUrl.pathname + redirectUrl.search}`
-    );
+  if (!isStatic) {
+    const headersList = headers();
+    if (!currentUser) {
+      const redirectUrl = new URL(headersList.get("x-url") || "");
+      redirect(
+        `/setting/login?redirect=${redirectUrl.pathname + redirectUrl.search}`
+      );
+    }
   }
 
-  const targetPostId = searchParams.target || searchParams.base;
+  const _searchParams: ParamsType = isStatic ? {} : searchParams;
+  const targetPostId = _searchParams.target || _searchParams.base;
   const targetPost = targetPostId
     ? await getPostDetail({ postId: targetPostId })
     : null;
@@ -46,7 +50,7 @@ export default async function postPage({
           count: r._count._all,
         }))}
         postTarget={targetPost}
-        mode={{ duplication: Boolean(searchParams.base) }}
+        mode={{ duplication: Boolean(_searchParams.base) }}
       />
     </>
   );
