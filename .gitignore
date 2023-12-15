@@ -8,6 +8,9 @@ _data/db/
 # シークレットキーなど
 .secret/
 
+# 個人用シェル
+.vscode/.batch/
+
 # キャッシュ
 /.cache
 *.check
