@@ -40,7 +40,7 @@ const schema = z.object({
   body: z.string().min(1, { message: "本文を入力してください" }),
   date: z.string().nullish(),
   category: z.string().nullish(),
-  pin: z.number().nullish(),
+  pin: z.coerce.number().nullish(),
   draft: z.boolean().nullish(),
   attached: z.custom<FileList>().nullish(),
 });
@@ -111,6 +111,11 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
     const formData = new FormData();
+    let sendEnable = false;
+    const append = (name: string, value: string | Blob, sendCheck = true) => {
+      formData.append(name, value);
+      if (sendCheck && !sendEnable) sendEnable = true;
+    };
 
     try {
       Object.entries(data).forEach(([key, item]) => {
@@ -118,25 +123,26 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
         switch (key) {
           case "postId":
           case "update":
-            formData.append(key, item);
+            append(key, item, false);
             break;
           case "date":
-            formData.append(key, new Date(`${item}+09:00`).toISOString());
+            if (item !== defaultItem)
+              append(key, item ? new Date(`${item}+09:00`).toISOString() : "");
             break;
           case "attached":
             for (const _item of Array.from(item) as any[]) {
-              formData.append(`${key}[]`, _item);
+              append(`${key}[]`, _item);
               if (_item.lastModified)
-                formData.append(`${key}_mtime[]`, _item.lastModified);
+                append(`${key}_mtime[]`, _item.lastModified);
             }
             break;
           default:
             if (item !== defaultItem && !(item === "" && !defaultItem))
-              formData.append(key, item);
+              append(key, item);
             break;
         }
       });
-      if (Object.keys(Object.fromEntries(formData)).length > 0) {
+      if (sendEnable) {
         const res = await axios.post("post/send", formData);
         if (res.status === 200) {
           toast(updateMode ? "更新しました" : "投稿しました", {

@@ -68,11 +68,15 @@ export async function POST(req: NextRequest) {
 
   const date = formData.get("date");
   if (date !== null) {
-    const stringDate = String(date);
-    if (stringDate.endsWith("Z") || /\+/.test(stringDate))
-      data.date = new Date(stringDate);
-    else
-      data.date = new Date(`${stringDate}+09:00`);
+    if (date === "") {
+      data.date = new Date();
+    } else {
+      const stringDate = String(date);
+      if (stringDate.endsWith("Z") || /\+/.test(stringDate))
+        data.date = new Date(stringDate);
+      else
+        data.date = new Date(`${stringDate}+09:00`);
+    }
   }
 
   if (!success) success = Object.keys(data).length > 0;

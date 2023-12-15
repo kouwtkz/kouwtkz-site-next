@@ -6,9 +6,10 @@ type getPostsProps = {
   page?: number
   q?: string
   common?: boolean
+  pinned?: boolean
 }
 
-export default async function getPosts({ take, page, q = "", common }: getPostsProps) {
+export default async function getPosts({ take, page, common, q = "", pinned = false }: getPostsProps) {
   if (page) page--;
   const skip = (take && page) ? take * page : undefined;
   const options = {};
@@ -17,6 +18,9 @@ export default async function getPosts({ take, page, q = "", common }: getPostsP
   if (common) where.push(
     { draft: false, date: { lte: new Date() } }
   )
+  const orderBy: any[] = []
+  if (pinned) orderBy.push({ pin: "desc" })
+  orderBy.push({ date: "desc" })
 
   try {
     const posts = await prisma.post.findMany({
@@ -25,10 +29,7 @@ export default async function getPosts({ take, page, q = "", common }: getPostsP
       },
       take,
       skip,
-      orderBy: {
-        // 降順
-        date: "desc",
-      },
+      orderBy,
       include: {
         // ユーザー情報も含める（POSTテーブルにないもの、JOIN文）
         user: {

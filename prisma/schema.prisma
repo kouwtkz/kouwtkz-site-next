@@ -42,7 +42,7 @@ model Post {
   title     String    @default("")
   body      String
   category  String    @default("")
-  pin       Int?      @default(0)
+  pin       Int       @default(0)
   noindex   Boolean   @default(false)
   draft     Boolean   @default(false)
   date      DateTime  @default(now())

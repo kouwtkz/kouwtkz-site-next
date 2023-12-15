@@ -10,20 +10,37 @@ type Props = {
 export default function OnePost({ post, isStatic }: Props) {
   const formattedDate = post.date ? post.date.toLocaleString("ja", opt) : "";
   return (
-    <div className="m-4">
-      <h3 className="text-2xl text-main-dark font-bold inline-block m-4">
-        <Link href={`/blog/post/${post.postId}`}>
-          {post.title || formattedDate}
-        </Link>
-      </h3>
-      <div className="underline inline-block">
-        <Link href={`/blog/?q=category:${post.category}`}>{post.category}</Link>
-      </div>
+    <div className="mx-4 my-6">
+      {post.pin !== 0 ? (
+        post.pin > 0 ? (
+          <div className="text-main-strong">▼ 固定された投稿</div>
+        ) : (
+          <></>
+        )
+      ) : (
+        <></>
+      )}
+      {post.title ? (
+        <h3 className="text-2xl text-main-dark font-bold inline-block m-2">
+          <Link href={`/blog/post/${post.postId}`}>{post.title}</Link>
+        </h3>
+      ) : (
+        <></>
+      )}
+      {post.category ? (
+        <div className="underline inline-block">
+          <Link href={`/blog/?q=category:${post.category}`}>
+            {post.category}
+          </Link>
+        </div>
+      ) : (
+        <></>
+      )}
       {isStatic ? null : <MultiParser>{post.body}</MultiParser>}
       <div className="text-right [&>*]:ml-4">
         {post.draft ? (
           <span className="text-main-grayish">(下書き)</span>
-          ) : post.date.getTime() > Date.now() ? (
+        ) : post.date.getTime() > Date.now() ? (
           <span className="text-main-grayish">(予約)</span>
         ) : (
           <></>
