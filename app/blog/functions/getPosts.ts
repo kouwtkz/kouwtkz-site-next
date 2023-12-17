@@ -1,4 +1,3 @@
-const prisma: any = {};
 import { AutoAllotDate } from "@/app/components/System/DateFunctions";
 import { Post } from "../Post";
 import { findMany } from "./findMany";

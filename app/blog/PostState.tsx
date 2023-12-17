@@ -28,7 +28,7 @@ export default function PostState({ buildTime = new Date().getTime() }) {
   const postsData = usePostState();
   useEffect(() => {
     if (!postsData.set)
-      fetch(`${location?.origin}/post.json?v=${buildTime}`)
+      fetch(`${location?.origin}/blog/get`)
         .then((d) => d.json())
         .then((json) => {
           if (!postsData.set) {
