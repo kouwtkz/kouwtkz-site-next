@@ -10,9 +10,11 @@ export type DataStateReplacedProps = {
 }
 export function DataStateAddMtime({ file, mtime, url }: DataStateProps) {
   try {
-    if (file) mtime = statSync(file).mtime;
-    else if (!mtime) mtime = new Date();
-    return `${url}?v=${mtime?.getTime()}`;
+    let v;
+    if (file) v = Math.ceil(statSync(file).mtime.getTime() / 1000);
+    else if (mtime) v = Math.ceil(mtime.getTime() / 1000);
+    else v = Math.ceil(new Date().getTime() / 300000);
+    return `${url}?v=${v}`;
   } catch (e) {
     console.error(e);
     return url;

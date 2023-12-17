@@ -50,7 +50,12 @@ export default async function RootLayout({
         <ImageViewer />
         <CharaData />
         <MediaImageState url={DataStateAddMtime({ url: "/media/image/get" })} />
-        <PostState url={DataStateAddMtime({ url: "/blog/get" })} />
+        <PostState
+          url={DataStateAddMtime({
+            url: "/blog/get",
+            file: "_data/post.json",
+          })}
+        />
         <Header site={site} />
         <div className="text-center pt-24 pb-8 font-KosugiMaru">
           <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
