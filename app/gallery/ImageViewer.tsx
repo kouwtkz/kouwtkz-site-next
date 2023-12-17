@@ -2,7 +2,7 @@
 
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
-import { MediaImageItemType } from "@/app/media/image/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/image/MediaImageType";
 import { useCharaData } from "@/app/character/CharaData";
 import Image from "next/image";
 import Link from "next/link";

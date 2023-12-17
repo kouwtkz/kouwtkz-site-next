@@ -4,7 +4,7 @@ import Image from "next/image";
 import { CharaType } from "@/app/character/chara.d";
 import Link from "next/link";
 import loaderSet from "@/app/lib/loaderSet";
-import { MediaImageItemType } from "@/app/media/image/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/image/MediaImageType";
 import { useCharaData } from "../CharaData";
 import { useServerState } from "@/app/components/System/ServerState";
 

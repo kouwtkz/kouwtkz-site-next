@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { create } from "zustand";
-import { MediaImageItemType, MediaImageAlbumType } from "./MediaImageData.mjs";
+import { MediaImageItemType, MediaImageAlbumType } from "./MediaImageType";
 import { useSystemState } from "@/app/components/System/SystemState";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";

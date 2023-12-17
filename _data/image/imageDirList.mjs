@@ -1,7 +1,7 @@
 const dataDir = `${process.env.DATA_DIR}`;
 /**
  * @summary デフォルトで画像ディレクトリ、サムネイルサイズでリサイズ
- * @type {import("../../app/media/image/MediaImageData.mjs").MediaImageDirType[]}
+ * @type {import("../../app/media/image/MediaImageType").MediaImageDirType[]}
  * */
 const imageDirList = [
   { path: 'gallery', root: `${dataDir}/image`, yaml: true, resizeOption: { mode: 'thumbnail', fit: 'outside' } },

@@ -209,73 +209,14 @@ export function parseImageItems(imageAlbums) {
 }
 
 /**
- * @typedef {{
- *  filter?: FilterOptionProps | string;
- *  doRetouch?: boolean;
- *  onceAlbum?: boolean;
- *  onceImage?: boolean;
- * }} getImageListType;
+ * @typedef { import("./MediaImageType.d.ts").getImageListType } getImageListType
+ * @typedef { import("./MediaImageType.d.ts").MediaImageDirType } MediaImageDirType
+ * @typedef { import("./MediaImageType.d.ts").ResizeMode } ResizeMode
+ * @typedef { import("./MediaImageType.d.ts").FitMethod } FitMethod
  * 
- * @comments ディレクトリ指定のオプション
- * @typedef {{
- * path: string;
- * root?: string;
- * yaml?: boolean;
- * imageRoot?: string;
- * name?: string;
- * recursive?: boolean;
- * resizeOption?: ResizeOptionType | ResizeOptionType[];
- * }} MediaImageDirType;
- * 
- * @typedef { "icon" | "thumbnail" | "simple" } ResizeMode
- * @typedef {"contain" | "cover" | "fill" | "outside" | "inside"} FitMethod
- * 
- * @typedef {{
- *  mode?: ResizeMode;
- *  ext?: string;
- *  size?: number | { w: number, h: number };
- *  quality?: number;
- *  fit?: FitMethod;
- * }} ResizeOptionType;
- * 
- * @comments ひとつのアルバムの変数
- * @typedef {{
- *  dir?: string;
- *  name: string;
- *  list: MediaImageItemType[];
- *  [key: string]: any;
- * }} MediaImageAlbumType;
- * 
- * @comments ひとつの画像用の変数
- * @typedef {{
- *  name: string;
- *  src: string;
- *  dir?: string;
- *  path?: string;
- *  link?: string;
- *  URL?: string;
- *  innerURL?: string;
- *  tags?: string[];
- *  group?: string;
- *  title?: string;
- *  description?: string;
- *  time?: Date | null;
- *  timeOptions?: Intl.DateTimeFormatOptions;
- *  topImage?: boolean;
- *  [key: string]: any;
- *  info?: MediaImageInfoType;
- *  resized?: {
- *   src: string;
- *   option: ResizeOptionType;
- *  }[]
- * }} MediaImageItemType;
- * 
- * @comments 画像そのもののプロパティ
- * @typedef {{
- *  width: number;
- *  height: number;
- *  type: string;
- *  wide: boolean;
- * }} MediaImageInfoType;
+ * @typedef { import("./MediaImageType.d.ts").ResizeOptionType } ResizeOptionType
+ * @typedef { import("./MediaImageType.d.ts").MediaImageAlbumType } MediaImageAlbumType
+ * @typedef { import("./MediaImageType.d.ts").MediaImageItemType } MediaImageItemType
+ * @typedef { import("./MediaImageType.d.ts").MediaImageInfoType } MediaImageInfoType
  * 
 */

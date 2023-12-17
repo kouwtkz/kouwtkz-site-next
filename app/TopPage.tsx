@@ -1,7 +1,7 @@
 "use client";
 
 import loaderSet from "@/app/lib/loaderSet";
-import { MediaImageItemType } from "@/app/media/image/MediaImageData.mjs";
+import { MediaImageItemType } from "@/app/media/image/MediaImageType";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
