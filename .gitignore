@@ -3,6 +3,7 @@
 # 主にメディア関連
 _media/
 _data/**/*.yaml
+_data/**/*.json
 _data/db/
 
 # シークレットキーなど
