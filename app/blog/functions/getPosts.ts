@@ -1,10 +1,10 @@
 const prisma: any = {};
 import { AutoAllotDate } from "@/app/components/System/DateFunctions";
 import { Post } from "../Post";
-let postList: Post[] = [];
+import { findMany } from "./findMany";
 
 type getPostsProps = {
-  json: Post[] | string
+  posts: Post[]
   update?: boolean
   take?: number
   page?: number
@@ -13,10 +13,9 @@ type getPostsProps = {
   pinned?: boolean
 }
 
-export default async function getPosts({ json, update = false, take, page, common, q = "", pinned = false }: getPostsProps) {
-  if (!postList || update) postList = typeof (json) === "string" ? JSON.parse(json) : json;
+export default function getPosts({ posts, take, page, common, q = "", pinned = false }: getPostsProps) {
   if (page) page--;
-  const skip = (take && page) ? take * page : undefined;
+  const skip = (take && page) ? take * page : 0;
   const options = {};
 
   const where = setWhere(q, options);
@@ -28,43 +27,25 @@ export default async function getPosts({ json, update = false, take, page, commo
   orderBy.push({ date: "desc" })
 
   try {
-    const posts: Post[] = await prisma.post.findMany({
+    let postsResult: Post[] = findMany({
+      list: posts,
       where: {
         AND: where,
       },
-      take,
-      skip,
       orderBy,
-      include: {
-        // ユーザー情報も含める（POSTテーブルにないもの、JOIN文）
-        user: {
-          select: {
-            name: true,
-            icon: true,
-          },
-        },
-      },
     });
-    const count = await prisma.post.count({
-      where: {
-        AND: where,
-      },
-    });
+    const count = postsResult.length;
+    postsResult = postsResult.filter((post, i) => {
+      if (take !== undefined && i >= (take + skip)) return false;
+      return ++i > skip;
+    })
     const max = Math.ceil(count / (take || 1));
-    return { posts, count, max };
+    return { posts: postsResult, count, max };
   } catch (e) {
     console.log(e);
     return { posts: [], count: 0, max: 0 }
   }
 }
-
-type logical = "AND" | "OR" | "NOT";
-type findManyProps = {
-  where: {[P in keyof Post]: boolean};
-}
-function findMany({where} : findManyProps) {
-  where.body
-} 
 
 type WhereOptionsType = {
   hidden?: {

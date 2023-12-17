@@ -2,6 +2,7 @@ import isStatic from "@/app/components/System/isStatic.mjs";
 const prisma: any = {};
 import PostForm from "./PostForm";
 import getPostDetail from "../functions/getPostDetail";
+import PostState from "../PostState";
 
 type ParamsType = { [key: string]: string | undefined };
 export default async function postPage({

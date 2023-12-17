@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense } from "react";
-import PostButton from "../../PostButton";
+import PostButton from "./PostButton";
 
 type props = { isStatic: boolean; postId: string; };
 

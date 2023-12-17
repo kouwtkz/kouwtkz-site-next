@@ -7,6 +7,7 @@ import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
 import CharaData from "./character/CharaData";
 import MediaImageState from "./media/image/MediaImageState";
+import PostState from "./blog/PostState";
 import ToasterContext from "@/app/context/toastContext";
 
 import {
@@ -48,6 +49,7 @@ export default async function RootLayout({
         <ImageViewer />
         <CharaData />
         <MediaImageState />
+        <PostState />
         <Header site={site} />
         <div className="text-center pt-24 pb-8 font-KosugiMaru">
           <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">

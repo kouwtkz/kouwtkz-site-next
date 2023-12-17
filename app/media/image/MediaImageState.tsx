@@ -40,18 +40,16 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
   },
 }));
 
-const MediaImageState = () => {
+export default function MediaImageState({ buildTime = new Date().getTime() }) {
   const imageData = useMediaImageState();
-  const { date } = useSystemState();
   useEffect(() => {
-    fetch(`${location?.origin}/media/image/get?v=${date.getTime()}`)
-      .then((d) => d.json())
-      .then((json) => {
-        if (!imageData.set) imageData.setImageAlbum(json);
-      });
+    if (!imageData.set)
+      fetch(`${location?.origin}/media/image/get?v=${buildTime}`)
+        .then((d) => d.json())
+        .then((json) => {
+          if (!imageData.set) imageData.setImageAlbum(json);
+        });
   });
 
   return <></>;
-};
-
-export default MediaImageState;
+}
