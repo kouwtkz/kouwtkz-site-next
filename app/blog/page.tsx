@@ -15,7 +15,9 @@ export default async function BlogPage({}: {}) {
         </Link>
         <StaticBlogPage />
         <div className="mt-8">
-          <Link href="/blog/rss.xml">RSSフィード</Link>
+          <a target="_blank" href="/blog/rss.xml">
+            RSSフィード
+          </a>
         </div>
       </div>
     </>

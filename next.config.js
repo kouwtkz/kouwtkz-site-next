@@ -15,9 +15,6 @@ try {
   envConfig.env = { ...envConfig.env, ...secretEnv.parsed };
 } catch { }
 
-// NEXTAUTH_SECRETが環境変数にない場合はサンプル用の変数を使用する
-if (!envConfig.env.NEXTAUTH_SECRET && !process.env.NEXTAUTH_SECRET) envConfig.env.NEXTAUTH_SECRET = "xxxxxxxxxxxxxxxx";
-
 const imageConfig = { images: { remotePatterns: [] } }
 
 const mediaHost = process.env.MEDIA_HOST_CONTAINER;
@@ -34,7 +31,7 @@ if (mediaHost) {
 const outputMode = process.env.OUTPUT_MODE || null;
 
 const exportConfig = (() => {
-  if (outputMode === 'export') {
+  if (outputMode === 'export' && process.env.NODE_ENV !== 'development') {
     try {
       require("fs").mkdirSync(`${cwd}/${process.env.CACHE_DIR}`)
     } catch { }

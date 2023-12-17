@@ -32,7 +32,6 @@ export function AutoAllotDate({ value, replaceT = true, Normalize = true, dayFir
   }
 
   let time: Date;
-  console.log(value);
   if (value.endsWith("Z") || /\+/.test(value))
     time = new Date(value);
   else

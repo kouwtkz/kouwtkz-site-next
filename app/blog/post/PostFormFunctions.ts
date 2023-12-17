@@ -1,4 +1,5 @@
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { FieldValues, UseFormReset } from "react-hook-form";
 import toast from "react-hot-toast";
 
 export function setCategory(
@@ -173,38 +174,26 @@ export function setMedia(
 
 export function setOperation({
   selectOperation,
-  postIdInput,
-  router,
+  onChangePostId,
+  onDuplication,
+  onDelete,
 }: {
   selectOperation: HTMLSelectElement | null,
-  postIdInput: HTMLInputElement | null,
-  router?: AppRouterInstance,
+  onChangePostId: () => void
+  onDuplication: () => void
+  onDelete: () => void
 }
 ) {
-  if (!selectOperation || !postIdInput) return;
+  if (!selectOperation) return;
   switch (selectOperation.value) {
     case 'postid':
-      const answer = prompt("記事のID名の変更", postIdInput.value);
-      if (answer !== null) {
-        postIdInput.value = answer;
-      }
+      onChangePostId();
       break;
     case 'duplication':
-      if (router) {
-        if (confirm("記事を複製しますか？")) {
-          router.replace(location.pathname + location.search.replace("target=", "base="));
-        }
-      }
+      onDuplication();
       break;
     case 'delete':
-      if (/target=/.test(location.search) && confirm("本当に削除しますか？")) {
-        fetch("/blog/post/send", { method: "DELETE", body: JSON.stringify({ postId: postIdInput.value }) })
-          .then((r) => r.json())
-          .then((r) => {
-            toast("削除しました", { duration: 2000 });
-            if (router) { router.push("/blog"); router.refresh(); } else { location.href = "/blog" }
-          })
-      }
+      onDelete();
       break;
   }
   selectOperation.value = '';

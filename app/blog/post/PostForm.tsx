@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import PostTextarea, { usePreviewMode } from "./PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   setAttached,
   setCategory,
@@ -32,6 +32,8 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import SetRegister from "@/app/components/form/hook/SetRegister";
 import axios from "axios";
+import { usePostState } from "../PostState";
+import { findMany } from "../functions/findMany";
 
 const schema = z.object({
   update: z.string(),
@@ -45,23 +47,29 @@ const schema = z.object({
   attached: z.custom<FileList>().nullish(),
 });
 
-type PostFormProps = {
-  categoryCount: {
-    category: string;
-    count: number;
-  }[];
-  postTarget?: Post | null;
-  mode?: {
-    duplication?: boolean;
-  };
-};
-
-const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
+export default function PostForm() {
   const router = useRouter();
+  const search = useSearchParams();
+  const duplicationMode = Boolean(search.get("base"));
+  const targetPostId = search.get("target") || search.get("base");
+  const { posts } = usePostState();
+  const postsUpdate = useRef(false);
+  const doReset = useRef(postsUpdate.current);
+  postsUpdate.current = posts.length > 0;
+  const postTarget = targetPostId
+    ? findMany({ list: posts, where: { postId: targetPostId }, take: 1 })[0]
+    : null;
+  const updateMode = postTarget && !duplicationMode;
+
+  const categoryCount = posts.reduce((prev, cur) => {
+    const category = cur.category;
+    if (category) prev[category] = (prev[category] || 0) + 1;
+    return prev;
+  }, {} as { [K: string]: number });
+
   const [loading, setLoading] = useState(false);
   const { togglePreviewMode } = usePreviewMode();
-  const duplicationMode = mode?.duplication || false;
-  const updateMode = postTarget && !duplicationMode;
+
   const formRef = useRef<HTMLFormElement>(null);
   const categorySelectRef = useRef<HTMLSelectElement | null>(null);
   const categoryNewRef = useRef<HTMLOptionElement | null>(null);
@@ -77,7 +85,7 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
 
   const defaultValues: { [k: string]: any } = {
     update: duplicationMode ? "" : postTarget?.postId,
-    postId: postTarget?.postId,
+    postId: duplicationMode ? undefined : postTarget?.postId,
     title: postTarget?.title,
     body: postTarget?.body,
     date: postTarget?.date
@@ -92,12 +100,47 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
+    getValues,
+    setValue,
   } = useForm<FieldValues>({
     defaultValues,
     resolver: zodResolver(schema),
   });
 
+  const onChangePostId = () => {
+    const answer = prompt("記事のID名の変更", getValues("postId"));
+    if (answer !== null) {
+      setValue("postId", answer);
+    }
+  };
+  const onDuplication = () => {
+    if (confirm("記事を複製しますか？")) {
+      router.replace(
+        location.pathname + location.search.replace("target=", "base=")
+      );
+      router.refresh();
+    }
+  };
+  const onDelete = () => {
+    if (/target=/.test(location.search) && confirm("本当に削除しますか？")) {
+      axios
+        .delete("/blog/post/send", {
+          data: JSON.stringify({ postId: getValues("postId") }),
+        })
+        .then((r) => {
+          toast("削除しました", { duration: 2000 });
+          router.push("/blog");
+          setTimeout(() => location.reload(), 100);
+        });
+    }
+  };
+
   useEffect(() => {
+    if (postsUpdate.current && !doReset.current) {
+      doReset.current = true;
+      reset(defaultValues);
+    }
     if (Object.keys(errors).length > 0) {
       toast.error(
         Object.entries(errors)
@@ -122,6 +165,8 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
         const defaultItem = defaultValues[key];
         switch (key) {
           case "postId":
+            append(key, item, item !== defaultItem);
+            break;
           case "update":
             append(key, item, false);
             break;
@@ -149,11 +194,13 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
             duration: 2000,
           });
           if (res.data.postId) {
-            router.push(`/blog/post/${res.data.postId}`);
+            router.push(`/blog?postId=${res.data.postId}`);
           } else {
             router.push(`/blog`);
           }
-          router.refresh();
+          setTimeout(() => {
+            location.reload();
+          }, 250);
         }
       } else {
         toast.error("更新するデータがありませんでした", { duration: 2000 });
@@ -257,9 +304,9 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
           <option value="new" ref={categoryNewRef}>
             新規作成
           </option>
-          {categoryCount.map((r, i) => (
-            <option key={i} value={r.category}>
-              {r.category} ({r.count})
+          {Object.entries(categoryCount).map(([category, count], i) => (
+            <option key={i} value={category}>
+              {category} ({count})
             </option>
           ))}
         </select>
@@ -270,8 +317,9 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
           onChange={() =>
             setOperation({
               selectOperation: operationRef.current,
-              postIdInput: postIdRef.current,
-              router,
+              onChangePostId,
+              onDuplication,
+              onDelete,
             })
           }
         >
@@ -416,6 +464,4 @@ const PostForm = ({ categoryCount, postTarget, mode }: PostFormProps) => {
       </div>
     </form>
   );
-};
-
-export default PostForm;
+}

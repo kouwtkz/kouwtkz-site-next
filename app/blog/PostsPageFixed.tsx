@@ -14,7 +14,7 @@ export default function Fixed({ isStatic, max }: props) {
         <PagingArea max={max} />
         <div className="flex flex-row">
           <SearchArea />
-          {isStatic ? <></> : <PostButton />}
+          {process.env.NODE_ENV === "development" ? <PostButton /> : <></>}
         </div>
       </div>
     </div>

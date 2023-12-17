@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 const prisma: any = {};
 import isStatic from "@/app/components/System/isStatic.mjs";
 import fs from "fs";
+import { getPostsFromJson, setPostsToJson } from "../../get/fromJson";
+import { site } from "@/app/site/SiteData.mjs";
+import { Post } from "../../Post";
 
 type PostFormType = {
   title?: string,
@@ -42,12 +45,13 @@ export async function POST(req: NextRequest) {
       })
     })
   })
-  const userId = "";
+  const userId = site.author.account;
 
-  const data = {} as PostFormType;
+  const data = {} as PostFormType & Post;
 
   let postId = String(formData.get("postId"));
   const update = String(formData.get("update"));
+  if (postId !== update) data.postId = postId;
 
   const title = formData.get("title");
   if (title !== null) data.title = String(title);
@@ -78,26 +82,34 @@ export async function POST(req: NextRequest) {
   }
 
   // あとでJSON形式の書き出しにする
-  // if (!success) success = Object.keys(data).length > 0;
-  // if (success) {
-  //   if (update) {
-  //     await prisma.post.updateMany({
-  //       where: {
-  //         AND: [{ postId: update }, { userId }]
-  //       },
-  //       data
-  //     })
-  //   } else {
-  //     postId = postId || autoPostId();
-  //     data.postId = postId;
-  //     data.userId = userId;
-  //     await prisma.post.create({ data: (data as any) })
-  //   }
+  if (!success) success = Object.keys(data).length > 0;
+  if (success) {
+    const posts = getPostsFromJson();
+    if (update) {
+      const updateData = posts.find((post) => post.postId === update);
+      if (updateData) {
+        Object.entries(data).forEach(([k, v]) => {
+          (updateData as any)[k] = v;
+        })
+        updateData.updatedAt = new Date();
+        setPostsToJson(posts);
+      }
+    } else {
+      postId = postId || autoPostId();
+      const maxId = Math.max(...posts.map(post => post.id));
+      const now = new Date();
+      posts.push({
+        ...{
+          id: maxId + 1, postId, userId, title: "", body: "", category: "", pin: 0, noindex: false, draft: false, date: now, updatedAt: now, flags: null, memo: null
+        } as Post, ...data
+      })
+      setPostsToJson(posts);
+    }
 
     return NextResponse.json({ postId });
-  // } else {
-  //   return NextResponse.json({ error: "更新するデータがありません" }, { status: 500 });
-  // }
+  } else {
+    return NextResponse.json({ error: "更新するデータがありません" }, { status: 500 });
+  }
 }
 
 // 削除
@@ -106,11 +118,13 @@ export async function DELETE(req: NextRequest) {
   const data = await req.json();
   const postId = String(data.postId || "");
   if (postId) {
-    await prisma.post.deleteMany({
-      where: {
-        AND: [{ postId }]
-      },
-    })
+    const posts = getPostsFromJson();
+    const deletedPosts = posts.filter(post => post.postId !== postId)
+    if (posts.length !== deletedPosts.length) {
+      setPostsToJson(deletedPosts);
+    } else {
+      return NextResponse.json({ result: "error", error: "削除済みです" }, { status: 500 });
+    }
     return NextResponse.json({ result: "success", postId });
   } else {
     return NextResponse.json({ result: "error", error: "ID未指定です" }, { status: 500 });

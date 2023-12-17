@@ -37,7 +37,7 @@ export default function PostDetail({ post }: PostDetailProps) {
             </div>
           </div>
         </div>
-        <MultiParser detailsOpen={true}>{post.body}</MultiParser>
+        <MultiParser className="mx-2" detailsOpen={true}>{post.body}</MultiParser>
         <div className="text-right [&>*]:ml-4">
           {post.draft ? (
             <span className="text-main-grayish">(下書き)</span>
