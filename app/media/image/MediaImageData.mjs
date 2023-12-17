@@ -6,7 +6,7 @@ import sizeOf from "image-size"
 
 import fs from "fs"
 import path from "path"
-import { load } from "js-yaml";
+import { parse } from "yaml";
 import RetouchImage from "./RetouchImage.mjs"
 
 const isStatic = process.env.OUTPUT_MODE === 'export';
@@ -114,7 +114,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
               if (dirItem.yaml && (filterAlbumNames.length === 0 || filterAlbumNames.some(fname => fname === parsedPath.name))) {
                 /** @type MediaImageAlbumType */
                 // @ts-ignore
-                const album = load(String(fs.readFileSync(`${itemFullDir}/${childName}`, "utf8")));
+                const album = parse(String(fs.readFileSync(`${itemFullDir}/${childName}`, "utf8")));
                 album.list = album.list.filter((item) => {
                   if (filter.imageName && filter.imageName !== item.name) return false;
                   if (filter.tagName && item.tags && !item.tags.some(tag => tag === filter.tagName)) return false;

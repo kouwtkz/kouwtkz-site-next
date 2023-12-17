@@ -20,7 +20,7 @@
  */
 
 import { readFileSync } from "fs";
-import { load } from "js-yaml";
+import { parse } from "yaml";
 const projectRoot = process.cwd(), publicDir = process.env.PUBLIC_DIR || '', publicRoot = `${projectRoot}/${publicDir}`;
 const mediaDir = process.env.MEDIA_DIR || '';
 const mediaHostPath = process.env.MEDIA_HOST_PATH || mediaDir;
@@ -34,7 +34,7 @@ export function ReadSoundDataFromYaml() {
   readYamlList.forEach((yamlItem) => {
     /** @type SoundAlbumType */
     // @ts-ignore
-    const album = load(String(readFileSync(`${projectRoot}/${yamlItem}`, "utf8")));
+    const album = parse(String(readFileSync(`${projectRoot}/${yamlItem}`, "utf8")));
     album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `${defaultSoundPath}/${sound.src}` }) })
     AlbumList.push(album);
   })

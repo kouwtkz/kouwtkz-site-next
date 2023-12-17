@@ -1,4 +1,4 @@
-import { load } from "js-yaml";
+import { parse } from "yaml";
 import { readFileSync } from "fs";
 
 /**
@@ -51,7 +51,7 @@ const projectRoot = process.cwd(), dataDir = process.env.DATA_DIR || '';
 /** @type any */
 let rawData = {}
 try {
-  rawData = load(readFileSync(`${projectRoot}/${dataDir}/site.yaml`, "utf8"));
+  rawData = parse(readFileSync(`${projectRoot}/${dataDir}/site.yaml`, "utf8"));
 } catch {
   rawData = { title: "title", description: "description", short: { description: "short" }, author: { since: 2023 } }
 }
