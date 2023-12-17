@@ -15,7 +15,7 @@ const projectRoot = process.cwd(), publicDir = process.env.PUBLIC_DIR || '', pub
 const mediaDir = process.env.MEDIA_DIR || '', mediaRoot = `${publicRoot}/${mediaDir}`;
 const dataDir = `${process.env.DATA_DIR}`, mediaDataDir = `${dataDir}/media`;
 
-const mediaHostPath = process.env.MEDIA_HOST_PATH || '';
+const mediaHostPath = process.env.MEDIA_HOST_PATH || mediaDir;
 const sMediaHostPath = `/${mediaHostPath ? mediaHostPath : process.env.MEDIA_DIR}`;
 const innerHost = `${isStatic ? '' : process.env.MEDIA_HOST_CONTAINER || ''}${sMediaHostPath}`;
 const imageHost = `${process.env.MEDIA_HOST_PUBLIC || ''}${sMediaHostPath}`;

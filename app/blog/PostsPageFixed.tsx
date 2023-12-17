@@ -5,19 +5,17 @@ import PagingArea from "./PagingArea";
 import SearchArea from "./SearchArea";
 import PostButton from "./PostButton";
 
-type props = { isStatic: boolean; max?: number; };
+type props = { isStatic: boolean; max?: number };
 
 export default function Fixed({ isStatic, max }: props) {
   return (
     <div className="fixed z-30 right right-0 bottom-0">
       <div className="flex flex-wrap justify-end m-2 ml-36">
         <PagingArea max={max} />
-        {!isStatic ? (
-          <div className="flex flex-row">
-            <SearchArea />
-            {isStatic ? <></> : <PostButton /> }
-          </div>
-        ) : null}
+        <div className="flex flex-row">
+          <SearchArea />
+          {isStatic ? <></> : <PostButton />}
+        </div>
       </div>
     </div>
   );

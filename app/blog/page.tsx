@@ -2,13 +2,11 @@
 // import getPosts from "./functions/getPosts";
 import isStatic from "@/app/components/System/isStatic.mjs";
 import Link from "next/link";
-import CheckPostId from "./CheckPostId";
 import StaticBlogPage from "./StaticBlogPage";
 
 export default async function BlogPage({}: {}) {
   return (
     <>
-      {isStatic ? <CheckPostId /> : null}
       <div>
         <Link href="/blog">
           <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
