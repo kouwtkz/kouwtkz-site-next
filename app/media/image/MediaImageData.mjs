@@ -93,6 +93,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
     (dirItem) => {
       const dirName = dirItem.name || path.parse(dirItem.path).name;
       const dirRoot = dirItem.root ? dirItem.root : defaultImageRoot;
+
       if (!dirItem.yaml && filterAlbumNames.length > 0 && !filterAlbumNames.some(fname => fname === dirName)) return null;
       if (!dirItem.imageRoot) dirItem.imageRoot = defaultImageRoot;
       /** @type MediaImageAlbumType | null */
