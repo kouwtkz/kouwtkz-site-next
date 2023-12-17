@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@/app/blog/Post.d";
 
 declare global {
   var prisma: PrismaClient | undefined

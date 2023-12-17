@@ -19,7 +19,6 @@ import {
 import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
-import CurrentUserMake from "./context/user/CurrentUserMake";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -46,7 +45,6 @@ export default async function RootLayout({
         <ToasterContext />
         <ClientSetup />
         <EmbedSync />
-        <CurrentUserMake />
         <ServerStateMake />
         <ImageViewer />
         <CharaData />

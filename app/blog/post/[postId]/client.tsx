@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { Post, User } from "@prisma/client";
+import { Post, User } from "@/app/blog/Post.d";
 import MultiParser from "@/app/components/functions/MultiParser";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";

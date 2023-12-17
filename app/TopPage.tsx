@@ -7,7 +7,6 @@ import Link from "next/link";
 import React from "react";
 import { useServerState } from "./components/System/ServerState";
 import MultiParser from "./components/functions/MultiParser";
-import { useCurrentUser } from "./context/user/CurrentUser";
 
 type TopPageProps = {
   topImage?: MediaImageItemType | null;
@@ -20,7 +19,6 @@ type TopPageProps = {
 
 export default function TopPage({ topImage, topPosts = [] }: TopPageProps) {
   const { isStatic } = useServerState();
-  const { user: currentUser } = useCurrentUser();
   return (
     <>
       {topImage ? (
@@ -75,11 +73,6 @@ export default function TopPage({ topImage, topPosts = [] }: TopPageProps) {
             ))}
           </div>
         </div>
-        {currentUser ? (
-          <div>ログイン中: {currentUser.name || currentUser.userId}</div>
-        ) : (
-          <></>
-        )}
       </main>
     </>
   );

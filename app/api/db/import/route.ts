@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import fs from "fs";
 import prisma from "@/app/lib/prisma";
-import { Post, User, UserRemember } from "@prisma/client";
+import { Post, User, UserRemember } from "@/app/blog/Post.d";
 
 export async function GET(request: NextRequest) {
   if (process.env.NODE_ENV === "development") {

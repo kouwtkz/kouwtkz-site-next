@@ -1,4 +1,4 @@
-import { Post, User } from "@prisma/client";
+import { Post } from "@/app/blog/Post.d";
 import MultiParser from "@/app/components/functions/MultiParser";
 import Link from "next/link";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";

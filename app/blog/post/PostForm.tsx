@@ -1,6 +1,6 @@
 "use client";
 
-import { Post } from "@prisma/client";
+import { Post } from "@/app/blog/Post.d";
 import React, {
   RefCallback,
   useEffect,
