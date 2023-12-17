@@ -2,6 +2,8 @@
 import React, { useEffect } from "react";
 import { Post } from "./Post.d";
 import { create } from "zustand";
+import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
+import axios from "axios";
 
 type PostStateType = {
   set: boolean;
@@ -24,17 +26,15 @@ export const usePostState = create<PostStateType>((set) => ({
   },
 }));
 
-export default function PostState({ buildTime = new Date().getTime() }) {
+export default function PostState({ url }: DataStateReplacedProps) {
   const postsData = usePostState();
   useEffect(() => {
     if (!postsData.set)
-      fetch(`${location?.origin}/blog/get`)
-        .then((d) => d.json())
-        .then((json) => {
-          if (!postsData.set) {
-            postsData.setPosts(json);
-          }
-        });
+      axios(url).then((r) => {
+        if (!postsData.set) {
+          postsData.setPosts(r.data);
+        }
+      });
   });
 
   return <></>;

@@ -4,6 +4,8 @@ import React, { useEffect } from "react";
 import { create } from "zustand";
 import { MediaImageItemType, MediaImageAlbumType } from "./MediaImageData.mjs";
 import { useSystemState } from "@/app/components/System/SystemState";
+import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
+import axios from "axios";
 
 type ImageDataType = {
   imageItemList: Array<MediaImageItemType>;
@@ -40,15 +42,13 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
   },
 }));
 
-export default function MediaImageState({ buildTime = new Date().getTime() }) {
+export default function MediaImageState({ url }: DataStateReplacedProps) {
   const imageData = useMediaImageState();
   useEffect(() => {
     if (!imageData.set)
-      fetch(`${location?.origin}/media/image/get?v=${buildTime}`)
-        .then((d) => d.json())
-        .then((json) => {
-          if (!imageData.set) imageData.setImageAlbum(json);
-        });
+      axios(url).then((r) => {
+        if (!imageData.set) imageData.setImageAlbum(r.data);
+      });
   });
 
   return <></>;

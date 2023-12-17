@@ -20,6 +20,7 @@ import {
 import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
+import { DataStateAddMtime } from "./components/dataState/DataStateFunctions";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -48,8 +49,8 @@ export default async function RootLayout({
         <ServerStateMake />
         <ImageViewer />
         <CharaData />
-        <MediaImageState />
-        <PostState />
+        <MediaImageState url={DataStateAddMtime({ url: "/media/image/get" })} />
+        <PostState url={DataStateAddMtime({ url: "/blog/get" })} />
         <Header site={site} />
         <div className="text-center pt-24 pb-8 font-KosugiMaru">
           <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">

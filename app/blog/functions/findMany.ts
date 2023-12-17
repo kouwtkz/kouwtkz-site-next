@@ -15,7 +15,6 @@ type findWhereType<T> = { [K in logicalConditionsType]?: (findWhereType<T> | obj
 export function findMany<T>({ list, where, take, orderBy, skip = 0 }: findManyProps<T>) {
   orderBy?.reverse().forEach((args) =>
     Object.entries(args).forEach(([k, v]) => {
-      console.log(k, v);
       switch (v) {
         case "asc":
           list.sort((a: any, b: any) => a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0)
