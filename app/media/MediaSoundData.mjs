@@ -21,8 +21,9 @@
 
 import { readFileSync } from "fs";
 import { load } from "js-yaml";
-const projectRoot = `${process.env.PWD}`;
-const mediaHostPath = `${process.env.MEDIA_HOST_PATH}`;
+const projectRoot = process.cwd(), publicDir = process.env.PUBLIC_DIR || '', publicRoot = `${projectRoot}/${publicDir}`;
+const mediaDir = process.env.MEDIA_DIR || '';
+const mediaHostPath = process.env.MEDIA_HOST_PATH || mediaDir;
 const dataDir = `${process.env.DATA_DIR}`, mediaDataDir = `${dataDir}/media`;
 const defaultSoundPath = `${mediaHostPath ? `/${mediaHostPath}` : ''}/sound`;
 

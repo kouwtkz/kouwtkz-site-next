@@ -11,14 +11,14 @@ import RetouchImage from "./RetouchImage.mjs"
 
 const isStatic = process.env.OUTPUT_MODE === 'export';
 
-const projectRoot = `${process.env.PWD}`, publicDir = `${process.env.PUBLIC_DIR}`, publicRoot = `${projectRoot}/${publicDir}`;
-const mediaDir = `${process.env.MEDIA_DIR}`, mediaRoot = `${projectRoot}/${mediaDir}`;
+const projectRoot = process.cwd(), publicDir = process.env.PUBLIC_DIR || '', publicRoot = `${projectRoot}/${publicDir}`;
+const mediaDir = process.env.MEDIA_DIR || '', mediaRoot = `${publicRoot}/${mediaDir}`;
 const dataDir = `${process.env.DATA_DIR}`, mediaDataDir = `${dataDir}/media`;
 
-const mediaHostPath = `${process.env.MEDIA_HOST_PATH}`;
-const sMediaHostPath = `${mediaHostPath ? `/${mediaHostPath}` : ''}`;
-const innerHost = `${isStatic ? '' : process.env.MEDIA_HOST_CONTAINER}${sMediaHostPath}`;
-const imageHost = `${process.env.MEDIA_HOST_PUBLIC}${sMediaHostPath}`;
+const mediaHostPath = process.env.MEDIA_HOST_PATH || '';
+const sMediaHostPath = `/${mediaHostPath ? mediaHostPath : process.env.MEDIA_DIR}`;
+const innerHost = `${isStatic ? '' : process.env.MEDIA_HOST_CONTAINER || ''}${sMediaHostPath}`;
+const imageHost = `${process.env.MEDIA_HOST_PUBLIC || ''}${sMediaHostPath}`;
 
 const resizedDir = `${process.env.RESIZED_DIR}`, resizedURLRoot = `${mediaHostPath ? `${mediaHostPath}/` : ''}${resizedDir}`, resizedFullDir = `${mediaRoot}/${resizedDir}`;
 const defaultImageRoot = mediaRoot;
@@ -143,7 +143,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
       }
       try {
         itemFor(dirItem.path);
-      } catch(e) {
+      } catch (e) {
         // ここのエラーは定義したメディアのディレクトリがないときに出る
         console.error(e);
       }

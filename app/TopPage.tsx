@@ -59,7 +59,7 @@ export default function TopPage({ topImage, topPosts = [] }: TopPageProps) {
             </div>
           </div>
         </div>
-        <div className="my-8">
+        {/* <div className="my-8">
           <h3 className="text-2xl my-4">お知らせ</h3>
           <div>
             {topPosts.map((post, i) => (
@@ -72,7 +72,7 @@ export default function TopPage({ topImage, topPosts = [] }: TopPageProps) {
               </div>
             ))}
           </div>
-        </div>
+        </div> */}
       </main>
     </>
   );

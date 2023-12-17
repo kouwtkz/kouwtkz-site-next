@@ -46,7 +46,7 @@ import { readFileSync } from "fs";
  * }} SiteSnsProps
  */
 
-const projectRoot = `${process.env.PWD}`, dataDir = `${process.env.DATA_DIR}`;
+const projectRoot = process.cwd(), dataDir = process.env.DATA_DIR || '';
 
 /** @type any */
 let rawData = {}
