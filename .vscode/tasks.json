@@ -32,26 +32,6 @@
       "problemMatcher": []
     },
     {
-      "label": "prisma: studio",
-      "type": "shell",
-      "command": "npx prisma studio"
-    },
-    {
-      "label": "prisma: pull",
-      "type": "shell",
-      "command": "npx prisma db pull"
-    },
-    {
-      "label": "prisma: push",
-      "type": "shell",
-      "command": "npx prisma db push"
-    },
-    {
-      "label": "prisma: migrate dev",
-      "type": "shell",
-      "command": "npx prisma migrate dev"
-    },
-    {
       "label": "rm: cache webpack",
       "type": "shell",
       "command": "rm -r .next/cache/webpack"

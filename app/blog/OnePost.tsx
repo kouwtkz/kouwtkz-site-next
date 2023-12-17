@@ -4,7 +4,7 @@ import Link from "next/link";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 type Props = {
   isStatic: boolean;
-  post: Post & { user: { name: string | null; icon: string | null } | null };
+  post: Post;
 };
 
 export default function OnePost({ post, isStatic }: Props) {
@@ -45,7 +45,6 @@ export default function OnePost({ post, isStatic }: Props) {
         ) : (
           <></>
         )}
-        <span className="text-main">{post.user?.name}</span>
         {formattedDate ? (
           <Link
             className="text-main-grayish hover:text-main-grayish-fluo"

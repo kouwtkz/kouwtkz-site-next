@@ -77,6 +77,7 @@ function Main({ max }: PagingAreaProps) {
         ＜
       </button>
       <input
+        title="ブログページ"
         name="p"
         type="number"
         min={1}

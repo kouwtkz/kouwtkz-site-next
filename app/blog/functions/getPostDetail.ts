@@ -1,4 +1,4 @@
-import prisma from "@/app/lib/prisma";
+const prisma: any = {};
 type getPostDetailProps = {
   postId: string
 }

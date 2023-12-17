@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/app/lib/prisma";
+const prisma: any = {};
 import isStatic from "@/app/components/System/isStatic.mjs";
-import getCurrentUser from "@/app/actions/getCurrentUser";
 import fs from "fs";
 
 type PostFormType = {
@@ -21,8 +20,7 @@ export async function GET(req: NextRequest) {
 
 // 投稿または更新
 export async function POST(req: NextRequest) {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return NextResponse.json({ result: "error", error: "ログインしてません" }, { status: 500 });
+  if (process.env.NODE_ENV !== "development") return new Response("開発モード限定です");
 
   const formData = await req.formData();
   let success = false
@@ -44,7 +42,7 @@ export async function POST(req: NextRequest) {
       })
     })
   })
-  const userId = currentUser.userId;
+  const userId = "";
 
   const data = {} as PostFormType;
 
@@ -79,38 +77,38 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (!success) success = Object.keys(data).length > 0;
-  if (success) {
-    if (update) {
-      await prisma.post.updateMany({
-        where: {
-          AND: [{ postId: update }, { userId }]
-        },
-        data
-      })
-    } else {
-      postId = postId || autoPostId();
-      data.postId = postId;
-      data.userId = userId;
-      await prisma.post.create({ data: (data as any) })
-    }
+  // あとでJSON形式の書き出しにする
+  // if (!success) success = Object.keys(data).length > 0;
+  // if (success) {
+  //   if (update) {
+  //     await prisma.post.updateMany({
+  //       where: {
+  //         AND: [{ postId: update }, { userId }]
+  //       },
+  //       data
+  //     })
+  //   } else {
+  //     postId = postId || autoPostId();
+  //     data.postId = postId;
+  //     data.userId = userId;
+  //     await prisma.post.create({ data: (data as any) })
+  //   }
 
     return NextResponse.json({ postId });
-  } else {
-    return NextResponse.json({ error: "更新するデータがありません" }, { status: 500 });
-  }
+  // } else {
+  //   return NextResponse.json({ error: "更新するデータがありません" }, { status: 500 });
+  // }
 }
 
 // 削除
 export async function DELETE(req: NextRequest) {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) return NextResponse.json({ error: "ログインしてません" }, { status: 500 });
+  if (process.env.NODE_ENV !== "development") return new Response("開発モード限定です");
   const data = await req.json();
   const postId = String(data.postId || "");
   if (postId) {
     await prisma.post.deleteMany({
       where: {
-        AND: [{ postId }, { userId: currentUser.userId }]
+        AND: [{ postId }]
       },
     })
     return NextResponse.json({ result: "success", postId });

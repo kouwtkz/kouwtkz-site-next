@@ -1,5 +1,6 @@
-import prisma from "@/app/lib/prisma";
+const prisma: any = {};
 import { AutoAllotDate } from "@/app/components/System/DateFunctions";
+import { Post } from "../Post";
 
 type getPostsProps = {
   take?: number
@@ -23,7 +24,7 @@ export default async function getPosts({ take, page, common, q = "", pinned = fa
   orderBy.push({ date: "desc" })
 
   try {
-    const posts = await prisma.post.findMany({
+    const posts: Post[] = await prisma.post.findMany({
       where: {
         AND: where,
       },
