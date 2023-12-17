@@ -1,8 +1,11 @@
 const prisma: any = {};
 import { AutoAllotDate } from "@/app/components/System/DateFunctions";
 import { Post } from "../Post";
+let postList: Post[] = [];
 
 type getPostsProps = {
+  json: Post[] | string
+  update?: boolean
   take?: number
   page?: number
   q?: string
@@ -10,7 +13,8 @@ type getPostsProps = {
   pinned?: boolean
 }
 
-export default async function getPosts({ take, page, common, q = "", pinned = false }: getPostsProps) {
+export default async function getPosts({ json, update = false, take, page, common, q = "", pinned = false }: getPostsProps) {
+  if (!postList || update) postList = typeof (json) === "string" ? JSON.parse(json) : json;
   if (page) page--;
   const skip = (take && page) ? take * page : undefined;
   const options = {};
@@ -53,6 +57,14 @@ export default async function getPosts({ take, page, common, q = "", pinned = fa
     return { posts: [], count: 0, max: 0 }
   }
 }
+
+type logical = "AND" | "OR" | "NOT";
+type findManyProps = {
+  where: {[P in keyof Post]: boolean};
+}
+function findMany({where} : findManyProps) {
+  where.body
+} 
 
 type WhereOptionsType = {
   hidden?: {
