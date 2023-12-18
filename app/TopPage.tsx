@@ -21,13 +21,14 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
       {topImage ? (
         <Image
           src={`${topImage.innerURL}`}
+          loader={loaderSet(isStatic, topImage.path)}
+          suppressHydrationWarning={isStatic}
           alt={topImage.name || topImage.src}
           width={topImage.info?.width}
           height={topImage.info?.height}
           loading="eager"
           unoptimized={isStatic}
           className="w-[100%] h-80"
-          suppressHydrationWarning={true}
         />
       ) : (
         <div className="w-[100%] h-80" />
