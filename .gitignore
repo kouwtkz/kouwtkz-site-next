@@ -12,6 +12,7 @@ imageScripts/**/*.json
 .secret/
 
 # 個人用シェル
+.vscode/tasks.json
 .vscode/.batch/
 
 # キャッシュ
