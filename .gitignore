@@ -11,9 +11,8 @@ imageScripts/**/*.json
 # シークレットキーなど
 .secret/
 
-# 個人用シェル
-.vscode/tasks.json
-.vscode/.batch/
+# vscodeの設定は除外
+.vscode/*
 
 # キャッシュ
 /.cache
