@@ -1,5 +1,5 @@
-@import "./styles/tailwind.css";
 @import "./styles/color.css";
+@import "./styles/tailwind.css";
 
 body {
   margin: 0;
@@ -113,7 +113,6 @@ button,
   user-select: none;
 }
 
-details > summary,
 input[type="submit"],
 input[type="button"],
 .button,
@@ -127,42 +126,43 @@ button {
   border: 0;
   outline: none;
   border-radius: 0.5em;
+  &:hover:not([disabled]) {
+    color: white;
+    background-color: var(--main-color-soft);
+  }
 }
 
-input[type="submit"]:hover:not([disabled]),
-input[type="button"]:hover:not([disabled]),
-.button:hover:not([disabled]),
-button:hover:not([disabled]) {
-  color: white;
-  background-color: var(--main-color-soft);
-}
-
-details > summary {
-  display: list-item;
-  width: fit-content;
-  min-width: 20em;
-  max-width: 80%;
-  margin: 0.5em;
-  border: 0;
-  cursor: pointer;
-  padding: 0.4em 1em;
-  padding-left: 1.2em;
-  line-height: 1.5em;
-  -webkit-user-select: none;
-  user-select: none;
-}
-
-details details {
-  margin-left: 1em;
-}
-
-details > button.close {
-  font-size: 0.7em;
-  width: 30em;
-  min-width: 50%;
-  border-radius: 0.5em;
-  margin: 0.5em auto 0.5em 0.5em;
-  background-color: var(--main-color-light-grayish);
+details {
+  >summary {
+    display: list-item;
+    padding: 0.4em 1em;
+    cursor: pointer;
+    color: white;
+    background-color: var(--main-color);
+    font-weight: 700;
+    border: 0;
+    outline: none;
+    border-radius: 0.5em;
+    width: fit-content;
+    min-width: 20em;
+    max-width: 80%;
+    margin: 0.5em;
+    padding-left: 1.2em;
+    line-height: 1.5em;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+  >button.close {
+    font-size: 0.7em;
+    width: 30em;
+    min-width: 50%;
+    border-radius: 0.5em;
+    margin: 0.5em auto 0.5em 0.5em;
+    background-color: var(--main-color-light-grayish);
+  }
+  details {
+    margin-left: 1em;
+  }
 }
 
 code {
