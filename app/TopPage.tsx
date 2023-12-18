@@ -16,7 +16,6 @@ type TopPageProps = {
 export default function TopPage({ topImages = [] }: TopPageProps) {
   const { isStatic } = useServerState();
   const topImage = topImages[Math.floor(Math.random() * topImages.length)];
-  console.log(topImage);
   return (
     <>
       {topImage ? (
