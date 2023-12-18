@@ -1,8 +1,9 @@
 import Rss from "rss";
 import getPosts from "../functions/getPosts";
 import { site } from "@/app/site/SiteData.mjs";
-import { Post } from "../Post";
+import { parse } from "marked";
 import { getPostsFromJson } from "../get/fromJson";
+import twemoji from "twemoji";
 
 const SITE_URL = process.env.PRODUCTION_URL || "http://localhost";
 
@@ -22,9 +23,9 @@ export async function GET() {
   posts.forEach((post) => {
     feed.item({
       title: post.title,
-      description: post.body,
-      url: `${SITE_URL}/blog/${post.postId}`,
-      guid: `${SITE_URL}/blog/${post.postId}`,
+      description: twemoji.parse(parse(post.body)),
+      url: `${SITE_URL}/blog?postId=${post.postId}`,
+      guid: `${SITE_URL}/blog?postId=${post.postId}`,
       date: post.date,
     });
   });
