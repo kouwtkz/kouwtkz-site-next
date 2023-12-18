@@ -12,7 +12,7 @@ imageScripts/**/*.json
 .secret/
 
 # vscodeの設定は除外
-.vscode/*
+.vscode/
 
 # キャッシュ
 /.cache
