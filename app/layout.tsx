@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./globals.css";
+import "./globals.scss";
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
 import { site } from "@/app/site/SiteData.mjs";

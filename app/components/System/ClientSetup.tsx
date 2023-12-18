@@ -6,7 +6,7 @@ import { isMobile } from "react-device-detect";
 export default function ClientSetup() {
   useEffect(() => {
     if (isMobile) {
-      document.documentElement.classList.add("mobile");
+      document.body.classList.add("mobile");
     }
   });
   return <></>;

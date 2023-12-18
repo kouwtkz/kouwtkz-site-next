@@ -1,0 +1,241 @@
+@import "./styles/tailwind.css";
+@import "./styles/color.css";
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  overflow-y: scroll;
+
+  &::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background-size: cover;
+    background-attachment: fixed;
+    background: var(--background);
+    z-index: -9999;
+  }
+}
+
+body,
+.window {
+  &::-webkit-scrollbar {
+    width: var(--scroll-margin);
+    height: var(--scroll-margin);
+  }
+  &.overflow-y-hidden,
+  &.overflow-y-hidden .fixed {
+    margin-right: var(--scroll-margin) !important;
+  }
+  &.mobile {
+    &::-webkit-scrollbar {
+      width: 0;
+      height: 0;
+    }
+    &.overflow-y-hidden,
+    &.overflow-y-hidden .fixed {
+      margin-right: 0 !important;
+    }
+  }
+  &::-webkit-scrollbar-track:not(.window) {
+    background: var(--background);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--main-color-soft);
+    border-radius: 5px;
+  }
+}
+
+* {
+  -webkit-tap-highlight-color: var(--main-color-fluo);
+  ::selection {
+    background-color: var(--main-color-soft);
+    color: white;
+  }
+}
+
+a {
+  word-break: break-all;
+  color: var(--main-color-strong);
+  &:hover {
+    color: var(--main-color);
+  }
+}
+
+.emoji {
+  width: 1.4em;
+  display: inline-block;
+  padding: 0 0.05em 0 0.1em;
+  vertical-align: -0.12em;
+  margin: 0;
+}
+
+img {
+  object-fit: cover;
+}
+
+h1 {
+  font-size: 2rem;
+  line-height: 2.5rem;
+}
+h2 {
+  font-size: 1.8rem;
+  line-height: 2.2rem;
+}
+h3 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+}
+h4 {
+  font-size: 1.3rem;
+  line-height: 1.8rem;
+}
+
+.readmore:not(.extend) > * {
+  display: none;
+}
+
+.readmore:not(.extend):before {
+  content: "もっと読む";
+  cursor: pointer;
+}
+button,
+.button,
+[type="button"],
+[type="reset"],
+[type="submit"] {
+  background-color: var(--main-color);
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+details > summary,
+input[type="submit"],
+input[type="button"],
+.button,
+button {
+  display: inline-block;
+  padding: 0.4em 1em;
+  cursor: pointer;
+  color: white;
+  background-color: var(--main-color);
+  font-weight: 700;
+  border: 0;
+  outline: none;
+  border-radius: 0.5em;
+}
+
+input[type="submit"]:hover:not([disabled]),
+input[type="button"]:hover:not([disabled]),
+.button:hover:not([disabled]),
+button:hover:not([disabled]) {
+  color: white;
+  background-color: var(--main-color-soft);
+}
+
+details > summary {
+  display: list-item;
+  width: fit-content;
+  min-width: 20em;
+  max-width: 80%;
+  margin: 0.5em;
+  border: 0;
+  cursor: pointer;
+  padding: 0.4em 1em;
+  padding-left: 1.2em;
+  line-height: 1.5em;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+details details {
+  margin-left: 1em;
+}
+
+details > button.close {
+  font-size: 0.7em;
+  width: 30em;
+  min-width: 50%;
+  border-radius: 0.5em;
+  margin: 0.5em auto 0.5em 0.5em;
+  background-color: var(--main-color-light-grayish);
+}
+
+code {
+  display: inline-block;
+  background-color: var(--main-color-grayish);
+  color: white;
+  border-radius: 16px;
+  padding: 1em 1em;
+  max-width: 92vw;
+  overflow: auto;
+  white-space: pre-wrap;
+  box-sizing: border-box;
+  width: 99%;
+  min-width: unset;
+}
+
+#audio_background {
+  overflow: hidden;
+  opacity: 0;
+  position: fixed;
+  background-attachment: fixed;
+  z-index: -50;
+  top: 0;
+  /* transition: opacity 1s; */
+  width: 100vw;
+  height: 100vh;
+  background: var(--play-background);
+}
+
+.audio_play body::-webkit-scrollbar-track {
+  background: var(--play-background);
+}
+
+.audio_play #audio_background {
+  opacity: 1;
+}
+
+/* .bg-background-top,
+.bg-background-bottom,
+:root {
+  transition: background-color 1s;
+} */
+
+.audio_play .bg-background-top {
+  background-color: var(--play-background-color-top);
+}
+
+form input,
+form textarea,
+form .preview-area,
+form select {
+  border: solid 1px var(--main-color-deep);
+  border-radius: 0.5em;
+  box-sizing: border-box;
+}
+
+form select {
+  padding: 0.25rem;
+}
+
+*:focus-visible {
+  outline: solid 1px var(--main-color-dark);
+}
+
+.parsed p {
+  margin: 1.5rem auto;
+  white-space: pre-line;
+}
+
+.preview-area .parsed p:first-child {
+  margin-top: 0;
+}
+
+iframe {
+  max-width: 100%;
+}

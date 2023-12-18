@@ -1,0 +1,58 @@
+:root {
+  --main-color: #c2d555;
+  --main-color-soft: #d4e18b;
+  --main-color-pale: #dfec98;
+  --main-color-fluo: #c5d85840;
+  --main-color-pale-fluo: #dfec9840;
+  --main-color-strong: #a2b825;
+  --main-color-deep: #9bb022;
+  --main-color-dark: #9ba346;
+  --main-color-grayish: #6d6e5e;
+  --main-color-grayish-fluo: rgb(146 147 127 / 90%);
+  --main-color-light-grayish: #bbbcaf;
+  --sub-color: #b99f72;
+  --sub-color-soft: #d8bb8a;
+  --sub-color-strong: #96815c;
+  --text-color: #27231d;
+  --background-top: #fdfde4;
+  --background-bottom: #fffcd4;
+}
+
+:root.theme-orange {
+  --main-color: #ecae75;
+  --main-color-soft: #fac798;
+  --main-color-pale: #ffd8a2;
+  --main-color-fluo: #f8b06d40;
+  --main-color-pale-fluo: #fde5c440;
+  --main-color-strong: #d88b44;
+  --main-color-deep: #c36b18;
+  --main-color-dark: #c06817;
+  --text-color: #27231d;
+  --background-top: #fff8e3;
+  --background-bottom: #fff1e4;
+}
+
+:root {
+  --play-background-color-top: #ecfffe;
+  --play-background-color-bottom: #f4ffd1;
+  --play-background: linear-gradient(
+    var(--play-background-color-top) 30%,
+    var(--play-background-color-bottom)
+  );
+  --playing-mark: "▶";
+  --lightbox-background: rgba(0, 0, 0, 0.3);
+  --lightbox-background-preview: rgba(146, 147, 127, 0.8);
+  --lightbox-background-text: rgb(255 255 255 / 90%);
+}
+:root.theme-orange {
+  --play-background-color-top: #fff9d4;
+  --play-background-color-bottom: #ffead4;
+}
+
+:root {
+  --background: linear-gradient(
+    var(--background-top) 30%,
+    var(--background-bottom)
+  );
+  --scroll-margin: 10px;
+}
