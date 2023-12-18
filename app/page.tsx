@@ -7,10 +7,10 @@ export const dynamic = isStatic ? "auto" : "force-dynamic";
 // export const dynamicParams = true;
 
 export default async function Page() {
-  const topImage = getImageItem({ filter: { topImage: true } });
+  // const topImage = getImageItem({ filter: { topImage: true } });
   return (
     <>
-      <TopPage topImage={topImage} />
+      <TopPage />
     </>
   );
 }
