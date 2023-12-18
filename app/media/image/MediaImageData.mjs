@@ -133,6 +133,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
                 if (imageRe.test(parsedPath.ext)) {
                   if (filter.imageName && filter.imageName !== parsedPath.name) return false;
                   if (filter.pathMatch && !`/${dir}/${childName}`.match(filter.pathMatch)) return false;
+                  if (filter.topImage) return false;
                   dirAlbum.list.push(readImage({ name: parsedPath.name, src: childName, dir: dir }, dirItem, getImageOption))
                 }
               }

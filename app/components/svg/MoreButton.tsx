@@ -1,7 +1,9 @@
 import { SVGAttributes } from "react";
 
-export default function MoreButton(attributes: SVGAttributes<SVGSVGElement>) {
-  const { className, ..._attributes } = attributes;
+export default function MoreButton({
+  className,
+  ...attributes
+}: SVGAttributes<SVGSVGElement>) {
   return (
     <svg
       width="235"
@@ -10,7 +12,7 @@ export default function MoreButton(attributes: SVGAttributes<SVGSVGElement>) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      {..._attributes}
+      {...attributes}
     >
       <rect width="235" height="235" fill="#F8CFA9" />
       <path

@@ -1,7 +1,9 @@
 import React, { SVGAttributes } from "react";
 
-export default function MenuButton(attributes: SVGAttributes<SVGSVGElement>) {
-  const { className, ..._attributes } = attributes;
+export default function MenuButton({
+  className,
+  ...attributes
+}: SVGAttributes<SVGSVGElement>) {
   return (
     <svg
       width="36"
@@ -10,7 +12,7 @@ export default function MenuButton(attributes: SVGAttributes<SVGSVGElement>) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
-      {..._attributes}
+      {...attributes}
     >
       <path
         fill-rule="evenodd"

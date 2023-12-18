@@ -3,7 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { SiteProps } from "@/app/site/SiteData.mjs";
-import MenuButton from "@/app/svg/MenuButton";
+import MenuButton from "@/app/components/svg/MenuButton";
 
 type HeaderProps = {
   site: SiteProps;

@@ -1,7 +1,9 @@
 import React, { SVGAttributes } from "react";
 
-export default function MenuButton(attributes: SVGAttributes<SVGSVGElement>) {
-  const { className, ..._attributes } = attributes;
+export default function MenuButton({
+  className,
+  ...attributes
+}: SVGAttributes<SVGSVGElement>) {
   return (
     <svg
       width="60"
@@ -12,7 +14,7 @@ export default function MenuButton(attributes: SVGAttributes<SVGSVGElement>) {
       className={
         "MenuButton hover:cursor-pointer" + (className ? ` ${className}` : "")
       }
-      {..._attributes}
+      {...attributes}
     >
       <path
         className="fill-main"

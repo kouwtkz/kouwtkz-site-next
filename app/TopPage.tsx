@@ -7,37 +7,28 @@ import Link from "next/link";
 import React from "react";
 import { useServerState } from "./components/System/ServerState";
 import MultiParser from "./components/functions/MultiParser";
-import MenuButton from "./svg/MenuButton";
-import { useMediaImageState } from "./media/image/MediaImageState";
-import { usePostState } from "./blog/PostState";
-import { findMany } from "./blog/functions/findMany";
+import Notice from "./blog/Notice";
 
 type TopPageProps = {
-  topImage?: MediaImageItemType | null;
+  topImages?: MediaImageItemType[];
 };
 
-export default function TopPage() {
+export default function TopPage({ topImages = [] }: TopPageProps) {
   const { isStatic } = useServerState();
-  const { imageItemList } = useMediaImageState();
-  const topImages = imageItemList.filter((image) => image.topImage);
   const topImage = topImages[Math.floor(Math.random() * topImages.length)];
-  const { posts } = usePostState();
-  const topPosts = findMany({
-    list: posts,
-    take: 3,
-    where: { category: "お知らせ" },
-  });
+  console.log(topImage);
   return (
     <>
       {topImage ? (
         <Image
           src={`${topImage.innerURL}`}
-          loader={loaderSet(isStatic, topImage.path)}
           alt={topImage.name || topImage.src}
           width={topImage.info?.width}
           height={topImage.info?.height}
           loading="eager"
+          unoptimized={isStatic}
           className="w-[100%] h-80"
+          suppressHydrationWarning={true}
         />
       ) : (
         <div className="w-[100%] h-80" />
@@ -70,20 +61,7 @@ export default function TopPage() {
             </div>
           </div>
         </div>
-        <div className="my-8">
-          <h3 className="text-2xl my-4">お知らせ</h3>
-          <div className="h-24 my-4">
-            {topPosts.map((post, i) => (
-              <div className="m-1" key={i}>
-                <Link href={`/blog?postId=${post.postId}`}>
-                  <MultiParser only={{ toTwemoji: true }}>
-                    {post.title}
-                  </MultiParser>
-                </Link>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Notice className="h-40" />
       </main>
     </>
   );
