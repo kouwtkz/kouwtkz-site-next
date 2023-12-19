@@ -79,6 +79,9 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
               <Link href="special">スペシャルページ</Link>
             </div>
             <div>
+              <Link href="about">このサイトについて</Link>
+            </div>
+            <div>
               <Link href="setting">せってい</Link>
             </div>
           </div>
