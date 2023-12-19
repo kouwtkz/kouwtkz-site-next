@@ -19,7 +19,7 @@ export default function CharaDetail({ chara }: DetailProps) {
       list: imageItemList.filter(
         (image) =>
           image.group?.match("art") && image.tags?.some((v) => v === chara.id)
-      ),
+      ).slice(0, 20),
       name: "ART",
     },
     {
@@ -28,6 +28,13 @@ export default function CharaDetail({ chara }: DetailProps) {
           image.group?.match("goods") && image.tags?.some((v) => v === chara.id)
       ),
       name: "GOODS",
+    },
+    {
+      list: imageItemList.filter(
+        (image) =>
+          image.group?.match("picture") && image.tags?.some((v) => v === chara.id)
+      ).slice(0, 20),
+      name: "PICTURE",
     },
     {
       list: imageItemList.filter(

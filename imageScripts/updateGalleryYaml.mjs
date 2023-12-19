@@ -10,6 +10,7 @@ const imageGroups = [
   "fanart",
   "given",
   "works",
+  "picture",
 ];
 
 // 管理データ周りの読込
@@ -31,7 +32,7 @@ let manageFileUpdated = false;  // 管理データが更新されたか
 // 各ディレクトリの定義と生成
 const mediaDir = `../public/_media`;  // このディレクトリが基準になる
 const archiveDirName = '.archive';
-const imageDir = `/images`;
+const imageDir = `images`;
 const imageYamlDir = `../_data/image/gallery`;
 try { mkdirSync(imageYamlDir); } catch { }
 /** @type Map<string, YamlObject> */
@@ -52,7 +53,7 @@ imageGroups.forEach((group) => {
     data = parse(readStr);
     mtime = Number(statSync(path).mtime?.getTime());
   } catch (e) {
-    data = { title: group, name: group, path: `${imageDir}/${group}`, description: "" };
+    data = { title: group, name: group, dir: `${imageDir}/${group}`, description: "" };
   }
   if (!data.list) data.list = [];
   data.list.forEach(
