@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { SiteProps } from "@/app/site/SiteData.mjs";
-import Image from "next/image";
 
 type FooterProps = {
   site: SiteProps;

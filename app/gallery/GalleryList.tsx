@@ -4,11 +4,8 @@ import { MediaImageAlbumType } from "@/app/media/image/MediaImageType";
 import { useImageViewer } from "@/app/gallery/ImageViewer";
 
 import React from "react";
-import Image from "next/image";
-import Link from "next/link";
-import loaderSet from "@/app/lib/loaderSet";
-import { useServerState } from "../components/System/ServerState";
 import { useRouter } from "next/navigation";
+import ImageMee from "../components/image/ImageMee";
 type GalleryPageProps = {
   album: MediaImageAlbumType | null;
   size?: number;
@@ -27,7 +24,6 @@ const GalleryList = ({
   autoDisable = false,
 }: GalleryPageProps) => {
   const router = useRouter();
-  const { isStatic } = useServerState();
   // const { setImageItem } = useImageViewer();
   if (!album || (autoDisable && album.list.length === 0)) return null;
   const thumb_size = size;
@@ -64,22 +60,13 @@ const GalleryList = ({
                   ` hover:brightness-90 transition cursor-pointer`
                 }
               >
-                <Image
-                  src={`${image.innerURL}`}
-                  loader={loaderSet(
-                    isStatic,
-                    image.resized?.find(
-                      (item) => item.option.mode === "thumbnail"
-                    )?.src
-                  )}
-                  alt={image.name || image.src}
-                  width={thumb.width}
-                  height={thumb.height}
+                <ImageMee
+                  imageItem={image}
+                  mode="thumbnail"
                   style={{ objectFit: "cover" }}
                   className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                   onClick={() => {
                     router.push(`?image=${image.path}`, { scroll: false });
-                    // setImageItem(image);
                   }}
                 />
               </div>

@@ -1,11 +1,10 @@
 "use client";
 
 import { CharaType } from "@/app/character/chara";
-import Image from "next/image";
-import loaderSet from "@/app/lib/loaderSet";
 import GalleryList from "@/app/gallery/GalleryList";
 import { useServerState } from "@/app/components/System/ServerState";
 import { useMediaImageState } from "@/app/media/image/MediaImageState";
+import ImageMee from "@/app/components/image/ImageMee";
 
 type DetailProps = {
   chara: CharaType;
@@ -62,28 +61,24 @@ export default function CharaDetail({ chara }: DetailProps) {
     <div className="p-0">
       {headerImage ? (
         <div>
-          <Image
-            src={`${headerImage.innerURL}`}
-            loader={loaderSet(isStatic, headerImage.path)}
+          <ImageMee
+            imageItem={headerImage}
+            loading="eager"
+            unoptimized={isStatic}
+            suppressHydrationWarning={true}
             className="inline-block w-[100%]"
-            alt={chara.name}
-            width={headerImage.info?.width}
-            height={headerImage.info?.height}
           />
         </div>
       ) : null}
       {charaImage ? (
         <div>
-          <Image
-            src={`${charaImage.innerURL}`}
-            loader={loaderSet(
-              isStatic,
-              charaImage.resized?.find(
-                (item) => item.option.mode === "thumbnail"
-              )?.src
-            )}
+          <ImageMee
+            imageItem={charaImage}
+            mode="thumbnail"
+            loading="eager"
+            unoptimized={isStatic}
+            suppressHydrationWarning={true}
             className="inline-block m-4"
-            alt={chara.name}
             width={256}
             height={256}
           />

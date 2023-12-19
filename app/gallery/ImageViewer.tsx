@@ -2,17 +2,14 @@
 
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
-import { MediaImageItemType } from "@/app/media/image/MediaImageType";
 import { useCharaData } from "@/app/character/CharaData";
-import Image from "next/image";
 import Link from "next/link";
-import loaderSet from "@/app/lib/loaderSet";
-import { useServerState } from "@/app/components/System/ServerState";
 import MultiParser from "@/app/components/functions/MultiParser";
 import { useSearchParams } from "next/navigation";
 import { useMediaImageState } from "../media/image/MediaImageState";
 import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
+import ImageMee from "../components/image/ImageMee";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -55,7 +52,6 @@ const ImageViewerWindow = () => {
   const search = useSearchParams();
   const { imageItemList } = useMediaImageState();
   const charaData = useCharaData();
-  const { isStatic } = useServerState();
   const [backCheck, setBackCheck] = useState(false);
   const imageParam = search.get("image");
 
@@ -93,16 +89,14 @@ const ImageViewerWindow = () => {
           id={imageViewerWindowID}
         >
           <div className="window flex flex-wrap flex-row max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%]">
-            <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%]">
-              <Image
-                src={`${image.innerURL}`}
-                alt={`${image.name}`}
-                loader={loaderSet(isStatic, image.path)}
-                width={image.info?.width}
-                height={image.info?.height}
-                style={{ objectFit: "contain" }}
-                className="w-[100%] h-[100%]"
-              />
+            <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
+              <Link href={`${image.URL || image.src}`} target="_blank">
+                <ImageMee
+                  imageItem={image}
+                  mode="thumbnail"
+                  style={{ objectFit: "contain" }}
+                />
+              </Link>
             </div>
             <div className="flex-auto pb-4 md:pb-0 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
               <div className="pl-0 md:pl-12">
@@ -130,18 +124,12 @@ const ImageViewerWindow = () => {
                         key={i}
                       >
                         {chara?.media?.icon ? (
-                          <Image
-                            src={`${chara.media.icon.innerURL}`}
-                            loader={loaderSet(
-                              isStatic,
-                              chara?.media?.icon?.resized?.find(
-                                (v) => v.option.mode === "icon"
-                              )?.src
-                            )}
-                            className="inline-block mr-1"
-                            alt={chara.name}
+                          <ImageMee
+                            imageItem={chara?.media?.icon}
+                            mode="icon"
                             width={40}
                             height={40}
+                            className="inline-block mr-1"
                           />
                         ) : (
                           <></>

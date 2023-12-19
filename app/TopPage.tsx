@@ -1,22 +1,19 @@
 "use client";
 
-import loaderSet from "@/app/lib/loaderSet";
 import { MediaImageItemType } from "@/app/media/image/MediaImageType";
-import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
-import { useServerState } from "./components/System/ServerState";
 import MultiParser from "./components/functions/MultiParser";
 import Notice from "./blog/Notice";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import fadein from "./styles/transitions/fadein.module.scss";
+import ImageMee from "./components/image/ImageMee";
 
 type TopPageProps = {
   topImages?: MediaImageItemType[];
 };
 
 export default function TopPage({ topImages = [] }: TopPageProps) {
-  const { isStatic } = useServerState();
   const [topImageState, setTopImage] = useState<MediaImageItemType>();
   const imageRnd = (images: MediaImageItemType[]) =>
     images[Math.floor(Math.random() * images.length)];
@@ -42,16 +39,11 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
           classNames={fadein}
           timeout={750}
         >
-          <Image
-            src={`${topImage.innerURL}`}
-            loader={loaderSet(isStatic, topImage.path)}
-            suppressHydrationWarning={isStatic}
-            alt={topImage.name || topImage.src}
-            width={topImage.info?.width}
-            height={topImage.info?.height}
+          <ImageMee
+            imageItem={topImage}
             loading="eager"
-            unoptimized={isStatic}
             className="w-[100%] h-[100%] absolute"
+            suppressHydrationWarning={true}
           />
         </CSSTransition>
       </TransitionGroup>
