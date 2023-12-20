@@ -36,6 +36,7 @@ export type MediaImageAlbumType = {
   [key: string]: any;
   dir?: string;
   name: string;
+  visible?: { info?: boolean, title?: boolean, filename?: boolean };
   list: MediaImageItemType[];
 }
 
@@ -49,7 +50,6 @@ export type MediaImageItemType = {
   URL?: string;
   innerURL?: string;
   tags?: string[];
-  group?: string;
   title?: string;
   description?: string;
   time?: Date | null;
@@ -61,6 +61,7 @@ export type MediaImageItemType = {
     src: string;
     option: ResizeOptionType;
   }[]
+  album?: MediaImageAlbumType;
 }
 
 export type MediaImageInfoType = {

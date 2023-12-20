@@ -30,14 +30,14 @@ export default function ImageMee({
   const { isStatic } = useServerState();
   src = src || imageItem?.innerURL || "";
   alt = alt || imageItem?.name || imageItem?.src || "";
-  console.log(src, imageItem?.path);
   return (
     <Image
       {...{ src, alt }}
       loader={loaderSet(
         isStatic,
         mode !== "simple"
-          ? imageItem?.resized?.find((item) => item.option.mode === mode)?.src
+          ? imageItem?.resized?.find((item) => item.option.mode === mode)
+              ?.src || src
           : src
       )}
       {...{

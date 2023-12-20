@@ -78,6 +78,13 @@ const ImageViewerWindow = () => {
     ? imageItemList.find((image) => image.path === imageParam) || null
     : null;
 
+  const titleEqFilename =
+    process.env.NODE_ENV === "development"
+      ? false
+      : image?.title
+      ? image.src.startsWith(image.title)
+      : true;
+
   return (
     <div className="fixed z-[40]" id="image_viewer">
       {imageViewer.isOpen && image ? (
@@ -98,73 +105,82 @@ const ImageViewerWindow = () => {
                 />
               </Link>
             </div>
-            <div className="flex-auto pb-4 md:pb-0 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
-              <div className="pl-0 md:pl-12">
-                <h2 className="my-8 text-4xl font-MochiyPopOne text-main-dark break-all">
-                  {image.title}
-                </h2>
-                <div className="mx-2 md:mr-6 text-2xl">
-                  <MultiParser className="[&_p]:my-4 [&_p]:whitespace-pre-line">
-                    {image.description}
-                  </MultiParser>
-                </div>
-                <div className="m-2 mb-8 text-2xl">
-                  {charaData.charaList
-                    .filter((chara) =>
-                      image.tags?.find((tag) => tag === chara.id)
-                    )
-                    .map((chara, i) => (
+            {image.album?.visible?.info ? (
+              <div className="flex-auto pb-4 md:pb-0 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
+                <div className="pl-0 md:pl-12">
+                  {image.album.visible.title &&
+                  (image.album.visible.filename || !titleEqFilename) ? (
+                    <h2 className="my-8 text-3xl md:text-4xl font-MochiyPopOne text-main-dark break-all">
+                      {image.title}
+                    </h2>
+                  ) : (
+                    <div className="my-8" />
+                  )}
+                  <div className="mx-2 md:mr-6 text-xl md:text-2xl">
+                    <MultiParser className="[&_p]:my-4 [&_p]:whitespace-pre-line">
+                      {image.description}
+                    </MultiParser>
+                  </div>
+                  <div className="m-2 mb-8 text-2xl">
+                    {charaData.charaList
+                      .filter((chara) =>
+                        image.tags?.find((tag) => tag === chara.id)
+                      )
+                      .map((chara, i) => (
+                        <Link
+                          className="mx-2 my-2 whitespace-nowrap inline-block"
+                          href={`/character/${chara.id}`}
+                          onClick={() => {
+                            imageViewer.onClose();
+                            return true;
+                          }}
+                          key={i}
+                        >
+                          {chara?.media?.icon ? (
+                            <ImageMee
+                              imageItem={chara?.media?.icon}
+                              mode="icon"
+                              width={40}
+                              height={40}
+                              className="inline-block mr-1"
+                            />
+                          ) : (
+                            <></>
+                          )}
+                          <span className="align-middle">{chara.name}</span>
+                        </Link>
+                      ))}
+                  </div>
+                  {image.link ? (
+                    <div className="text-xl">
                       <Link
-                        className="mx-2 my-2 whitespace-nowrap inline-block"
-                        href={`/character/${chara.id}`}
-                        onClick={() => {
-                          imageViewer.onClose();
-                          return true;
-                        }}
-                        key={i}
+                        target="_blank"
+                        className="underline font-sans"
+                        href={image.link}
                       >
-                        {chara?.media?.icon ? (
-                          <ImageMee
-                            imageItem={chara?.media?.icon}
-                            mode="icon"
-                            width={40}
-                            height={40}
-                            className="inline-block mr-1"
-                          />
-                        ) : (
-                          <></>
-                        )}
-                        <span className="align-middle">{chara.name}</span>
+                        {image.link}
                       </Link>
-                    ))}
+                    </div>
+                  ) : (
+                    <></>
+                  )}
                 </div>
-                {image.link ? (
-                  <div className="text-xl">
-                    <Link
-                      target="_blank"
-                      className="underline font-sans"
-                      href={image.link}
-                    >
-                      {image.link}
-                    </Link>
+                {image.time ? (
+                  <div className="m-4 mr-8 text-main-grayish text-right">
+                    {image.time.toLocaleString("ja", opt)}
                   </div>
                 ) : (
                   <></>
                 )}
-              </div>
-              {image.time ? (
-                <div className="m-4 text-main-grayish text-right">
-                  {image.time.toLocaleString("ja", opt)}
+                <div className="m-4">
+                  <button className="m-auto block text-xl" onClick={backAction}>
+                    とじる
+                  </button>
                 </div>
-              ) : (
-                <></>
-              )}
-              <div className="m-4">
-                <button className="m-auto block text-xl" onClick={backAction}>
-                  とじる
-                </button>
               </div>
-            </div>
+            ) : (
+              <></>
+            )}
           </div>
         </div>
       ) : (

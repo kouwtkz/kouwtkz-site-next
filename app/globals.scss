@@ -31,7 +31,8 @@ body,
   &.overflow-y-hidden .fixed {
     margin-right: var(--scroll-margin) !important;
   }
-  &.mobile {
+  &.mobile,
+  &.mobile .window {
     &::-webkit-scrollbar {
       width: 0;
       height: 0;
@@ -133,7 +134,7 @@ button {
 }
 
 details {
-  >summary {
+  > summary {
     display: list-item;
     padding: 0.4em 1em;
     cursor: pointer;
@@ -152,7 +153,7 @@ details {
     -webkit-user-select: none;
     user-select: none;
   }
-  >button.close {
+  > button.close {
     font-size: 0.7em;
     width: 30em;
     min-width: 50%;

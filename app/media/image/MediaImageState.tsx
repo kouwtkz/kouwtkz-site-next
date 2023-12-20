@@ -21,7 +21,11 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
   const imageList: MediaImageItemType[] = [];
   imageAlbums.forEach((album) => {
     album.list.forEach((item) => {
-      item.group = album.name;
+      album.visible = {
+        ...{ info: true, filename: true, title: true },
+        ...album.visible,
+      };
+      item.album = album;
       item.time = item.time ? new Date(item.time) : undefined;
       imageList.push(item);
     });

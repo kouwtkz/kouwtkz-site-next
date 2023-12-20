@@ -203,7 +203,6 @@ export function parseImageItems(imageAlbums) {
   const imageList = [];
   imageAlbums.forEach((album => {
     album.list.forEach(item => {
-      item.group = album.name;
       imageList.push(item);
     })
   }))

@@ -15,37 +15,45 @@ export default function CharaDetail({ chara }: DetailProps) {
   const { imageItemList } = useMediaImageState();
   const galleryGroups = [
     {
-      list: imageItemList.filter(
-        (image) =>
-          image.group?.match("art") && image.tags?.some((v) => v === chara.id)
-      ).slice(0, 20),
+      list: imageItemList
+        .filter(
+          (image) =>
+            image.album?.name?.match("art") &&
+            image.tags?.some((v) => v === chara.id)
+        )
+        .slice(0, 20),
       name: "ART",
     },
     {
       list: imageItemList.filter(
         (image) =>
-          image.group?.match("goods") && image.tags?.some((v) => v === chara.id)
+          image.album?.name?.match("goods") &&
+          image.tags?.some((v) => v === chara.id)
       ),
       name: "GOODS",
     },
     {
-      list: imageItemList.filter(
-        (image) =>
-          image.group?.match("picture") && image.tags?.some((v) => v === chara.id)
-      ).slice(0, 20),
+      list: imageItemList
+        .filter(
+          (image) =>
+            image.album?.name?.match("picture") &&
+            image.tags?.some((v) => v === chara.id)
+        )
+        .slice(0, 20),
       name: "PICTURE",
     },
     {
       list: imageItemList.filter(
         (image) =>
-          image.group?.match("given") && image.tags?.some((v) => v === chara.id)
+          image.album?.name?.match("given") &&
+          image.tags?.some((v) => v === chara.id)
       ),
       name: "FAN ART",
     },
   ];
   const imageList = imageItemList.filter((image) =>
     ["art", "goods", "given", "charaImages", "charaIcon"].find(
-      (fg) => fg === image.group
+      (fg) => fg === image.album?.name
     )
   );
   const headerImagePath = `${chara.headerImage}`;
