@@ -21,6 +21,10 @@ body {
   }
 }
 
+body::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
 body,
 .window {
   &::-webkit-scrollbar {
@@ -41,9 +45,6 @@ body,
     &.overflow-y-hidden .fixed {
       margin-right: 0 !important;
     }
-  }
-  &::-webkit-scrollbar-track:not(.window) {
-    background: var(--background);
   }
   &::-webkit-scrollbar-thumb {
     background: var(--main-color-soft);
