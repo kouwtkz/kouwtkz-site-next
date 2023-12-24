@@ -21,6 +21,7 @@ import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
 import { DataStateAddMtime } from "./components/dataState/DataStateFunctions";
+import Breakcrumb from "./components/navigation/breadcrumb";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -57,10 +58,13 @@ export default async function RootLayout({
           })}
         />
         <Header site={site} />
-        <div className="text-center pt-24 pb-8 font-KosugiMaru">
-          <div className="mx-auto bg-white bg-opacity-50 max-w-[1160px] min-h-[70vh]">
-            {children}
-            <Footer site={site} currentDate={currentDate} />
+        <div className="pt-16 pb-8 text-center font-KosugiMaru">
+          <div className="mx-auto max-w-[1160px] min-h-[70vh]">
+            <Breakcrumb />
+            <div className="bg-white bg-opacity-50">
+              {children}
+              <Footer site={site} currentDate={currentDate} />
+            </div>
           </div>
         </div>
         <div id="audio_background"></div>

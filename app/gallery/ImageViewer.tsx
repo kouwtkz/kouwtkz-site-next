@@ -28,7 +28,7 @@ type ImageViewerType = {
   imagePath: string;
   setImagePath: (path: string) => void;
 };
-const useImageViewer = create<ImageViewerType>((set) => ({
+export const useImageViewer = create<ImageViewerType>((set) => ({
   isOpen: false,
   imagePath: "",
   onOpen: () => {
@@ -44,9 +44,8 @@ const useImageViewer = create<ImageViewerType>((set) => ({
     bodyLock(true);
   },
 }));
-export { useImageViewer };
 
-const ImageViewerWindow = () => {
+function ImageViewerWindow() {
   const router = useRouter();
   const imageViewer = useImageViewer();
   const search = useSearchParams();
@@ -188,14 +187,12 @@ const ImageViewerWindow = () => {
       )}
     </div>
   );
-};
+}
 
-const ImageViewer = () => {
+export default function ImageViewer() {
   return (
     <Suspense>
       <ImageViewerWindow />
     </Suspense>
   );
-};
-
-export default ImageViewer;
+}
