@@ -30,6 +30,16 @@ export default function ImageMee({
   const { isStatic } = useServerState();
   src = src || imageItem?.innerURL || "";
   alt = alt || imageItem?.name || imageItem?.src || "";
+  if (width) {
+    if (!height)
+      height = Math.floor(
+        (width * (imageItem?.info?.height || 1)) / (imageItem?.info?.width || 1)
+      );
+  } else if (height) {
+    width = Math.floor(
+      (height * (imageItem?.info?.width || 1)) / (imageItem?.info?.height || 1)
+    );
+  }
   return (
     <Image
       {...{ src, alt }}

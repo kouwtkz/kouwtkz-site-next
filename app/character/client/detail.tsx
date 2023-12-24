@@ -84,11 +84,10 @@ export default function CharaDetail({ chara }: DetailProps) {
             imageItem={charaImage}
             mode="thumbnail"
             loading="eager"
-            unoptimized={isStatic}
             suppressHydrationWarning={true}
             className="inline-block m-4"
-            width={256}
-            height={256}
+            style={{ objectFit: "cover" }}
+            height={340}
           />
         </div>
       ) : null}
