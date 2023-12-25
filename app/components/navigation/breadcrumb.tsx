@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { resolve } from "path";
 import React, { HTMLAttributes, Suspense } from "react";
 import { create } from "zustand";
 type BreakcrumbType = {};
@@ -10,11 +11,14 @@ export const useBreakcrumb = create<BreakcrumbType>((set) => ({}));
 
 function BreakcrumbInner() {
   const pathname = usePathname();
+  const search = useSearchParams();
+  const existsSearch = Array.from(search.entries()).length > 0;
+  const backUrl = existsSearch ? pathname : resolve(pathname + "/..");
   return (
     <>
       {pathname !== "/" ? (
         <div className="flex">
-          <Link href="./" className="m-1">
+          <Link href={backUrl} className="m-1">
             ←戻る
           </Link>
         </div>
