@@ -2,7 +2,7 @@
 
 import { env } from 'process';
 import dotenv from 'dotenv';
-if (!env.PUBLIC_DIR) dotenv.config();
+if (!env.MEDIA_DIR) dotenv.config();
 import sizeOf from "image-size"
 
 import fs from "fs"
@@ -47,7 +47,7 @@ function readImage(image, dirItem, getImageOption = {}) {
   const baseImageFullPath = path.resolve(`${cwd}/${baseImagePath}`);
   image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
   image.path = baseImagePath;
-  if (/(png|jpe?g)$/.test(image.src)) {
+  if (/(png|jpe?g)$/i.test(image.src)) {
     const webpImageSrc = image.src.replace(/[^.]+$/, "webp");
     const webpImagePath = `/${image.dir}/${webpImageSrc}`;
     if (getImageOption.doMakeImage) {
