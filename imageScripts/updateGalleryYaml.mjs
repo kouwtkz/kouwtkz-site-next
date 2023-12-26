@@ -18,7 +18,7 @@ const imageGroups = [
 // 各ディレクトリの定義
 // cwdを基準にしたパスを指定する
 const imageYamlDir = `_data/image/gallery`;
-const mediaDir = "public/_media";  // このディレクトリが基準になる
+const mediaDir = "_media";  // このディレクトリが基準になる
 const archiveDirName = '.archive';
 const imageDir = `images`;
 
@@ -145,39 +145,39 @@ imageGroups.forEach((group) => {
   let updated = yamlUpdated;
   let updatedArchive = archiveYamlUpdated;
   // ここで読み込んだファイルのリストを取得
-  const dirPath = data.path || `${imageDir}/${group}`;
-  const readDirList = outReadDirList(dirPath);
+  const imagesDirPath = data.path || `${imageDir}/${group}`;
+  const readImagesList = outReadDirList(imagesDirPath);
   // データの確認用などでアーカイブも取得
-  const dirArchivePath = `${dirPath}/${archiveDirName}`;
-  const readArchiveDirList = outReadDirList(dirArchivePath);
+  const dirArchivePath = `${imagesDirPath}/${archiveDirName}`;
+  const readArchiveImagesList = outReadDirList(dirArchivePath);
   // yaml更新されていて、readDirListにないデータがyamlにある場合はアーカイブがあれば取得する
   if (yamlUpdated) {
     // 更新されているyamlの項目を取得
     yamlData.data.list.filter((item, i) => {
-      return !readDirList.some(file => (file.name === item.src && file.dir === `${dirPath}${item.dir}`));
+      return !readImagesList.some(file => (file.name === item.src && file.dir === `${imagesDirPath}${item.dir}`));
     }).forEach(item => {
-      let fromFile = readDirList.find(file => file.name === item.src);
+      let fromFile = readImagesList.find(file => file.name === item.src);
       const existFromFile1 = Boolean(fromFile);
       let existFromFile2 = false;
       if (!existFromFile1) {
-        fromFile = readArchiveDirList.find(file => file.name === item.src);
+        fromFile = readArchiveImagesList.find(file => file.name === item.src);
         existFromFile2 = Boolean(fromFile);
       }
       if (fromFile) {
         const renameFrom = resolve(`${mediaFullDir}/${fromFile.dir}/${fromFile.name}`);
-        const renameToDir = resolve(`${mediaFullDir}/${dirPath}${item.dir}`)
+        const renameToDir = resolve(`${mediaFullDir}/${imagesDirPath}${item.dir}`)
         const renameTo = resolve(`${renameToDir}/${item.src}`);
         try { mkdirSync(renameToDir) } catch { };
         try { renameSync(renameFrom, renameTo) } catch { }
         if (existFromFile1) {
-          const index = readDirList.findIndex(file => file.name === fromFile.name);
-          readDirList[index].dir = `${dirPath}${item.dir}`;
+          const index = readImagesList.findIndex(file => file.name === fromFile.name);
+          readImagesList[index].dir = `${imagesDirPath}${item.dir}`;
         } else if (existFromFile2) {
-          const index = readArchiveDirList.findIndex(file => file.name === fromFile.name);
-          const item2 = readArchiveDirList.splice(index, 1).pop();
+          const index = readArchiveImagesList.findIndex(file => file.name === fromFile.name);
+          const item2 = readArchiveImagesList.splice(index, 1).pop();
           if (item2) {
-            item2.dir = `${dirPath}${item.dir}`;
-            readDirList.push(item2);
+            item2.dir = `${imagesDirPath}${item.dir}`;
+            readImagesList.push(item2);
           }
           const indexArchiveYamlData = archiveYamlData.data.list.findIndex(file => file.src === fromFile.name);
           archiveYamlData.data.list.splice(indexArchiveYamlData, 1)
@@ -188,13 +188,13 @@ imageGroups.forEach((group) => {
   // アーカイブも似たようなループをする
   if (archiveYamlUpdated) {
     archiveYamlData.data.list.filter((item, i) => {
-      return !readArchiveDirList.some(file => (file.name === item.src && file.dir === `${dirArchivePath}${item.dir}`));
+      return !readArchiveImagesList.some(file => (file.name === item.src && file.dir === `${dirArchivePath}${item.dir}`));
     }).forEach(item => {
-      let fromFile = readDirList.find(file => file.name === item.src);
+      let fromFile = readImagesList.find(file => file.name === item.src);
       const existFromFile1 = Boolean(fromFile);
       let existFromFile2 = false;
       if (!existFromFile1) {
-        fromFile = readArchiveDirList.find(file => file.name === item.src);
+        fromFile = readArchiveImagesList.find(file => file.name === item.src);
         existFromFile2 = Boolean(fromFile);
       }
       if (fromFile) {
@@ -204,27 +204,27 @@ imageGroups.forEach((group) => {
         try { mkdirSync(renameToDir) } catch { };
         try { renameSync(renameFrom, renameTo) } catch { }
         if (existFromFile1) {
-          const index = readDirList.findIndex(file => file.name === fromFile.name);
-          const item1 = readDirList.splice(index, 1).pop();
+          const index = readImagesList.findIndex(file => file.name === fromFile.name);
+          const item1 = readImagesList.splice(index, 1).pop();
           if (item1) {
             item1.dir = `${dirArchivePath}${item.dir}`;
-            readArchiveDirList.push(item1);
+            readArchiveImagesList.push(item1);
           }
         } else if (existFromFile2) {
-          const index = readArchiveDirList.findIndex(file => file.name === fromFile.name);
-          readArchiveDirList[index].dir = `${dirArchivePath}${item.dir}`;
+          const index = readArchiveImagesList.findIndex(file => file.name === fromFile.name);
+          readArchiveImagesList[index].dir = `${dirArchivePath}${item.dir}`;
         }
       }
     })
   }
-  readDirList.forEach(
+  readImagesList.forEach(
     /** @param {PlusDirEntry} item */
     (item) => {
       const listFindIndex = data.list.findIndex((e) => e.src == item.name);
       const archiveListFindIndex = archiveData.list.findIndex((e) =>
         e.src == item.name
       );
-      const dir = item.dir.replace(dirPath, "");
+      const dir = item.dir.replace(imagesDirPath, "");
       if (listFindIndex < 0 && archiveListFindIndex < 0) {
         const insertData = {
           src: item.name,
@@ -302,7 +302,7 @@ imageGroups.forEach((group) => {
   }
 });
 if (manageFileUpdated) {
-  writeFileSync(manageFilePath, JSON.stringify(manageData));
+  writeFileSync(manageFileFullPath, JSON.stringify(manageData));
 } else {
   console.log("Yamlファイルの更新はありませんでした。");
 }

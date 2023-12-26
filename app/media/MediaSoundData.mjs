@@ -21,20 +21,18 @@
 
 import { readFileSync } from "fs";
 import { parse } from "yaml";
-const projectRoot = process.cwd(), publicDir = process.env.PUBLIC_DIR || '', publicRoot = `${projectRoot}/${publicDir}`;
-const mediaDir = process.env.MEDIA_DIR || '';
-const mediaHostPath = process.env.MEDIA_HOST_PATH || mediaDir;
-const dataDir = `${process.env.DATA_DIR}`, mediaDataDir = `${dataDir}/media`;
-const defaultSoundPath = `${mediaHostPath ? `/${mediaHostPath}` : ''}/sound`;
+const cwd = process.cwd();
+const dataDir = `${process.env.DATA_DIR || '_data'}`;
+const defaultSoundPath = `/sound`;
 
-const readYamlList = [`${mediaDataDir}/sound.yaml`];
+const readYamlList = [`${dataDir}/media/sound.yaml`];
 export function ReadSoundDataFromYaml() {
   /** @type SoundAlbumType[] */
   const AlbumList = [];
   readYamlList.forEach((yamlItem) => {
     /** @type SoundAlbumType */
     // @ts-ignore
-    const album = parse(String(readFileSync(`${projectRoot}/${yamlItem}`, "utf8")));
+    const album = parse(String(readFileSync(`${cwd}/${yamlItem}`, "utf8")));
     album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `${defaultSoundPath}/${sound.src}` }) })
     AlbumList.push(album);
   })

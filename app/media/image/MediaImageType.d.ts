@@ -1,6 +1,6 @@
 export type getImageListType = {
   filter?: string | FilterOptionProps;
-  doRetouch?: boolean;
+  doMakeImage?: boolean;
   onceAlbum?: boolean;
   onceImage?: boolean;
 }
@@ -10,11 +10,9 @@ export type ResizeMode = "icon" | "thumbnail" | "simple";
 export type FitMethod = "fill" | "contain" | "cover" | "outside" | "inside";
 
 /** @comments ディレクトリ指定のオプション */
-export type MediaImageDirType = {
+export type MediaImageGroupsType = {
   path: string;
-  root?: string;
   yaml?: boolean;
-  imageRoot?: string;
   name?: string;
   recursive?: boolean;
   resizeOption?: ResizeOptionType | ResizeOptionType[];
@@ -48,7 +46,6 @@ export type MediaImageItemType = {
   path?: string;
   link?: string;
   URL?: string;
-  innerURL?: string;
   tags?: string[];
   title?: string;
   description?: string;

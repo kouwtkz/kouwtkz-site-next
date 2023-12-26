@@ -6,6 +6,7 @@ _data/**/*.yaml
 _data/**/*.json
 _data/db/
 public/**/*.json
+public/sound/
 imageScripts/**/*.json
 
 # シークレットキーなど

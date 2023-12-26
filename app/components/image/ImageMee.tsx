@@ -28,7 +28,7 @@ export default function ImageMee({
   ...attributes
 }: ImageMeeProps) {
   const { isStatic } = useServerState();
-  src = src || imageItem?.innerURL || "";
+  src = src || imageItem?.URL || "";
   alt = alt || imageItem?.name || imageItem?.src || "";
   if (width) {
     if (!height)
