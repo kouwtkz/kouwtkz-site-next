@@ -36,7 +36,7 @@ export default function PostsPage({
     page,
     q,
     take: 5,
-    common: true,
+    common: process.env.NODE_ENV !== "development",
   });
 
   return (
