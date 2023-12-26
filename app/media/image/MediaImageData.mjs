@@ -45,6 +45,7 @@ const imageRe = /\.(png|jpe?g|gif)$/i;
 function readImage(image, dirItem, getImageOption = {}) {
   const baseImagePath = `/${image.dir}/${image.src}`;
   const baseImageFullPath = path.resolve(`${cwd}/${baseImagePath}`);
+  image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
   image.path = baseImagePath;
   if (/(png|jpe?g)$/.test(image.src)) {
     const webpImageSrc = image.src.replace(/[^.]+$/, "webp");
@@ -56,9 +57,22 @@ function readImage(image, dirItem, getImageOption = {}) {
       })
     }
     image.path = webpImagePath;
+  } else {
+    if (getImageOption.doMakeImage) {
+      const copyFullPath = path.resolve(`${cwd}/${publicDir}/${image.path}`);
+      if ((() => {
+        try {
+          const copyToTime = fs.statSync(copyFullPath).mtime;
+          const copyFromTime = fs.statSync(baseImageFullPath).mtime;
+          return copyFromTime > copyToTime;
+        } catch {
+          return true;
+        }
+      })()) { fs.copyFile(baseImageFullPath, copyFullPath, () => { }); }
+    }
   }
+
   image.URL = `${host}${image.path}`;
-  image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
   const dimensions = sizeOf(baseImageFullPath);
   const width = Number(dimensions.width);
   const height = Number(dimensions.height);

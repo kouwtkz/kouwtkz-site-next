@@ -16,7 +16,15 @@ import { parse } from "path";
  * @param {{ src: string; output: string; size?: number | { h: number, w: number } | null; quality?: number; fit?: FitMethod; }} param0
  */
 export default function RetouchImage({ src, output, size = null, quality, fit = "cover" }) {
-  // if (fs.existsSync(output)) return null;
+  if ((() => {
+    try {
+      const toTime = fs.statSync(output).mtime;
+      const fromTime = fs.statSync(src).mtime;
+      return fromTime <= toTime;
+    } catch {
+      return false;
+    }
+  })()) return null
 
   const outputPath = parse(output);
   /** @type sharp.Sharp */
