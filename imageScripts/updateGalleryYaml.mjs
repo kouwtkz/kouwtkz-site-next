@@ -3,6 +3,8 @@
  */
 import { parse, stringify } from "yaml";
 import { Dirent, mkdirSync, readFileSync, readdirSync, renameSync, statSync, unlinkSync, writeFileSync } from "fs";
+import path, { resolve } from "path";
+const cwd = process.cwd();
 
 const imageGroups = [
   "art",
@@ -13,11 +15,22 @@ const imageGroups = [
   "picture",
 ];
 
+// 各ディレクトリの定義
+// cwdを基準にしたパスを指定する
+const imageYamlDir = `_data/image/gallery`;
+const mediaDir = "public/_media";  // このディレクトリが基準になる
+const archiveDirName = '.archive';
+const imageDir = `images`;
+
 // 管理データ周りの読込
-const manageFilePath = "./updateGallery.json";
+const manageFilePath = "updateGallery.json";
+
+// manageFilePathのみこのファイルのディレクトリを基準にする
+const fileBaseDir = path.dirname(process.argv[1]);
+const manageFileFullPath = path.resolve(`${fileBaseDir}/${manageFilePath}`)
 let manageData = null;
 try {
-  manageData = JSON.parse(String(readFileSync(manageFilePath)));
+  manageData = JSON.parse(String(readFileSync(manageFileFullPath)));
 } catch (e) {
   manageData = new Object();
 }
@@ -29,15 +42,15 @@ let manageFileUpdated = false;  // 管理データが更新されたか
  * @typedef { import("./galleryYamlType.d.ts").YamlData } YamlData
  * @typedef { import("./galleryYamlType.d.ts").YamlObject } YamlObject
  */
-// 各ディレクトリの定義と生成
-const mediaDir = `../public/_media`;  // このディレクトリが基準になる
-const archiveDirName = '.archive';
-const imageDir = `images`;
-const imageYamlDir = `../_data/image/gallery`;
-try { mkdirSync(imageYamlDir); } catch { }
+
+// 各ディレクトリの生成
+const mediaFullDir = resolve(`${cwd}/${mediaDir}`);
+const imageYamlFullDir = resolve(`${cwd}/${imageYamlDir}`);
+
+try { mkdirSync(imageYamlFullDir); } catch { }
 /** @type Map<string, YamlObject> */
 const imageYamlData = new Map();
-const imageYamlArchiveDir = `${imageYamlDir}/${archiveDirName}`;
+const imageYamlArchiveDir = `${imageYamlFullDir}/${archiveDirName}`;
 try { mkdirSync(imageYamlArchiveDir); } catch { }
 /** @type Map<string, YamlObject> */
 const imageYamlArchiveData = new Map();
@@ -48,7 +61,7 @@ imageGroups.forEach((group) => {
   let data = null;
   let mtime = 0;
   try {
-    path = `${imageYamlDir}/${group}.yaml`;
+    path = `${imageYamlFullDir}/${group}.yaml`;
     readStr = String(readFileSync(path));
     data = parse(readStr);
     mtime = Number(statSync(path).mtime?.getTime());
@@ -87,12 +100,12 @@ imageGroups.forEach((group) => {
 function outReadDirList(cur) {
   let list = [];
   try {
-    const mediaCur = `${mediaDir}/${cur}`;
+    const mediaCur = resolve(`${mediaFullDir}/${cur}`);
     const readDir = Array.from(readdirSync(mediaCur, { withFileTypes: true }));
     if (readDir.length > 0) {
       Array.from(readDir).forEach((item) => {
         const curPath = `${cur}/${item.name}`;
-        const staticCurPath = `${mediaDir}/${curPath}`;
+        const staticCurPath = resolve(`${mediaFullDir}/${curPath}`);
         if (item.isFile()) {
           const stat = statSync(staticCurPath);
           list.push({
@@ -151,9 +164,9 @@ imageGroups.forEach((group) => {
         existFromFile2 = Boolean(fromFile);
       }
       if (fromFile) {
-        const renameFrom = `${mediaDir}${fromFile.dir}/${fromFile.name}`;
-        const renameToDir = `${mediaDir}${dirPath}${item.dir}`
-        const renameTo = `${renameToDir}/${item.src}`;
+        const renameFrom = resolve(`${mediaFullDir}/${fromFile.dir}/${fromFile.name}`);
+        const renameToDir = resolve(`${mediaFullDir}/${dirPath}${item.dir}`)
+        const renameTo = resolve(`${renameToDir}/${item.src}`);
         try { mkdirSync(renameToDir) } catch { };
         try { renameSync(renameFrom, renameTo) } catch { }
         if (existFromFile1) {
@@ -185,8 +198,8 @@ imageGroups.forEach((group) => {
         existFromFile2 = Boolean(fromFile);
       }
       if (fromFile) {
-        const renameFrom = `${mediaDir}${fromFile.dir}/${fromFile.name}`;
-        const renameToDir = `${mediaDir}${dirArchivePath}${item.dir}`
+        const renameFrom = resolve(`${mediaFullDir}${fromFile.dir}/${fromFile.name}`);
+        const renameToDir = resolve(`${mediaFullDir}${dirArchivePath}${item.dir}`);
         const renameTo = `${renameToDir}/${item.src}`;
         try { mkdirSync(renameToDir) } catch { };
         try { renameSync(renameFrom, renameTo) } catch { }
