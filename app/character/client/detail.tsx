@@ -3,7 +3,7 @@
 import { CharaType } from "@/app/character/chara";
 import GalleryList from "@/app/gallery/GalleryList";
 import { useServerState } from "@/app/components/System/ServerState";
-import { useMediaImageState } from "@/app/media/image/MediaImageState";
+import { useMediaImageState } from "@/app/context/MediaImageState";
 import ImageMee from "@/app/components/image/ImageMee";
 
 type DetailProps = {

@@ -2,7 +2,7 @@
 
 import React from "react";
 import GalleryList from "./GalleryList";
-import { useMediaImageState } from "../media/image/MediaImageState";
+import { useMediaImageState } from "@/app/context/MediaImageState";
 
 export default function Home() {
   const { imageAlbumList } = useMediaImageState();

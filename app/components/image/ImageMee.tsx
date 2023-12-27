@@ -3,7 +3,7 @@ import Image from "next/image";
 import {
   MediaImageItemType,
   ResizeMode,
-} from "@/app/media/image/MediaImageType";
+} from "@/imageScripts/MediaImageType";
 import loaderSet from "./loaderSet";
 import { useServerState } from "../System/ServerState";
 

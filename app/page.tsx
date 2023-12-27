@@ -1,6 +1,6 @@
 const prisma: any = {};
 import TopPage from "@/app/TopPage";
-import { getImageItems } from "@/app/media/image/MediaImageData.mjs";
+import { getImageItems } from "@/imageScripts/MediaImageData.mjs";
 
 import isStatic from "@/app/components/System/isStatic.mjs";
 export const dynamic = isStatic ? "auto" : "force-dynamic";

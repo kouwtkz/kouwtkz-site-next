@@ -1,7 +1,6 @@
 import React from "react";
 import { charaList } from "./getCharaData";
 import CharaListItem from "./client/listItem";
-import { getImageItem } from "@/app/media/image/MediaImageData.mjs";
 
 export default function Page() {
   return (

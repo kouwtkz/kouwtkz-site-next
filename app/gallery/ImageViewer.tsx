@@ -6,7 +6,7 @@ import { useCharaData } from "@/app/character/CharaData";
 import Link from "next/link";
 import MultiParser from "@/app/components/functions/MultiParser";
 import { useSearchParams } from "next/navigation";
-import { useMediaImageState } from "../media/image/MediaImageState";
+import { useMediaImageState } from "@/app/context/MediaImageState";
 import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 import ImageMee from "../components/image/ImageMee";

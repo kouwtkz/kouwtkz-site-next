@@ -1,3 +1,3 @@
 // @ts-check
-import { getImageItems } from "../app/media/image/MediaImageData.mjs"
+import { getImageItems } from "./MediaImageData.mjs"
 getImageItems({ doMakeImage: true });

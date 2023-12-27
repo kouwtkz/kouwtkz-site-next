@@ -6,7 +6,7 @@ import { site } from "@/app/site/SiteData.mjs";
 import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
 import CharaData from "./character/CharaData";
-import MediaImageState from "./media/image/MediaImageState";
+import MediaImageState from "@/app/context/MediaImageState";
 import PostState from "./blog/PostState";
 import ToasterContext from "@/app/context/toastContext";
 

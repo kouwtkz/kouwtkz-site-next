@@ -1,6 +1,6 @@
 "use client";
 
-import { MediaImageItemType } from "@/app/media/image/MediaImageType";
+import { MediaImageItemType } from "@/imageScripts/MediaImageType";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import MultiParser from "./components/functions/MultiParser";

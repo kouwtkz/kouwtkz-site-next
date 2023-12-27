@@ -1,9 +1,9 @@
 "use client"
 
 import React from "react";
-import { getImageAlbum } from "@/app/media/image/MediaImageData.mjs";
+import { getImageAlbum } from "@/imageScripts/MediaImageData.mjs";
 import GalleryList from "@/app/gallery/GalleryList";
-import { useMediaImageState } from "@/app/media/image/MediaImageState";
+import { useMediaImageState } from "@/app/context/MediaImageState";
 
 export default function Home() {
   const { imageAlbumList } = useMediaImageState();
