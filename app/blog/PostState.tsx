@@ -1,12 +1,11 @@
 "use client";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Post } from "./Post.d";
 import { create } from "zustand";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
 
 type PostStateType = {
-  set: boolean;
   posts: Post[];
   setPosts: (value: any) => void;
 };
@@ -19,7 +18,6 @@ function parsePosts(posts: Post[]) {
   return posts;
 }
 export const usePostState = create<PostStateType>((set) => ({
-  set: false,
   posts: [],
   setPosts: (value) => {
     set(() => ({ posts: parsePosts(value), set: true }));
@@ -28,12 +26,12 @@ export const usePostState = create<PostStateType>((set) => ({
 
 export default function PostState({ url }: DataStateReplacedProps) {
   const postsData = usePostState();
+  const setPost = useRef(false);
   useEffect(() => {
-    if (!postsData.set)
+    if (!setPost.current)
       axios(url).then((r) => {
-        if (!postsData.set) {
-          postsData.setPosts(r.data);
-        }
+        postsData.setPosts(r.data);
+        setPost.current = true;
       });
   });
 

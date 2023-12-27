@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
 import { MediaImageItemType, MediaImageAlbumType } from "./MediaImageType";
 import { useSystemState } from "@/app/components/System/SystemState";
@@ -10,7 +10,6 @@ import axios from "axios";
 type ImageDataType = {
   imageItemList: Array<MediaImageItemType>;
   imageAlbumList: Array<MediaImageAlbumType>;
-  set: boolean;
   setImageAlbum: (albumList: Array<MediaImageAlbumType>) => void;
 };
 type ImageDataProps = {
@@ -36,7 +35,6 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
 export const useMediaImageState = create<ImageDataType>((set) => ({
   imageItemList: [],
   imageAlbumList: [],
-  set: false,
   setImageAlbum: (data) => {
     set(() => ({
       set: true,
@@ -48,10 +46,12 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
 
 export default function MediaImageState({ url }: DataStateReplacedProps) {
   const imageData = useMediaImageState();
+  const setImage = useRef(false);
   useEffect(() => {
-    if (!imageData.set)
+    if (!setImage.current)
       axios(url).then((r) => {
-        if (!imageData.set) imageData.setImageAlbum(r.data);
+        imageData.setImageAlbum(r.data);
+        setImage.current = true;
       });
   });
 
