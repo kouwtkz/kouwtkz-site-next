@@ -4,11 +4,7 @@ import { Post } from "./Post.d";
 import { create } from "zustand";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
-
-type PostStateType = {
-  posts: Post[];
-  setPosts: (value: any) => void;
-};
+const defaultUrl = "/blog/posts.json";
 
 function parsePosts(posts: Post[]) {
   posts.forEach((post) => {
@@ -17,10 +13,23 @@ function parsePosts(posts: Post[]) {
   });
   return posts;
 }
+type PostStateType = {
+  posts: Post[];
+  setPosts: (value: any) => void;
+  setPostsFromUrl: (url?: string) => void;
+};
 export const usePostState = create<PostStateType>((set) => ({
   posts: [],
   setPosts: (value) => {
     set(() => ({ posts: parsePosts(value), set: true }));
+  },
+  setPostsFromUrl: (url = defaultUrl) => {
+    set((state) => {
+      axios(url).then((r) => {
+        state.setPosts(r.data);
+      });
+      return state;
+    });
   },
 }));
 
@@ -28,11 +37,10 @@ export default function PostState({ url }: DataStateReplacedProps) {
   const postsData = usePostState();
   const setPost = useRef(false);
   useEffect(() => {
-    if (!setPost.current)
-      axios(url).then((r) => {
-        postsData.setPosts(r.data);
-        setPost.current = true;
-      });
+    if (!setPost.current) {
+      postsData.setPostsFromUrl(url);
+      setPost.current = true;
+    }
   });
 
   return <></>;

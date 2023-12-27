@@ -52,7 +52,7 @@ export default function PostForm() {
   const search = useSearchParams();
   const duplicationMode = Boolean(search.get("base"));
   const targetPostId = search.get("target") || search.get("base");
-  const { posts } = usePostState();
+  const { posts, setPostsFromUrl } = usePostState();
   const postsUpdate = useRef(false);
   const doReset = useRef(postsUpdate.current);
   postsUpdate.current = posts.length > 0;
@@ -130,8 +130,8 @@ export default function PostForm() {
         })
         .then((r) => {
           toast("削除しました", { duration: 2000 });
+          setPostsFromUrl();
           router.push("/blog");
-          setTimeout(() => location.reload(), 100);
         });
     }
   };
@@ -193,14 +193,12 @@ export default function PostForm() {
           toast(updateMode ? "更新しました" : "投稿しました", {
             duration: 2000,
           });
+          setPostsFromUrl();
           if (res.data.postId) {
             router.push(`/blog?postId=${res.data.postId}`);
           } else {
             router.push(`/blog`);
           }
-          setTimeout(() => {
-            location.reload();
-          }, 250);
         }
       } else {
         toast.error("更新するデータがありませんでした", { duration: 2000 });

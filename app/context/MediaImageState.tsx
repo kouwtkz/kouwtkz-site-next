@@ -7,15 +7,6 @@ import { useSystemState } from "@/app/components/System/SystemState";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
 
-type ImageDataType = {
-  imageItemList: Array<MediaImageItemType>;
-  imageAlbumList: Array<MediaImageAlbumType>;
-  setImageAlbum: (albumList: Array<MediaImageAlbumType>) => void;
-};
-type ImageDataProps = {
-  imageAlbums: MediaImageAlbumType[];
-};
-
 function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
   const imageList: MediaImageItemType[] = [];
   imageAlbums.forEach((album) => {
@@ -31,6 +22,12 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
   });
   return imageList;
 }
+
+type ImageDataType = {
+  imageItemList: Array<MediaImageItemType>;
+  imageAlbumList: Array<MediaImageAlbumType>;
+  setImageAlbum: (albumList: Array<MediaImageAlbumType>) => void;
+};
 
 export const useMediaImageState = create<ImageDataType>((set) => ({
   imageItemList: [],

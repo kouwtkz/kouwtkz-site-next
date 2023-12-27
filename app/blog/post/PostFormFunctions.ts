@@ -1,7 +1,3 @@
-import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
-import { FieldValues, UseFormReset } from "react-hook-form";
-import toast from "react-hot-toast";
-
 export function setCategory(
   {
     selectCategory,
