@@ -1,6 +1,6 @@
 "use client";
 
-import { MediaImageAlbumType } from "@/app/media/image/MediaImageType";
+import { MediaImageAlbumType } from "@/imageScripts/MediaImageType";
 import { useImageViewer } from "@/app/gallery/ImageViewer";
 
 import React from "react";
