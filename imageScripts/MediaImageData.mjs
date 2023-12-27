@@ -30,19 +30,24 @@ try {
   imageGroups = parse(String(fs.readFileSync(imageDirListPath)));
   imageGroups.forEach(groupItem => {
     if (!groupItem.path.startsWith('/')) groupItem.path = `${mediaDir}/${groupItem.path}`;
+    if (groupItem.recursive === undefined) groupItem.recursive = true;
   })
 } catch { }
 
 // 画像とみなす拡張子
 const imageRe = /\.(png|jpe?g|gif)$/i;
 
+
+/** @type {Map<string, any>} */
+const publicMediaList = new Map()
+
 /**
  * @summary 参照渡しで加工する関数
  * @param {MediaImageItemType & {time?: any}} image
- * @param {MediaImageGroupsType} dirItem
+ * @param {MediaImageGroupsType} groupItem
  * @param {getImageListType} getImageOption[]
  */
-function readImage(image, dirItem, getImageOption = {}) {
+function readImage(image, groupItem, getImageOption = {}) {
   const baseImagePath = `/${image.dir}/${image.src}`;
   const baseImageFullPath = path.resolve(`${cwd}/${baseImagePath}`);
   image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
@@ -55,11 +60,13 @@ function readImage(image, dirItem, getImageOption = {}) {
       fs.mkdir(path.dirname(webpFullPath), { recursive: true }, () => {
         sharp(baseImageFullPath).webp().toFile(webpFullPath);
       })
+      publicMediaList.set(webpFullPath, true);
     }
     image.path = webpImagePath;
   } else {
     if (getImageOption.doMakeImage) {
       const copyFullPath = path.resolve(`${cwd}/${publicDir}/${image.path}`);
+      publicMediaList.set(copyFullPath, true);
       if ((() => {
         try {
           const copyToTime = fs.statSync(copyFullPath).mtime;
@@ -78,7 +85,7 @@ function readImage(image, dirItem, getImageOption = {}) {
   const height = Number(dimensions.height);
   image.info = { width, height, type: `${dimensions.type}`, wide: width > height }
   if (imageRe.test(image.src)) {
-    const resizeOptions = dirItem.resizeOption ? (Array.isArray(dirItem.resizeOption) ? dirItem.resizeOption : [dirItem.resizeOption]) : [];
+    const resizeOptions = groupItem.resizeOption ? (Array.isArray(groupItem.resizeOption) ? groupItem.resizeOption : [groupItem.resizeOption]) : [];
     resizeOptions.forEach((v) => {
       const resizeOption = Object.assign({}, v);
       if (!resizeOption.mode) resizeOption.mode = "thumbnail";
@@ -96,7 +103,10 @@ function readImage(image, dirItem, getImageOption = {}) {
       // const resizedBase = resizeOption.ext ? baseImagePath?.replace(/[^.]+$/, resizeOption.ext) : baseImagePath;
       const resizedUrl = baseImagePath.replace(mediaDir, `${mediaDir}/${resizedDir}/${resizeOption.mode}`).replace(/[^.]+$/, "webp");
       const resizedFullPath = path.resolve(`${cwd}/${publicDir}${resizedUrl}`);
-      if (getImageOption.doMakeImage) RetouchImage({ ...{ src: `${baseImageFullPath}`, output: resizedFullPath }, ...resizeOption });
+      if (getImageOption.doMakeImage) {
+        RetouchImage({ ...{ src: baseImageFullPath, output: resizedFullPath }, ...resizeOption });
+        publicMediaList.set(resizedFullPath, true);
+      }
       if (!image.resized) image.resized = [];
       image.resized?.push({ src: resizedUrl, option: resizeOption });
     });
@@ -130,22 +140,19 @@ export function getImageAlbums(getImageOptionArgs = {}) {
         name: groupName,
         list: []
       };
+      const baseFullPath = path.resolve(`${cwd}/${groupItem.path}`);
 
-      /** @param {string} dir */
-      const itemFor = (dir) => {
-        const itemFullDir = path.resolve(`${cwd}/${dir}`);
-        fs.readdirSync(itemFullDir).some((childName) => {
-          const childFullPath = path.resolve(`${itemFullDir}/${childName}`);
-
-          const parsedPath = path.parse(childFullPath);
-          if (parsedPath.ext === "") {
-            if (groupItem.recursive) itemFor(`${dir}/${childName}`)
-          } else {
+      try {
+        fs.readdirSync(baseFullPath, { recursive: groupItem.recursive, withFileTypes: true })
+          .filter(dirent => !/\.archive/.test(dirent.path) && dirent.isFile())
+          .forEach((dirent) => {
+            const childFullPath = path.resolve(`${dirent.path}/${dirent.name}`);
+            const parsedPath = path.parse(childFullPath);
             if (/\.ya?ml/i.test(parsedPath.ext)) {
               if (groupItem.yaml && (filterAlbumNames.length === 0 || filterAlbumNames.some(fname => fname === parsedPath.name))) {
                 /** @type MediaImageAlbumType */
                 // @ts-ignore
-                const album = parse(String(fs.readFileSync(`${itemFullDir}/${childName}`, "utf8")));
+                const album = parse(String(fs.readFileSync(childFullPath, "utf8")));
                 album.list = album.list.filter((item) => {
                   if (filter.imageName && filter.imageName !== item.name) return false;
                   if (filter.tagName && item.tags && !item.tags.some(tag => tag === filter.tagName)) return false;
@@ -162,28 +169,38 @@ export function getImageAlbums(getImageOptionArgs = {}) {
             } else {
               if (dirAlbum !== null && !filter.tagName) {
                 if (imageRe.test(parsedPath.ext)) {
+                  const dir = groupItem.path + dirent.path.replace(baseFullPath, '').replaceAll('\\', '/');
+                  const url = dir + '/' + dirent.name;
                   if (filter.imageName && filter.imageName !== parsedPath.name) return false;
-                  if (filter.pathMatch && !childFullPath.replaceAll('\\', '/').match(filter.pathMatch)) return false;
+                  if (filter.pathMatch && !url.match(filter.pathMatch)) return false;
                   if (filter.topImage) return false;
-                  dirAlbum.list.push(readImage({ name: parsedPath.name, src: childName, dir: dir }, groupItem, getImageOption))
+                  dirAlbum.list.push(readImage({ name: parsedPath.name, src: dirent.name, dir }, groupItem, getImageOption))
                 }
               }
             }
-          }
-          if ((onceAlbum || onceImage) && allResult.length > 0) return true
-          else if (onceImage && dirAlbum !== null && dirAlbum.list.length > 0) return true;
-        });
-      }
-      try {
-        itemFor(groupItem.path);
+            if ((onceAlbum || onceImage) && allResult.length > 0) return true
+            else if (onceImage && dirAlbum !== null && dirAlbum.list.length > 0) return true;
+
+          })
       } catch (e) {
-        // ここのエラーは定義したメディアのディレクトリがないときに出る
+        // ここのエラーは定義したメディアのディレクトリがないときに多い
         console.error(e);
       }
       if (dirAlbum !== null && dirAlbum.list.length > 0) allResult.push(dirAlbum);
       if ((onceAlbum || onceImage) && allResult.length > 0) return true;
     }
   )
+  if (getImageOption.doMakeImage) {
+    fs.readdir(path.resolve(`${cwd}/${publicDir}/${mediaDir}`), { recursive: true, withFileTypes: true }, (err, dirents) => {
+      if (err) return;
+      dirents.filter((dirent) =>
+        dirent.isFile() &&
+        !publicMediaList.has(path.resolve(`${dirent.path}/${dirent.name}`))
+      ).forEach((dirent) => {
+        fs.unlink(path.resolve(`${dirent.path}/${dirent.name}`), () => { });
+      })
+    })
+  }
   return allResult;
 }
 
