@@ -30,13 +30,15 @@ try {
   imageGroups = parse(String(fs.readFileSync(imageDirListPath)));
   imageGroups.forEach(groupItem => {
     if (!groupItem.path.startsWith('/')) groupItem.path = `${mediaDir}/${groupItem.path}`;
-    if (groupItem.recursive === undefined) groupItem.recursive = true;
-    groupItem.output = {...{webp: true, get: true},...groupItem.output}
+    if (groupItem.format === undefined) groupItem.format = "image";
+    if (groupItem.format === "comic") groupItem.recursive = true;
+    else if (groupItem.recursive === undefined) groupItem.recursive = true;
+    groupItem.output = { ...{ webp: true, get: true, info: true, time: true }, ...groupItem.output }
   })
 } catch { }
 
 // 画像とみなす拡張子
-const imageRe = /\.(png|jpe?g|gif)$/i;
+const imageRe = /\.(png|jpe?g|gif|svg|webp)$/i;
 
 
 /** @type {Map<string, any>} */
@@ -51,7 +53,8 @@ const publicMediaList = new Map()
 function readImage(image, groupItem, getImageOption = {}) {
   const baseImagePath = `/${image.dir}/${image.src}`;
   const baseImageFullPath = path.resolve(`${cwd}/${baseImagePath}`);
-  image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
+  if (groupItem.output?.time)
+    image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
   image.path = baseImagePath;
   if (groupItem.output?.webp && /(png|jpe?g)$/i.test(image.src)) {
     const webpImageSrc = image.src.replace(/[^.]+$/, "webp");
@@ -81,10 +84,12 @@ function readImage(image, groupItem, getImageOption = {}) {
   }
 
   image.URL = `${host}${image.path}`;
-  const dimensions = sizeOf(baseImageFullPath);
-  const width = Number(dimensions.width);
-  const height = Number(dimensions.height);
-  image.info = { width, height, type: `${dimensions.type}`, wide: width > height }
+  if (groupItem.output?.info) {
+    const dimensions = sizeOf(baseImageFullPath);
+    const width = Number(dimensions.width);
+    const height = Number(dimensions.height);
+    image.info = { width, height, type: `${dimensions.type}`, wide: width > height }
+  }
   if (imageRe.test(image.src)) {
     const resizeOptions = groupItem.resizeOption ? (Array.isArray(groupItem.resizeOption) ? groupItem.resizeOption : [groupItem.resizeOption]) : [];
     resizeOptions.forEach((v) => {
@@ -133,61 +138,92 @@ export function getImageAlbums(getImageOptionArgs = {}) {
 
   imageGroups.some(
     (groupItem) => {
-      const groupName = groupItem.name || path.basename(groupItem.path);
-      if (!groupItem.yaml && filterAlbumNames.length > 0 && !filterAlbumNames.some(fname => fname === groupName)) return null;
-      /** @type MediaImageAlbumType | null */
-      const dirAlbum = groupItem.yaml ? null : {
-        dir: groupItem.path,
-        name: groupName,
-        list: []
-      };
+      let groupName = groupItem.name || path.basename(groupItem.path);
+      if (filterAlbumNames.length > 0 && !filterAlbumNames.some(fname => fname === groupName)) return null;
+      /** @type MediaImageAlbumType[] */
+      const groupAlbums = groupItem.yaml || groupItem.format === "comic"
+        ? [] : [{
+          dir: groupItem.path,
+          name: groupName,
+          group: groupName,
+          list: []
+        }];
+      let index = groupAlbums.length - 1;
       const baseFullPath = path.resolve(`${cwd}/${groupItem.path}`);
 
       try {
         fs.readdirSync(baseFullPath, { recursive: groupItem.recursive, withFileTypes: true })
-          .filter(dirent => !/\.archive/.test(dirent.path) && dirent.isFile())
+          .filter(dirent => {
+            if (/\.archive/.test(dirent.path)) return false;
+            const isFile = dirent.isFile();
+            if (!isFile && groupItem.format === "comic" && dirent.path === baseFullPath) {
+              groupAlbums.push({
+                name: dirent.name,
+                group: groupName,
+                dir: groupItem.path + dirent.path.replace(baseFullPath, '').replaceAll('\\', '/'),
+                list: []
+              })
+              groupName = dirent.name;
+              index++;
+            }
+            return isFile;
+          })
           .forEach((dirent) => {
             const childFullPath = path.resolve(`${dirent.path}/${dirent.name}`);
             const parsedPath = path.parse(childFullPath);
             if (/\.ya?ml/i.test(parsedPath.ext)) {
-              if (groupItem.yaml && (filterAlbumNames.length === 0 || filterAlbumNames.some(fname => fname === parsedPath.name))) {
+              if ((filterAlbumNames.length === 0 || filterAlbumNames.some(fname => fname === parsedPath.name))) {
                 /** @type MediaImageAlbumType */
                 // @ts-ignore
                 const album = parse(String(fs.readFileSync(childFullPath, "utf8")));
-                album.list = album.list.filter((item) => {
-                  if (filter.imageName && filter.imageName !== item.name) return false;
-                  if (filter.tagName && item.tags && !item.tags.some(tag => tag === filter.tagName)) return false;
-                  if (filter.topImage && !item.topImage) return false;
-                  item.dir = album.dir || '';
-                  if (filter.pathMatch && !`/${item.dir}/${item.src}`.match(filter.pathMatch)) return false;
-                  if (!item.dir.startsWith('/')) item.dir = `${mediaDir}/${item.dir}`;
-                  readImage(item, groupItem, getImageOption);
-                  return true;
-                });
-                if (onceImage && album.list.length > 0) album.list = [album.list[0]];
-                if (groupItem.output?.get && album.list.length > 0) allResult.push(album)
+                if (groupItem.yaml) {
+                  album.group = album.name || groupName;
+                  album.list = album.list.filter((item) => {
+                    if (filter.imageName && filter.imageName !== item.name) return false;
+                    if (filter.tagName && item.tags && !item.tags.some(tag => tag === filter.tagName)) return false;
+                    if (filter.topImage && !item.topImage) return false;
+                    item.dir = album.dir || '';
+                    if (filter.pathMatch && !`/${item.dir}/${item.src}`.match(filter.pathMatch)) return false;
+                    if (!item.dir.startsWith('/')) item.dir = `${mediaDir}/${item.dir}`;
+                    readImage(item, groupItem, getImageOption);
+                    return true;
+                  });
+                  if (onceImage && album.list.length > 0) album.list = [album.list[0]];
+                  if (groupItem.output?.get && album.list.length > 0) allResult.push(album)
+                } else if (index >= 0) {
+                  groupAlbums[index] = { ...album, ...groupAlbums[index] }
+                }
               }
             } else {
-              if (dirAlbum !== null && !filter.tagName) {
-                if (imageRe.test(parsedPath.ext)) {
-                  const dir = groupItem.path + dirent.path.replace(baseFullPath, '').replaceAll('\\', '/');
-                  const url = dir + '/' + dirent.name;
-                  if (filter.imageName && filter.imageName !== parsedPath.name) return false;
-                  if (filter.pathMatch && !url.match(filter.pathMatch)) return false;
-                  if (filter.topImage) return false;
-                  dirAlbum.list.push(readImage({ name: parsedPath.name, src: dirent.name, dir }, groupItem, getImageOption))
+              if (imageRe.test(parsedPath.ext) && index >= 0) {
+                const dir = groupItem.path + dirent.path.replace(baseFullPath, '').replaceAll('\\', '/');
+                const url = dir + '/' + dirent.name;
+                if (filter.imageName && filter.imageName !== parsedPath.name) return false;
+                if (filter.pathMatch && !url.match(filter.pathMatch)) return false;
+                if (filter.topImage) return false;
+                const imageItem = readImage({ name: parsedPath.name, src: dirent.name, dir }, groupItem, getImageOption);
+                imageItem.tags = (groupItem.tags || []).concat(imageItem.tags || []);
+                const currentGroupAlbum = groupAlbums[index];
+                if (groupItem.format === "comic") {
+                  const baseDirName = path.basename(parsedPath.dir);
+                  imageItem.tags = imageItem.tags.concat(
+                    ["comic",
+                      (baseDirName === currentGroupAlbum.name ? parsedPath.name : baseDirName.toLowerCase())
+                    ])
+                  currentGroupAlbum.list.push(imageItem)
+                } else {
+                  currentGroupAlbum.list.push(imageItem)
                 }
               }
             }
-            if ((onceAlbum || onceImage) && allResult.length > 0) return true
-            else if (onceImage && dirAlbum !== null && dirAlbum.list.length > 0) return true;
-
           })
       } catch (e) {
         // ここのエラーは定義したメディアのディレクトリがないときに多い
         console.error(e);
       }
-      if (groupItem.output?.get && dirAlbum !== null && dirAlbum.list.length > 0) allResult.push(dirAlbum);
+      if (groupItem.output?.get && groupAlbums.length > 0) groupAlbums.forEach((groupAlbum) => {
+        if (groupAlbum.list.length > 0) allResult.push(groupAlbums[0]);
+      })
       if ((onceAlbum || onceImage) && allResult.length > 0) return true;
     }
   )

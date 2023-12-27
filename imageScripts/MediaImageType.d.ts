@@ -14,10 +14,14 @@ export type MediaImageGroupsType = {
   path: string;
   yaml?: boolean;
   name?: string;
+  tags?: string[];
+  format?: "image" | "comic";
   recursive?: boolean;
   output?: {
-    webp?: boolean;
     get?: boolean; // Jsonとかで使うかどうか
+    webp?: boolean;
+    time?: boolean;
+    info?: boolean;
   }
   resizeOption?: ResizeOptionType | ResizeOptionType[];
 }
@@ -35,11 +39,15 @@ export type ResizeOptionType = {
 
 /** @comments ひとつのアルバムの変数 */
 export type MediaImageAlbumType = {
-  [key: string]: any;
   dir?: string;
   name: string;
+  group?: string;
+  link?: string;  
+  time?: Date | null;
+  description?: string;  
   visible?: { info?: boolean, title?: boolean, filename?: boolean };
   list: MediaImageItemType[];
+  // [key: string]: any;
 }
 
 /** @comments ひとつの画像用の変数 */
