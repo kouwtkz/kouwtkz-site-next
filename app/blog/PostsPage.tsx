@@ -2,7 +2,7 @@
 
 import { Suspense } from "react";
 import OnePost from "./OnePost";
-import Fixed from "./PostsPageFixed";
+import Fixed from "./fixed/PostsPageFixed";
 import Link from "next/link";
 import getPosts from "./functions/getPosts";
 import { Post } from "./Post";

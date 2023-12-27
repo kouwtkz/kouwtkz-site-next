@@ -7,7 +7,7 @@ import MultiParser from "@/app/components/functions/MultiParser";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
-import Fixed from "./PostDetailFixed";
+import Fixed from "./fixed/PostDetailFixed";
 
 type PostDetailProps = {
   post?: Post;
