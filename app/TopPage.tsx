@@ -33,20 +33,24 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
 
   return (
     <>
-      <TransitionGroup className="wrapper h-80 relative">
-        <CSSTransition
-          key={currentTopImage.current.src}
-          classNames={fadein}
-          timeout={750}
-        >
-          <ImageMee
-            imageItem={topImage}
-            loading="eager"
-            className="w-[100%] h-[100%] absolute"
-            suppressHydrationWarning={true}
-          />
-        </CSSTransition>
-      </TransitionGroup>
+      {currentTopImage.current ? (
+        <TransitionGroup className="wrapper h-80 relative">
+          <CSSTransition
+            key={currentTopImage.current.src || ""}
+            classNames={fadein}
+            timeout={750}
+          >
+            <ImageMee
+              imageItem={topImage}
+              loading="eager"
+              className="w-[100%] h-[100%] absolute"
+              suppressHydrationWarning={true}
+            />
+          </CSSTransition>
+        </TransitionGroup>
+      ) : (
+        <></>
+      )}
       <main className="pb-8">
         <div className="my-8">
           <div className="text-4xl [&>*]:m-4 mb-8">

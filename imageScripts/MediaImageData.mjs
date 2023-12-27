@@ -31,7 +31,7 @@ try {
   imageGroups.forEach(groupItem => {
     if (!groupItem.path.startsWith('/')) groupItem.path = `${mediaDir}/${groupItem.path}`;
     if (groupItem.recursive === undefined) groupItem.recursive = true;
-    if (groupItem.webp === undefined) groupItem.webp = true;
+    groupItem.output = {...{webp: true, get: true},...groupItem.output}
   })
 } catch { }
 
@@ -53,7 +53,7 @@ function readImage(image, groupItem, getImageOption = {}) {
   const baseImageFullPath = path.resolve(`${cwd}/${baseImagePath}`);
   image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
   image.path = baseImagePath;
-  if (groupItem.webp && /(png|jpe?g)$/i.test(image.src)) {
+  if (groupItem.output?.webp && /(png|jpe?g)$/i.test(image.src)) {
     const webpImageSrc = image.src.replace(/[^.]+$/, "webp");
     const webpImagePath = `/${image.dir}/${webpImageSrc}`;
     if (getImageOption.doMakeImage) {
@@ -165,7 +165,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
                   return true;
                 });
                 if (onceImage && album.list.length > 0) album.list = [album.list[0]];
-                if (album.list.length > 0) allResult.push(album)
+                if (groupItem.output?.get && album.list.length > 0) allResult.push(album)
               }
             } else {
               if (dirAlbum !== null && !filter.tagName) {
@@ -187,7 +187,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
         // ここのエラーは定義したメディアのディレクトリがないときに多い
         console.error(e);
       }
-      if (dirAlbum !== null && dirAlbum.list.length > 0) allResult.push(dirAlbum);
+      if (groupItem.output?.get && dirAlbum !== null && dirAlbum.list.length > 0) allResult.push(dirAlbum);
       if ((onceAlbum || onceImage) && allResult.length > 0) return true;
     }
   )
