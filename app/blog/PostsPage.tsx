@@ -53,8 +53,8 @@ export default function PostsPage({
                 <Link
                   className="inline-block mt-4 mb-2 text-xl"
                   href={`/blog?${Object.entries({
+                    q: q.replace("#", "%23").replace("+", "%2B"),
                     p: String((page || 1) + 1),
-                    q: q,
                   })
                     .filter((v) => v[1])
                     .map((v) => v.join("="))
