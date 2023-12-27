@@ -60,6 +60,17 @@ body,
   }
 }
 
+.content-parent {
+  > *:not(.wide){
+    max-width: 1160px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  > *:not(.transparent){
+    background-color:#ffffff80;
+  }
+}
+
 a {
   word-break: break-all;
   color: var(--main-color-strong);

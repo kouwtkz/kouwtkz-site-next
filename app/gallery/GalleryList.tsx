@@ -66,7 +66,8 @@ const GalleryList = ({
                   style={{ objectFit: "cover" }}
                   className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                   onClick={() => {
-                    router.push(`?image=${image.path}`, { scroll: false });
+                    if (image.direct) router.push(image.direct);
+                    else router.push(`?image=${image.path}`, { scroll: false });
                   }}
                 />
               </div>

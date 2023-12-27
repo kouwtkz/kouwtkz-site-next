@@ -47,7 +47,7 @@ export type MediaImageAlbumType = {
   description?: string;  
   visible?: { info?: boolean, title?: boolean, filename?: boolean };
   list: MediaImageItemType[];
-  // [key: string]: any;
+  odd?: boolean;
 }
 
 /** @comments ひとつの画像用の変数 */
@@ -57,6 +57,7 @@ export type MediaImageItemType = {
   dir?: string;
   path?: string;
   link?: string;
+  direct?: string;
   URL?: string;
   tags?: string[];
   title?: string;
@@ -64,7 +65,6 @@ export type MediaImageItemType = {
   time?: Date | null;
   timeOptions?: Intl.DateTimeFormatOptions;
   topImage?: boolean;
-  [key: string]: any;
   info?: MediaImageInfoType;
   resized?: {
     src: string;

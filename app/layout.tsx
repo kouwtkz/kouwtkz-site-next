@@ -59,12 +59,10 @@ export default async function RootLayout({
         />
         <Header site={site} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
-          <div className="mx-auto max-w-[1160px] min-h-[70vh]">
-            <Breakcrumb />
-            <div className="bg-white bg-opacity-50">
-              {children}
-              <Footer site={site} currentDate={currentDate} />
-            </div>
+          <div className="mx-auto content-parent min-h-[70vh]">
+            <Breakcrumb className="transparent" />
+            {children}
+            <Footer site={site} currentDate={currentDate} />
           </div>
         </div>
         <div id="audio_background"></div>

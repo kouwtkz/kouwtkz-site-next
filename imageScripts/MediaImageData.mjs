@@ -84,7 +84,7 @@ function readImage(image, groupItem, getImageOption = {}) {
   }
 
   image.URL = `${host}${image.path}`;
-  if (groupItem.output?.info) {
+  if (groupItem.output?.info || /^(thumbnail)$/i.test(image.name)) {
     const dimensions = sizeOf(baseImageFullPath);
     const width = Number(dimensions.width);
     const height = Number(dimensions.height);

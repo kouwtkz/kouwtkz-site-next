@@ -32,7 +32,7 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
   });
 
   return (
-    <>
+    <div>
       {currentTopImage.current ? (
         <TransitionGroup className="wrapper h-80 relative">
           <CSSTransition
@@ -84,6 +84,6 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
         </div>
         <Notice className="h-40" />
       </main>
-    </>
+    </div>
   );
 }
