@@ -15,6 +15,7 @@ export type MediaImageGroupsType = {
   yaml?: boolean;
   name?: string;
   recursive?: boolean;
+  webp?: boolean;
   resizeOption?: ResizeOptionType | ResizeOptionType[];
 }
 

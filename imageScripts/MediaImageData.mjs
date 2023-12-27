@@ -31,6 +31,7 @@ try {
   imageGroups.forEach(groupItem => {
     if (!groupItem.path.startsWith('/')) groupItem.path = `${mediaDir}/${groupItem.path}`;
     if (groupItem.recursive === undefined) groupItem.recursive = true;
+    if (groupItem.webp === undefined) groupItem.webp = true;
   })
 } catch { }
 
@@ -52,7 +53,7 @@ function readImage(image, groupItem, getImageOption = {}) {
   const baseImageFullPath = path.resolve(`${cwd}/${baseImagePath}`);
   image.time = image.time ? image.time : (image.time === null ? null : new Date(fs.statSync(baseImageFullPath).mtime));
   image.path = baseImagePath;
-  if (/(png|jpe?g)$/i.test(image.src)) {
+  if (groupItem.webp && /(png|jpe?g)$/i.test(image.src)) {
     const webpImageSrc = image.src.replace(/[^.]+$/, "webp");
     const webpImagePath = `/${image.dir}/${webpImageSrc}`;
     if (getImageOption.doMakeImage) {
