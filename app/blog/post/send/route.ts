@@ -5,6 +5,8 @@ import fs from "fs";
 import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson";
 import { site } from "@/app/site/SiteData.mjs";
 import { Post } from "../../Post";
+import path from "path";
+import sharp from "sharp";
 
 type PostFormType = {
   title?: string,
@@ -28,23 +30,33 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   let success = false
 
-  const attached = (formData.getAll("attached[]") || []) as File[];
-  const attached_mtime = (formData.getAll("attached_mtime[]") || []) as any[];
-  const mediaDir = `${process.env.MEDIA_DIR}`;
-  const now = new Date();
-  attached.forEach((file, i) => {
-    if (!file.name) return;
+  let attached = (formData.getAll("attached[]") || []) as File[];
+  attached = attached.filter(file => Boolean(file.name));
+  if (attached.length > 0) {
     if (!success) success = true;
-    const blogImagesDir = mediaDir + "/images/blog/uploads";
-    fs.mkdir(blogImagesDir, { recursive: true }, () => {
+    const attached_mtime = (formData.getAll("attached_mtime[]") || []) as any[];
+    const now = new Date();
+    const cwd = process.cwd();
+    const mediaDir = process.env.MEDIA_DIR || "_media";
+    const publicDir = "public";
+    const blogImageDir = `${mediaDir}/images/blog/uploads`;
+    const blogImagesFullDir = path.resolve(`${cwd}/${blogImageDir}`);
+    const blogPublicImagesFullDir = path.resolve(`${cwd}/${publicDir}/${blogImageDir}`);
+    try { fs.mkdirSync(blogImagesFullDir, { recursive: true }); } catch { }
+    try { fs.mkdirSync(blogPublicImagesFullDir, { recursive: true }); } catch { }
+    attached.forEach((file, i) => {
       file.arrayBuffer().then((abuf) => {
         const mTime = new Date(Number(attached_mtime[i]));
-        const filePath = `${blogImagesDir}/${file.name.replaceAll(" ", "_")}`;
+        const filename = file.name.replaceAll(" ", "_");
+        const filePath = path.resolve(`${blogImagesFullDir}/${filename}`);
         fs.writeFileSync(filePath, Buffer.from(abuf));
         fs.utimesSync(filePath, now, new Date(mTime));
+        const webpImageSrc = filename.replace(/[^.]+$/, "webp");
+        const webpFullPath = path.resolve(`${blogPublicImagesFullDir}/${webpImageSrc}`);
+        sharp(filePath).webp().toFile(webpFullPath);
       })
     })
-  })
+  }
   const userId = site.author.account;
 
   const data = {} as PostFormType & Post;
