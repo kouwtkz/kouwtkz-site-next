@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 const prisma: any = {};
 import isStatic from "@/app/components/System/isStatic.mjs";
 import fs from "fs";
-import { getPostsFromJson, setPostsToJson } from "../../get/fromJson";
+import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson";
 import { site } from "@/app/site/SiteData.mjs";
 import { Post } from "../../Post";
 

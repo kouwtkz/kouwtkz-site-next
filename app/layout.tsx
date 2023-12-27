@@ -50,10 +50,10 @@ export default async function RootLayout({
         <ServerStateMake />
         <ImageViewer />
         <CharaData />
-        <MediaImageState url={DataStateAddMtime({ url: "/media/image/get" })} />
+        <MediaImageState url={DataStateAddMtime({ url: "/data/images.json" })} />
         <PostState
           url={DataStateAddMtime({
-            url: "/blog/get",
+            url: "/blog/posts.json",
             file: "_data/post.json",
           })}
         />

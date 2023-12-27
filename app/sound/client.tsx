@@ -1,5 +1,5 @@
 "use client";
-import { SoundAlbumType } from "@/app/media/MediaSoundData.mjs";
+import { SoundAlbumType } from "./MediaSoundData.mjs";
 import React, { useEffect } from "react";
 import { AudioPlay, AudioStop } from "./SoundPlayer";
 

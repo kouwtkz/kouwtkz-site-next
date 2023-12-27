@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server"
 
-import { charaList, charaObject } from "../getCharaData";
+import { charaList, charaObject } from "@/app/character/getCharaData";
 import { getImageItem } from "../../media/image/MediaImageData.mjs";
 
 export async function GET() {

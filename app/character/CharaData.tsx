@@ -25,7 +25,7 @@ const CharaData = () => {
   const charaData = useCharaData();
   const { date } = useSystemState();
   useEffect(() => {
-    fetch(`${location?.origin}/character/data?v=${date.getTime()}`)
+    fetch(`${location?.origin}/data/characters.json?v=${date.getTime()}`)
       .then((d) => d.json())
       .then((json) => {
         if (!charaData.charaObject) charaData.setCharaObject(json);

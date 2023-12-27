@@ -2,7 +2,7 @@ import Rss from "rss";
 import getPosts from "../functions/getPosts";
 import { site } from "@/app/site/SiteData.mjs";
 import { parse } from "marked";
-import { getPostsFromJson } from "../get/fromJson";
+import { getPostsFromJson } from "../posts.json/fromJson";
 import twemoji from "twemoji";
 
 const SITE_URL = process.env.PRODUCTION_URL || "http://localhost";
