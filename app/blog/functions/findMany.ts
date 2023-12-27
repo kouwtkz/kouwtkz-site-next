@@ -3,8 +3,8 @@ type filterConditionsType = "equals" | "contains" | "gt" | "gte" | "lt" | "lte" 
 type objectSubmitDataType<T> = { [K in keyof T]?: T[K] | { [C in filterConditionsType]?: T[K] } }
 type findWhereType<T> = { [K in logicalConditionsType]?: (findWhereType<T> | objectSubmitDataType<T>)[] } | objectSubmitDataType<T>
 
-  // includeは無理…それ以外を再現した
-  type findManyProps<T> = {
+// includeは無理…それ以外を再現した
+type findManyProps<T> = {
   list: T[],
   where?: findWhereType<T>;
   take?: number,
@@ -52,7 +52,7 @@ function whereLoop<T>(value: T, where?: findWhereType<T>) {
                 case "equals":
                   return cval == v;
                 case "contains":
-                  return String(cval).match(v);
+                  return String(cval).match(new RegExp(v, 'i'));
                 case "startsWith":
                   return String(cval).startsWith(v);
                 case "endsWith":
