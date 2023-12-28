@@ -15,25 +15,32 @@ type TopPageProps = {
 
 export default function TopPage({ topImages = [] }: TopPageProps) {
   const [topImageState, setTopImage] = useState<MediaImageItemType>();
+  const firstLoad = useRef(true);
   const imageRnd = (images: MediaImageItemType[]) =>
     images[Math.floor(Math.random() * images.length)];
-  const currentTopImage = useRef<MediaImageItemType>(imageRnd(topImages));
-  if (topImageState) currentTopImage.current = topImageState;
+  const currentTopImage = useRef<MediaImageItemType | null>(null);
+  if (topImageState && currentTopImage) currentTopImage.current = topImageState;
   const topImage = currentTopImage.current;
+  const setRndTopImage = () => {
+    const filterTopImages = currentTopImage.current
+      ? topImages.filter((image) => image.src !== currentTopImage.current?.src)
+      : topImages;
+    setTopImage(imageRnd(filterTopImages));
+  };
   useEffect(() => {
+    if (firstLoad.current) {
+      setRndTopImage();
+      firstLoad.current = false;
+    }
     const timer = setInterval(() => {
-      setTopImage(
-        imageRnd(
-          topImages.filter((image) => image.src !== currentTopImage.current.src)
-        )
-      );
+      setRndTopImage();
     }, 10000);
     return () => clearInterval(timer);
   });
 
   return (
     <div>
-      {currentTopImage.current ? (
+      {currentTopImage.current && topImage ? (
         <TransitionGroup className="wrapper h-80 relative">
           <CSSTransition
             key={currentTopImage.current.src || ""}
@@ -49,7 +56,7 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
           </CSSTransition>
         </TransitionGroup>
       ) : (
-        <></>
+        <div className="h-80 bg-main-grayish-fluo"></div>
       )}
       <main className="pb-8">
         <div className="my-8">
