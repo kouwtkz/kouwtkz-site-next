@@ -16,7 +16,7 @@ function BreakcrumbInner() {
   return (
     <>
       {pathname !== "/" ? (
-        <div className="flex font-KosugiMaru align-middle">
+        <div className="flex font-KosugiMaru align-middle select-none">
           <Link href={backUrl} className="p-3">
             <span className="inline-block h-8 w-8 text-2xl">◁</span>
           </Link>
