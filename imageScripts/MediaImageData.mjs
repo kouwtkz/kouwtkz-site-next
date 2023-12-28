@@ -37,10 +37,6 @@ try {
   })
 } catch { }
 
-// 画像とみなす拡張子
-const imageRe = /\.(png|jpe?g|gif|svg|webp)$/i;
-
-
 /** @type {Map<string, any>} */
 const publicMediaList = new Map()
 
@@ -91,7 +87,7 @@ function readImage(image, groupItem, getImageOption = {}) {
     const height = Number(dimensions.height);
     image.info = { width, height, type: `${dimensions.type}`, wide: width > height }
   }
-  if (imageRe.test(image.src)) {
+  if (/\.(png|jpe?g|gif|webp)$/i.test(image.src)) {
     const resizeOptions = groupItem.resizeOption ? (Array.isArray(groupItem.resizeOption) ? groupItem.resizeOption : [groupItem.resizeOption]) : [];
     if (isThumbnailName && !resizeOptions.some(opt => opt.mode === "thumbnail")) resizeOptions.push({ mode: "thumbnail" })
     resizeOptions.forEach((v) => {
@@ -197,7 +193,7 @@ export function getImageAlbums(getImageOptionArgs = {}) {
                 }
               }
             } else {
-              if (imageRe.test(parsedPath.ext) && index >= 0) {
+              if (/\.(png|jpe?g|gif|webp|svg)$/i.test(parsedPath.ext) && index >= 0) {
                 const dir = groupItem.path + dirent.path.replace(baseFullPath, '').replaceAll('\\', '/');
                 const url = dir + '/' + dirent.name;
                 if (filter.imageName && filter.imageName !== parsedPath.name) return false;
