@@ -5,6 +5,7 @@ import ComicViewer from "react-comic-viewer";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { useSearchParams } from "next/navigation";
 import ComicsList from "./ComicsList";
+import Link from "next/link";
 
 function App() {
   const { imageAlbumList } = useMediaImageState();
@@ -20,9 +21,27 @@ function App() {
   return (
     <>
       {album ? (
-        <div className="wide">
-          <ComicViewer pages={pages} />
-        </div>
+        <>
+          <div className="react-comic-viewer">
+            <ComicViewer
+              pages={pages}
+              text={{
+                expansion: "かくだい",
+                fullScreen: "ぜんがめん",
+                move: "いどう",
+                normal: "もとにもどす",
+              }}
+            />
+          </div>
+          <div className="pt-12">
+            <p>
+              Powered by{" "}
+              <Link href="https://www.npmjs.com/package/react-comic-viewer">
+                react-comic-viewer
+              </Link>
+            </p>
+          </div>
+        </>
       ) : null}
     </>
   );
