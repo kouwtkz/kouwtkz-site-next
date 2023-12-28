@@ -2,7 +2,7 @@
 
 import { CharaType } from "@/app/character/chara.d";
 import Link from "next/link";
-import { useCharaData } from "../CharaData";
+import { useCharaData } from "./CharaData";
 import ImageMee from "@/app/components/image/ImageMee";
 
 type CharaListItemProps = {

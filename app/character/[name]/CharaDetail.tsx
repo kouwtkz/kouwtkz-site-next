@@ -5,14 +5,18 @@ import GalleryList from "@/app/gallery/GalleryList";
 import { useServerState } from "@/app/components/System/ServerState";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import ImageMee from "@/app/components/image/ImageMee";
+import { useCharaData } from "../CharaData";
 
 type DetailProps = {
-  chara: CharaType;
+  name: string;
 };
 
-export default function CharaDetail({ chara }: DetailProps) {
+export default function CharaDetail({ name }: DetailProps) {
   const { isStatic } = useServerState();
   const { imageItemList } = useMediaImageState();
+  const { charaObject } = useCharaData();
+  const chara = charaObject ? charaObject[name] : null;
+  if (!chara) return null;
   const galleryGroups = [
     {
       list: imageItemList
@@ -51,26 +55,12 @@ export default function CharaDetail({ chara }: DetailProps) {
       name: "FAN ART",
     },
   ];
-  const imageList = imageItemList.filter((image) =>
-    ["art", "goods", "given", "charaImages", "charaIcon"].find(
-      (fg) => fg === image.album?.name
-    )
-  );
-  const headerImagePath = `${chara.headerImage}`;
-  const headerImage = chara.headerImage
-    ? imageList.find((image) => image.path?.endsWith(headerImagePath))
-    : null;
-  const charaImagePath = chara?.image || chara?.icon || "";
-  const charaImage = charaImagePath
-    ? imageList.find((image) => image.path?.endsWith(charaImagePath))
-    : null;
-
   return (
     <div className="p-0">
-      {headerImage ? (
+      {chara.media?.headerImage ? (
         <div>
           <ImageMee
-            imageItem={headerImage}
+            imageItem={chara.media.headerImage}
             loading="eager"
             unoptimized={isStatic}
             suppressHydrationWarning={true}
@@ -78,10 +68,10 @@ export default function CharaDetail({ chara }: DetailProps) {
           />
         </div>
       ) : null}
-      {charaImage ? (
+      {chara.media?.image ? (
         <div>
           <ImageMee
-            imageItem={charaImage}
+            imageItem={chara.media.image}
             mode="thumbnail"
             loading="eager"
             suppressHydrationWarning={true}
