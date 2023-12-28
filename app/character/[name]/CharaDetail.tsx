@@ -19,13 +19,11 @@ export default function CharaDetail({ name }: DetailProps) {
   if (!chara) return null;
   const galleryGroups = [
     {
-      list: imageItemList
-        .filter(
-          (image) =>
-            image.album?.name?.match("art") &&
-            image.tags?.some((v) => v === chara.id)
-        )
-        .slice(0, 20),
+      list: imageItemList.filter(
+        (image) =>
+          image.album?.name?.match("art") &&
+          image.tags?.some((v) => v === chara.id)
+      ),
       name: "ART",
     },
     {
@@ -37,13 +35,11 @@ export default function CharaDetail({ name }: DetailProps) {
       name: "GOODS",
     },
     {
-      list: imageItemList
-        .filter(
-          (image) =>
-            image.album?.name?.match("picture") &&
-            image.tags?.some((v) => v === chara.id)
-        )
-        .slice(0, 20),
+      list: imageItemList.filter(
+        (image) =>
+          image.album?.name?.match("picture") &&
+          image.tags?.some((v) => v === chara.id)
+      ),
       name: "PICTURE",
     },
     {
@@ -53,6 +49,7 @@ export default function CharaDetail({ name }: DetailProps) {
           image.tags?.some((v) => v === chara.id)
       ),
       name: "FAN ART",
+      max: 40,
     },
   ];
   return (
@@ -88,7 +85,11 @@ export default function CharaDetail({ name }: DetailProps) {
       {galleryGroups.map((group, i) => {
         return (
           <div key={i}>
-            <GalleryList album={group} autoDisable={true} />
+            <GalleryList
+              album={group}
+              autoDisable={true}
+              max={group.max || 20}
+            />
           </div>
         );
       })}

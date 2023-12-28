@@ -3,15 +3,17 @@
 import { MediaImageAlbumType } from "@/imageScripts/MediaImageType";
 import { useImageViewer } from "@/app/gallery/ImageViewer";
 
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import ImageMee from "../components/image/ImageMee";
+import MoreButton from "../components/svg/MoreButton";
 type GalleryPageProps = {
   album: MediaImageAlbumType | null;
   size?: number;
   label?: string;
   showLabel?: boolean;
   max?: number;
+  step?: number;
   autoDisable?: boolean;
 };
 
@@ -21,12 +23,14 @@ const GalleryList = ({
   size = 320,
   showLabel = true,
   max = 1000,
+  step = 20,
   autoDisable = false,
 }: GalleryPageProps) => {
   const router = useRouter();
-  // const { setImageItem } = useImageViewer();
+  const [curMax, setCurMax] = useState(max);
+  const showMoreButton = curMax < (album?.list.length || 0);
+  const visibleMax = showMoreButton ? curMax - 1 : curMax;
   if (!album || (autoDisable && album.list.length === 0)) return null;
-  const thumb_size = size;
   return (
     <div className="w-[100%]">
       {showLabel ? (
@@ -35,23 +39,12 @@ const GalleryList = ({
         </h2>
       ) : null}
       <div
-        className={`max-w-[1120px] mx-auto flex flex-wrap${
+        className={`max-w-[1120px] mx-auto select-none flex flex-wrap${
           album.list.length < 3 ? " justify-center" : ""
         }`}
       >
         {album.list
           .map((image, key) => {
-            const size = image.info;
-            const thumb = {
-              width: !size?.wide
-                ? thumb_size
-                : Math.floor((thumb_size * size.width) / size.height),
-              height: size?.wide
-                ? thumb_size
-                : Math.floor(
-                    (thumb_size * Number(size?.height)) / Number(size?.width)
-                  ),
-            };
             return (
               <div
                 key={key}
@@ -73,7 +66,15 @@ const GalleryList = ({
               </div>
             );
           })
-          .filter((v, i) => i < max)}
+          .filter((v, i) => i < visibleMax)}
+        {showMoreButton ? (
+          <MoreButton
+            className="w-[24.532%] h-auto cursor-pointer m-[0.234%] p-0 fill-main-soft hover:fill-main-pale"
+            onClick={() => {
+              setCurMax(curMax + step);
+            }}
+          />
+        ) : null}
       </div>
     </div>
   );
