@@ -12,7 +12,7 @@ type HeaderProps = {
 
 export default function Header({ site }: HeaderProps) {
   return (
-    <header className="fixed z-10 text-center w-[100%]">
+    <header className="fixed w-[100%] z-10 text-center">
       <Breakcrumb className="absolute left-0 m-1 h-14 w-14" />
       <MenuButton className="block absolute right-0 h-14 m-1 opacity-80" />
       <div className="container my-3 inline-block">

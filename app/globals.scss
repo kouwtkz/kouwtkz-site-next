@@ -31,9 +31,14 @@ body,
     width: var(--scroll-margin);
     height: var(--scroll-margin);
   }
-  &.overflow-y-hidden,
-  &.overflow-y-hidden .fixed {
-    margin-right: var(--scroll-margin) !important;
+  &.overflow-y-hidden {
+    &,
+    .fixed {
+      padding-right: var(--scroll-margin) !important;
+    }
+    .fixed .absolute.right-0 {
+      right: var(--scroll-margin) !important;
+    }
   }
   &.mobile,
   &.mobile .window {
@@ -41,9 +46,14 @@ body,
       width: 0;
       height: 0;
     }
-    &.overflow-y-hidden,
-    &.overflow-y-hidden .fixed {
-      margin-right: 0 !important;
+    &.overflow-y-hidden {
+      &,
+      .fixed {
+        padding-right: 0 !important;
+      }
+      .fixed .absolute.right-0 {
+        right: 0 !important;
+      }
     }
   }
   &::-webkit-scrollbar-thumb {
