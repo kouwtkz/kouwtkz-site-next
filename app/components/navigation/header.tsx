@@ -17,7 +17,7 @@ export default function Header({ site }: HeaderProps) {
       <MenuButton className="block absolute right-0 h-14 m-1 opacity-80" />
       <div className="container my-3 inline-block">
         <Link href="/" className="inline-block px-2 h-10">
-          <div id="siteTitle" className="text-3xl font-MochiyPopOne text-main">
+          <div id="siteTitle" className="text-2xl sm:text-3xl leading-10 font-MochiyPopOne text-main">
             {site.title}
           </div>
         </Link>
