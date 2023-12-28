@@ -97,6 +97,7 @@ button {
   }
   > *:not(.transparent) {
     background-color: #ffffff80;
+    overflow: hidden;
   }
 }
 
