@@ -60,7 +60,7 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
               </MultiParser>
             </h1>
             <div>
-              <Link href="gallery">イラスト</Link>
+              <Link href="gallery">ギャラリー</Link>
             </div>
             <div>
               <Link href="character">キャラクター</Link>
