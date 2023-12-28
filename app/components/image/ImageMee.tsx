@@ -1,11 +1,8 @@
-import React from "react";
-import Image from "next/image";
-import {
-  MediaImageItemType,
-  ResizeMode,
-} from "@/imageScripts/MediaImageType";
-import loaderSet from "./loaderSet";
-import { useServerState } from "../System/ServerState";
+/* eslint-disable @next/next/no-img-element */
+"use client";
+
+import React, { useState } from "react";
+import { MediaImageItemType, ResizeMode } from "@/imageScripts/MediaImageType";
 
 type ImageMeeProps = {
   imageItem?: MediaImageItemType;
@@ -18,18 +15,29 @@ type ImageMeeProps = {
 export default function ImageMee({
   imageItem,
   mode = "simple",
-  alt,
+  alt: _alt,
+  src: _src,
   loading,
-  src,
   srcSet,
   width,
   height,
   placeholder,
+  unoptimized,
   ...attributes
 }: ImageMeeProps) {
-  const { isStatic } = useServerState();
-  src = src || imageItem?.URL || "";
-  alt = alt || imageItem?.name || imageItem?.src || "";
+  const [loaded, setLoaded] = useState(false);
+  const src = _src || imageItem?.URL || "";
+  const alt = _alt || imageItem?.name || imageItem?.src || "";
+  const thumbnail = imageItem?.resized?.find(
+    (item) => item.option.mode === "thumbnail"
+  )?.src;
+  const imageSrc =
+    mode === "simple"
+      ? src
+      : mode === "thumbnail" && thumbnail
+      ? thumbnail
+      : imageItem?.resized?.find((item) => item.option.mode === mode)?.src ||
+        src;
   if (width) {
     if (!height)
       height = Math.floor(
@@ -40,23 +48,34 @@ export default function ImageMee({
       (height * (imageItem?.info?.width || 1)) / (imageItem?.info?.height || 1)
     );
   }
+  const setAttr = {
+    ...{
+      ...{
+        width: width || imageItem?.info?.width,
+        height: height || imageItem?.info?.height,
+      },
+      ...attributes,
+    },
+  };
   return (
-    <Image
-      {...{ src, alt }}
-      loader={loaderSet(
-        isStatic,
-        mode !== "simple"
-          ? imageItem?.resized?.find((item) => item.option.mode === mode)
-              ?.src || src
-          : src
+    <>
+      {mode === "simple" && thumbnail ? (
+        <>
+          <img src={loaded ? imageSrc : thumbnail} alt={alt} {...setAttr} />
+          {!loaded ? (
+            <img
+              src={imageSrc}
+              alt="loading"
+              className="hidden"
+              onLoad={() => {
+                setLoaded(true);
+              }}
+            />
+          ) : null}
+        </>
+      ) : (
+        <img src={imageSrc} alt={alt} {...setAttr} />
       )}
-      {...{
-        ...{
-          width: width || imageItem?.info?.width,
-          height: height || imageItem?.info?.height,
-        },
-        ...attributes,
-      }}
-    />
+    </>
   );
 }

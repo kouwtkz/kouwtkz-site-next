@@ -1,7 +1,6 @@
 "use client";
 
 import { MediaImageAlbumType } from "@/imageScripts/MediaImageType";
-import { useImageViewer } from "@/app/gallery/ImageViewer";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";

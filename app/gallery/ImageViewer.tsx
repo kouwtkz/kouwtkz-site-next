@@ -99,7 +99,6 @@ function ImageViewerWindow() {
               <Link href={`${image.URL || image.src}`} target="_blank">
                 <ImageMee
                   imageItem={image}
-                  mode="thumbnail"
                   style={{ objectFit: "contain" }}
                 />
               </Link>
