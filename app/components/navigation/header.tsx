@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { SiteProps } from "@/app/site/SiteData.mjs";
 import MenuButton from "@/app/components/svg/MenuButton";
+import Breakcrumb from "./breadcrumb";
 
 type HeaderProps = {
   site: SiteProps;
@@ -12,7 +13,8 @@ type HeaderProps = {
 export default function Header({ site }: HeaderProps) {
   return (
     <header className="fixed z-10 text-center w-[100vw]">
-      <MenuButton className="block md:hidden absolute right-2 m-1" />
+      <Breakcrumb className="absolute left-0 m-1 h-14 w-14" />
+      <MenuButton className="block absolute right-2 h-14 m-1 opacity-80 md:hidden" />
       <div className="container my-3 inline-block">
         <Link href="/" className="inline-block px-2 h-10">
           <div id="siteTitle" className="text-3xl font-MochiyPopOne text-main">

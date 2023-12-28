@@ -21,7 +21,6 @@ import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
 import { DataStateAddMtime } from "./components/dataState/DataStateFunctions";
-import Breakcrumb from "./components/navigation/breadcrumb";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -60,7 +59,6 @@ export default async function RootLayout({
         <Header site={site} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
           <div className="mx-auto content-parent min-h-[70vh]">
-            <Breakcrumb className="transparent" />
             {children}
             <Footer site={site} currentDate={currentDate} />
           </div>

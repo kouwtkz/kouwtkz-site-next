@@ -12,13 +12,13 @@ function BreakcrumbInner() {
   const pathname = usePathname();
   const search = useSearchParams();
   const existsSearch = Array.from(search.entries()).length > 0;
-  const backUrl = existsSearch ? pathname : pathname.replace(/[^/]+\/?$/, '');
+  const backUrl = existsSearch ? pathname : pathname.replace(/[^/]+\/?$/, "");
   return (
     <>
       {pathname !== "/" ? (
-        <div className="flex">
-          <Link href={backUrl} className="m-1">
-            ←戻る
+        <div className="flex font-KosugiMaru align-middle">
+          <Link href={backUrl} className="p-3">
+            <span className="inline-block h-8 w-8 text-2xl">◁</span>
           </Link>
         </div>
       ) : null}
