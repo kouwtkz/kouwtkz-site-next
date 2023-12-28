@@ -84,7 +84,8 @@ function readImage(image, groupItem, getImageOption = {}) {
   }
 
   image.URL = `${host}${image.path}`;
-  if (groupItem.output?.info || /^(thumbnail)$/i.test(image.name)) {
+  const isThumbnailName = /^(thumbnail)$/i.test(image.name);
+  if (groupItem.output?.info || isThumbnailName) {
     const dimensions = sizeOf(baseImageFullPath);
     const width = Number(dimensions.width);
     const height = Number(dimensions.height);
@@ -92,6 +93,7 @@ function readImage(image, groupItem, getImageOption = {}) {
   }
   if (imageRe.test(image.src)) {
     const resizeOptions = groupItem.resizeOption ? (Array.isArray(groupItem.resizeOption) ? groupItem.resizeOption : [groupItem.resizeOption]) : [];
+    if (isThumbnailName && !resizeOptions.some(opt => opt.mode === "thumbnail")) resizeOptions.push({ mode: "thumbnail" })
     resizeOptions.forEach((v) => {
       const resizeOption = Object.assign({}, v);
       if (!resizeOption.mode) resizeOption.mode = "thumbnail";
