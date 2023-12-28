@@ -7,6 +7,7 @@ import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
 import CharaData from "./character/CharaData";
 import MediaImageState from "@/app/context/MediaImageState";
+import SiteState from "./site/SiteState";
 import PostState from "./blog/PostState";
 import ToasterContext from "@/app/context/toastContext";
 
@@ -49,6 +50,7 @@ export default async function RootLayout({
         <ServerStateMake />
         <ImageViewer />
         <CharaData />
+        <SiteState />
         <MediaImageState url={DataStateAddMtime({ url: "/data/images.json" })} />
         <PostState
           url={DataStateAddMtime({
