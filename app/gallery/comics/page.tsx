@@ -17,7 +17,6 @@ function App() {
   const pages: Array<string | null> = album.list
     .filter((image) => image.tags?.some((tag) => tag === "content"))
     .map((image) => image.URL || "");
-  // if (album.odd) pages.unshift(null);
   return (
     <>
       {album ? (

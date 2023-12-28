@@ -47,7 +47,6 @@ export type MediaImageAlbumType = {
   description?: string;  
   visible?: { info?: boolean, title?: boolean, filename?: boolean };
   list: MediaImageItemType[];
-  odd?: boolean;
 }
 
 /** @comments ひとつの画像用の変数 */
