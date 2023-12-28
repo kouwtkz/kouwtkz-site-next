@@ -1,5 +1,5 @@
 "use client";
-import { CharaType, CharaObjectType } from "./chara.d";
+import { CharaType, CharaObjectType } from "./chara";
 
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
@@ -7,16 +7,13 @@ import { useSystemState } from "../components/System/SystemState";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
 import { MediaImageAlbumType } from "@/imageScripts/MediaImageType";
-type CharaDataType = {
+type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
   setCharaObject: (list: CharaObjectType) => void;
 };
-type CharaDataProps = {
-  charaObject: CharaObjectType;
-};
 
-export const useCharaData = create<CharaDataType>((set) => ({
+export const useCharaState = create<CharaStateType>((set) => ({
   charaObject: null,
   charaList: [],
   set: false,
@@ -28,8 +25,8 @@ export const useCharaData = create<CharaDataType>((set) => ({
   },
 }));
 
-const CharaData = () => {
-  const charaData = useCharaData();
+const CharaState = () => {
+  const charaData = useCharaState();
   const { date } = useSystemState();
   const setChara = useRef(false);
   const { imageItemList, imageAlbumList } = useMediaImageState();
@@ -70,7 +67,6 @@ const CharaData = () => {
             }
           });
         });
-        console.log(charaList);
         charaData.setCharaObject(data);
 
         setChara.current = true;
@@ -81,4 +77,4 @@ const CharaData = () => {
   return <></>;
 };
 
-export default CharaData;
+export default CharaState;

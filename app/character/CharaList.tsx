@@ -1,10 +1,10 @@
 "use client";
 
 import CharaListItem from "./CharaListItem";
-import { useCharaData } from "./CharaData";
+import { useCharaState } from "./CharaState";
 
 export default function CharaList() {
-  const { charaList } = useCharaData();
+  const { charaList } = useCharaState();
   return (
     <>
       {charaList.map((chara, index) => {

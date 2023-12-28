@@ -2,7 +2,7 @@
 
 import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { create } from "zustand";
-import { useCharaData } from "@/app/character/CharaData";
+import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
 import MultiParser from "@/app/components/functions/MultiParser";
 import { useSearchParams } from "next/navigation";
@@ -50,7 +50,7 @@ function ImageViewerWindow() {
   const imageViewer = useImageViewer();
   const search = useSearchParams();
   const { imageItemList } = useMediaImageState();
-  const charaData = useCharaData();
+  const charaData = useCharaState();
   const [backCheck, setBackCheck] = useState(false);
   const imageParam = search.get("image");
 

@@ -2,7 +2,7 @@
 
 import { CharaType } from "@/app/character/chara.d";
 import Link from "next/link";
-import { useCharaData } from "./CharaData";
+import { useCharaState } from "./CharaState";
 import ImageMee from "@/app/components/image/ImageMee";
 
 type CharaListItemProps = {
@@ -10,7 +10,7 @@ type CharaListItemProps = {
 };
 
 export default function CharaListItem({ chara }: CharaListItemProps) {
-  const { charaObject } = useCharaData();
+  const { charaObject } = useCharaState();
   const currentChara = charaObject && chara.id ? charaObject[chara.id] : null;
   return (
     <Link className="text-3xl m-2" href={`character/${chara.id}`}>

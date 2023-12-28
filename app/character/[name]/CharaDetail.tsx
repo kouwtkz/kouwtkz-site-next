@@ -5,7 +5,7 @@ import GalleryList from "@/app/gallery/GalleryList";
 import { useServerState } from "@/app/components/System/ServerState";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import ImageMee from "@/app/components/image/ImageMee";
-import { useCharaData } from "../CharaData";
+import { useCharaState } from "../CharaState";
 
 type DetailProps = {
   name: string;
@@ -14,7 +14,7 @@ type DetailProps = {
 export default function CharaDetail({ name }: DetailProps) {
   const { isStatic } = useServerState();
   const { imageItemList } = useMediaImageState();
-  const { charaObject } = useCharaData();
+  const { charaObject } = useCharaState();
   const chara = charaObject ? charaObject[name] : null;
   if (!chara) return null;
   const galleryGroups = [

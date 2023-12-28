@@ -5,7 +5,7 @@ import Footer from "@/app/components/navigation/footer";
 import { site } from "@/app/site/SiteData.mjs";
 import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
-import CharaData from "./character/CharaData";
+import CharaState from "./character/CharaState";
 import MediaImageState from "@/app/context/MediaImageState";
 import SiteState from "./site/SiteState";
 import PostState from "./blog/PostState";
@@ -49,7 +49,7 @@ export default async function RootLayout({
         <EmbedSync />
         <ServerStateMake />
         <ImageViewer />
-        <CharaData />
+        <CharaState />
         <SiteState />
         <MediaImageState url={DataStateAddMtime({ url: "/data/images.json" })} />
         <PostState
