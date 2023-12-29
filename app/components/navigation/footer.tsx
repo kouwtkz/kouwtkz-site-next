@@ -20,6 +20,7 @@ const SnsList = React.memo(function SnsList({
                   href={sns.url}
                   target={/^https?:\/\//.test(sns.url) ? "_blank" : ""}
                   className={sns.hidden ? "hidden" : ""}
+                  rel={sns.rel}
                 >
                   <div
                     className="bg-main hover:bg-main-soft w-8 h-8"
