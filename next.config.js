@@ -6,6 +6,8 @@ const strictConfig = {
 }
 
 const cwd = process.cwd();
+const fs = require("fs");
+const path = require("path");
 
 const envConfig = { env: {} }
 
@@ -29,15 +31,14 @@ if (mediaHost) {
 
 // SSGでImageを出力する際はローダーが必要
 const outputMode = process.env.OUTPUT_MODE || null;
+const isStaticBuild = outputMode === 'export' && process.env.NODE_ENV !== 'development';
+const distDir = process.env.DIST_DIR;
 
 const exportConfig = (() => {
-  if (outputMode === 'export' && process.env.NODE_ENV !== 'development') {
-    try {
-      require("fs").mkdirSync(`${cwd}/${process.env.CACHE_DIR}`)
-    } catch { }
+  if (isStaticBuild) {
     return {
       output: 'export',
-      distDir: process.env.DICT_DIR,
+      distDir,
       images: { loader: 'custom' },
       // domains: ['images.microcms-assets.io'],
     }
@@ -45,6 +46,11 @@ const exportConfig = (() => {
     return {}
   }
 })();
+
+if (isStaticBuild) {
+  const distFullDir = path.resolve(`${cwd}/${process.env.DIST_DIR}`);
+  fs.rm(distFullDir, { recursive: true }, () => { });
+}
 
 const nextConfig = {
   ...strictConfig,
