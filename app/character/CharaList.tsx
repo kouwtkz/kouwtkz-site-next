@@ -1,19 +1,31 @@
 "use client";
 
-import CharaListItem from "./CharaListItem";
+import Link from "next/link";
+import ImageMee from "../components/image/ImageMee";
 import { useCharaState } from "./CharaState";
 
 export default function CharaList() {
   const { charaList } = useCharaState();
   return (
-    <>
+    <div className="flex flex-row flex-wrap justify-center content-around">
       {charaList.map((chara, index) => {
         return (
-          <div key={index} className="m-4 h-8 inline-block">
-            <CharaListItem chara={chara} />
-          </div>
+          <Link
+            key={index}
+            className="block p-4 w-[30%] hover:bg-main-pale-fluo hover:text-main-dark"
+            href={`character/${chara.id}`}
+          >
+            {chara.media?.image ? (
+              <ImageMee
+                imageItem={chara.media.image}
+                mode="thumbnail"
+                className="block mx-auto my-2 max-w-[82%]"
+              />
+            ) : null}
+            <div className="text-center text-3xl">{chara.name}</div>
+          </Link>
         );
       })}
-    </>
+    </div>
   );
 }
