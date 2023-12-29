@@ -39,4 +39,6 @@ export type SiteSnsProps = {
   image?: string
   row?: number
   rel?: string
+  hidden?: boolean
+  none?: boolean
 }
