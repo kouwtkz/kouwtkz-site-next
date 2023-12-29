@@ -13,13 +13,17 @@ const SnsList = React.memo(function SnsList({
     <>
       {snsList.length > 0 ? (
         <div className="py-4">
-          {snsList.map((sns, i) => (
-            <div key={i} className="inline-block mx-1">
-              {sns.mask && !sns.none ? (
+          {snsList
+            .filter((sns) => !sns.none && sns.mask)
+            .map((sns, i) => (
+              <div
+                key={i}
+                className={"inline-block mx-1" + (sns.hidden ? " hidden" : "")}
+              >
                 <Link
+                  title={sns.title || sns.name}
                   href={sns.url}
                   target={/^https?:\/\//.test(sns.url) ? "_blank" : ""}
-                  className={sns.hidden ? "hidden" : ""}
                   rel={sns.rel}
                 >
                   <div
@@ -32,9 +36,8 @@ const SnsList = React.memo(function SnsList({
                     }}
                   ></div>
                 </Link>
-              ) : null}
-            </div>
-          ))}
+              </div>
+            ))}
         </div>
       ) : null}
     </>
