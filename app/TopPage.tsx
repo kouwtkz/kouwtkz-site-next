@@ -1,6 +1,6 @@
 "use client";
 
-import { MediaImageItemType } from "@/imageScripts/MediaImageType";
+import { MediaImageItemType } from "@/imageScripts/MediaImageDataType";
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
 import MultiParser from "./components/functions/MultiParser";
@@ -8,12 +8,11 @@ import Notice from "./blog/Notice";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import fadein from "./styles/transitions/fadein.module.scss";
 import ImageMee from "./components/image/ImageMee";
+import { useMediaImageState } from "@/app/context/MediaImageState";
 
-type TopPageProps = {
-  topImages?: MediaImageItemType[];
-};
-
-export default function TopPage({ topImages = [] }: TopPageProps) {
+export default function TopPage() {
+  const { imageItemList } = useMediaImageState();
+  const topImages = imageItemList.filter((image) => image.topImage);
   const [topImageState, setTopImage] = useState<MediaImageItemType>();
   const firstLoad = useRef(true);
   const imageRnd = (images: MediaImageItemType[]) =>
@@ -28,7 +27,7 @@ export default function TopPage({ topImages = [] }: TopPageProps) {
     setTopImage(imageRnd(filterTopImages));
   };
   useEffect(() => {
-    if (firstLoad.current) {
+    if (firstLoad.current && imageItemList.length > 0) {
       setRndTopImage();
       firstLoad.current = false;
     }

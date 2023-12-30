@@ -1,3 +1,5 @@
+import { ResizeOptionType } from "./MediaImageYamlType";
+
 export type getImageListType = {
   filter?: string | FilterOptionProps;
   doMakeImage?: boolean;
@@ -5,49 +7,19 @@ export type getImageListType = {
   onceImage?: boolean;
 }
 
-export type ResizeMode = "icon" | "thumbnail" | "simple";
-
-export type FitMethod = "fill" | "contain" | "cover" | "outside" | "inside";
-
-/** @comments ディレクトリ指定のオプション */
-export type MediaImageGroupsType = {
-  path: string;
-  yaml?: boolean;
-  name?: string;
-  tags?: string[];
-  format?: "image" | "comic";
-  recursive?: boolean;
-  output?: {
-    get?: boolean; // Jsonとかで使うかどうか
-    webp?: boolean;
-    time?: boolean;
-    info?: boolean;
-  }
-  resizeOption?: ResizeOptionType | ResizeOptionType[];
-}
-
-export type ResizeOptionType = {
-  mode?: ResizeMode;
-  ext?: string;
-  size?: number | {
-    w: number;
-    h: number;
-  };
-  quality?: number;
-  fit?: FitMethod;
-}
-
 /** @comments ひとつのアルバムの変数 */
 export type MediaImageAlbumType = {
   dir?: string;
   name: string;
   group?: string;
-  link?: string;  
+  link?: string;
   time?: Date | null;
-  description?: string;  
-  visible?: { info?: boolean, title?: boolean, filename?: boolean };
+  description?: string;
+  visible?: AlbumVisibleType;
   list: MediaImageItemType[];
 }
+
+export type AlbumVisibleType = { info?: boolean, title?: boolean, filename?: boolean };
 
 /** @comments ひとつの画像用の変数 */
 export type MediaImageItemType = {
@@ -59,17 +31,23 @@ export type MediaImageItemType = {
   direct?: string;
   URL?: string;
   tags?: string[];
-  title?: string;
   description?: string;
+  fanart?: boolean;
+  collaboration?: boolean;
+  copyright?: string | boolean;
   time?: Date | null;
   timeOptions?: Intl.DateTimeFormatOptions;
   topImage?: boolean;
   info?: MediaImageInfoType;
+  resizeOption?: ResizeOptionType | ResizeOptionType[];
   resized?: {
     src: string;
     option: ResizeOptionType;
   }[]
   album?: MediaImageAlbumType;
+  fullPath?: string;
+  mtime?: Date;
+  title?: string; // 互換用、nameに統一することにした
 }
 
 export type MediaImageInfoType = {

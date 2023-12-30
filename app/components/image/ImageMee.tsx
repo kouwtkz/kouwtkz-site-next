@@ -2,7 +2,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { MediaImageItemType, ResizeMode } from "@/imageScripts/MediaImageType";
+import { MediaImageItemType } from "@/imageScripts/MediaImageDataType";
+import { ResizeMode } from "@/imageScripts/MediaImageYamlType";
 
 type ImageMeeProps = {
   imageItem?: MediaImageItemType;

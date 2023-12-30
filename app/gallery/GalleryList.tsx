@@ -1,6 +1,6 @@
 "use client";
 
-import { MediaImageAlbumType } from "@/imageScripts/MediaImageType";
+import { MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -43,6 +43,9 @@ const GalleryList = ({
         }`}
       >
         {album.list
+          .sort((a, b) =>
+            a.time && b.time ? b.time.getTime() - a.time.getTime() : 0
+          )
           .map((image, key) => {
             return (
               <div
@@ -59,7 +62,7 @@ const GalleryList = ({
                   className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                   onClick={() => {
                     if (image.direct) router.push(image.direct);
-                    else router.push(`?image=${image.path}`, { scroll: false });
+                    else router.push(`?image=${image.URL}`, { scroll: false });
                   }}
                 />
               </div>

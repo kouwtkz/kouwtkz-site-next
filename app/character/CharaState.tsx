@@ -6,7 +6,7 @@ import { create } from "zustand";
 import { useSystemState } from "../components/System/SystemState";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
-import { MediaImageAlbumType } from "@/imageScripts/MediaImageType";
+import { MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
@@ -42,28 +42,20 @@ const CharaState = () => {
           { kind: "image", name: "charaImages" },
           { kind: "headerImage" },
         ];
-        const albumCharaMediaKinds = mediaKindArray.reduce((c, kindItem) => {
-          const mediaName = kindItem.name || kindItem.kind;
-          const obj = imageAlbumList.find((album) => album.name === mediaName);
-          if (obj) c[kindItem.kind] = obj;
-          return c;
-        }, {} as { [key: string]: MediaImageAlbumType | undefined });
         charaList.forEach((chara) => {
           if (!chara.media) chara.media = {};
-          const media = chara.media;
+          const charaMedia = chara.media;
           mediaKindArray.forEach((kindItem) => {
-            if (
-              typeof chara[kindItem.kind] === "string" &&
-              chara[kindItem.kind] !== ""
-            ) {
-              const mediaPath = `.*${chara[kindItem.kind]}.*`;
-              media[kindItem.kind] = imageItemList.find((item) =>
-                item.path?.match(mediaPath)
+            const charaMediaItem = chara[kindItem.kind];
+            if (charaMediaItem) {
+              charaMedia[kindItem.kind] = imageItemList.find(({ URL }) =>
+                URL?.match(charaMediaItem)
               );
-            } else {
-              media[kindItem.kind] = albumCharaMediaKinds[
-                kindItem.kind
-              ]?.list.find((item) => item.name === chara.id);
+            } else if (kindItem.name) {
+              charaMedia[kindItem.kind] = imageItemList.find(
+                ({ album, name }) =>
+                  album?.name === kindItem.name && name === chara.id
+              );
             }
           });
         });

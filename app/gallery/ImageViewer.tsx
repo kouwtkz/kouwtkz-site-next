@@ -74,14 +74,14 @@ function ImageViewerWindow() {
   });
 
   const image = imageViewer.imagePath
-    ? imageItemList.find((image) => image.path === imageParam) || null
+    ? imageItemList.find((image) => image.URL === imageParam) || null
     : null;
 
   const titleEqFilename =
     process.env.NODE_ENV === "development"
       ? false
-      : image?.title
-      ? image.src.startsWith(image.title)
+      : image?.name
+      ? image.src.startsWith(image.name)
       : true;
 
   return (
@@ -109,7 +109,7 @@ function ImageViewerWindow() {
                   {image.album.visible.title &&
                   (image.album.visible.filename || !titleEqFilename) ? (
                     <h2 className="my-8 text-3xl md:text-4xl font-MochiyPopOne text-main-dark break-all">
-                      {image.title}
+                      {image.name}
                     </h2>
                   ) : (
                     <div className="my-8" />

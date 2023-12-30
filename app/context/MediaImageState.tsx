@@ -2,8 +2,7 @@
 
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
-import { MediaImageItemType, MediaImageAlbumType } from "@/imageScripts/MediaImageType";
-import { useSystemState } from "@/app/components/System/SystemState";
+import { MediaImageItemType, MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
 
