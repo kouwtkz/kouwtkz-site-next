@@ -373,7 +373,7 @@ export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImag
     }
     if (notfound.length === 0) delete y.data.notfound;
 
-    // 余分なデータの削除
+    // 余分なデータの削除する
     y.data.list?.forEach((item) => {
       if (Array.isArray(item.resizeOption) && item.resizeOption.length === 0) delete item.resizeOption;
       if (item.dir === "") delete item.dir;
@@ -381,6 +381,10 @@ export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImag
       if (item.tags?.length === 0 || item.tags === null) delete item.tags;
       if (item.title) { item.name = item.title; delete item.title; }
     })
+    // ソート
+    if (y.data.list) {
+      y.data.list.sort((a, b) => a.time && b.time ? (new Date(b.time).getTime()) - (new Date(a.time).getTime()) : 0)
+    }
   })
 
   const write_mtime = new Date().toLocaleString("sv-SE", { timeZone: "JST" }) + "+09:00"

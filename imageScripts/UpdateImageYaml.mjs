@@ -4,4 +4,4 @@ import { UpdateImageYaml } from "./YamlImageFunctions.mjs";
 
 // yamlを管理するメディアディレクトリ
 const mediaDir = "_media";
-UpdateImageYaml({ path: mediaDir, filter: { archive: false } });
+UpdateImageYaml({ path: mediaDir });

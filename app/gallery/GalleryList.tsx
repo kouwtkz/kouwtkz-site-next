@@ -43,9 +43,7 @@ const GalleryList = ({
         }`}
       >
         {album.list
-          .sort((a, b) =>
-            a.time && b.time ? b.time.getTime() - a.time.getTime() : 0
-          )
+          .sort((a, b) => (b.time?.getTime() || 0) - (a.time?.getTime() || 0))
           .map((image, key) => {
             return (
               <div
