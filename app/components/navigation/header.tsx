@@ -18,7 +18,7 @@ const SiteMenu = React.memo(function SiteMenu({
   setIsOpen: Function;
 }) {
   return (
-    <div className="absolute right-0 bg-white bg-opacity-90 flex font-LuloClean flex-wrap justify-center md:flex-col sm:text-right">
+    <div className="absolute right-0 bg-white bg-opacity-90 flex font-LuloClean flex-wrap justify-center flex-col text-right">
       {nav.map((item, i) => (
         <Link
           key={i}

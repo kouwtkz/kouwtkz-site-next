@@ -86,7 +86,7 @@ function ImageViewerWindow() {
       : true;
 
   return (
-    <div className="fixed z-[40]" id="image_viewer">
+    <div className="fixed z-40" id="image_viewer">
       {imageViewer.isOpen && image ? (
         <div
           className="bg-lightbox-background w-[100vw] h-[100vh] flex justify-center items-center"
@@ -96,7 +96,7 @@ function ImageViewerWindow() {
           id={imageViewerWindowID}
         >
           <CloseButton
-            className="absolute top-0 right-0 m-6 cursor-pointer"
+            className="absolute top-0 right-0 z-20 m-2 w-10 h-10 md:m-6 md:w-16 md:h-16 opacity-80 cursor-pointer"
             width={60}
             height={60}
             onClick={(e) => {
@@ -104,7 +104,7 @@ function ImageViewerWindow() {
               e.stopPropagation();
             }}
           />
-          <div className="window flex flex-wrap flex-row max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%]">
+          <div className="window z-30 flex flex-wrap flex-row max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%]">
             <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
               <Link href={`${image.URL || image.src}`} target="_blank">
                 <ImageMee imageItem={image} style={{ objectFit: "contain" }} />
