@@ -60,7 +60,7 @@ export default function GalleryList({
                 if (yearSelectRef.current) setYear(yearSelectRef.current.value);
               }}
             >
-              <option value=""></option>
+              <option value="">all</option>
               {getYears(album.list.map((item) => item.time)).map((year, i) => (
                 <option key={i} value={year}>
                   {year}
