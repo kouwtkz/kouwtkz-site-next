@@ -123,8 +123,10 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
   /** @type {{isFile: boolean, path: string}[]} */
   let currentPublicItems = [];
   roots.forEach(root => {
+    const path = resolve(`${cwd}/${publicDir}/${root}`);
+    try { fs.mkdirSync(path, { recursive: true }) } catch { }
     currentPublicItems = currentPublicItems.concat(
-      fs.readdirSync(resolve(`${cwd}/${publicDir}/${root}`), { recursive: true, withFileTypes: true })
+      fs.readdirSync(path, { recursive: true, withFileTypes: true })
         .map(dirent => ({ isFile: dirent.isFile(), path: resolve(`${dirent.path}/${dirent.name}`) }))
     )
   })
@@ -139,7 +141,8 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
         image.mtime = new Date(fs.statSync(image.fullPath).mtime);
       }
       const baseImageFullPath = image.fullPath;
-      image.src = /\.(svg|gif)$/i.test(image.src) ? image.src : image.src.replace(/[^.]+$/, "webp");
+      const toWebp = !/\.(svg|gif)$/i.test(image.src);
+      image.src = toWebp ? image.src.replace(/[^.]+$/, "webp") : image.src;
       image.URL = `${imageDir}${image.src}`;
       image.resizeOption = image.resizeOption ? (Array.isArray(image.resizeOption) ? image.resizeOption : [image.resizeOption]) : [];
       if (/^thumbnail/i.test(image.src) && !image.resizeOption.some(({ mode }) => mode === "thumbnail")) {
@@ -157,7 +160,10 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
         }
         if (copy) {
           fs.mkdir(dirname(imageFullPath), { recursive: true }, () => {
-            sharp(baseImageFullPath).webp().toFile(imageFullPath);
+            if (baseImageFullPath) {
+              if (toWebp) sharp(baseImageFullPath).webp().toFile(imageFullPath);
+              else fs.copyFile(baseImageFullPath, imageFullPath, () => { })
+            }
           })
         }
       }
