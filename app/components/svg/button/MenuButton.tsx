@@ -22,9 +22,7 @@ export default function MenuButton({
       {...attributes}
     >
       <path
-        className="fill-main"
         d="M0 0H60V60H0V0Z"
-        fill="gray"
         fillOpacity="0.8"
       />
       <g className={isOpen ? "hidden" : ""}>

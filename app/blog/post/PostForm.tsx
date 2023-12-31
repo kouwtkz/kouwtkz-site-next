@@ -252,7 +252,7 @@ export default function PostForm() {
       className="pt-2 [&>*]:my-2"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <h1 className="font-LuloClean text-3xl text-main my-6 pt-2 pb-8">
+      <h1 className="font-LuloClean text-3xl sm:text-4xl text-main my-6 pt-2 pb-8">
         Post form
       </h1>
       <input {...register("update")} type="hidden" />

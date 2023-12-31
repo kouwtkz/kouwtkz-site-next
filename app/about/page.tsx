@@ -1,7 +1,7 @@
 export default function About() {
   return (
     <div>
-      <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
+      <h2 className="font-LuloClean text-3xl sm:text-4xl text-center text-main pt-8 mb-12">
         ABOUT
       </h2>
       <ul className="[&>li]:my-4 [&_h3]:text-main-deep [&_h3]:m-2">

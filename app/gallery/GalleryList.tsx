@@ -4,8 +4,8 @@ import { MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import ImageMee from "../components/image/ImageMee";
-import MoreButton from "../components/svg/MoreButton";
+import { ImageMeeThumbnail } from "../components/image/ImageMee";
+import MoreButton from "../components/svg/button/MoreButton";
 type GalleryPageProps = {
   album: MediaImageAlbumType | null;
   size?: number;
@@ -33,7 +33,7 @@ const GalleryList = ({
   return (
     <div className="w-[100%]">
       {showLabel ? (
-        <h2 className="pt-12 mb-6 text-4xl font-LuloClean text-center text-main">
+        <h2 className="pt-12 mb-6 font-LuloClean text-3xl sm:text-4xl text-center text-main">
           {label || album.name}
         </h2>
       ) : null}
@@ -53,9 +53,8 @@ const GalleryList = ({
                   ` hover:brightness-90 transition cursor-pointer`
                 }
               >
-                <ImageMee
+                <ImageMeeThumbnail
                   imageItem={image}
-                  mode="thumbnail"
                   style={{ objectFit: "cover" }}
                   className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                   onClick={() => {

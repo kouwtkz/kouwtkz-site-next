@@ -23,6 +23,7 @@ import {
   // ZenMaruFont,
   LuloCleanFont,
 } from "@/app/fonts/list";
+import SoundState from "./sound/SoundState";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -53,7 +54,15 @@ export default async function RootLayout({
         <ImageViewer />
         <CharaState />
         <SiteState />
-        <MediaImageState url={DataStateAddMtime({ url: "/data/images.json" })} />
+        <MediaImageState
+          url={DataStateAddMtime({ url: "/data/images.json" })}
+        />
+        <SoundState
+          url={DataStateAddMtime({
+            url: "/data/sound.json",
+            file: "_data/sound.yaml",
+          })}
+        />
         <PostState
           url={DataStateAddMtime({
             url: "/blog/posts.json",

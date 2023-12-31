@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { SiteProps, SiteMenuProps } from "@/app/site/SiteData.mjs";
-import MenuButton from "@/app/components/svg/MenuButton";
+import MenuButton from "@/app/components/svg/button/MenuButton";
 import Breakcrumb from "./breadcrumb";
 
 type HeaderProps = {
@@ -62,7 +62,7 @@ export default function Header({ site }: HeaderProps) {
         onClick={() => {
           setIsOpen(!isOpen);
         }}
-        className="block absolute select-none right-0 h-14 m-1 opacity-80"
+        className="block absolute select-none right-0 h-14 m-1 opacity-80 fill-main"
       />
       <SiteTitle title={site.title} />
       <div className="absolute top-0 m-0 h-[100%] w-[100%] bg-background-top opacity-90 -z-10" />

@@ -5,13 +5,13 @@ import React, { useState } from "react";
 import { MediaImageItemType } from "@/imageScripts/MediaImageDataType";
 import { ResizeMode } from "@/imageScripts/MediaImageYamlType";
 
-type ImageMeeProps = {
+interface ImageMeeProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   imageItem?: MediaImageItemType;
   width?: number;
   height?: number;
   mode?: ResizeMode;
   unoptimized?: boolean;
-} & React.ImgHTMLAttributes<HTMLImageElement>;
+}
 
 export default function ImageMee({
   imageItem,
@@ -37,8 +37,7 @@ export default function ImageMee({
       ? src
       : mode === "thumbnail" && thumbnail
       ? thumbnail
-      : imageItem?.resized?.find((item) => item.mode === mode)?.src ||
-        src;
+      : imageItem?.resized?.find((item) => item.mode === mode)?.src || src;
   if (width) {
     if (!height)
       height = Math.floor(
@@ -79,4 +78,17 @@ export default function ImageMee({
       )}
     </>
   );
+}
+
+interface ImageMeeSimpleProps
+  extends React.ImgHTMLAttributes<HTMLImageElement> {
+  size?: number;
+  imageItem: MediaImageItemType;
+}
+
+export function ImageMeeIcon({ size, ...args }: ImageMeeSimpleProps) {
+  return ImageMee({ ...args, mode: "icon", width: size, height: size });
+}
+export function ImageMeeThumbnail({ size, ...args }: ImageMeeSimpleProps) {
+  return ImageMee({ ...args, mode: "thumbnail", width: size, height: size });
 }

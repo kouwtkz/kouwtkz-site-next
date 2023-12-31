@@ -21,8 +21,6 @@ const PlayPath = React.memo(function PlayPath() {
 });
 
 export default function PlayPauseButton({
-  className,
-  fill,
   isPause = true,
   ...attributes
 }: PlayPauseButtonProps) {
@@ -34,10 +32,9 @@ export default function PlayPauseButton({
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       name="pause"
-      className={className}
       {...attributes}
     >
-      <circle cx="18" cy="18" r="18" className={fill || "fill-main-soft"} />
+      <circle cx="18" cy="18" r="18" />
       {isPause ? <PlayPath /> : <PausePath />}
     </svg>
   );

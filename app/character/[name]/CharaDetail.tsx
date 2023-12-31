@@ -4,7 +4,7 @@ import { CharaType } from "@/app/character/chara";
 import GalleryList from "@/app/gallery/GalleryList";
 import { useServerState } from "@/app/components/System/ServerState";
 import { useMediaImageState } from "@/app/context/MediaImageState";
-import ImageMee from "@/app/components/image/ImageMee";
+import ImageMee, { ImageMeeIcon } from "@/app/components/image/ImageMee";
 import { useCharaState } from "../CharaState";
 
 type DetailProps = {
@@ -78,9 +78,16 @@ export default function CharaDetail({ name }: DetailProps) {
           />
         </div>
       ) : null}
-      <h1 className="text-main-deep font-bold text-3xl">{`${chara.name}${
-        chara.honorific || ""
-      }`}</h1>
+      <h1 className="text-main-deep font-bold text-3xl h-10 flex justify-center items-center">
+        {chara.media?.icon ? (
+          <ImageMeeIcon
+            imageItem={chara.media.icon}
+            size={40}
+            className="inline-block mr-2"
+          />
+        ) : null}
+        <span>{`${chara.name}${chara.honorific || ""}`}</span>
+      </h1>
       <div className="text-main text-xl">{chara.description}</div>
       {galleryGroups.map((group, i) => {
         return (

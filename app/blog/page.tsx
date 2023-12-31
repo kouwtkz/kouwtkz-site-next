@@ -9,7 +9,7 @@ export default async function BlogPage({}: {}) {
     <>
       <div>
         <Link href="/blog">
-          <h2 className="text-4xl font-LuloClean text-center text-main pt-8 mb-12">
+          <h2 className="font-LuloClean text-3xl sm:text-4xl text-center text-main pt-8 mb-12">
             MINI BLOG
           </h2>
         </Link>

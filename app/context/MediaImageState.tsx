@@ -2,7 +2,10 @@
 
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
-import { MediaImageItemType, MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
+import {
+  MediaImageItemType,
+  MediaImageAlbumType,
+} from "@/imageScripts/MediaImageDataType";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
 
@@ -33,7 +36,6 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
   imageAlbumList: [],
   setImageAlbum: (data) => {
     set(() => ({
-      set: true,
       imageAlbumList: data,
       imageItemList: parseImageItems(data),
     }));
@@ -41,12 +43,12 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
 }));
 
 export default function MediaImageState({ url }: DataStateReplacedProps) {
-  const imageData = useMediaImageState();
+  const { setImageAlbum } = useMediaImageState();
   const setImage = useRef(false);
   useEffect(() => {
     if (!setImage.current)
       axios(url).then((r) => {
-        imageData.setImageAlbum(r.data);
+        setImageAlbum(r.data);
         setImage.current = true;
       });
   });
