@@ -12,7 +12,7 @@ function App() {
   const search = useSearchParams();
   const comicName = search.get("name");
   if (!comicName) return <ComicsList />;
-  const album = imageAlbumList.find((album) => album.name === comicName);
+  const album = imageAlbumList.find((album) => album.name.endsWith(comicName));
   if (!album) return <></>;
 
   const pages: Array<string | null> = album.list
@@ -36,7 +36,7 @@ function App() {
           <div className="pt-12">
             <p>
               Powered by{" "}
-              <Link href="https://www.npmjs.com/package/react-comic-viewer">
+              <Link href="https://www.npmjs.com/package/react-comic-viewer" target="_blank">
                 react-comic-viewer
               </Link>
             </p>
