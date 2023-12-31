@@ -1,22 +1,9 @@
 // @ts-check
 
 /**
- * @typedef {{
- * title: string;
- * src: string;
- * name: string;
- * playlist?: PlaylistType[];
- * setupSound?: string
- * }} SoundAlbumType;
- * @typedef {{
- * title?: string;
- * list: SoundItemType[];
- * }} PlaylistType;
- * @typedef {{
- * src: string;
- * title: string;
- * list: [];
- * }} SoundItemType;
+ * @typedef { import("./MediaSoundType").SoundAlbumType } SoundAlbumType
+ * @typedef { import("./MediaSoundType").PlaylistType } PlaylistType
+ * @typedef { import("./MediaSoundType").SoundItemType } SoundItemType
  */
 
 import { readFileSync } from "fs";
@@ -25,7 +12,7 @@ const cwd = process.cwd();
 const dataDir = `${process.env.DATA_DIR || '_data'}`;
 const defaultSoundPath = `/sound`;
 
-const readYamlList = [`${dataDir}/media/sound.yaml`];
+const readYamlList = [`${dataDir}/sound.yaml`];
 export function ReadSoundDataFromYaml() {
   /** @type SoundAlbumType[] */
   const AlbumList = [];

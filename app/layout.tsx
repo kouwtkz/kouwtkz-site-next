@@ -10,6 +10,11 @@ import MediaImageState from "@/app/context/MediaImageState";
 import SiteState from "./site/SiteState";
 import PostState from "./blog/PostState";
 import ToasterContext from "@/app/context/toastContext";
+import ServerStateMake from "./components/System/ServerStateMake";
+import ClientSetup from "./components/System/ClientSetup";
+import EmbedSync from "./components/System/EmbedSync";
+import { DataStateAddMtime } from "./components/dataState/DataStateFunctions";
+import SoundPlayer from "./sound/SoundPlayer";
 
 import {
   KosugiMaruFont,
@@ -18,10 +23,6 @@ import {
   // ZenMaruFont,
   LuloCleanFont,
 } from "@/app/fonts/list";
-import ServerStateMake from "./components/System/ServerStateMake";
-import ClientSetup from "./components/System/ClientSetup";
-import EmbedSync from "./components/System/EmbedSync";
-import { DataStateAddMtime } from "./components/dataState/DataStateFunctions";
 
 export const metadata: Metadata = {
   title: site.title,
@@ -48,6 +49,7 @@ export default async function RootLayout({
         <ClientSetup />
         <EmbedSync />
         <ServerStateMake />
+        <SoundPlayer />
         <ImageViewer />
         <CharaState />
         <SiteState />
