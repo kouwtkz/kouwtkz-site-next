@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react";
-import { getImageAlbum } from "@/imageScripts/MediaImageData.mjs";
 import GalleryList from "@/app/gallery/GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 
