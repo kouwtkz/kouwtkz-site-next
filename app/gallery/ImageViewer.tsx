@@ -106,9 +106,13 @@ function ImageViewerWindow() {
           />
           <div className="window z-30 flex flex-wrap flex-row max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%]">
             <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
-              <Link href={`${image.URL || image.src}`} target="_blank">
+              <a
+                title="image.src"
+                href={`${image.URL || image.src}`}
+                target="_blank"
+              >
                 <ImageMee imageItem={image} style={{ objectFit: "contain" }} />
-              </Link>
+              </a>
             </div>
             {image.album?.visible?.info ? (
               <div className="flex-auto pb-4 md:pb-0 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
