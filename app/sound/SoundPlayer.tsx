@@ -29,15 +29,14 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
     set(() => ({ src }));
   },
   Play: (src) => {
-    const value: { paused: boolean; ended: boolean; src?: string } = {
+    const value: { paused: boolean; ended?: boolean; src?: string } = {
       paused: false,
-      ended: false,
     };
     if (src) value.src = src;
     set(() => value);
   },
   Pause: () => {
-    set(() => ({ paused: true }));
+    set(() => ({ paused: true, ended: false }));
   },
   Stop: () => {
     set(() => ({ paused: true, ended: true }));
@@ -48,14 +47,14 @@ function Main() {
   const refAudio = useRef<HTMLAudioElement>(null);
   const { src, paused, ended, Stop } = useSoundPlayer();
   if (refAudio.current) {
-    if (src && !refAudio.current.src.endsWith(src))
-      refAudio.current.src = src;
+    if (src && !refAudio.current.src.endsWith(src)) refAudio.current.src = src;
     if (refAudio.current.paused !== paused) {
-      if (paused) refAudio.current.pause();
-      else refAudio.current.play();
-    }
-    if (ended) {
-      refAudio.current.currentTime = 0;
+      if (paused) {
+        refAudio.current.pause();
+      } else {
+        if (ended) refAudio.current.currentTime = 0;
+        refAudio.current.play();
+      }
     }
   }
   const html = typeof window === "object" ? document?.documentElement : null;
