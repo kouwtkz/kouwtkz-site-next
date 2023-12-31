@@ -12,7 +12,14 @@ export default function Home() {
       {["art", "fanart", "works"].map((name, i) => {
         const groupAlbum =
           imageAlbumList.find((album) => album.name === name) || null;
-        return <GalleryList key={i} album={groupAlbum} max={20} />;
+        return (
+          <GalleryList
+            key={i}
+            album={groupAlbum}
+            max={20}
+            filterButton={true}
+          />
+        );
       })}
       <ComicsList />
     </div>
