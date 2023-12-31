@@ -10,6 +10,7 @@ import { useMediaImageState } from "@/app/context/MediaImageState";
 import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 import ImageMee from "../components/image/ImageMee";
+import CloseButton from "../components/svg/button/CloseButton";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -94,13 +95,19 @@ function ImageViewerWindow() {
           }}
           id={imageViewerWindowID}
         >
+          <CloseButton
+            className="absolute top-0 right-0 m-6 cursor-pointer"
+            width={60}
+            height={60}
+            onClick={(e) => {
+              backAction();
+              e.stopPropagation();
+            }}
+          />
           <div className="window flex flex-wrap flex-row max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%]">
             <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
               <Link href={`${image.URL || image.src}`} target="_blank">
-                <ImageMee
-                  imageItem={image}
-                  style={{ objectFit: "contain" }}
-                />
+                <ImageMee imageItem={image} style={{ objectFit: "contain" }} />
               </Link>
             </div>
             {image.album?.visible?.info ? (

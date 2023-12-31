@@ -47,7 +47,6 @@ function Main({ max }: PagingAreaProps) {
         delete newSearch["p"];
       }
       if (newSearch.q) newSearch.q = newSearch.q.replace("#", "%23").replace("+", "%2B");
-      console.log(newSearch);
       router.push(
         `${url.pathname}?${Object.entries(newSearch)
           .map((v) => v.join("="))

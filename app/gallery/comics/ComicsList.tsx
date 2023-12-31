@@ -14,7 +14,6 @@ export default function ComicsList() {
       album.list.some((img) => img.dir?.startsWith("/content"))
     );
   });
-  console.log(comicsAlbums);
   const thumbnails = comicsAlbums.map((album) => {
     const thumbnail = {
       ...(album.list.find((image) => image.src.startsWith("thumbnail")) ||

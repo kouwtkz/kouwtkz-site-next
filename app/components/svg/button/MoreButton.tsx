@@ -1,8 +1,6 @@
 import { SVGAttributes } from "react";
 
-export default function MoreButton({
-  ...attributes
-}: SVGAttributes<SVGSVGElement>) {
+export default function MoreButton(attributes: SVGAttributes<SVGSVGElement>) {
   return (
     <svg
       width="235"
