@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { create } from "zustand";
 
 type SoundPlayerType = {
@@ -16,7 +16,7 @@ type SoundPlayerType = {
 };
 
 export const useSoundPlayer = create<SoundPlayerType>((set) => ({
-  paused: false,
+  paused: true,
   ended: false,
   src: "",
   setPaused: (paused) => {
@@ -29,7 +29,10 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
     set(() => ({ src }));
   },
   Play: (src) => {
-    const value: { paused: boolean; src?: string } = { paused: false };
+    const value: { paused: boolean; ended: boolean; src?: string } = {
+      paused: false,
+      ended: false,
+    };
     if (src) value.src = src;
     set(() => value);
   },
@@ -41,24 +44,33 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   },
 }));
 
-export default function SoundPlayer() {
+function Main() {
   const refAudio = useRef<HTMLAudioElement>(null);
   const { src, paused, ended, Stop } = useSoundPlayer();
   if (refAudio.current) {
-    if (src) refAudio.current.src = src;
+    if (src && !refAudio.current.src.endsWith(src))
+      refAudio.current.src = src;
     if (refAudio.current.paused !== paused) {
       if (paused) refAudio.current.pause();
       else refAudio.current.play();
     }
-    if (ended) refAudio.current.currentTime = 0;
-  }
-  useEffect(() => {
-    const html = typeof window === "object" ? document?.documentElement : null;
-    if (refAudio.current?.paused) {
-      html?.classList.remove("audio_play");
-    } else {
-      html?.classList.add("audio_play");
+    if (ended) {
+      refAudio.current.currentTime = 0;
     }
-  });
-  return <audio ref={refAudio} onEnded={() => Stop() } />;
+  }
+  const html = typeof window === "object" ? document?.documentElement : null;
+  if (paused) {
+    html?.classList.remove("audio_play");
+  } else {
+    html?.classList.add("audio_play");
+  }
+  return <audio ref={refAudio} onEnded={() => Stop()} />;
+}
+
+export default function SoundPlayer() {
+  return (
+    <Suspense>
+      <Main />
+    </Suspense>
+  );
 }
