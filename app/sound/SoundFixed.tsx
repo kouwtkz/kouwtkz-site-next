@@ -8,7 +8,6 @@ import { usePathname } from "next/navigation";
 
 export default function SoundFixed() {
   const pathname = usePathname();
-
   const { Play, Pause, Stop, paused, ended } = useSoundPlayer();
   return (
     <>
