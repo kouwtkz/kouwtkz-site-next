@@ -96,6 +96,7 @@ export default function CharaDetail({ name }: DetailProps) {
               album={group}
               autoDisable={true}
               max={group.max || 20}
+              filterButton={true}
             />
           </div>
         );
