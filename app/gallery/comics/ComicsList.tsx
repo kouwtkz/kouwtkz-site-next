@@ -6,17 +6,21 @@ import GalleryList from "../GalleryList";
 
 export default function ComicsList() {
   const { imageAlbumList } = useMediaImageState();
-  const comicsAlbums = imageAlbumList.filter((album) =>
-    album.group?.match(/fanbook/i)
-  );
+  const comicsAlbums = imageAlbumList.filter((album) => {
+    return (
+      album.dir &&
+      /fanbook/i.test(album.dir) &&
+      album.list.some((img) => img.dir?.startsWith("/content"))
+    );
+  });
+  console.log(comicsAlbums);
   const thumbnails = comicsAlbums.map((album) => {
     const thumbnail = {
-      ...(album.list.find((image) =>
-        image.tags?.some((tag) => tag === "thumbnail")
-      ) || album.list[0]),
+      ...(album.list.find((image) => image.src.startsWith("thumbnail")) ||
+        album.list[0]),
     };
     thumbnail.direct = `/gallery/comics?name=${album.name}`;
     return thumbnail;
   });
-  return <GalleryList album={{ name: "fanbook", list: thumbnails }} max={20} />
+  return <GalleryList album={{ name: "fanbook", list: thumbnails }} max={20} />;
 }

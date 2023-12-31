@@ -16,7 +16,7 @@ function App() {
   if (!album) return <></>;
 
   const pages: Array<string | null> = album.list
-    .filter((image) => image.tags?.some((tag) => tag === "content"))
+    .filter((image) => image.dir?.startsWith("/content"))
     .map((image) => image.URL || "");
   return (
     <>
