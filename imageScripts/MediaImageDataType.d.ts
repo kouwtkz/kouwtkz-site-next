@@ -1,4 +1,4 @@
-import { ResizeOptionType } from "./MediaImageYamlType";
+import { ResizeMode, ResizeOptionType } from "./MediaImageYamlType";
 
 export type getImageListType = {
   filter?: string | FilterOptionProps;
@@ -20,6 +20,7 @@ export type MediaImageAlbumType = {
 }
 
 export type AlbumVisibleType = { info?: boolean, title?: boolean, filename?: boolean };
+export type ResizedType = { src: string, mode: ResizeMode };
 
 /** @comments ひとつの画像用の変数 */
 export type MediaImageItemType = {
@@ -40,10 +41,7 @@ export type MediaImageItemType = {
   topImage?: boolean;
   info?: MediaImageInfoType;
   resizeOption?: ResizeOptionType | ResizeOptionType[];
-  resized?: {
-    src: string;
-    option: ResizeOptionType;
-  }[]
+  resized?: ResizedType[]
   album?: MediaImageAlbumType;
   fullPath?: string;
   mtime?: Date;

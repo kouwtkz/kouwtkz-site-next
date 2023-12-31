@@ -175,6 +175,8 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
       if (!/\.(svg)$/i.test(image.src)) {
         const baseImageFullPath = image.fullPath;
         const resizeOptions = yResizeOptions.concat(image.resizeOption ? (Array.isArray(image.resizeOption) ? image.resizeOption : [image.resizeOption]) : [])
+        image.resized = [];
+        const resized = image.resized;
         resizeOptions.forEach(resizeOption => {
           if (!resizeOption.mode) resizeOption.mode = "thumbnail";
           switch (resizeOption.mode) {
@@ -190,6 +192,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
           }
           const resizedImageDir = `/${y.root}/${resizedDir}/${resizeOption.mode}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
           const resizedImageUrl = `${resizedImageDir}${image.src.replace(/[^.]+$/, "webp")}`;
+          resized.push({ mode: resizeOption.mode, src: resizedImageUrl })
           if (makeImage && baseImageFullPath) {
             const resizedImageFullPath = resolve(`${cwd}/${publicDir}${resizedImageUrl}`);
             let make = true;
@@ -204,6 +207,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
             outputPublicImages.push(resizedImageFullPath);
           }
         })
+        delete image.resizeOption;
       }
     })
     if (makeImage) {

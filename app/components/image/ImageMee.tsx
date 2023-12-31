@@ -30,14 +30,14 @@ export default function ImageMee({
   const src = _src || imageItem?.URL || "";
   const alt = _alt || imageItem?.name || imageItem?.src || "";
   const thumbnail = imageItem?.resized?.find(
-    (item) => item.option.mode === "thumbnail"
+    (item) => item.mode === "thumbnail"
   )?.src;
   const imageSrc =
     mode === "simple"
       ? src
       : mode === "thumbnail" && thumbnail
       ? thumbnail
-      : imageItem?.resized?.find((item) => item.option.mode === mode)?.src ||
+      : imageItem?.resized?.find((item) => item.mode === mode)?.src ||
         src;
   if (width) {
     if (!height)
