@@ -2,6 +2,8 @@
 
 import { Suspense, useEffect, useRef } from "react";
 import { create } from "zustand";
+import SoundFixed from "./SoundFixed";
+import { usePathname } from "next/navigation";
 
 type SoundPlayerType = {
   paused: boolean;
@@ -17,7 +19,7 @@ type SoundPlayerType = {
 
 export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   paused: true,
-  ended: false,
+  ended: true,
   src: "",
   setPaused: (paused) => {
     set(() => ({ paused }));
@@ -45,6 +47,7 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
 
 function Main() {
   const refAudio = useRef<HTMLAudioElement>(null);
+  const pathname = usePathname();
   const { src, paused, ended, Stop } = useSoundPlayer();
   if (refAudio.current) {
     if (src && !refAudio.current.src.endsWith(src)) refAudio.current.src = src;
@@ -63,7 +66,14 @@ function Main() {
   } else {
     html?.classList.add("audio_play");
   }
-  return <audio ref={refAudio} onEnded={() => Stop()} />;
+  return (
+    <>
+      {/sound/.test(pathname) || !paused || (paused && !ended) ? (
+        <SoundFixed />
+      ) : null}
+      <audio ref={refAudio} onEnded={() => Stop()} />
+    </>
+  );
 }
 
 export default function SoundPlayer() {

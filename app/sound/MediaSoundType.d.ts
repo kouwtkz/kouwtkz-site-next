@@ -14,6 +14,7 @@ export type PlaylistType = {
 export type SoundItemType = {
   src: string;
   title: string;
+  setup?: boolean;
 }
 
 export type LoopMode = "off" | "loop" | "loopOne" | "playUntilEnd";

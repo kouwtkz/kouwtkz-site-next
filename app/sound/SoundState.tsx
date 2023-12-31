@@ -5,6 +5,7 @@ import { SoundAlbumType, SoundItemType } from "./MediaSoundType";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import { useEffect, useRef } from "react";
 import axios from "axios";
+import { useSoundPlayer } from "./SoundPlayer";
 
 function parseImageItems(soundAlbums: SoundAlbumType[]) {
   const soundList: SoundItemType[] = [];
@@ -35,12 +36,19 @@ export const useSoundState = create<SoundDataType>((set) => ({
 }));
 
 export default function SoundState({ url }: DataStateReplacedProps) {
+  const { setSrc } = useSoundPlayer();
   const { setSoundAlbum } = useSoundState();
   const setSound = useRef(false);
   useEffect(() => {
     if (!setSound.current)
       axios(url).then((r) => {
-        setSoundAlbum([r.data]);
+        const album = r.data as SoundAlbumType;
+        setSoundAlbum([album]);
+        const setupSrc = album.playlist?.reduce(
+          (a, c) => (a ? a : c.list.find(({ setup }) => setup)?.src || ""),
+          ""
+        );
+        if (setupSrc) setSrc(setupSrc);
         setSound.current = true;
       });
   });

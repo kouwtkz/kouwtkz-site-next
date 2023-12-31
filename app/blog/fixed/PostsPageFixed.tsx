@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React from "react";
 import PagingArea from "./PagingArea";
 import SearchArea from "./SearchArea";
 import PostButton from "./PostButton";

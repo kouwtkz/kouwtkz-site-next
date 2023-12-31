@@ -1,7 +1,7 @@
 import React, { SVGAttributes } from "react";
 
 type PlayPauseButtonProps = {
-  isPause?: boolean;
+  paused?: boolean;
 } & SVGAttributes<SVGSVGElement>;
 
 const PausePath = React.memo(function PausePath() {
@@ -21,7 +21,7 @@ const PlayPath = React.memo(function PlayPath() {
 });
 
 export default function PlayPauseButton({
-  isPause = true,
+  paused = true,
   ...attributes
 }: PlayPauseButtonProps) {
   return (
@@ -35,7 +35,7 @@ export default function PlayPauseButton({
       {...attributes}
     >
       <circle cx="18" cy="18" r="18" />
-      {isPause ? <PlayPath /> : <PausePath />}
+      {paused ? <PlayPath /> : <PausePath />}
     </svg>
   );
 }
