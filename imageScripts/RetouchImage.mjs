@@ -25,7 +25,7 @@ export default async function RetouchImage({ src, output, size = null, quality, 
   const metadata = await retouchImage.metadata();
 
   const { w, h } = typeof (size) === "number" ? { w: size, h: size } : (size !== null ? size : { w: null, h: null });
-  if (w && h && metadata.width && metadata.height && ((w * h) < (metadata.width * metadata.height))) {
+  if (w && h && (!(metadata.width && metadata.height) || ((w * h) < (metadata.width * metadata.height)))) {
     retouchImage.resize(w, h, { fit: fit })
   }
 
