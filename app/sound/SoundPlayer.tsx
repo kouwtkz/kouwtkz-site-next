@@ -3,21 +3,29 @@
 import { Suspense, useRef } from "react";
 import { create } from "zustand";
 import SoundFixed from "./SoundFixed";
-import { LoopMode } from "./MediaSoundType";
+import { LoopMode, PlaylistType, SoundItemType } from "./MediaSoundType";
+import { parse } from "path";
 const LoopModeList: LoopMode[] = ["loop", "loopOne", "playUntilEnd", "off"];
+
+type PlaylistSrcType =
+  | string
+  | string[]
+  | SoundItemType
+  | SoundItemType[]
+  | PlaylistType;
 
 type SoundPlayerType = {
   paused: boolean;
   ended: boolean;
-  playlist: string[];
+  playlist: PlaylistType;
   current: number;
   loopMode: LoopMode;
   SetPaused: (paused: boolean) => void;
   SetEnded: (ended: boolean) => void;
-  SetPlaylist: (src: string | string[], current?: number) => void;
+  SetPlaylist: (playlist: PlaylistSrcType, current?: number) => void;
   SetCurrent: (current: number) => void;
   SetLoopMode: (loopMode: LoopMode) => void;
-  Play: (src?: string | string[], current?: number) => void;
+  Play: (playlist?: PlaylistSrcType, current?: number) => void;
   Pause: () => void;
   Stop: () => void;
   Next: () => void;
@@ -28,7 +36,7 @@ type SoundPlayerType = {
 export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   paused: true,
   ended: true,
-  playlist: [],
+  playlist: { list: [] },
   current: 0,
   loopMode: LoopModeList[0],
   SetPaused: (paused) => {
@@ -37,7 +45,20 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   SetEnded: (ended) => {
     set(() => ({ ended }));
   },
-  SetPlaylist: (src, current = 0) => {
+  SetPlaylist: (playlist, current = 0) => {
+    if (Array.isArray(playlist)) {
+      playlist = {
+        list: playlist.map((item) =>
+          typeof item === "string"
+            ? { src: item, title: parse(item).base }
+            : item
+        ),
+      };
+    } else {
+      if (typeof playlist === "string")
+        playlist = { list: [{ src: playlist, title: parse(playlist).base }] };
+      if (typeof playlist.list === "undefined") playlist = { list: [playlist] };
+    }
     set(() => ({
       playlist: typeof src === "string" ? [src] : src,
       current,
