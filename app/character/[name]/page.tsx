@@ -11,21 +11,15 @@ export async function generateStaticParams() {
   });
 }
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { name: string };
-}): Promise<Metadata> {
+type Props = { params: { name: string } };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const character = charaMap.get(params.name);
   if (character) return { title: character.name };
   else return {};
 }
 
-export default async function Page({
-  params,
-}: {
-  params: { [key: string]: string };
-}) {
+export default async function Page({ params }: Props) {
   const { name } = params;
   return (
     <>
