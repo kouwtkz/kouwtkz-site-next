@@ -10,12 +10,6 @@ export default function specialPage() {
       <h1 className="font-LuloClean text-3xl sm:text-4xl text-main pt-8 mb-12">
         {title}
       </h1>
-      <Link
-        className="my-4 text-4xl text-center underline  "
-        href="/special/fanart"
-      >
-        ファンアート
-      </Link>
     </div>
   );
 }

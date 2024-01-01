@@ -1,60 +1,110 @@
 "use client";
 
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useRef } from "react";
 import { create } from "zustand";
 import SoundFixed from "./SoundFixed";
+import { LoopMode } from "./MediaSoundType";
+const LoopModeList: LoopMode[] = ["loop", "loopOne", "playUntilEnd", "off"];
 
 type SoundPlayerType = {
   paused: boolean;
   ended: boolean;
-  src: string;
-  setPaused: (paused: boolean) => void;
-  setEnded: (ended: boolean) => void;
-  setSrc: (src: string) => void;
-  Play: (src?: string) => void;
+  playlist: string[];
+  current: number;
+  loopMode: LoopMode;
+  SetPaused: (paused: boolean) => void;
+  SetEnded: (ended: boolean) => void;
+  SetPlaylist: (src: string | string[], current?: number) => void;
+  SetCurrent: (current: number) => void;
+  SetLoopMode: (loopMode: LoopMode) => void;
+  Play: (src?: string | string[], current?: number) => void;
   Pause: () => void;
   Stop: () => void;
+  Next: () => void;
+  Prev: () => void;
+  NextLoopMode: () => void;
 };
 
 export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   paused: true,
   ended: true,
-  src: "",
-  setPaused: (paused) => {
+  playlist: [],
+  current: 0,
+  loopMode: LoopModeList[0],
+  SetPaused: (paused) => {
     set(() => ({ paused }));
   },
-  setEnded: (ended) => {
+  SetEnded: (ended) => {
     set(() => ({ ended }));
   },
-  setSrc: (src) => {
-    set(() => ({ src }));
+  SetPlaylist: (src, current = 0) => {
+    set(() => ({
+      playlist: typeof src === "string" ? [src] : src,
+      current,
+    }));
   },
-  Play: (src) => {
-    const value: { paused: boolean; ended?: boolean; src?: string } = {
-      paused: false,
-    };
-    if (src) value.src = src;
-    set(() => value);
+  SetCurrent: (current) => {
+    set(() => ({ current }));
+  },
+  SetLoopMode: (loopMode) => {
+    set(() => ({ loopMode }));
+  },
+  Play: (src, current) => {
+    set((state) => {
+      if (src) state.SetPlaylist(src, current);
+      return { paused: false };
+    });
   },
   Pause: () => {
     set(() => ({ paused: true, ended: false }));
   },
   Stop: () => {
-    set(() => ({ paused: true, ended: true }));
+    set(() => ({ paused: true, ended: true, current: 0 }));
+  },
+  Next: () => {
+    set((state) => {
+      if (
+        state.loopMode === "playUntilEnd" &&
+        state.playlist.length === state.current + 1
+      ) {
+        return { paused: true, ended: true };
+      } else return { current: (state.current + 1) % state.playlist.length };
+    });
+  },
+  Prev: () => {
+    set((state) => {
+      if (state.loopMode === "playUntilEnd" && state.current === 0) {
+        return { current: state.current === 0 ? 0 : state.current - 1 };
+      } else {
+        const length = state.playlist.length;
+        return { current: (length + state.current - 1) % length };
+      }
+    });
+  },
+  NextLoopMode: () => {
+    set((state) => ({
+      loopMode:
+        LoopModeList[
+          (LoopModeList.indexOf(state.loopMode) + 1) % LoopModeList.length
+        ],
+    }));
   },
 }));
 
 function Main() {
   const refAudio = useRef<HTMLAudioElement>(null);
-  const { src, paused, ended, Stop } = useSoundPlayer();
-  if (refAudio.current) {
-    if (src && !refAudio.current.src.endsWith(src)) refAudio.current.src = src;
-    if (refAudio.current.paused !== paused) {
+  const audioElm = refAudio.current;
+  const { paused, ended, Stop, playlist, current, loopMode, Next } =
+    useSoundPlayer();
+  const src = playlist[current] || "";
+  if (audioElm) {
+    if (src && !audioElm.src.endsWith(src)) audioElm.src = src;
+    if (audioElm.paused !== paused) {
       if (paused) {
-        refAudio.current.pause();
+        audioElm.pause();
       } else {
-        if (ended) refAudio.current.currentTime = 0;
-        refAudio.current.play();
+        if (ended) audioElm.currentTime = 0;
+        audioElm.play();
       }
     }
   }
@@ -67,7 +117,26 @@ function Main() {
   return (
     <>
       <SoundFixed />
-      <audio ref={refAudio} onEnded={() => Stop()} />
+      <audio
+        ref={refAudio}
+        onEnded={() => {
+          switch (loopMode) {
+            case "loop":
+            case "playUntilEnd":
+              Next();
+              break;
+            case "loopOne":
+              if (audioElm) {
+                audioElm.currentTime = 0;
+                audioElm.play();
+              }
+              break;
+            case "off":
+              Stop();
+              break;
+          }
+        }}
+      />
     </>
   );
 }

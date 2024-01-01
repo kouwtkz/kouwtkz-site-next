@@ -36,7 +36,7 @@ export const useSoundState = create<SoundDataType>((set) => ({
 }));
 
 export default function SoundState({ url }: DataStateReplacedProps) {
-  const { setSrc } = useSoundPlayer();
+  const { SetPlaylist } = useSoundPlayer();
   const { setSoundAlbum } = useSoundState();
   const setSound = useRef(false);
   useEffect(() => {
@@ -44,11 +44,15 @@ export default function SoundState({ url }: DataStateReplacedProps) {
       axios(url).then((r) => {
         const album = r.data as SoundAlbumType;
         setSoundAlbum([album]);
-        const setupSrc = album.playlist?.reduce(
-          (a, c) => (a ? a : c.list.find(({ setup }) => setup)?.src || ""),
-          ""
-        );
-        if (setupSrc) setSrc(setupSrc);
+        const setupPlaylist = album.playlist?.find((playlist) =>
+          playlist.list.some((item) => item.setup)
+        ) || { list: [] };
+        const setupSoundIndex = setupPlaylist?.list.findIndex((item) => item.setup);
+        if (setupPlaylist?.list.length > 0)
+          SetPlaylist(
+            setupPlaylist.list.map((item) => item.src),
+            setupSoundIndex
+          );
         setSound.current = true;
       });
   });
