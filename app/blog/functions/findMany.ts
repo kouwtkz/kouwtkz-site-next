@@ -4,8 +4,8 @@ type objectSubmitDataType<T> = { [K in keyof T]?: T[K] | { [C in filterCondition
 type findWhereType<T> = { [K in logicalConditionsType]?: (findWhereType<T> | objectSubmitDataType<T>)[] } | objectSubmitDataType<T>
 
 // includeは無理…それ以外を再現した
-type findManyProps<T> = {
-  list: T[],
+export type findManyProps<T> = {
+  list?: T[],
   where?: findWhereType<T>;
   take?: number,
   skip?: number,
@@ -13,6 +13,7 @@ type findManyProps<T> = {
   include?: any
 }
 export function findMany<T>({ list, where, take, orderBy, skip = 0 }: findManyProps<T>) {
+  if (!list) return [] as T[];
   orderBy?.reverse().forEach((args) =>
     Object.entries(args).forEach(([k, v]) => {
       switch (v) {

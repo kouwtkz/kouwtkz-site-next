@@ -4,7 +4,7 @@ import { MediaImageItemType } from "@/imageScripts/MediaImageDataType";
 import Link from "next/link";
 import React, { Suspense, useEffect, useRef, useState } from "react";
 import MultiParser from "./components/functions/MultiParser";
-import Notice from "./blog/Notice";
+import PostListWindow from "./blog/List/PostListWindow";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import fadein from "./styles/transitions/fadein.module.scss";
 import ImageMee from "./components/image/ImageMee";
@@ -72,9 +72,6 @@ function Main() {
               <Link href="character">キャラクター</Link>
             </div>
             <div>
-              <Link href="blog">ブログ</Link>
-            </div>
-            <div>
               <Link href="sound">サウンド</Link>
             </div>
             <div>
@@ -88,7 +85,14 @@ function Main() {
             </div>
           </div>
         </div>
-        <Notice className="h-40" />
+        <PostListWindow
+          heading={
+            <Link href="blog">
+              <h3 className="inline-block">ブログ</h3>
+            </Link>
+          }
+          className="max-w-md h-40 mx-auto my-6"
+        />
       </main>
     </div>
   );
