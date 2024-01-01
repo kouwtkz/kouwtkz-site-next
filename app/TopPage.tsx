@@ -88,7 +88,7 @@ function Main() {
         <PostListWindow
           heading={
             <Link href="blog">
-              <h3 className="inline-block">ブログ</h3>
+              <h3 className="inline-block text-3xl">ブログ</h3>
             </Link>
           }
           className="max-w-md h-40 mx-auto my-6"
