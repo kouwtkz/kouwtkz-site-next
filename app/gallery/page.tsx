@@ -1,27 +1,8 @@
-"use client";
+import { Metadata } from "next";
+import GalleryPage from "./GalleryPage";
+const title = "GALLERY";
+export const metadata: Metadata = { title };
 
-import React from "react";
-import GalleryList from "./GalleryList";
-import { useMediaImageState } from "@/app/context/MediaImageState";
-import ComicsList from "./comics/ComicsList";
-
-export default function Home() {
-  const { imageAlbumList } = useMediaImageState();
-  return (
-    <div className="">
-      {["art", "fanart", "works"].map((name, i) => {
-        const groupAlbum =
-          imageAlbumList.find((album) => album.name === name) || null;
-        return (
-          <GalleryList
-            key={i}
-            album={groupAlbum}
-            max={20}
-            filterButton={true}
-          />
-        );
-      })}
-      <ComicsList />
-    </div>
-  );
+export default function page() {
+  return <GalleryPage />;
 }

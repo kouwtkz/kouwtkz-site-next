@@ -26,7 +26,10 @@ import {
 import SoundState from "./sound/SoundState";
 
 export const metadata: Metadata = {
-  title: site.title,
+  title: {
+    template: `%s | ${site.title}`,
+    default: site.title,
+  },
   description: site.short.description,
 };
 

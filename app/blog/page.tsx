@@ -1,8 +1,8 @@
-// オリジナルタグを使用したい場合は定義元は必ずuse clientのものとなる
-// import getPosts from "./functions/getPosts";
-import isStatic from "@/app/components/System/isStatic.mjs";
 import Link from "next/link";
 import StaticBlogPage from "./StaticBlogPage";
+import { Metadata } from "next";
+const title = "BLOG";
+export const metadata: Metadata = { title };
 
 export default async function BlogPage({}: {}) {
   return (
