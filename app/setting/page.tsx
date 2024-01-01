@@ -2,7 +2,7 @@ import React from "react";
 import { ChangeThemeButton } from "./ChangeTheme";
 import { Metadata } from "next";
 const title = "SETTING";
-export const metadata: Metadata = { title };
+export const metadata: Metadata = { title, robots: { index: false } };
 
 export default async function Page() {
   return (

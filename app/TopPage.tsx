@@ -75,9 +75,6 @@ function Main() {
               <Link href="sound">サウンド</Link>
             </div>
             <div>
-              <Link href="special">スペシャルページ</Link>
-            </div>
-            <div>
               <Link href="about">このサイトについて</Link>
             </div>
             <div>
