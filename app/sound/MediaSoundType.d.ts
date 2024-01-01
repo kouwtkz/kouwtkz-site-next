@@ -3,7 +3,8 @@ export type SoundAlbumType = {
   src: string;
   name: string;
   playlist?: PlaylistType[];
-  setupSound?: string
+  setupSound?: string;
+  dir?: string;
 }
 
 export type PlaylistType = {

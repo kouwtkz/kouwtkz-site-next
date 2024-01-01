@@ -10,7 +10,7 @@ import { readFileSync } from "fs";
 import { parse } from "yaml";
 const cwd = process.cwd();
 const dataDir = `${process.env.DATA_DIR || '_data'}`;
-const defaultSoundPath = `/sound`;
+const defaultSoundDir = `/sound`;
 
 const readYamlList = [`${dataDir}/sound.yaml`];
 export function ReadSoundDataFromYaml() {
@@ -20,7 +20,7 @@ export function ReadSoundDataFromYaml() {
     /** @type SoundAlbumType */
     // @ts-ignore
     const album = parse(String(readFileSync(`${cwd}/${yamlItem}`, "utf8")));
-    album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `${defaultSoundPath}/${sound.src}` }) })
+    album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `${album.dir || defaultSoundDir}/${sound.src}` }) })
     AlbumList.push(album);
   })
   return AlbumList;
