@@ -70,30 +70,24 @@ body,
   }
 }
 
-button,
-.button,
-[type="button"],
-[type="reset"],
-[type="submit"] {
-  background-color: var(--main-color);
-  -webkit-user-select: none;
-  user-select: none;
+[disabled] {
+  pointer-events: none;
 }
 
-input[type="submit"],
-input[type="button"],
-.button,
-button {
-  display: inline-block;
-  padding: 0.4em 1em;
-  cursor: pointer;
+button,
+.button {
   color: white;
   background-color: var(--main-color);
+  display: inline-block;
+  cursor: pointer;
+  padding: 0.4em 1em;
   font-weight: 700;
   border: 0;
   outline: none;
   border-radius: 0.5em;
-  &:hover:not([disabled]) {
+  -webkit-user-select: none;
+  user-select: none;
+  &:hover {
     color: white;
     background-color: var(--main-color-soft);
   }

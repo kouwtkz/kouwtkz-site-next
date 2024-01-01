@@ -9,7 +9,7 @@ export function ChangeThemeButton() {
         onClick={() =>
           document?.documentElement.classList.toggle("theme-orange")
         }
-        className="cursor-pointer text-2xl"
+        className="cursor-pointer text-2xl bg-main"
       >
         テーマきりかえ
       </button>

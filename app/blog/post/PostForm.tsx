@@ -445,6 +445,7 @@ export default function PostForm() {
       />
       <div className="[&>button]:mx-4 pt-2">
         <button
+          className="bg-main"
           type="button"
           onClick={() =>
             togglePreviewMode(
@@ -458,7 +459,9 @@ export default function PostForm() {
         >
           プレビュー
         </button>
-        <button type="submit">{updateMode ? "更新する" : "投稿する"}</button>
+        <button className="bg-main" type="submit">
+          {updateMode ? "更新する" : "投稿する"}
+        </button>
       </div>
     </form>
   );

@@ -62,7 +62,7 @@ function Main({ max }: PagingAreaProps) {
       <button
         type="button"
         className={
-          "mx-2 my-3 w-10 h-10 text-xl rounded-full p-0" +
+          "mx-2 my-3 w-10 h-10 p-0 text-xl rounded-full bg-main-soft hover:bg-main-pale" +
           (_min >= p ? " opacity-40" : "")
         }
         disabled={_min >= p}
@@ -90,7 +90,7 @@ function Main({ max }: PagingAreaProps) {
       <button
         type="button"
         className={
-          "mx-2 my-3 w-10 h-10 text-xl rounded-full p-0" +
+          "mx-2 my-3 w-10 h-10 text-xl rounded-full p-0 bg-main-soft hover:bg-main-pale" +
           (_max <= p ? " opacity-40" : "")
         }
         disabled={_max <= p}
