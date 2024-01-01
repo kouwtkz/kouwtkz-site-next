@@ -7,8 +7,6 @@ import { ResizeMode } from "@/imageScripts/MediaImageYamlType";
 
 interface ImageMeeProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   imageItem?: MediaImageItemType;
-  width?: number;
-  height?: number;
   mode?: ResizeMode;
   unoptimized?: boolean;
 }
@@ -20,8 +18,6 @@ export default function ImageMee({
   src: _src,
   loading,
   srcSet,
-  width,
-  height,
   placeholder,
   unoptimized,
   ...attributes
@@ -38,30 +34,11 @@ export default function ImageMee({
       : mode === "thumbnail" && thumbnail
       ? thumbnail
       : imageItem?.resized?.find((item) => item.mode === mode)?.src || src;
-  if (width) {
-    if (!height)
-      height = Math.floor(
-        (width * (imageItem?.info?.height || 1)) / (imageItem?.info?.width || 1)
-      );
-  } else if (height) {
-    width = Math.floor(
-      (height * (imageItem?.info?.width || 1)) / (imageItem?.info?.height || 1)
-    );
-  }
-  const setAttr = {
-    ...{
-      ...{
-        width: width || imageItem?.info?.width,
-        height: height || imageItem?.info?.height,
-      },
-      ...attributes,
-    },
-  };
   return (
     <>
       {mode === "simple" && thumbnail ? (
         <>
-          <img src={loaded ? imageSrc : thumbnail} alt={alt} {...setAttr} />
+          <img src={loaded ? imageSrc : thumbnail} alt={alt} {...attributes} />
           {!loaded ? (
             <img
               src={imageSrc}
@@ -74,7 +51,7 @@ export default function ImageMee({
           ) : null}
         </>
       ) : (
-        <img src={imageSrc} alt={alt} {...setAttr} />
+        <img src={imageSrc} alt={alt} {...attributes} />
       )}
     </>
   );

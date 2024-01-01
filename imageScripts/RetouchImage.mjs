@@ -4,18 +4,11 @@ import sharp from "sharp";
 import { parse } from "path";
 
 /**
- * @typedef {{
- *  width: number;
- *  height: number;
- *  type: string;
- *  wide: boolean;
- * }} MediaImageInfoType;
-
  * @typedef {"contain" | "cover" | "fill" | "outside" | "inside"} FitMethod
 
  * @param {{ src: string; output: string; size?: number | { h: number, w: number } | null; quality?: number; fit?: FitMethod; }} param0
  */
-export default function RetouchImage({ src, output, size = null, quality, fit = "cover" }) {
+export default async function RetouchImage({ src, output, size = null, quality, fit = "cover" }) {
   if ((() => {
     try {
       const toTime = fs.statSync(output).mtime;
@@ -29,10 +22,12 @@ export default function RetouchImage({ src, output, size = null, quality, fit = 
   const outputPath = parse(output);
   /** @type sharp.Sharp */
   const retouchImage = sharp(src);
+  const metadata = await retouchImage.metadata();
 
   const { w, h } = typeof (size) === "number" ? { w: size, h: size } : (size !== null ? size : { w: null, h: null });
-
-  if (w && h) retouchImage.resize(w, h, { fit: fit })
+  if (w && h && metadata.width && metadata.height && ((w * h) < (metadata.width * metadata.height))) {
+    retouchImage.resize(w, h, { fit: fit })
+  }
 
   switch (outputPath.ext.toLowerCase()) {
     case ".jpg":

@@ -39,18 +39,11 @@ export type MediaImageItemType = {
   time?: Date | null;
   timeOptions?: Intl.DateTimeFormatOptions;
   topImage?: boolean;
-  info?: MediaImageInfoType;
+  tool?: string | string[];
   resizeOption?: ResizeOptionType | ResizeOptionType[];
   resized?: ResizedType[]
   album?: MediaImageAlbumType;
   fullPath?: string;
   mtime?: Date;
   title?: string; // 互換用、nameに統一することにした
-}
-
-export type MediaImageInfoType = {
-  width: number;
-  height: number;
-  type: string;
-  wide: boolean;
 }
