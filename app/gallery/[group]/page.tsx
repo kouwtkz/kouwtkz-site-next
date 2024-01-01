@@ -17,6 +17,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function Page({ params }: Props) {
   const { group } = params;
   return (
-    <GalleryPage items={[group]} max={40} link={false} filterButton={true} />
+    <GalleryPage
+      items={group}
+      max={40}
+      step={28}
+      link={false}
+      filterButton={true}
+    />
   );
 }

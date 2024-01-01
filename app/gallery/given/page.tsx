@@ -13,6 +13,7 @@ export default function page() {
       <GalleryPage
         items={"given"}
         max={40}
+        step={28}
         label="given fanart"
         link={false}
         filterButton={true}
