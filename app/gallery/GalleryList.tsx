@@ -6,8 +6,8 @@ import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageMeeThumbnail } from "../components/image/ImageMee";
 import MoreButton from "../components/svg/button/MoreButton";
-type GalleryPageProps = {
-  album: MediaImageAlbumType | null;
+import Link from "next/link";
+export interface GalleryListPropsBase {
   size?: number;
   label?: string;
   showLabel?: boolean;
@@ -15,7 +15,12 @@ type GalleryPageProps = {
   step?: number;
   autoDisable?: boolean;
   filterButton?: boolean;
-};
+  link?: boolean | string;
+}
+
+interface GalleryListProps extends GalleryListPropsBase {
+  album: MediaImageAlbumType | null;
+}
 
 function getYear(date?: Date | null) {
   return date?.toLocaleString("ja", { timeZone: "JST" }).split("/", 1)[0];
@@ -33,7 +38,8 @@ export default function GalleryList({
   step = 20,
   autoDisable = false,
   filterButton = false,
-}: GalleryPageProps) {
+  link = true,
+}: GalleryListProps) {
   const router = useRouter();
   const [curMax, setCurMax] = useState(max);
   const yearSelectRef = useRef<HTMLSelectElement>(null);
@@ -47,6 +53,20 @@ export default function GalleryList({
   }
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
+  const heading = label || album.name;
+  const headingElm = link ? (
+    <Link
+      href={
+        typeof link === "string"
+          ? link
+          : `/gallery/${album.group || album.name}`
+      }
+    >
+      {heading}
+    </Link>
+  ) : (
+    <>{heading}</>
+  );
   return (
     <div className="w-[100%]">
       <div className="pt-12 mx-4 relative">
@@ -71,7 +91,7 @@ export default function GalleryList({
         ) : null}
         {showLabel ? (
           <h2 className=" mb-6 font-LuloClean text-3xl sm:text-4xl text-center text-main">
-            {label || album.name}
+            {headingElm}
           </h2>
         ) : null}
       </div>

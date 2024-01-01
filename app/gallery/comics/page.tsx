@@ -4,14 +4,27 @@ import React, { Suspense } from "react";
 import ComicViewer from "react-comic-viewer";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { useSearchParams } from "next/navigation";
-import ComicsList from "./ComicsList";
 import Link from "next/link";
+import GalleryPage from "../GalleryPage";
 
 function App() {
   const { imageAlbumList } = useMediaImageState();
   const search = useSearchParams();
   const comicName = search.get("name");
-  if (!comicName) return <ComicsList />;
+  if (!comicName)
+    return (
+      <GalleryPage
+        items={{
+          name: "comics",
+          match: "fanbook",
+          format: "comic",
+        }}
+        max={40}
+        label="fanbook"
+        link={false}
+        filterButton={true}
+      />
+    );
   const album = imageAlbumList.find((album) => album.name.endsWith(comicName));
   if (!album) return <></>;
 
@@ -36,7 +49,10 @@ function App() {
           <div className="pt-12">
             <p>
               Powered by{" "}
-              <Link href="https://www.npmjs.com/package/react-comic-viewer" target="_blank">
+              <Link
+                href="https://www.npmjs.com/package/react-comic-viewer"
+                target="_blank"
+              >
                 react-comic-viewer
               </Link>
             </p>
