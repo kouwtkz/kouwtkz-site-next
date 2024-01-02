@@ -1,28 +1,9 @@
 import { Metadata } from "next";
-import GalleryPage from "./GalleryPage";
+import GalleryObject from "./GalleryObject";
 const title = "GALLERY";
 export const metadata: Metadata = { title };
+import { site } from "@/app/site/SiteData.mjs";
 
 export default function page() {
-  return (
-    <>
-      <GalleryPage
-        items={[
-          "art",
-          { name: "fanart", max: 12 },
-          "works",
-          {
-            name: "comics",
-            label: "fanbook",
-            match: "fanbook",
-            format: "comic",
-          },
-          {
-            name: "given",
-            label: "given fanart",
-          },
-        ]}
-      />
-    </>
-  );
+  return <GalleryObject items={site.gallery?.default} />;
 }
