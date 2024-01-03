@@ -234,14 +234,25 @@ export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImag
   // yamlを管理するメディアディレクトリ
   const baseDir = args.from;
   const yamls = GetYamlImageList({ readImage: false, ...args });
+  const mtimeYamlPath = resolve(`${dirname(process.argv[1])}/yamldata_mtimes.json`);
+  /** @type {{[key: string]: Date}} */
+  const mtimeYamlList = (() => {
+    let JsonStr = "{}";
+    try { JsonStr = String(fs.readFileSync(mtimeYamlPath)); } catch { }
+    /** @type {{[key: string]: string}} */
+    const _mtimeYamlList = JSON.parse(JsonStr);
+    return Object.fromEntries(Object.entries(_mtimeYamlList)
+      .map(([key, value]) => { try { return [key, new Date(value)] } catch { return [key, null] } })
+      .filter((key, value) => value !== null));
+  })();
 
   // yamlが手動で更新されていればyamlの更新の通りに反映させる
   yamls.filter(y => {
+    y.mtime = mtimeYamlList[y.dir];
     try {
-      if (y.data.mtime) {
+      if (y.mtime) {
         const stat = fs.statSync(resolve(`${baseDir}/${y.dir}/${y.name}`));
-        const mtime = new Date(y.data.mtime);
-        return (stat.mtime.getTime() - mtime.getTime()) > 1500
+        return (stat.mtime.getTime() - y.mtime.getTime()) > 1500
       } else return false;
     } catch {
       return false;
@@ -399,10 +410,13 @@ export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImag
   })
 
   const write_mtime = new Date().toLocaleString("sv-SE", { timeZone: "JST" }) + "+09:00"
+  const write_mtime_json = Object.fromEntries(yamls.map(y => [y.dir, write_mtime]).sort((a, b) => (a[0] > b[0]) ? 1 : -1));
+  try {
+    fs.writeFileSync(mtimeYamlPath, JSON.stringify(write_mtime_json))
+  } catch { }
 
   yamls.forEach((y) => {
     const outputPath = resolve(`${baseDir}/${y.dir}/${y.name}`);
-    y.data.mtime = write_mtime;
     try {
       fs.writeFileSync(outputPath, yamlStringify(y.data))
     } catch { }

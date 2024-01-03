@@ -31,7 +31,6 @@ export type YamlDataType = {
   copyright?: boolean | string;
   format?: GroupFormat;
   time?: string;
-  mtime?: string;
   list?: YamlDataImageType[];
   notfound?: YamlDataImageType[];
   output?: OutputOptionType;
@@ -46,6 +45,7 @@ export type YamlGroupType = {
   data: YamlDataType;
   list: YamlDataImageType[];
   already: boolean;
+  mtime?: Date;
 };
 
 export type GetYamlImageFilterType = {
