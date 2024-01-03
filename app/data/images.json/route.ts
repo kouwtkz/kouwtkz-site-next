@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
-import { GetMediaImageAlbums } from "@/imageScripts/YamlImageFunctions.mjs";
+import { GetMediaImageAlbums } from "@/MediaScripts/YamlImageFunctions.mjs";
 
 export async function GET() {
-  const albums = GetMediaImageAlbums({path: "_media", filter: {archive: false}});
+  const albums = GetMediaImageAlbums({from: "_data/_media", to: "_media", filter: {archive: false}});
   return NextResponse.json(albums);
 }

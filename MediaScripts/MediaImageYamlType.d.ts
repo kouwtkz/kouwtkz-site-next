@@ -40,7 +40,8 @@ export type YamlDataType = {
 
 export type YamlGroupType = {
   name: string;
-  root: string;
+  from: string;
+  to?: string;
   dir: string;
   data: YamlDataType;
   list: YamlDataImageType[];
@@ -57,7 +58,14 @@ export type GetYamlImageFilterType = {
 }
 
 export type GetYamlImageListProps = {
-  path: string;
+  from: string;
+  /**
+   * @default path
+   * @augments `${publicDir}/${to}`
+   */
+  to?: string;
+  /** @default "public" */
+  publicDir?: string;
   filter?: GetYamlImageFilterType;
   readImage?: boolean;
   makeImage?: boolean;

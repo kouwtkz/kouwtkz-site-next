@@ -1,0 +1,57 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "npm: setup",
+      "type": "npm",
+      "script": "install",
+      "detail": "npm install",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: dev",
+      "type": "npm",
+      "script": "dev",
+      "group": "test",
+      "detail": "next dev",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: build",
+      "type": "npm",
+      "script": "build",
+      "group": "build",
+      "detail": "next build",
+      "problemMatcher": []
+    },
+    {
+      "label": "npm: start",
+      "type": "npm",
+      "script": "start",
+      "detail": "next server start",
+      "problemMatcher": []
+    },
+    {
+      "label": "rm: cache webpack",
+      "type": "shell",
+      "command": "rm -r .next/cache/webpack"
+    },
+    {
+      "label": "deploy: pages",
+      "type": "shell",
+      "command": "wrangler pages deploy out/html --project-name kouwtkz --commit-dirty true --branch test",
+      "detail": "deploy to cloudflare pages"
+    },
+    {
+      "label": "update: media files.",
+      "type": "shell",
+      "command": "node ./MediaScripts/MediaUpdate.mjs",
+      "detail": "gallery yaml update & make thumbnail & media copy"
+    },
+    {
+      "label": "serve: static",
+      "type": "shell",
+      "command": "node ./.vscode/scripts/wsv.js ./out/html 3003"
+    }
+  ]
+}

@@ -3,9 +3,9 @@
 import React from "react";
 import GalleryList, { GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
-import { GroupFormat } from "@/imageScripts/MediaImageYamlType";
+import { GroupFormat } from "@/MediaScripts/MediaImageYamlType";
 import { basename } from "path";
-import { MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
+import { MediaImageAlbumType } from "@/MediaScripts/MediaImageDataType";
 
 export interface GalleryItemObjectType extends GalleryListPropsBase {
   name: string;

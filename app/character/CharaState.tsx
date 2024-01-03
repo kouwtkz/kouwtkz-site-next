@@ -6,7 +6,7 @@ import { create } from "zustand";
 import { useSystemState } from "../components/System/SystemState";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
-import { MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
+import { MediaImageAlbumType } from "@/MediaScripts/MediaImageDataType";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;

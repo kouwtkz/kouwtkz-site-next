@@ -20,18 +20,20 @@ import sharp from "sharp";
  * @param {GetYamlImageListProps} args
  * @returns {YamlGroupType[]}
  */
-export function GetYamlImageList({ path: root, filter, readImage = true, makeImage = false, deleteImage = false }) {
+export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, readImage = true, makeImage = false, deleteImage = false }) {
+  from = from.replace(/[\\/]+/g, "/");
+  const to = _to === undefined ? from : _to;
   // ディレクトリ内の各ファイルを取得
   /** @type fs.Dirent[] */
   let files = [];
   try {
-    files = fs.readdirSync(root, { recursive: true, withFileTypes: true })
+    files = fs.readdirSync(from, { recursive: true, withFileTypes: true })
       .filter(dirent => dirent.isFile())
   } catch (e) {
     console.error(e);
   }
   const ls = files.reduce((a, dirent) => {
-    const dirChild = dirent.path.replace(root, "").replace(/\\/g, "/");
+    const dirChild = dirent.path.replace(/\\/g, "/").replace(from, "");
     /** @type _Dirent */
     const v = { name: dirent.name, dir: dirChild }
     const ext = extname(dirent.name);
@@ -49,28 +51,28 @@ export function GetYamlImageList({ path: root, filter, readImage = true, makeIma
   // 次にyamlファイルのリストを作成
   /** @type YamlGroupType[] */
   let yamls = ls.yamls.map((yaml) => {
-    const dataStr = String(fs.readFileSync(resolve(`${root}/${yaml.dir}/${yaml.name}`)))
+    const dataStr = String(fs.readFileSync(resolve(`${from}/${yaml.dir}/${yaml.name}`)))
     /** @type YamlDataType */
     const data = dataStr ? yamlParse(dataStr) : {};
     /** @type YamlDataImageType[] */
     const list = [];
-    return { data, list, root, already: Boolean(dataStr), ...yaml };
+    return { data, list, from, to, already: Boolean(dataStr), ...yaml };
   }).filter(y => y.already).sort((a, b) => a < b ? 1 : -1);
   ls.images.forEach(img => {
     let candidate = yamls.find(yaml => img.dir.startsWith(yaml.dir));
     // 取得した候補に再帰定義がなく、同一フォルダでなければ新規定義
     if (candidate === undefined || (candidate.dir !== img.dir && !candidate.data.recursive)) {
-      candidate = { ...img, root, name: "_data.yaml", already: false, list: [], data: { recursive: true, listup: false } };
+      candidate = { ...img, from, to, name: "_data.yaml", already: false, list: [], data: { recursive: true, listup: false } };
       yamls.unshift(candidate);
     }
     let dir = img.dir.replace(candidate.dir, "");
     if (/\/\.\w+$/i.test(dir)) {
-      candidate = { ...img, root, dir: img.dir, name: "_data.yaml", already: false, list: [], data: { recursive: true, listup: false } };
+      candidate = { ...img, from, to, dir: img.dir, name: "_data.yaml", already: false, list: [], data: { recursive: true, listup: false } };
       dir = img.dir.replace(dir, "");
       yamls.unshift(candidate);
     }
     if (!candidate.list?.some(c => c.src === img.name)) {
-      const stat = fs.statSync(resolve(`${root}/${img.dir}/${img.name}`));
+      const stat = fs.statSync(resolve(`${from}/${img.dir}/${img.name}`));
       candidate.list.push({ name: parse(img.name).name, src: img.name, dir, time: stat.mtime.toLocaleString("sv-SE", { timeZone: "JST" }) + "+09:00" });
     }
   })
@@ -107,7 +109,7 @@ export function GetYamlImageList({ path: root, filter, readImage = true, makeIma
       y.list = y.list.filter(({ topImage }) => topImage)
     })
     // サムネサイズ設定や画像生成処理
-    if (readImage) ReadImageFromYamls({ yamls, makeImage, deleteImage })
+    if (readImage) ReadImageFromYamls({ yamls, publicDir, makeImage, deleteImage })
 
     yamls = yamls.filter(({ list }) => list.length > 0)
   }
@@ -119,11 +121,11 @@ export function GetYamlImageList({ path: root, filter, readImage = true, makeIma
  */
 export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, publicDir = 'public', resizedDir = 'resized' }) {
   const cwd = process.cwd();
-  const roots = (makeImage) ? Array.from(new Set(yamls.map(({ root }) => root))) : [];
+  const toList = (makeImage) ? Array.from(new Set(yamls.map(({ to }) => to))) : [];
   /** @type {{isFile: boolean, path: string}[]} */
   let currentPublicItems = [];
-  roots.forEach(root => {
-    const path = resolve(`${cwd}/${publicDir}/${root}`);
+  toList.forEach(to => {
+    const path = resolve(`${cwd}/${publicDir}/${to}`);
     try { fs.mkdirSync(path, { recursive: true }) } catch { }
     currentPublicItems = currentPublicItems.concat(
       fs.readdirSync(path, { recursive: true, withFileTypes: true })
@@ -135,9 +137,9 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
   yamls.forEach(y => {
     // 画像URLの定義
     y.list.forEach((image) => {
-      const imageDir = `/${y.root}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
+      const imageDir = `/${y.to}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
       if (makeImage) {
-        image.fullPath = resolve(`${cwd}${imageDir}${image.src}`);
+        image.fullPath = resolve(`${cwd}/${y.from}/${y.dir}/${image.dir || ""}/${image.src}`);
         image.mtime = new Date(fs.statSync(image.fullPath).mtime);
       }
       const baseImageFullPath = image.fullPath;
@@ -190,7 +192,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
               if (!resizeOption.ext) resizeOption.ext = "webp"
               break;
           }
-          const resizedImageDir = `/${y.root}/${resizedDir}/${resizeOption.mode}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
+          const resizedImageDir = `/${y.to}/${resizedDir}/${resizeOption.mode}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
           const resizedImageUrl = `${resizedImageDir}${image.src.replace(/[^.]+$/, "webp")}`;
           resized.push({ mode: resizeOption.mode, src: resizedImageUrl })
           if (makeImage && baseImageFullPath) {
@@ -216,7 +218,6 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
         delete image.mtime;
       });
     }
-
   })
   if (deleteImage) {
     const currentPublicImages = currentPublicItems.filter(item => item.isFile).map(({ path }) => path);
@@ -231,7 +232,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
  */
 export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImage = true, ...args }) {
   // yamlを管理するメディアディレクトリ
-  const baseDir = args.path;
+  const baseDir = args.from;
   const yamls = GetYamlImageList({ readImage: false, ...args });
 
   // yamlが手動で更新されていればyamlの更新の通りに反映させる

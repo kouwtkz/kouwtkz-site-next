@@ -5,7 +5,7 @@ import { create } from "zustand";
 import {
   MediaImageItemType,
   MediaImageAlbumType,
-} from "@/imageScripts/MediaImageDataType";
+} from "@/MediaScripts/MediaImageDataType";
 import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
 

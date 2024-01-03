@@ -1,0 +1,20 @@
+{
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "VsCodeTaskButtons.tasks": [
+    { "label": "update", "task": "update: gallery" },
+    { "label": "dev", "task": "npm: dev" },
+    { "label": "build", "task": "npm: build" },
+    { "label": "serve", "task": "serve: static" },
+    { "label": "deploy", "task": "deploy: pages" }
+  ],
+  // Explorer で非表示にするもの
+  "files.exclude": {
+    "**/.next": true, // Next.jsの生成ファイル
+    "**/.cache": true, // キャッシュ
+    "**/node_modules": true
+  },
+  "references.preferredLocation": "view",
+  "files.eol": "\n"
+}
