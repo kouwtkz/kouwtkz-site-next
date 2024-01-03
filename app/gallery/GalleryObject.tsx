@@ -3,25 +3,33 @@
 import React from "react";
 import GalleryList, { GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
-import { GroupFormat } from "@/imageScripts/MediaImageYamlType";
+import { GroupFormat } from "@/MediaScripts/MediaImageYamlType";
 import { basename } from "path";
-import { MediaImageAlbumType } from "@/imageScripts/MediaImageDataType";
+import { MediaImageAlbumType } from "@/MediaScripts/MediaImageDataType";
 
-interface GalleryPageListType extends GalleryListPropsBase {
+export interface GalleryItemObjectType extends GalleryListPropsBase {
   name: string;
-  label?: string;
   match?: string | RegExp;
   format?: GroupFormat;
 }
 
-interface GalleryPageProps extends GalleryListPropsBase {
-  items: string | GalleryPageListType | Array<string | GalleryPageListType>;
+export type GalleryItemType = string | GalleryItemObjectType;
+
+export type GalleryItemsType = GalleryItemType | GalleryItemType[];
+
+interface GalleryObjectProps extends GalleryListPropsBase {
+  items?: GalleryItemsType;
 }
 
-export default function GalleryPage({ items, ...args }: GalleryPageProps) {
-  const list = Array.isArray(items) ? items : [items];
+export default function GalleryObject({
+  items = [],
+  ...args
+}: GalleryObjectProps) {
   const { imageAlbumList } = useMediaImageState();
-  if (imageAlbumList.length === 0) return <></>;
+  const loading = imageAlbumList.length === 0;
+  // if (!items) return <></>;
+  const list = Array.isArray(items) ? items : [items];
+  // if (imageAlbumList.length === 0) return <></>;
   return (
     <>
       {list.map((item, i) => {
@@ -49,13 +57,22 @@ export default function GalleryPage({ items, ...args }: GalleryPageProps) {
             return thumbnail;
           });
           const album: MediaImageAlbumType = { name, list: thumbnails };
-          return <GalleryList key={i} album={album} {...setArgs} />;
+          return (
+            <GalleryList key={i} album={album} loading={loading} {...setArgs} />
+          );
         } else {
-          const groupAlbum =
-            (match
-              ? imageAlbumList.find((album) => album.dir?.match(match))
-              : imageAlbumList.find((album) => album.name === name)) || null;
-          return <GalleryList key={i} album={groupAlbum} {...setArgs} />;
+          let groupAlbum = match
+            ? imageAlbumList.find((album) => album.dir?.match(match))
+            : imageAlbumList.find((album) => album.name === name);
+          if (!groupAlbum) groupAlbum = { name, list: [] };
+          return (
+            <GalleryList
+              key={i}
+              album={groupAlbum}
+              loading={loading}
+              {...setArgs}
+            />
+          );
         }
       })}
     </>

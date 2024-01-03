@@ -1,3 +1,5 @@
+import { GalleryItemType } from "../gallery/GalleryObject"
+
 type SiteProps = {
   title: string
   description: string
@@ -10,6 +12,10 @@ type SiteProps = {
   menu?: {
     nav?: SiteMenuProps[],
     sns?: SiteSnsProps[],
+  }
+  gallery?: {
+    default?: GalleryItemType[]
+    generate?: GalleryItemType[]
   }
 }
 

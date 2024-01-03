@@ -1,19 +1,17 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# 主にメディア関連
-_media/
-_data/**/*.yaml
-_data/**/*.json
-_data/db/
-public/**/*.json
-public/sound/
-imageScripts/**/*.json
+# コピーや生成するメディアの出力先
+/public/_media
+/public/sound
+
+# 自動生成するもの
+yamldata_mtimes.json
 
 # シークレットキーなど
 .secret/
 
-# vscodeの設定は除外
-.vscode/
+# vscodeの設定で除外したいもの
+# .vscode/
 
 # キャッシュ
 /.cache

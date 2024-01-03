@@ -31,7 +31,6 @@ export type YamlDataType = {
   copyright?: boolean | string;
   format?: GroupFormat;
   time?: string;
-  mtime?: string;
   list?: YamlDataImageType[];
   notfound?: YamlDataImageType[];
   output?: OutputOptionType;
@@ -40,11 +39,13 @@ export type YamlDataType = {
 
 export type YamlGroupType = {
   name: string;
-  root: string;
+  from: string;
+  to?: string;
   dir: string;
   data: YamlDataType;
   list: YamlDataImageType[];
   already: boolean;
+  mtime?: Date;
 };
 
 export type GetYamlImageFilterType = {
@@ -57,7 +58,14 @@ export type GetYamlImageFilterType = {
 }
 
 export type GetYamlImageListProps = {
-  path: string;
+  from: string;
+  /**
+   * @default path
+   * @augments `${publicDir}/${to}`
+   */
+  to?: string;
+  /** @default "public" */
+  publicDir?: string;
   filter?: GetYamlImageFilterType;
   readImage?: boolean;
   makeImage?: boolean;

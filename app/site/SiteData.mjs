@@ -14,9 +14,11 @@ const projectRoot = process.cwd(), dataDir = process.env.DATA_DIR || '';
 let rawData = {}
 try {
   rawData = parse(readFileSync(`${projectRoot}/${dataDir}/site.yaml`, "utf8"));
-} catch {
+} catch (e) {
+  console.error(e);
   rawData = { title: "title", description: "description", short: { description: "short" }, author: { since: 2023 } }
 }
+
 
 /** @type SiteProps */
 const site = rawData;

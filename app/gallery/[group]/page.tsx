@@ -1,11 +1,14 @@
 import React from "react";
 import { Metadata } from "next";
-import GalleryPage from "../GalleryPage";
+import GalleryObject from "../GalleryObject";
+import { site } from "@/app/site/SiteData.mjs";
 
 export async function generateStaticParams() {
-  return ["art", "fanart", "works", "given"].map((group) => {
-    return { group };
-  });
+  return (
+    site.gallery?.generate?.map((_group) => ({
+      group: typeof _group === "string" ? _group : _group.name,
+    })) || []
+  );
 }
 
 type Props = { params: { group: string } };
@@ -16,9 +19,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function Page({ params }: Props) {
   const { group } = params;
+  const item =
+    site.gallery?.generate?.find(
+      (_group) => (typeof _group === "string" ? _group : _group.name) === group
+    ) || group;
   return (
-    <GalleryPage
-      items={group}
+    <GalleryObject
+      items={item}
       max={40}
       step={28}
       link={false}

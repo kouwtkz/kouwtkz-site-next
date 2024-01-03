@@ -5,7 +5,7 @@ import ComicViewer from "react-comic-viewer";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import GalleryPage from "../GalleryPage";
+import GalleryObject from "../GalleryObject";
 
 function App() {
   const { imageAlbumList } = useMediaImageState();
@@ -13,7 +13,7 @@ function App() {
   const comicName = search.get("name");
   if (!comicName)
     return (
-      <GalleryPage
+      <GalleryObject
         items={{
           name: "comics",
           match: "fanbook",
