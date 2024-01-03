@@ -21,7 +21,10 @@ export default function SoundFixed() {
     paused,
     ended,
     loopMode,
+    playlist,
+    current,
   } = useSoundPlayer();
+  const title = playlist.list[current]?.title || null;
   return (
     <>
       {/sound/.test(pathname) || !paused || !ended ? (
@@ -52,6 +55,9 @@ export default function SoundFixed() {
                 className="hover:fill-main-pale"
                 onClick={() => Next()}
               />
+            </div>
+            <div className="m-1">
+              {title && !(paused && ended) ? "♪ " + title : "（たいきちゅう）"}
             </div>
           </div>
         </div>

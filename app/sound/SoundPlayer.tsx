@@ -7,12 +7,16 @@ import { LoopMode, PlaylistType, SoundItemType } from "./MediaSoundType";
 import { parse } from "path";
 const LoopModeList: LoopMode[] = ["loop", "loopOne", "playUntilEnd", "off"];
 
-type PlaylistSrcType =
+type PlaylistRegistType =
   | string
   | string[]
   | SoundItemType
   | SoundItemType[]
   | PlaylistType;
+export type PlaylistRegistProps = {
+  playlist?: PlaylistRegistType;
+  current?: number;
+};
 
 type SoundPlayerType = {
   paused: boolean;
@@ -22,10 +26,10 @@ type SoundPlayerType = {
   loopMode: LoopMode;
   SetPaused: (paused: boolean) => void;
   SetEnded: (ended: boolean) => void;
-  SetPlaylist: (playlist: PlaylistSrcType, current?: number) => void;
+  RegistPlaylist: (args: PlaylistRegistProps) => void;
   SetCurrent: (current: number) => void;
-  SetLoopMode: (loopMode: LoopMode) => void;
-  Play: (playlist?: PlaylistSrcType, current?: number) => void;
+  SetLoopMode: (loopMode: LoopMode, current?: number) => void;
+  Play: (args?: PlaylistRegistProps) => void;
   Pause: () => void;
   Stop: () => void;
   Next: () => void;
@@ -45,24 +49,32 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   SetEnded: (ended) => {
     set(() => ({ ended }));
   },
-  SetPlaylist: (playlist, current = 0) => {
-    if (Array.isArray(playlist)) {
+  RegistPlaylist: ({ playlist: _playlist, current = 0 }) => {
+    let playlist: PlaylistType;
+    if (Array.isArray(_playlist)) {
       playlist = {
-        list: playlist.map((item) =>
+        list: _playlist.map((item) =>
           typeof item === "string"
             ? { src: item, title: parse(item).base }
             : item
         ),
       };
     } else {
-      if (typeof playlist === "string")
-        playlist = { list: [{ src: playlist, title: parse(playlist).base }] };
-      if (typeof playlist.list === "undefined") playlist = { list: [playlist] };
+      if (typeof _playlist === "string")
+        playlist = { list: [{ src: _playlist, title: parse(_playlist).base }] };
+      else if (_playlist) {
+        if ((_playlist as any).list !== undefined) {
+          playlist = _playlist as PlaylistType;
+        } else {
+          playlist = { list: [_playlist as SoundItemType] };
+        }
+      } else {
+        set(() => ({ current }));
+      }
     }
-    set(() => ({
-      playlist: typeof src === "string" ? [src] : src,
-      current,
-    }));
+    set(() => {
+      return { playlist, current };
+    });
   },
   SetCurrent: (current) => {
     set(() => ({ current }));
@@ -70,10 +82,12 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   SetLoopMode: (loopMode) => {
     set(() => ({ loopMode }));
   },
-  Play: (src, current) => {
+  Play: ({ playlist, current } = {}) => {
     set((state) => {
-      if (src) state.SetPlaylist(src, current);
-      return { paused: false };
+      const value: { paused: boolean; current?: number } = { paused: false };
+      if (playlist) state.RegistPlaylist({ playlist, current });
+      else if (current !== undefined) value.current = current;
+      return value;
     });
   },
   Pause: () => {
@@ -86,10 +100,11 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
     set((state) => {
       if (
         state.loopMode === "playUntilEnd" &&
-        state.playlist.length === state.current + 1
+        state.playlist.list.length === state.current + 1
       ) {
         return { paused: true, ended: true };
-      } else return { current: (state.current + 1) % state.playlist.length };
+      } else
+        return { current: (state.current + 1) % state.playlist.list.length };
     });
   },
   Prev: () => {
@@ -97,7 +112,7 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
       if (state.loopMode === "playUntilEnd" && state.current === 0) {
         return { current: state.current === 0 ? 0 : state.current - 1 };
       } else {
-        const length = state.playlist.length;
+        const length = state.playlist.list.length;
         return { current: (length + state.current - 1) % length };
       }
     });
@@ -117,7 +132,7 @@ function Main() {
   const audioElm = refAudio.current;
   const { paused, ended, Stop, playlist, current, loopMode, Next } =
     useSoundPlayer();
-  const src = playlist[current] || "";
+  const src = playlist.list[current]?.src || "";
   if (audioElm) {
     if (src && !audioElm.src.endsWith(src)) audioElm.src = src;
     if (audioElm.paused !== paused) {
