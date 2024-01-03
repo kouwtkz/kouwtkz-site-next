@@ -8,23 +8,10 @@
 
 import { readFileSync } from "fs";
 import { parse } from "yaml";
-const cwd = process.cwd();
-const dataDir = `${process.env.DATA_DIR || '_data'}`;
-const defaultSoundDir = `/sound`;
+export const yamlPath = `_data/sound/_data.yaml`;
+const outputSoundDir = `/sound`;
 
-const readYamlList = [`${dataDir}/sound.yaml`];
-export function ReadSoundDataFromYaml() {
-  /** @type SoundAlbumType[] */
-  const AlbumList = [];
-  readYamlList.forEach((yamlItem) => {
-    /** @type SoundAlbumType */
-    // @ts-ignore
-    const album = parse(String(readFileSync(`${cwd}/${yamlItem}`, "utf8")));
-    album.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `${album.dir || defaultSoundDir}/${sound.src}` }) })
-    AlbumList.push(album);
-  })
-  return AlbumList;
-}
-
-const soundAlbums = ReadSoundDataFromYaml();
-export { soundAlbums };
+/** @type SoundAlbumType */
+const soundAlbum = parse(String(readFileSync(`${yamlPath}`, "utf8")));
+soundAlbum.playlist?.forEach(sounds => { sounds.list.forEach((sound) => { sound.src = `${soundAlbum.dir || outputSoundDir}/${sound.src}` }) })
+export { soundAlbum };

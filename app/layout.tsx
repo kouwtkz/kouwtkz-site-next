@@ -24,6 +24,7 @@ import {
   LuloCleanFont,
 } from "@/app/fonts/list";
 import SoundState from "./sound/SoundState";
+import { yamlPath } from "./sound/MediaSoundData.mjs";
 
 export const metadata: Metadata = {
   title: {
@@ -63,7 +64,7 @@ export default async function RootLayout({
         <SoundState
           url={DataStateAddMtime({
             url: "/data/sound.json",
-            file: "_data/sound.yaml",
+            file: yamlPath,
           })}
         />
         <PostState
