@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useRef } from "react";
+import React from "react";
 import PlayPauseButton from "@/app/components/svg/audio/PlayPauseButton";
-import { PlaylistRegistProps, useSoundPlayer } from "./SoundPlayer";
+import { useSoundPlayer } from "./SoundPlayer";
 import { useSoundState } from "./SoundState";
 import TriangleCursor from "../components/svg/cursor/Triangle";
-import { PlaylistType } from "./MediaSoundType";
 import toast from "react-hot-toast";
 
 export default function SoundPage() {
@@ -20,7 +19,6 @@ export default function SoundPage() {
     current,
   } = useSoundPlayer();
   const src = playerList.list[current]?.src || "";
-  // const allPlaylistMax = useRef<number>(-1);
 
   return (
     <div>
