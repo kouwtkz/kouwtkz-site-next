@@ -1,11 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# データはサブモジュール化する
-_data
-
 # コピーや生成するメディアの出力先
-_media
-public/sound
+/public/_media
+/public/sound
 
 # シークレットキーなど
 .secret/
