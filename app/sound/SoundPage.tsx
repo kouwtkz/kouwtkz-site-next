@@ -16,10 +16,11 @@ export default function SoundPage() {
     paused,
     RegistPlaylist,
     playlist: playerList,
+    special,
     current,
   } = useSoundPlayer();
   const src = playerList.list[current]?.src || "";
-  const allPlaylistMax = useRef<number>(-1);
+  // const allPlaylistMax = useRef<number>(-1);
 
   return (
     <div>
@@ -27,30 +28,30 @@ export default function SoundPage() {
         <h1
           className="font-LuloClean text-3xl sm:text-4xl text-main pt-8 mb-8 cursor-pointer"
           onClick={() => {
-            if (allPlaylistMax.current < 0) {
-              allPlaylistMax.current = SoundItemList.length;
+            if (special) {
+              const playlist = SoundAlbum?.playlist?.find((item) =>
+                item.list.some((sound) => sound.src === src)
+              );
+              if (playlist) {
+                RegistPlaylist({
+                  playlist,
+                  current: playlist.list.findIndex(
+                    (sound) => sound.src === src
+                  ),
+                  special: false,
+                });
+                toast(playlist.title + "を再生", { duration: 1000 });
+              }
+            } else {
               RegistPlaylist({
                 playlist: {
                   title: "すべて再生",
                   list: SoundItemList,
                 },
                 current: SoundItemList.findIndex((sound) => sound.src === src),
+                special: true,
               });
               toast("すべて再生", { duration: 1000 });
-            } else {
-              const playlist = SoundAlbum?.playlist?.find((item) =>
-                item.list.some((sound) => sound.src === src)
-              );
-              if (playlist) {
-                allPlaylistMax.current = -1;
-                RegistPlaylist({
-                  playlist,
-                  current: playlist.list.findIndex(
-                    (sound) => sound.src === src
-                  ),
-                });
-                toast(playlist.title + "を再生", { duration: 1000 });
-              }
             }
           }}
         >
@@ -69,14 +70,14 @@ export default function SoundPage() {
                       className="my-1 w-[100%] font-bold cursor-pointer md:w-[50%] hover:bg-main-pale-fluo flex items-center"
                       onClick={() => {
                         if (itemPaused) {
-                          if (allPlaylistMax.current < 0) {
-                            Play({ playlist, current: i });
-                          } else {
+                          if (special) {
                             Play({
                               current: SoundItemList.findIndex(
                                 (_sound) => _sound.src === sound.src
                               ),
                             });
+                          } else {
+                            Play({ playlist, current: i });
                           }
                         } else Pause();
                       }}

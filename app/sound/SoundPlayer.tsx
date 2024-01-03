@@ -16,6 +16,7 @@ type PlaylistRegistType =
 export type PlaylistRegistProps = {
   playlist?: PlaylistRegistType;
   current?: number;
+  special?: boolean;
 };
 
 type SoundPlayerType = {
@@ -24,6 +25,7 @@ type SoundPlayerType = {
   playlist: PlaylistType;
   current: number;
   loopMode: LoopMode;
+  special: boolean;
   SetPaused: (paused: boolean) => void;
   SetEnded: (ended: boolean) => void;
   RegistPlaylist: (args: PlaylistRegistProps) => void;
@@ -43,16 +45,22 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   playlist: { list: [] },
   current: 0,
   loopMode: LoopModeList[0],
+  special: false,
   SetPaused: (paused) => {
     set(() => ({ paused }));
   },
   SetEnded: (ended) => {
     set(() => ({ ended }));
   },
-  RegistPlaylist: ({ playlist: _playlist, current = 0 }) => {
-    let playlist: PlaylistType;
+  RegistPlaylist: ({ playlist: _playlist, current = 0, special }) => {
+    const value: {
+      playlist?: PlaylistType;
+      current?: number;
+      special?: boolean;
+    } = { current };
+    if (special !== undefined) value.special = special;
     if (Array.isArray(_playlist)) {
-      playlist = {
+      value.playlist = {
         list: _playlist.map((item) =>
           typeof item === "string"
             ? { src: item, title: parse(item).base }
@@ -61,20 +69,18 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
       };
     } else {
       if (typeof _playlist === "string")
-        playlist = { list: [{ src: _playlist, title: parse(_playlist).base }] };
+        value.playlist = {
+          list: [{ src: _playlist, title: parse(_playlist).base }],
+        };
       else if (_playlist) {
         if ((_playlist as any).list !== undefined) {
-          playlist = _playlist as PlaylistType;
+          value.playlist = _playlist as PlaylistType;
         } else {
-          playlist = { list: [_playlist as SoundItemType] };
+          value.playlist = { list: [_playlist as SoundItemType] };
         }
-      } else {
-        set(() => ({ current }));
       }
     }
-    set(() => {
-      return { playlist, current };
-    });
+    set(() => value);
   },
   SetCurrent: (current) => {
     set(() => ({ current }));
@@ -82,11 +88,11 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   SetLoopMode: (loopMode) => {
     set(() => ({ loopMode }));
   },
-  Play: ({ playlist, current } = {}) => {
+  Play: (args = {}) => {
     set((state) => {
       const value: { paused: boolean; current?: number } = { paused: false };
-      if (playlist) state.RegistPlaylist({ playlist, current });
-      else if (current !== undefined) value.current = current;
+      if (args.playlist) state.RegistPlaylist(args);
+      else if (args.current !== undefined) value.current = args.current;
       return value;
     });
   },
