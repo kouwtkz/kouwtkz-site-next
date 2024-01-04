@@ -8,7 +8,7 @@
   --main-color-deep: #9bb022;
   --main-color-dark: #9ba346;
   --main-color-grayish: #6d6e5e;
-  --main-color-grayish-fluo: rgba(146, 147, 127, 0.3);
+  --main-color-grayish-fluo: rgba(146, 147, 127, 0.15);
   --main-color-light-grayish: #bbbcaf;
   --sub-color: #b99f72;
   --sub-color-soft: #d8bb8a;
@@ -16,31 +16,6 @@
   --text-color: #27231d;
   --background-top: #fdfde4;
   --background-bottom: #fffcd4;
-}
-
-:root .fc {
-  --fc-event-bg-color: var(--main-color-strong);
-  --fc-button-hover-bg-color: var(--main-color-soft);
-  --fc-event-border-color: var(--main-color-strong);
-  --fc-event-border-color: var(--main-color-strong);
-  --fc-button-bg-color: var(--main-color);
-  --fc-button-hover-border-color: var(--main-color-soft);
-  --fc-button-active-bg-color: var(--main-color-deep);
-  --fc-button-active-border-color: var(--main-color-deep);
-  --fc-button-border-color: var(--main-color-deep);
-  --fc-button-active-border-color: var(--main-color-dark);
-  --fc-neutral-bg-color: var(--main-color-pale-fluo);
-  --fc-list-event-hover-bg-color: var(--main-color-pale);
-  --fc-non-business-color: rgba(240, 95, 95, 0.132);
-}
-:root .fc .fc-day-sat {
-  --fc-non-business-color: rgba(95, 146, 240, 0.132);
-}
-:root .fc .fc-h-event:hover {
-  --fc-event-bg-color: var(--main-color);
-}
-:root .fc .fc-h-event {
-  color: white;
 }
 
 :root.theme-orange {

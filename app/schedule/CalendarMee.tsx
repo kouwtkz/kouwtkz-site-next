@@ -47,12 +47,12 @@ export default function CalendarMee({
         ]}
         locales={allLocales}
         {...GoogleOptions}
-        timeZone="Asia/Tokyo"
-        initialView="listMonth"
+        initialView="listWeek"
         locale={"ja"}
         dayCellContent={(e) => e.dayNumberText.replace("日", "")}
         dayMaxEvents={true}
         businessHours={true}
+        navLinks={true}
         allDayText="終日"
         eventClick={(args) => {
           window.open(
@@ -63,20 +63,30 @@ export default function CalendarMee({
           args.jsEvent.preventDefault();
         }}
         headerToolbar={{
-          end: "dayGridMonth,dayGridWeek,listMonth prev,today,next",
+          end: "dayGridMonth,listWeek prev,today,next",
         }}
         buttonText={{
           today: "現在",
-          list: "予定",
+          listWeek: "予定",
         }}
         views={{
-          dayGridWeek: {
+          listWeek: {
             titleFormat: ({ start, end }) => {
-              const endYear =
-                end && start.year !== end?.year ? `${end.year}/` : "";
+              let useDate = end;
+              // 今月の最終週のみ今月として表記
+              if (start.month !== end?.month) {
+                const current = new Date();
+                if (
+                  current.getFullYear() === start.year &&
+                  current.getMonth() === start.month
+                )
+                  useDate = start;
+                start.day++;
+              }
+              if (!useDate) useDate = start;
               return (
-                `${start.year}/${start.month + 1}/${start.day}` +
-                (end ? ` - ${endYear}${end.month + 1}/${end.day}` : "")
+                `${useDate.year}年${useDate.month + 1}月` +
+                ` ${Math.ceil(useDate.day / 7)}週目`
               );
             },
           },
