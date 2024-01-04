@@ -26,7 +26,8 @@ body::-webkit-scrollbar-track {
 }
 
 body,
-.window {
+.window,
+.fc-scroller {
   &::-webkit-scrollbar {
     width: var(--scroll-margin);
     height: var(--scroll-margin);
@@ -40,19 +41,22 @@ body,
       right: var(--scroll-margin) !important;
     }
   }
-  &.mobile,
-  &.mobile .window {
-    &::-webkit-scrollbar {
-      width: 0;
-      height: 0;
-    }
-    &.overflow-y-hidden {
-      &,
-      .fixed {
-        padding-right: 0 !important;
+  &.mobile {
+    &,
+    .window,
+    .fc-scroller {
+      &::-webkit-scrollbar {
+        width: 0;
+        height: 0;
       }
-      .fixed .absolute.right-0 {
-        right: 0 !important;
+      &.overflow-y-hidden {
+        &,
+        .fixed {
+          padding-right: 0 !important;
+        }
+        .fixed .absolute.right-0 {
+          right: 0 !important;
+        }
       }
     }
   }
@@ -266,4 +270,30 @@ form select {
 
 iframe {
   max-width: 100%;
+}
+
+.fc {
+  .fc-button-group button:focus {
+    box-shadow: none !important;
+  }
+  .fc-today-button:disabled {
+    opacity: 1;
+  }
+  a:hover {
+    color: var(--main-color-dark);
+  }
+  .fc-button-primary {
+    font-size: 0.9em;
+  }
+  .fc-toolbar {
+    .fc-toolbar-title {
+      font-size: 1.2em;
+    }
+    &.fc-header-toolbar {
+      margin-bottom: 0.25em;
+      .fc-toolbar-chunk:last-child {
+        text-align: right;
+      }
+    }
+  }
 }
