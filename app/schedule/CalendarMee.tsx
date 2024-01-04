@@ -47,7 +47,7 @@ export default function CalendarMee({
         ]}
         locales={allLocales}
         {...GoogleOptions}
-        initialView="listWeek"
+        initialView="dayGridMonth"
         locale={"ja"}
         dayCellContent={(e) => e.dayNumberText.replace("日", "")}
         dayMaxEvents={true}
