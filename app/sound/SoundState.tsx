@@ -2,7 +2,6 @@
 
 import { create } from "zustand";
 import { SoundAlbumType, SoundItemType } from "./MediaSoundType";
-import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import { useEffect, useRef } from "react";
 import axios from "axios";
 import { useSoundPlayer } from "./SoundPlayer";
@@ -33,12 +32,12 @@ export const useSoundState = create<SoundDataType>((set) => ({
   },
 }));
 
-export default function SoundState({ url }: DataStateReplacedProps) {
+export default function SoundState({ url }: { url: string }) {
   const { RegistPlaylist } = useSoundPlayer();
   const { setSoundAlbum } = useSoundState();
-  const setSound = useRef(false);
+  const isSet = useRef(false);
   useEffect(() => {
-    if (!setSound.current)
+    if (!isSet.current)
       axios(url).then((r) => {
         const album = r.data as SoundAlbumType;
         setSoundAlbum(album);
@@ -50,8 +49,8 @@ export default function SoundState({ url }: DataStateReplacedProps) {
         );
         if (setupPlaylist?.list.length > 0)
           RegistPlaylist({ playlist: setupPlaylist, current: setupSoundIndex });
-        setSound.current = true;
       });
+    isSet.current = true;
   });
 
   return <></>;

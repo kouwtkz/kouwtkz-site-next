@@ -3,10 +3,8 @@ import { CharaType, CharaObjectType } from "./chara";
 
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
-import { useSystemState } from "../components/System/SystemState";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
-import { MediaImageAlbumType } from "@/MediaScripts/MediaImageDataType";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
@@ -25,14 +23,12 @@ export const useCharaState = create<CharaStateType>((set) => ({
   },
 }));
 
-const CharaState = () => {
+const CharaState = ({ url }: { url: string }) => {
   const charaData = useCharaState();
-  const { date } = useSystemState();
-  const setChara = useRef(false);
+  const isSet = useRef(false);
   const { imageItemList, imageAlbumList } = useMediaImageState();
   useEffect(() => {
-    if (!setChara.current && imageItemList.length > 0) {
-      const url = `/data/characters.json?v=${date.getTime()}`;
+    if (!isSet.current && imageItemList.length > 0) {
       axios(url).then((r) => {
         const data: CharaObjectType = r.data;
         const charaList = Object.values(data);
@@ -60,9 +56,8 @@ const CharaState = () => {
           });
         });
         charaData.setCharaObject(data);
-
-        setChara.current = true;
       });
+      isSet.current = true;
     }
   });
 

@@ -6,7 +6,6 @@ import {
   MediaImageItemType,
   MediaImageAlbumType,
 } from "@/MediaScripts/MediaImageDataType";
-import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
 
 function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
@@ -42,15 +41,15 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
   },
 }));
 
-export default function MediaImageState({ url }: DataStateReplacedProps) {
+export default function MediaImageState({ url }: { url: string }) {
   const { setImageAlbum } = useMediaImageState();
   const setImage = useRef(false);
   useEffect(() => {
     if (!setImage.current)
       axios(url).then((r) => {
         setImageAlbum(r.data);
-        setImage.current = true;
       });
+    setImage.current = true;
   });
 
   return <></>;

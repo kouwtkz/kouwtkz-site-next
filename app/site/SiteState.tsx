@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
-import { useSystemState } from "../components/System/SystemState";
 import axios from "axios";
 import { SiteProps } from "./SiteDataType";
 
@@ -17,17 +16,16 @@ export const useSiteState = create<SiteStateType>((set) => ({
   },
 }));
 
-export default function SiteState() {
-  const { date } = useSystemState();
+export default function SiteState({ url }: { url: string }) {
   const { site, setSite } = useSiteState();
-  const isSetSite = useRef(false);
+  const isSet = useRef(false);
   useEffect(() => {
-    if (!isSetSite.current && !site) {
-      const url = `/data/site.json?v=${date.getTime()}`;
+    if (!isSet.current) {
       axios(url).then((r) => {
         const data: SiteProps = r.data;
         setSite(data);
       });
+      isSet.current = true;
     }
   });
   return <></>;

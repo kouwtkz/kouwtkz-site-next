@@ -2,7 +2,6 @@
 import React, { useEffect, useRef } from "react";
 import { Post } from "./Post.d";
 import { create } from "zustand";
-import { DataStateReplacedProps } from "@/app/components/dataState/DataStateFunctions";
 import axios from "axios";
 const defaultUrl = "/blog/posts.json";
 
@@ -33,13 +32,13 @@ export const usePostState = create<PostStateType>((set) => ({
   },
 }));
 
-export default function PostState({ url }: DataStateReplacedProps) {
+export default function PostState({ url }: { url: string }) {
   const postsData = usePostState();
-  const setPost = useRef(false);
+  const isSet = useRef(false);
   useEffect(() => {
-    if (!setPost.current) {
+    if (!isSet.current) {
       postsData.setPostsFromUrl(url);
-      setPost.current = true;
+      isSet.current = true;
     }
   });
 

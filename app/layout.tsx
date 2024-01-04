@@ -1,21 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.scss";
-import Header from "@/app/components/navigation/header";
-import Footer from "@/app/components/navigation/footer";
-import { site } from "@/app/site/SiteData.mjs";
-import { currentDate } from "@/app/components/functions/general";
-import ImageViewer from "./gallery/ImageViewer";
-import CharaState from "./character/CharaState";
-import MediaImageState from "@/app/context/MediaImageState";
-import SiteState from "./site/SiteState";
-import PostState from "./blog/PostState";
-import ToasterContext from "@/app/context/toastContext";
-import ServerStateMake from "./components/System/ServerStateMake";
-import ClientSetup from "./components/System/ClientSetup";
-import EmbedSync from "./components/System/EmbedSync";
-import { DataStateAddMtime } from "./components/dataState/DataStateFunctions";
-import SoundPlayer from "./sound/SoundPlayer";
-
 import {
   KosugiMaruFont,
   MochiyPopOneFont,
@@ -23,8 +7,17 @@ import {
   // ZenMaruFont,
   LuloCleanFont,
 } from "@/app/fonts/list";
-import SoundState from "./sound/SoundState";
-import { yamlPath } from "./sound/MediaSoundData.mjs";
+import Header from "@/app/components/navigation/header";
+import Footer from "@/app/components/navigation/footer";
+import { site } from "@/app/site/SiteData.mjs";
+import { currentDate } from "@/app/components/functions/general";
+import ImageViewer from "./gallery/ImageViewer";
+import ToasterContext from "@/app/context/toastContext";
+import ServerStateMake from "./components/System/ServerStateMake";
+import ClientSetup from "./components/System/ClientSetup";
+import EmbedSync from "./components/System/EmbedSync";
+import SoundPlayer from "./sound/SoundPlayer";
+import DataState from "./data/State/DataState";
 
 export const metadata: Metadata = {
   title: {
@@ -56,23 +49,7 @@ export default async function RootLayout({
         <ServerStateMake />
         <SoundPlayer />
         <ImageViewer />
-        <CharaState />
-        <SiteState />
-        <MediaImageState
-          url={DataStateAddMtime({ url: "/data/images.json" })}
-        />
-        <SoundState
-          url={DataStateAddMtime({
-            url: "/data/sound.json",
-            file: yamlPath,
-          })}
-        />
-        <PostState
-          url={DataStateAddMtime({
-            url: "/blog/posts.json",
-            file: "_data/post.json",
-          })}
-        />
+        <DataState />
         <Header site={site} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
           <div className="mx-auto content-parent min-h-[70vh]">
