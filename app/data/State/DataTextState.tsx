@@ -31,7 +31,7 @@ export const useDataTextState = create<DataTextStateType>((set) => ({
 }));
 
 export default function DataTextState({ url }: { url: string }) {
-  const { values, set } = useDataTextState();
+  const { set } = useDataTextState();
   const isSet = useRef(false);
   useEffect(() => {
     if (!isSet.current) {

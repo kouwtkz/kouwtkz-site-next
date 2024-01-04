@@ -1,4 +1,4 @@
-import GetStateText from "../State/GetStateText.mjs";
+import GetStateText from "../GetStateText.mjs";
 
 export async function GET() {
   return new Response(GetStateText(), {

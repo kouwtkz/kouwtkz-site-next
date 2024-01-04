@@ -25,6 +25,6 @@ export default function DataState() {
       </>
     );
   } else {
-    return <DataTextState url={"/data/stateData.txt"} />;
+    return <DataTextState url={"/data/State/update.txt"} />;
   }
 }
