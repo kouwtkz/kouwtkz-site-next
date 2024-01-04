@@ -48,7 +48,7 @@ export default function CalendarMee({
         locales={allLocales}
         {...GoogleOptions}
         timeZone="Asia/Tokyo"
-        initialView="dayGridWeek"
+        initialView="listMonth"
         locale={"ja"}
         dayCellContent={(e) => e.dayNumberText.replace("日", "")}
         dayMaxEvents={true}

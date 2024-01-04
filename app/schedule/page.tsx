@@ -18,7 +18,11 @@ export default function Page() {
       <h1 className="font-LuloClean text-3xl sm:text-4xl text-main pt-8 mb-8">
         {title}
       </h1>
-      <CalendarMee google={googleCalenderOptions} height={500} className="m-2 text-sm sm:text-base md:m-8" />
+      <CalendarMee
+        google={googleCalenderOptions}
+        height={500}
+        className="text-sm sm:text-base m-2 sm:mx-auto max-w-4xl"
+      />
     </div>
   );
 }
