@@ -1,7 +1,7 @@
 import { parse } from "yaml";
 import { readFileSync } from "fs";
 import { setPath } from "@/app/components/functions/general";
-import { CharaType, CharaObjectType } from "./chara.d";
+import { CharaType, CharaObjectType } from "./CharaType";
 
 const dataDir = `${process.env.DATA_DIR}`;
 let rawData: any = {}

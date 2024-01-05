@@ -1,11 +1,12 @@
 "use client";
 
-import { CharaType } from "@/app/character/chara";
 import GalleryList from "@/app/gallery/GalleryList";
 import { useServerState } from "@/app/components/System/ServerState";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import ImageMee, { ImageMeeIcon } from "@/app/components/image/ImageMee";
 import { useCharaState } from "../CharaState";
+import { useSoundPlayer } from "@/app/sound/SoundPlayer";
+import { useEffect, useRef } from "react";
 
 type DetailProps = {
   name: string;
@@ -15,7 +16,24 @@ export default function CharaDetail({ name }: DetailProps) {
   const { isStatic } = useServerState();
   const { imageItemList } = useMediaImageState();
   const { charaObject } = useCharaState();
+  const { RegistPlaylist, current, playlist } = useSoundPlayer();
+  const isSetPlaylist = useRef(false);
   const chara = charaObject ? charaObject[name] : null;
+  useEffect(() => {
+    if (!isSetPlaylist.current) {
+      if (chara?.playlist && playlist.title !== chara.playlist.title) {
+        let foundIndex = chara.playlist.list.findIndex(
+          (item) => item.src === playlist.list[current].src
+        );
+        if (foundIndex < 0) foundIndex = 0;
+        RegistPlaylist({
+          playlist: chara.playlist,
+          current: foundIndex,
+        });
+      }
+      isSetPlaylist.current = true;
+    }
+  });
   if (!chara) return null;
   const galleryGroups = [
     {

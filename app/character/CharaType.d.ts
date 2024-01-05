@@ -1,5 +1,6 @@
 
 import { MediaImageItemType } from "@/MediaScripts/MediaImageDataType";
+import { PlaylistType } from "../sound/MediaSoundType";
 
 export interface CharaType {
   id?: string
@@ -9,14 +10,14 @@ export interface CharaType {
   path?: string,
   icon?: string,
   image?: string,
+  time?: Date,
   headerImage?: string,
+  playlist?: PlaylistType,
   media?: {
     icon?: MediaImageItemType | null,
     image?: MediaImageItemType | null,
     headerImage?: MediaImageItemType | null,
   }
-  playlist?: [string] | string,
-  time?: Date,
 }
 
 export interface CharaObjectType {

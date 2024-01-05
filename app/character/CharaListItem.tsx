@@ -1,6 +1,6 @@
 "use client";
 
-import { CharaType } from "@/app/character/chara.d";
+import { CharaType } from "@/app/character/CharaType";
 import Link from "next/link";
 import { useCharaState } from "./CharaState";
 import { ImageMeeIcon } from "@/app/components/image/ImageMee";

@@ -1,10 +1,11 @@
 "use client";
-import { CharaType, CharaObjectType } from "./chara";
+import { CharaType, CharaObjectType } from "./CharaType";
 
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
+import { useSoundState } from "../sound/SoundState";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
@@ -27,8 +28,13 @@ const CharaState = ({ url }: { url: string }) => {
   const charaData = useCharaState();
   const isSet = useRef(false);
   const { imageItemList, imageAlbumList } = useMediaImageState();
+  const { SoundItemList, defaultPlaylist } = useSoundState();
   useEffect(() => {
-    if (!isSet.current && imageItemList.length > 0) {
+    if (
+      !isSet.current &&
+      imageItemList.length > 0 &&
+      SoundItemList.length > 0
+    ) {
       axios(url).then((r) => {
         const data: CharaObjectType = r.data;
         const charaList = Object.values(data);
@@ -54,6 +60,29 @@ const CharaState = ({ url }: { url: string }) => {
               );
             }
           });
+          if (typeof chara.time === "string") chara.time = new Date(chara.time);
+          let playlist: unknown = chara.playlist;
+          const playlistTitle = `${chara.name}のプレイリスト`;
+          if (typeof playlist === "string") {
+            if (playlist === "default") {
+              if (defaultPlaylist)
+                chara.playlist = {
+                  ...defaultPlaylist,
+                  title: playlistTitle,
+                };
+            } else playlist = [playlist];
+          }
+          if (Array.isArray(playlist)) {
+            chara.playlist = {
+              title: playlistTitle,
+              list: playlist
+                .map((src) =>
+                  SoundItemList.findIndex((item) => item.src.endsWith(src))
+                )
+                .filter((i) => i >= 0)
+                .map((i) => SoundItemList[i]),
+            };
+          }
         });
         charaData.setCharaObject(data);
       });
