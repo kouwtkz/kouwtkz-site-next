@@ -116,9 +116,7 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
           Math.random() * (state.playlist.list.length - 1)
         );
         if (current >= state.current) current++;
-        return {
-          current,
-        };
+        return { current };
       } else if (
         state.loopMode === "playUntilEnd" &&
         state.playlist.list.length === state.current + 1

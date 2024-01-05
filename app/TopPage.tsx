@@ -15,16 +15,20 @@ function Main() {
   const topImages = imageItemList.filter((image) => image.topImage);
   const [topImageState, setTopImage] = useState<MediaImageItemType>();
   const firstLoad = useRef(true);
-  const imageRnd = (images: MediaImageItemType[]) =>
-    images[Math.floor(Math.random() * images.length)];
   const currentTopImage = useRef<MediaImageItemType | null>(null);
   if (topImageState && currentTopImage) currentTopImage.current = topImageState;
   const topImage = currentTopImage.current;
   const setRndTopImage = () => {
-    const filterTopImages = currentTopImage.current
-      ? topImages.filter((image) => image.src !== currentTopImage.current?.src)
-      : topImages;
-    setTopImage(imageRnd(filterTopImages));
+    const curIndex = currentTopImage.current
+      ? topImages.findIndex(
+          (image) => image.src === currentTopImage.current?.src
+        )
+      : -1;
+    let imageIndex = Math.floor(
+      Math.random() * (topImages.length - (curIndex >= 0 ? 1 : 0))
+    );
+    if (imageIndex >= curIndex) imageIndex++;
+    setTopImage(topImages[imageIndex]);
   };
   if (firstLoad.current && imageItemList.length > 0) {
     setRndTopImage();
