@@ -6,13 +6,31 @@ import { useMediaImageState } from "@/app/context/MediaImageState";
 import ImageMee, { ImageMeeIcon } from "@/app/components/image/ImageMee";
 import { useCharaState } from "../CharaState";
 import { useSoundPlayer } from "@/app/sound/SoundPlayer";
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, memo, useEffect, useRef } from "react";
 import HTMLReactParser from "html-react-parser";
-import { useEmbedState } from "@/app/context/embed/EmbedState";
+import {
+  EmbedDataType,
+  EmbedTextType,
+  useEmbedState,
+} from "@/app/context/embed/EmbedState";
 
 type DetailProps = {
   name: string;
 };
+
+const EmbedNode = memo(function EmbedNode({
+  embed,
+  embedData,
+}: {
+  embed: string;
+  embedData: EmbedDataType;
+}) {
+  const list = typeof embed === "string" ? [embed] : embed;
+  if (!embed || !embedData === null) return [];
+  return list.map((name) =>
+    embedData === null ? <></> : HTMLReactParser(embedData[name] || name)
+  );
+});
 
 export default function CharaDetail({ name }: DetailProps) {
   const { isStatic } = useServerState();
@@ -73,14 +91,12 @@ export default function CharaDetail({ name }: DetailProps) {
       max: 40,
     },
   ];
-  const embedList: ReactNode[] = (() => {
-    if (!chara.embed || !embedData) return [];
-    const list = typeof chara.embed === "string" ? [chara.embed] : chara.embed;
-    return list
-      .map((name) => embedData[name])
-      .filter((html) => html !== undefined)
-      .map((html) => HTMLReactParser(html));
-  })();
+  const embedList =
+    chara.embed && embedData
+      ? (typeof chara.embed === "string" ? [chara.embed] : chara.embed).map(
+          (embed, i) => <EmbedNode key={i} {...{ embed, embedData }} />
+        )
+      : [];
 
   return (
     <div className="p-0">

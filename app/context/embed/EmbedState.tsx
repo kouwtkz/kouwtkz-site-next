@@ -3,8 +3,11 @@ import React, { ReactNode, useEffect, useRef } from "react";
 import { create } from "zustand";
 import axios from "axios";
 
+export type EmbedTextType = string | string[];
+export type EmbedDataType = { [k: string]: string } | null;
+
 type EmbedStateType = {
-  data: { [k: string]: string } | null;
+  data: EmbedDataType;
   setData: (value: any) => void;
 };
 
@@ -20,9 +23,13 @@ export default function EmbedState({ url }: { url: string }) {
   const { setData: setList } = useEmbedState();
   useEffect(() => {
     if (!isSet.current) {
-      axios(url).then((r) => {
-        setList(r.data);
-      });
+      axios(url)
+        .then((r) => {
+          setList(r.data);
+        })
+        .catch(() => {
+          setList({});
+        });
       isSet.current = true;
     }
   });
