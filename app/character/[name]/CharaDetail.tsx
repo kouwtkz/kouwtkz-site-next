@@ -6,7 +6,9 @@ import { useMediaImageState } from "@/app/context/MediaImageState";
 import ImageMee, { ImageMeeIcon } from "@/app/components/image/ImageMee";
 import { useCharaState } from "../CharaState";
 import { useSoundPlayer } from "@/app/sound/SoundPlayer";
-import { useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef } from "react";
+import HTMLReactParser from "html-react-parser";
+import { useEmbedState } from "@/app/context/embed/EmbedState";
 
 type DetailProps = {
   name: string;
@@ -17,6 +19,7 @@ export default function CharaDetail({ name }: DetailProps) {
   const { imageItemList } = useMediaImageState();
   const { charaObject } = useCharaState();
   const { RegistPlaylist, current, playlist } = useSoundPlayer();
+  const { data: embedData } = useEmbedState();
   const isSetPlaylist = useRef(false);
   const chara = charaObject ? charaObject[name] : null;
   useEffect(() => {
@@ -70,6 +73,15 @@ export default function CharaDetail({ name }: DetailProps) {
       max: 40,
     },
   ];
+  const embedList: ReactNode[] = (() => {
+    if (!chara.embed || !embedData) return [];
+    const list = typeof chara.embed === "string" ? [chara.embed] : chara.embed;
+    return list
+      .map((name) => embedData[name])
+      .filter((html) => html !== undefined)
+      .map((html) => HTMLReactParser(html));
+  })();
+
   return (
     <div className="p-0">
       {chara.media?.headerImage ? (
@@ -107,10 +119,10 @@ export default function CharaDetail({ name }: DetailProps) {
         <span>{`${chara.name}${chara.honorific || ""}`}</span>
       </h1>
       <div className="text-main text-xl">{chara.description}</div>
-      {chara.embed ? (
+      {embedList.length ? (
         <div className="my-8 mx-2 md:mx-8">
-          {chara.embed.map((embed, i) => (
-            <div key={i}>{embed}</div>
+          {embedList.map((node, i) => (
+            <div key={i}>{node}</div>
           ))}
         </div>
       ) : null}

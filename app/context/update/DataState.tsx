@@ -6,6 +6,7 @@ import SiteState from "@/app/site/SiteState";
 import PostState from "@/app/blog/PostState";
 import SoundState from "@/app/sound/SoundState";
 import DataTextState, { useDataTextState } from "./DataTextState";
+import EmbedState from "../embed/EmbedState";
 
 function addMdate(url: string, values: { [k: string]: any }) {
   if (values[url]) return `${url}?v=${values[url]}`;
@@ -22,9 +23,10 @@ export default function DataState() {
         <MediaImageState url={addMdate("/data/images.json", values)} />
         <SoundState url={addMdate("/data/sound.json", values)} />
         <PostState url={addMdate("/blog/posts.json", values)} />
+        <EmbedState url={addMdate("/data/embed.json", values)} />
       </>
     );
   } else {
-    return <DataTextState url={"/data/State/update.txt"} />;
+    return <DataTextState url={"/data/update.txt"} />;
   }
 }

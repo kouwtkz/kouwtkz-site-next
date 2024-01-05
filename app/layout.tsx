@@ -17,7 +17,7 @@ import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
 import SoundPlayer from "./sound/SoundPlayer";
-import DataState from "./data/State/DataState";
+import DataState from "./context/update/DataState";
 
 export const metadata: Metadata = {
   title: {

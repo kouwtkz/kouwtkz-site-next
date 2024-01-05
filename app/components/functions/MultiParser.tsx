@@ -1,7 +1,7 @@
 "use client";
 
 import React, { MutableRefObject, useLayoutEffect, useRef } from "react";
-import HtmlParse from "html-react-parser";
+import HTMLReactParser from "html-react-parser";
 import { parse } from "marked";
 import { useRouter } from "next/navigation";
 import twemoji from "twemoji";
@@ -105,7 +105,7 @@ function MultiParser({
     }
     if (toTwemoji) childString = twemoji.parse(childString);
     if (toDom) {
-      children = HtmlParse(childString);
+      children = HTMLReactParser(childString);
     } else children = childString;
   } else {
     children = (

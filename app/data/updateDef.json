@@ -1,0 +1,8 @@
+[
+  ["/data/characters.json", "_data/characters.yaml"],
+  ["/data/site.json", "_data/site.yaml"],
+  "/data/images.json",
+  ["/data/sound.json", "_data/sound/_data.yaml"],
+  ["/blog/posts.json", "_data/post.json"],
+  ["/data/embed.json", "_data/embed.yaml"]
+]

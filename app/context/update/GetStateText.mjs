@@ -1,17 +1,12 @@
 // @ts-check
 
 import { statSync } from "fs";
+import updateDef from "@/app/data/updateDef.json";
 
 export default function GetStateText() {
   const defaultMtime = GetDataMtime();
   const StateData =
-    Object.fromEntries([
-      ["/data/characters.json", "_data/characters.yaml"],
-      ["/data/site.json", "_data/site.yaml"],
-      "/data/images.json",
-      ["/data/sound.json", "_data/sound/_data.yaml"],
-      ["/blog/posts.json", "_data/post.json"]
-    ].map(v => {
+    Object.fromEntries(updateDef.map(v => {
       if (Array.isArray(v)) {
         return [v[0], GetDataMtime(v[1])];
       } else {

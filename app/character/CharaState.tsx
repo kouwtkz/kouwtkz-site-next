@@ -84,16 +84,6 @@ const CharaState = ({ url }: { url: string }) => {
                 .map((i) => SoundItemList[i]),
             };
           }
-          if (chara.embed) {
-            chara.embed = chara.embed.map((embed) => {
-              if (typeof embed !== "string") return embed;
-              try {
-                return HTMLReactParser(embed);
-              } catch {
-                return embed;
-              }
-            });
-          }
         });
         charaData.setCharaObject(data);
       });

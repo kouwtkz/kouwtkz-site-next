@@ -13,7 +13,7 @@ export interface CharaType {
   image?: string,
   time?: Date,
   headerImage?: string,
-  embed?: (string | ReactNode)[],
+  embed?: string | string[],
   playlist?: PlaylistType,
   media?: {
     icon?: MediaImageItemType | null,
