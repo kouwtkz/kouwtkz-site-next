@@ -22,7 +22,7 @@ function App() {
         max={40}
         step={28}
         label="fanbook"
-        link={false}
+        linkLabel={false}
         filterButton={true}
       />
     );

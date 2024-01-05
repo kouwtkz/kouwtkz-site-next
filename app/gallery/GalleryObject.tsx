@@ -35,7 +35,7 @@ export default function GalleryObject({
       {list.map((item, i) => {
         if (typeof item === "string") item = { name: item };
         const { name, match, format = "image", ..._args } = item;
-        const setArgs = { max: 20, filterButton: true, ...args, ..._args };
+        const setArgs = { max: 20, filterButton: true, linkLabel: true, ...args, ..._args };
         if (format === "comic") {
           const comicsAlbums = match
             ? imageAlbumList.filter((album) => {
@@ -58,7 +58,12 @@ export default function GalleryObject({
           });
           const album: MediaImageAlbumType = { name, list: thumbnails };
           return (
-            <GalleryList key={i} album={album} loading={loading} {...setArgs} />
+            <GalleryList
+              key={i}
+              album={album}
+              loading={loading}
+              {...setArgs}
+            />
           );
         } else {
           let groupAlbum = match

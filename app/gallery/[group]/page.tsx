@@ -28,7 +28,7 @@ export default async function Page({ params }: Props) {
       items={item}
       max={40}
       step={28}
-      link={false}
+      linkLabel={false}
       filterButton={true}
     />
   );

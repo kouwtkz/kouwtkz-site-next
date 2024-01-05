@@ -13,11 +13,11 @@ export interface GalleryListPropsBase {
   h4?: string;
   label?: string;
   showLabel?: boolean;
+  linkLabel?: boolean | string;
   max?: number;
   step?: number;
   autoDisable?: boolean;
   filterButton?: boolean;
-  link?: boolean | string;
 }
 
 interface GalleryListProps extends GalleryListPropsBase {
@@ -37,11 +37,11 @@ export default function GalleryList({
   label,
   size = 320,
   showLabel = true,
+  linkLabel = false,
   max = 1000,
   step = 20,
   autoDisable = false,
   filterButton = false,
-  link = true,
   loading = false,
   h2: _h2,
   h4: _h4,
@@ -60,11 +60,11 @@ export default function GalleryList({
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
   const heading = label || album.name;
-  const headingElm = link ? (
+  const headingElm = linkLabel ? (
     <Link
       href={
-        typeof link === "string"
-          ? link
+        typeof linkLabel === "string"
+          ? linkLabel
           : `/gallery/${album.group || album.name}`
       }
     >
