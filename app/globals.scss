@@ -27,10 +27,15 @@ body::-webkit-scrollbar-track {
 
 body,
 .window,
+.overflow-y-scroll,
 .fc-scroller {
   &::-webkit-scrollbar {
     width: var(--scroll-margin);
     height: var(--scroll-margin);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: var(--main-color-soft);
+    border-radius: round;
   }
   &.overflow-y-hidden {
     &,
@@ -44,6 +49,7 @@ body,
   &.mobile {
     &,
     .window,
+    .overflow-y-scroll,
     .fc-scroller {
       &::-webkit-scrollbar {
         width: 0;
@@ -59,10 +65,6 @@ body,
         }
       }
     }
-  }
-  &::-webkit-scrollbar-thumb {
-    background: var(--main-color-soft);
-    border-radius: 5px;
   }
 }
 

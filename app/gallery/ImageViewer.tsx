@@ -96,7 +96,7 @@ function ImageViewerWindow() {
           id={imageViewerWindowID}
         >
           <CloseButton
-            className="absolute top-0 right-0 z-20 m-2 w-10 h-10 md:m-6 md:w-16 md:h-16 opacity-80 cursor-pointer"
+            className="absolute top-0 right-0 z-20 m-2 w-10 h-10 md:m-4 md:w-14 md:h-14 opacity-80 cursor-pointer"
             width={60}
             height={60}
             onClick={(e) => {
@@ -104,10 +104,10 @@ function ImageViewerWindow() {
               e.stopPropagation();
             }}
           />
-          <div className="window z-30 flex flex-wrap flex-row max-h-[85%] h-auto md:flex-nowrap overflow-y-scroll w-[98%] md:h-[80%]">
+          <div className="window z-30 flex flex-wrap flex-row max-h-[90%] h-auto md:flex-nowrap w-[98%] md:h-[88%] mt-12 font-KosugiMaru overflow-y-scroll md:overflow-auto">
             <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
               <a
-                title="image.src"
+                title={image.name || image.src}
                 href={`${image.URL || image.src}`}
                 target="_blank"
               >
@@ -115,11 +115,11 @@ function ImageViewerWindow() {
               </a>
             </div>
             {image.album?.visible?.info ? (
-              <div className="flex-auto pb-4 md:pb-0 text-center md:text-left bg-lightbox-background-text min-w-[50vw] max-h-[100%] font-KosugiMaru w-[100%] md:w-auto">
-                <div className="pl-0 md:pl-12">
+              <div className="window flex-auto pb-4 md:pb-0 bg-lightbox-background-text max-h-[100%] md:min-w-[30em] md:w-[40vw] md:overflow-y-scroll">
+                <div className="text-center md:text-left">
                   {image.album.visible.title &&
                   (image.album.visible.filename || !titleEqFilename) ? (
-                    <h2 className="my-8 text-3xl md:text-4xl font-MochiyPopOne text-main-dark break-all">
+                    <h2 className="mx-1 my-8 text-center text-2xl md:text-3xl font-MochiyPopOne text-main-dark break-all">
                       {image.name}
                     </h2>
                   ) : (
@@ -137,7 +137,7 @@ function ImageViewerWindow() {
                       )
                       .map((chara, i) => (
                         <Link
-                          className="mx-2 my-2 whitespace-nowrap inline-block"
+                          className="m-1 text-lg whitespace-nowrap inline-block"
                           href={`/character/${chara.id}`}
                           onClick={() => {
                             imageViewer.onClose();
@@ -181,11 +181,6 @@ function ImageViewerWindow() {
                 ) : (
                   <></>
                 )}
-                <div className="m-4">
-                  <button className="m-auto block text-xl" onClick={backAction}>
-                    とじる
-                  </button>
-                </div>
               </div>
             ) : (
               <></>
