@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import LoopButton from "../components/svg/audio/LoopButton";
 import PrevButton from "../components/svg/audio/PrevButton";
 import NextButton from "../components/svg/audio/NextButton";
+import ShuffleButton from "../components/svg/audio/ShuffleButton";
 
 export default function SoundFixed() {
   const pathname = usePathname();
@@ -18,11 +19,13 @@ export default function SoundFixed() {
     Prev,
     Next,
     NextLoopMode,
+    ToggleShuffle,
     paused,
     ended,
     loopMode,
     playlist,
     current,
+    shuffle,
   } = useSoundPlayer();
   const title = playlist.list[current]?.title || null;
   return (
@@ -39,6 +42,11 @@ export default function SoundFixed() {
                 className="hover:fill-main-pale"
                 loopMode={loopMode}
                 onClick={() => NextLoopMode()}
+              />
+              <ShuffleButton
+                className="hover:fill-main-pale"
+                shuffle={shuffle}
+                onClick={() => ToggleShuffle()}
               />
             </div>
             <div className="[&>*]:m-1 [&>*]:fill-main-soft [&>*]:cursor-pointer">

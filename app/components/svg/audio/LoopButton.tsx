@@ -45,7 +45,7 @@ export default function LoopButton({
             </g>
           ) : null}
           {loopMode === "off" ? (
-            <path d="M29 7L7 29" stroke="white" strokeWidth="4" />
+            <path d="M25 5L9.99999 31.0956" stroke="white" strokeWidth="4" />
           ) : null}
         </>
       )}

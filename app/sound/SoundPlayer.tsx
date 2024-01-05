@@ -25,18 +25,21 @@ type SoundPlayerType = {
   playlist: PlaylistType;
   current: number;
   loopMode: LoopMode;
+  shuffle: boolean;
   special: boolean;
   SetPaused: (paused: boolean) => void;
   SetEnded: (ended: boolean) => void;
   RegistPlaylist: (args: PlaylistRegistProps) => void;
   SetCurrent: (current: number) => void;
   SetLoopMode: (loopMode: LoopMode, current?: number) => void;
+  SetShuffle: (shuffle: boolean) => void;
   Play: (args?: PlaylistRegistProps) => void;
   Pause: () => void;
   Stop: () => void;
   Next: () => void;
   Prev: () => void;
   NextLoopMode: () => void;
+  ToggleShuffle: () => void;
 };
 
 export const useSoundPlayer = create<SoundPlayerType>((set) => ({
@@ -45,6 +48,7 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   playlist: { list: [] },
   current: 0,
   loopMode: LoopModeList[0],
+  shuffle: false,
   special: false,
   SetPaused: (paused) => {
     set(() => ({ paused }));
@@ -88,6 +92,9 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   SetLoopMode: (loopMode) => {
     set(() => ({ loopMode }));
   },
+  SetShuffle(shuffle) {
+    set(() => ({ shuffle }));
+  },
   Play: (args = {}) => {
     set((state) => {
       const value: { paused: boolean; current?: number } = { paused: false };
@@ -104,7 +111,15 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
   },
   Next: () => {
     set((state) => {
-      if (
+      if (state.shuffle) {
+        let current = Math.floor(
+          Math.random() * (state.playlist.list.length - 1)
+        );
+        if (current >= state.current) current++;
+        return {
+          current,
+        };
+      } else if (
         state.loopMode === "playUntilEnd" &&
         state.playlist.list.length === state.current + 1
       ) {
@@ -130,6 +145,9 @@ export const useSoundPlayer = create<SoundPlayerType>((set) => ({
           (LoopModeList.indexOf(state.loopMode) + 1) % LoopModeList.length
         ],
     }));
+  },
+  ToggleShuffle() {
+    set((state) => ({ shuffle: !state.shuffle }));
   },
 }));
 
