@@ -1,11 +1,12 @@
 "use client";
-import { CharaType, CharaObjectType } from "./CharaType";
 
 import React, { useEffect, useRef } from "react";
+import { CharaType, CharaObjectType } from "./CharaType";
 import { create } from "zustand";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
+import HTMLReactParser from "html-react-parser";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
@@ -82,6 +83,16 @@ const CharaState = ({ url }: { url: string }) => {
                 .filter((i) => i >= 0)
                 .map((i) => SoundItemList[i]),
             };
+          }
+          if (chara.embed) {
+            chara.embed = chara.embed.map((embed) => {
+              if (typeof embed !== "string") return embed;
+              try {
+                return HTMLReactParser(embed);
+              } catch {
+                return embed;
+              }
+            });
           }
         });
         charaData.setCharaObject(data);

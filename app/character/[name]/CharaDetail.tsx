@@ -107,6 +107,13 @@ export default function CharaDetail({ name }: DetailProps) {
         <span>{`${chara.name}${chara.honorific || ""}`}</span>
       </h1>
       <div className="text-main text-xl">{chara.description}</div>
+      {chara.embed ? (
+        <div className="my-8 mx-2 md:mx-8">
+          {chara.embed.map((embed, i) => (
+            <div key={i}>{embed}</div>
+          ))}
+        </div>
+      ) : null}
       {galleryGroups.map((group, i) => {
         return (
           <div key={i}>

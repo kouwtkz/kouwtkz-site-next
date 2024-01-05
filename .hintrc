@@ -12,6 +12,15 @@
           "-webkit-tap-highlight-color"
         ]
       }
+    ],
+    "disown-opener": "off",
+    "compat-api/html": [
+      "default",
+      {
+        "ignore": [
+          "iframe[allow]"
+        ]
+      }
     ]
   }
 }

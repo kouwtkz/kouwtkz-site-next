@@ -15,4 +15,14 @@ export const charaMap = <Map<string, CharaType>>new Map(Object.entries(charaObje
 
 Object.entries(charaObject).forEach(([key, chara]) => {
   chara.id = key;
+  if (chara.embed) {
+    chara.embed = chara.embed.map((embed) => {
+      if (typeof embed !== "string") return embed;
+      try {
+        return String(readFileSync(embed));
+      } catch {
+        return embed;
+      }
+    });
+  }
 });
