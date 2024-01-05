@@ -1,7 +1,7 @@
 "use client";
 
 import { create } from "zustand";
-import { SoundAlbumType, SoundItemType } from "./MediaSoundType";
+import { PlaylistType, SoundAlbumType, SoundItemType } from "./MediaSoundType";
 import { useEffect, useRef } from "react";
 import axios from "axios";
 import { useSoundPlayer } from "./SoundPlayer";
@@ -18,37 +18,47 @@ function parseImageItems(soundAlbum: SoundAlbumType) {
 type SoundDataType = {
   SoundAlbum: SoundAlbumType | null;
   SoundItemList: Array<SoundItemType>;
-  setSoundAlbum: (album: SoundAlbumType) => void;
+  defaultPlaylist: PlaylistType | null;
+  SetSoundAlbum: (album: SoundAlbumType) => void;
+  SetDefaultPlaylist: (playlist: PlaylistType) => void;
 };
 
 export const useSoundState = create<SoundDataType>((set) => ({
   SoundAlbum: null,
   SoundItemList: [],
-  setSoundAlbum: (data) => {
+  defaultPlaylist: null,
+  SetSoundAlbum: (data) => {
     set(() => ({
       SoundAlbum: data,
       SoundItemList: parseImageItems(data),
+    }));
+  },
+  SetDefaultPlaylist: (playlist) => {
+    set(() => ({
+      defaultPlaylist: playlist,
     }));
   },
 }));
 
 export default function SoundState({ url }: { url: string }) {
   const { RegistPlaylist } = useSoundPlayer();
-  const { setSoundAlbum } = useSoundState();
+  const { SetSoundAlbum, SetDefaultPlaylist } = useSoundState();
   const isSet = useRef(false);
   useEffect(() => {
     if (!isSet.current)
       axios(url).then((r) => {
         const album = r.data as SoundAlbumType;
-        setSoundAlbum(album);
+        SetSoundAlbum(album);
         const setupPlaylist = album.playlist?.find((playlist) =>
           playlist.list.some((item) => item.setup)
         ) || { list: [] };
         const setupSoundIndex = setupPlaylist?.list.findIndex(
           (item) => item.setup
         );
-        if (setupPlaylist?.list.length > 0)
+        if (setupPlaylist?.list.length > 0) {
+          SetDefaultPlaylist(setupPlaylist);
           RegistPlaylist({ playlist: setupPlaylist, current: setupSoundIndex });
+        }
       });
     isSet.current = true;
   });
