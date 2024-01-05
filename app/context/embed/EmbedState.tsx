@@ -1,7 +1,8 @@
 "use client";
-import React, { ReactNode, useEffect, useRef } from "react";
+import React, { HTMLAttributes, memo, useEffect, useRef } from "react";
 import { create } from "zustand";
 import axios from "axios";
+import HTMLReactParser from "html-react-parser";
 
 export type EmbedTextType = string | string[];
 export type EmbedDataType = { [k: string]: string } | null;
@@ -35,3 +36,25 @@ export default function EmbedState({ url }: { url: string }) {
   });
   return <></>;
 }
+
+interface EmbedNodeProps extends HTMLAttributes<HTMLDivElement> {
+  embed?: string[] | string;
+}
+
+export const EmbedNode = memo(function EmbedNode({
+  embed,
+  ...args
+}: EmbedNodeProps) {
+  const { data: embedData } = useEmbedState();
+  if (!embed || embedData === null) return <></>;
+  const list = typeof embed === "string" ? [embed] : embed;
+  return (
+    <>
+      {list.map((name, i) => (
+        <div key={i} {...args}>
+          {HTMLReactParser(embedData[name] || name)}
+        </div>
+      ))}
+    </>
+  );
+});

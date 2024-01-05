@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 import ImageMee from "../components/image/ImageMee";
 import CloseButton from "../components/svg/button/CloseButton";
+import { EmbedNode, useEmbedState } from "../context/embed/EmbedState";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -52,6 +53,7 @@ function ImageViewerWindow() {
   const search = useSearchParams();
   const { imageItemList } = useMediaImageState();
   const charaData = useCharaState();
+  const { data: embedData } = useEmbedState();
   const [backCheck, setBackCheck] = useState(false);
   const imageParam = search.get("image");
 
@@ -104,19 +106,31 @@ function ImageViewerWindow() {
               e.stopPropagation();
             }}
           />
-          <div className="window z-30 flex flex-wrap flex-row max-h-[90%] h-auto md:flex-nowrap w-[98%] md:h-[88%] mt-12 font-KosugiMaru overflow-y-scroll md:overflow-auto">
-            <div className="flex-auto bg-lightbox-background-preview flex items-center w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
-              <a
-                title={image.name || image.src}
-                href={`${image.URL || image.src}`}
-                target="_blank"
-              >
-                <ImageMee imageItem={image} style={{ objectFit: "contain" }} />
-              </a>
+          <div className="window z-30 flex flex-wrap flex-row items-center md:items-stretch max-h-[90%] h-auto md:flex-nowrap w-[98%] md:h-[88%] mt-12 font-KosugiMaru overflow-y-scroll md:overflow-auto">
+            <div className="bg-lightbox-background-preview w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
+              {image.embed ? (
+                <>
+                  <EmbedNode
+                    embed={image.embed}
+                  />
+                </>
+              ) : (
+                <a
+                  title={image.name || image.src}
+                  href={`${image.URL || image.src}`}
+                  target="_blank"
+                  className="flex items-center flex-auto"
+                >
+                  <ImageMee
+                    imageItem={image}
+                    style={{ objectFit: "contain" }}
+                  />
+                </a>
+              )}
             </div>
             {image.album?.visible?.info ? (
               <div className="window flex-auto pb-4 md:pb-0 bg-lightbox-background-text max-h-[100%] md:min-w-[30em] md:w-[40vw] md:overflow-y-scroll">
-                <div className="text-center md:text-left">
+                <div className="text-center md:text-left ml-4 mr-2">
                   {image.album.visible.title &&
                   (image.album.visible.filename || !titleEqFilename) ? (
                     <h2 className="mx-1 my-8 text-center text-2xl md:text-3xl font-MochiyPopOne text-main-dark break-all">
@@ -125,12 +139,12 @@ function ImageViewerWindow() {
                   ) : (
                     <div className="my-8" />
                   )}
-                  <div className="mx-2 md:mr-6 text-xl md:text-2xl">
+                  <div className="text-xl md:text-2xl">
                     <MultiParser className="[&_p]:my-4 [&_p]:whitespace-pre-line">
                       {image.description}
                     </MultiParser>
                   </div>
-                  <div className="m-2 mb-8 text-2xl">
+                  <div className="mb-8 text-2xl">
                     {charaData.charaList
                       .filter((chara) =>
                         image.tags?.find((tag) => tag === chara.id)

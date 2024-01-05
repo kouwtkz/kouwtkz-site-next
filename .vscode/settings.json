@@ -3,7 +3,7 @@
     "*.css": "tailwindcss"
   },
   "VsCodeTaskButtons.tasks": [
-    { "label": "update", "task": "update: gallery" },
+    { "label": "update", "task": "update: media" },
     { "label": "dev", "task": "npm: dev" },
     { "label": "build", "task": "npm: build" },
     { "label": "serve", "task": "serve: static" },

@@ -1,43 +1,20 @@
 "use client";
 
-import GalleryList from "@/app/gallery/GalleryList";
 import { useServerState } from "@/app/components/System/ServerState";
-import { useMediaImageState } from "@/app/context/MediaImageState";
 import ImageMee, { ImageMeeIcon } from "@/app/components/image/ImageMee";
-import { useCharaState } from "../CharaState";
+import { CharaGalleryAlbum, useCharaState } from "../CharaState";
 import { useSoundPlayer } from "@/app/sound/SoundPlayer";
-import { ReactNode, memo, useEffect, useRef } from "react";
-import HTMLReactParser from "html-react-parser";
-import {
-  EmbedDataType,
-  EmbedTextType,
-  useEmbedState,
-} from "@/app/context/embed/EmbedState";
+import { memo, useEffect, useRef } from "react";
+import { EmbedNode, useEmbedState } from "@/app/context/embed/EmbedState";
 
 type DetailProps = {
   name: string;
 };
 
-const EmbedNode = memo(function EmbedNode({
-  embed,
-  embedData,
-}: {
-  embed: string;
-  embedData: EmbedDataType;
-}) {
-  const list = typeof embed === "string" ? [embed] : embed;
-  if (!embed || !embedData === null) return [];
-  return list.map((name) =>
-    embedData === null ? <></> : HTMLReactParser(embedData[name] || name)
-  );
-});
-
 export default function CharaDetail({ name }: DetailProps) {
   const { isStatic } = useServerState();
-  const { imageItemList } = useMediaImageState();
   const { charaObject } = useCharaState();
   const { RegistPlaylist, current, playlist } = useSoundPlayer();
-  const { data: embedData } = useEmbedState();
   const isSetPlaylist = useRef(false);
   const chara = charaObject ? charaObject[name] : null;
   useEffect(() => {
@@ -56,47 +33,6 @@ export default function CharaDetail({ name }: DetailProps) {
     }
   });
   if (!chara) return null;
-  const galleryGroups = [
-    {
-      list: imageItemList.filter(
-        (image) =>
-          image.album?.name?.match("art") &&
-          image.tags?.some((v) => v === chara.id)
-      ),
-      name: "ART",
-    },
-    {
-      list: imageItemList.filter(
-        (image) =>
-          image.album?.name?.match("goods") &&
-          image.tags?.some((v) => v === chara.id)
-      ),
-      name: "GOODS",
-    },
-    {
-      list: imageItemList.filter(
-        (image) =>
-          image.album?.name?.match("picture") &&
-          image.tags?.some((v) => v === chara.id)
-      ),
-      name: "PICTURE",
-    },
-    {
-      list: imageItemList.filter(
-        (image) =>
-          image.album?.name?.match("given") &&
-          image.tags?.some((v) => v === chara.id)
-      ),
-      name: "FAN ART",
-      max: 40,
-    },
-  ];
-  const embedList =
-    chara.embed && embedData
-      ? (typeof chara.embed === "string" ? [chara.embed] : chara.embed).map(
-          (embed, i) => <EmbedNode key={i} {...{ embed, embedData }} />
-        )
-      : [];
 
   return (
     <div className="p-0">
@@ -135,25 +71,12 @@ export default function CharaDetail({ name }: DetailProps) {
         <span>{`${chara.name}${chara.honorific || ""}`}</span>
       </h1>
       <div className="text-main text-xl">{chara.description}</div>
-      {embedList.length ? (
-        <div className="my-8 mx-2 md:mx-8">
-          {embedList.map((node, i) => (
-            <div key={i}>{node}</div>
-          ))}
-        </div>
-      ) : null}
-      {galleryGroups.map((group, i) => {
-        return (
-          <div key={i}>
-            <GalleryList
-              album={group}
-              autoDisable={true}
-              max={group.max || 20}
-              filterButton={true}
-            />
-          </div>
-        );
-      })}
+      <EmbedNode className="my-8 mx-2 md:mx-8" embed={chara.embed} />
+      <CharaGalleryAlbum chara={chara} name="art" />
+      <CharaGalleryAlbum chara={chara} name="goods" />
+      <CharaGalleryAlbum chara={chara} name="3D" />
+      <CharaGalleryAlbum chara={chara} name="picture" />
+      <CharaGalleryAlbum chara={chara} name="given" label="FAN ART" max={40} />
     </div>
   );
 }

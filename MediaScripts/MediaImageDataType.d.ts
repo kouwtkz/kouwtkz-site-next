@@ -33,6 +33,7 @@ export type MediaImageItemType = {
   URL?: string;
   tags?: string[];
   description?: string;
+  embed?: string;
   fanart?: boolean;
   collaboration?: boolean;
   copyright?: string | boolean;

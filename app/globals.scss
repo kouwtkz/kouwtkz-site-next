@@ -342,6 +342,9 @@ iframe {
 .sketchfab-embed-wrapper {
   iframe {
     width: 100%;
-    height: 36em;
+    min-height: 36em;
+  }
+  #image_viewer & p {
+    display: none;
   }
 }

@@ -43,7 +43,7 @@
       "detail": "deploy to cloudflare pages"
     },
     {
-      "label": "update: media files.",
+      "label": "update: media",
       "type": "shell",
       "command": "node ./MediaScripts/MediaUpdate.mjs",
       "detail": "gallery yaml update & make thumbnail & media copy"

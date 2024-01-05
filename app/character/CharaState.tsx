@@ -1,12 +1,13 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { HTMLAttributes, memo, useEffect, useRef } from "react";
 import { CharaType, CharaObjectType } from "./CharaType";
 import { create } from "zustand";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
 import HTMLReactParser from "html-react-parser";
+import GalleryList from "../gallery/GalleryList";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
@@ -25,7 +26,7 @@ export const useCharaState = create<CharaStateType>((set) => ({
   },
 }));
 
-const CharaState = ({ url }: { url: string }) => {
+export default function CharaState({ url }: { url: string }) {
   const charaData = useCharaState();
   const isSet = useRef(false);
   const { imageItemList, imageAlbumList } = useMediaImageState();
@@ -92,6 +93,41 @@ const CharaState = ({ url }: { url: string }) => {
   });
 
   return <></>;
-};
+}
 
-export default CharaState;
+interface CharaGalleryAlbumProps extends HTMLAttributes<HTMLDivElement> {
+  name: string;
+  chara: CharaType;
+  label?: string;
+  max?: number;
+}
+
+export const CharaGalleryAlbum = memo(function GalleryFromAlbum({
+  name,
+  label,
+  chara,
+  max = 20,
+  ...args
+}: CharaGalleryAlbumProps) {
+  const { imageAlbumList } = useMediaImageState();
+  if (!name || imageAlbumList.length === 0) return <></>;
+  const matchAlbum = imageAlbumList.find((album) => album.name === name);
+  if (name==="3D") console.log(imageAlbumList)
+  if (!matchAlbum) return <></>;
+  const album = {
+    ...matchAlbum,
+    list: matchAlbum.list.filter((item) =>
+      item.tags?.some((v) => v === chara.id)
+    ),
+  };
+  if (album.list.length === 0) return <></>;
+  return (
+    <GalleryList
+      album={album}
+      autoDisable={true}
+      max={max}
+      filterButton={true}
+      {...args}
+    />
+  );
+});
