@@ -27,7 +27,8 @@ function Main() {
     let imageIndex = Math.floor(
       Math.random() * (topImages.length - (curIndex >= 0 ? 1 : 0))
     );
-    if (imageIndex >= curIndex) imageIndex++;
+    if (curIndex >= 0 && curIndex <= imageIndex) imageIndex++;
+    console.log(imageIndex);
     setTopImage(topImages[imageIndex]);
   };
   if (firstLoad.current && imageItemList.length > 0) {
