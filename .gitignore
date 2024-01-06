@@ -17,6 +17,8 @@ yamldata_mtimes.json
 /.cache
 *.check
 
+desktop.ini
+
 # dependencies
 /node_modules
 /.pnp
