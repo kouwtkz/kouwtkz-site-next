@@ -25,6 +25,13 @@ export const metadata: Metadata = {
     default: site.title,
   },
   description: site.description,
+  openGraph: {
+    title: {
+      template: `%s | ${site.title}`,
+      default: site.title,
+    },
+    description: site.description,
+  },
 };
 
 export default async function RootLayout({
