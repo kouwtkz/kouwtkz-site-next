@@ -106,8 +106,8 @@ function ImageViewerWindow() {
               e.stopPropagation();
             }}
           />
-          <div className="window z-30 flex flex-wrap flex-row items-center md:items-stretch max-h-[90%] h-auto md:flex-nowrap w-[98%] md:h-[88%] mt-12 font-KosugiMaru overflow-y-scroll md:overflow-auto">
-            <div className="bg-lightbox-background-preview w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]">
+          <div className="window modal z-30 font-KosugiMaru">
+            <div className="preview">
               {image.embed ? (
                 <>
                   <EmbedNode
@@ -129,7 +129,7 @@ function ImageViewerWindow() {
               )}
             </div>
             {image.album?.visible?.info ? (
-              <div className="window flex-auto pb-4 md:pb-0 bg-lightbox-background-text max-h-[100%] md:min-w-[30em] md:w-[40vw] md:overflow-y-scroll">
+              <div className="window info">
                 <div className="text-center md:text-left ml-4 mr-2">
                   {image.album.visible.title &&
                   (image.album.visible.filename || !titleEqFilename) ? (
