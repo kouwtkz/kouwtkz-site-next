@@ -21,6 +21,7 @@ import DataState from "./context/update/DataState";
 import { WithContext, WebSite } from "schema-dts";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
   title: {
     template: `%s | ${site.title}`,
     default: site.title,
@@ -32,6 +33,7 @@ export const metadata: Metadata = {
       default: site.title,
     },
     description: site.description,
+    images: [site.image],
   },
 };
 
