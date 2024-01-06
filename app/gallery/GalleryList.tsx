@@ -76,15 +76,15 @@ export default function GalleryList({
   return (
     <>
       {_h2 || _h4 ? (
-        <div className="pt-8">
+        <div className="pt-6 pb-2">
           {_h2 ? (
             <h2 className="my-4 text-4xl text-main font-MochiyPopOne">{_h2}</h2>
           ) : null}
           {_h4 ? <h4 className="text-main-soft">{_h4}</h4> : null}
         </div>
       ) : null}
-      <div className="w-[100%]">
-        <div className="pt-12 mx-4 relative">
+      <div className="pt-6 pb-6 w-[100%]">
+        <div className="mx-4 relative">
           {filterButton ? (
             <div>
               <select

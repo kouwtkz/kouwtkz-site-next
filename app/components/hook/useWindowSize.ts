@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useLayoutEffect, useState } from 'react';
 
 // お借りしました https://zenn.dev/kenghaya/articles/6020b6192dadec

@@ -42,7 +42,7 @@
   --playing-mark: "▶";
   --lightbox-background: rgba(0, 0, 0, 0.3);
   --lightbox-background-preview: rgba(146, 147, 127, 0.8);
-  --lightbox-background-text: rgb(255 255 255 / 90%);
+  --lightbox-background-text: rgb(246, 246, 243);
 }
 :root.theme-orange {
   --play-background-color-top: #fff9d4;

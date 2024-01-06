@@ -106,7 +106,7 @@ button,
     margin-right: auto;
   }
   > *:not(.transparent) {
-    background-color: #ffffff80;
+    // background-color: #ffffff80;
     overflow: hidden;
   }
 }
@@ -339,9 +339,6 @@ iframe {
   }
 }
 
-// bg-lightbox-background-preview w-[100%] max-h-[65vh] md:max-h-[100%] [&_*]:w-[100%] [&_*]:h-[100%]
-// className="bg-lightbox-background w-[100vw] h-[100vh] flex justify-center items-center"
-
 #image_viewer {
   .viewer {
     background-color: var(--lightbox-background);
@@ -364,7 +361,6 @@ iframe {
     body:not(.mobile) & {
       margin-right: 1.5rem;
     }
-    // absolute top-0 right-0 z-20 m-2 w-10 h-10 md:m-2 md:w-14 md:h-14 opacity-80 cursor-pointer
   }
   .modal {
     margin-top: 3.6rem;
