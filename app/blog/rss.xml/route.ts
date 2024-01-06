@@ -5,7 +5,7 @@ import { parse } from "marked";
 import { getPostsFromJson } from "../posts.json/fromJson";
 import twemoji from "twemoji";
 
-const SITE_URL = process.env.PRODUCTION_URL || "http://localhost";
+const SITE_URL = site.url || "http://localhost";
 
 export async function GET() {
   const rawPosts = getPostsFromJson();

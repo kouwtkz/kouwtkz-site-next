@@ -4,6 +4,7 @@ type SiteProps = {
   title: string
   description: string
   short: { description: string }
+  url: string
   image: string
   author: SiteAuthorProps
   manifest: any
