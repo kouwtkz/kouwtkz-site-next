@@ -2,10 +2,10 @@ import { parse } from "yaml";
 import { readFileSync } from "fs";
 
 /**
- * @typedef { import("./SiteDataType.d.js").SiteProps } SiteProps
- * @typedef { import("./SiteDataType.d.js").SiteAuthorProps } SiteAuthorProps
- * @typedef { import("./SiteDataType.d.js").SiteMenuProps } SiteMenuProps
- * @typedef { import("./SiteDataType.d.js").SiteSnsProps } SiteSnsProps
+ * @typedef { import("./SiteDataType.d.js").SiteDataType } SiteDataType
+ * @typedef { import("./SiteDataType.d.js").SiteAuthorType } SiteAuthorType
+ * @typedef { import("./SiteDataType.d.js").SiteMenuItemType } SiteMenuItemType
+ * @typedef { import("./SiteDataType.d.js").SiteSnsItemType } SiteSnsItemType
  */
 
 const projectRoot = process.cwd(), dataDir = process.env.DATA_DIR || '';
@@ -20,7 +20,7 @@ try {
 }
 
 
-/** @type SiteProps */
+/** @type SiteDataType */
 const site = rawData;
 
 export { site };

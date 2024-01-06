@@ -2,11 +2,11 @@
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
 import axios from "axios";
-import { SiteProps } from "./SiteDataType";
+import { SiteDataType } from "./SiteDataType";
 
 type SiteStateType = {
-  site: SiteProps | null;
-  setSite: (value: SiteProps) => void;
+  site: SiteDataType | null;
+  setSite: (value: SiteDataType) => void;
 };
 
 export const useSiteState = create<SiteStateType>((set) => ({
@@ -22,7 +22,7 @@ export default function SiteState({ url }: { url: string }) {
   useEffect(() => {
     if (!isSet.current) {
       axios(url).then((r) => {
-        const data: SiteProps = r.data;
+        const data: SiteDataType = r.data;
         setSite(data);
       });
       isSet.current = true;

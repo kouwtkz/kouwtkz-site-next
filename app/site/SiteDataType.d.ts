@@ -1,18 +1,18 @@
 import { GalleryItemType } from "../gallery/GalleryObject"
 
-type SiteProps = {
+type SiteDataType = {
   title: string
   description: string
   short: { description: string }
   url: string
   image: string
-  author: SiteAuthorProps
+  author: SiteAuthorType
   manifest: any
   enableEmoji?: boolean
   enableRobotsTXT?: boolean
   menu?: {
-    nav?: SiteMenuProps[],
-    sns?: SiteSnsProps[],
+    nav?: SiteMenuItemType[],
+    sns?: SiteSnsItemType[],
   }
   gallery?: {
     default?: GalleryItemType[]
@@ -20,7 +20,7 @@ type SiteProps = {
   }
 }
 
-export type SiteAuthorProps = {
+export type SiteAuthorType = {
   name: string
   account: string
   ename: string
@@ -33,12 +33,12 @@ export type SiteAuthorProps = {
   }
 }
 
-export type SiteMenuProps = {
+export type SiteMenuItemType = {
   name: string
   url: string
 }
 
-export type SiteSnsProps = {
+export type SiteSnsItemType = {
   name: string
   url: string
   title?: string

@@ -1,13 +1,11 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
-import { SiteProps, SiteSnsProps } from "@/app/site/SiteData.mjs";
+import { SiteDataType, SiteSnsItemType } from "@/app/site/SiteData.mjs";
 
 const SnsList = React.memo(function SnsList({
   snsList,
 }: {
-  snsList: SiteSnsProps[];
+  snsList: SiteSnsItemType[];
 }) {
   return (
     <>
@@ -45,7 +43,7 @@ const SnsList = React.memo(function SnsList({
 });
 
 type FooterProps = {
-  site: SiteProps;
+  site: SiteDataType;
   currentDate: Date;
 };
 export default function Footer({ site, currentDate }: FooterProps) {
