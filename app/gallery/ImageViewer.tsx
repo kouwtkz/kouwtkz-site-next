@@ -21,7 +21,6 @@ const bodyLock = (m: boolean) => {
     body?.classList.remove("overflow-y-hidden");
   }
 };
-const imageViewerWindowID = "image_viewer_window";
 
 type ImageViewerType = {
   isOpen: boolean;
@@ -91,14 +90,13 @@ function ImageViewerWindow() {
     <div className="fixed z-40" id="image_viewer">
       {imageViewer.isOpen && image ? (
         <div
-          className="bg-lightbox-background w-[100vw] h-[100vh] flex justify-center items-center"
           onClick={(e) => {
             if (e.target === e.currentTarget) backAction();
           }}
-          id={imageViewerWindowID}
+          className="viewer"
         >
           <CloseButton
-            className="absolute top-0 right-0 z-20 m-2 w-10 h-10 md:m-4 md:w-14 md:h-14 opacity-80 cursor-pointer"
+            className="close"
             width={60}
             height={60}
             onClick={(e) => {
@@ -109,11 +107,7 @@ function ImageViewerWindow() {
           <div className="window modal z-30 font-KosugiMaru">
             <div className="preview">
               {image.embed ? (
-                <>
-                  <EmbedNode
-                    embed={image.embed}
-                  />
-                </>
+                <EmbedNode embed={image.embed} />
               ) : (
                 <a
                   title={image.name || image.src}
