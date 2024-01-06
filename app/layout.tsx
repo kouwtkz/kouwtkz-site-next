@@ -18,6 +18,7 @@ import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
 import SoundPlayer from "./sound/SoundPlayer";
 import DataState from "./context/update/DataState";
+import { WithContext, WebSite } from "schema-dts";
 
 export const metadata: Metadata = {
   title: {
@@ -39,6 +40,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const jsonLd: WithContext<WebSite> = {
+    "@type": "WebSite",
+    "@context": "https://schema.org",
+    url: site.url,
+    name: site.title,
+    alternateName: site.author.name,
+  };
   return (
     <html lang="ja">
       <body
@@ -50,6 +58,10 @@ export default async function RootLayout({
           LuloCleanFont.variable,
         ].join(" ")}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <ToasterContext />
         <ClientSetup />
         <EmbedSync />
