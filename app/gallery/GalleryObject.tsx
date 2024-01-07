@@ -1,13 +1,12 @@
 "use client";
 
-import React, { RefObject, createRef, useEffect, useRef } from "react";
-import GalleryList, { GalleryListPropsBase } from "./GalleryList";
+import React, { RefObject, createRef, useRef } from "react";
+import { GalleryList, GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { GroupFormat } from "@/MediaScripts/MediaImageYamlType";
 import { basename } from "path";
 import { MediaImageAlbumType } from "@/MediaScripts/MediaImageDataType";
 import InPageMenu from "../components/navigation/InPageMenu";
-import { isMobile } from "react-device-detect";
 
 export interface GalleryItemObjectType extends GalleryListPropsBase {
   name: string;
@@ -75,7 +74,6 @@ export default function GalleryObject({
   const list = (Array.isArray(items) ? items : [items]).map((item) =>
     typeof item === "string" ? { name: item } : item
   );
-
   const refList = useRef<RefObject<HTMLDivElement>[]>([]);
   list.forEach((_, index) => {
     refList.current[index] = createRef<HTMLDivElement>();

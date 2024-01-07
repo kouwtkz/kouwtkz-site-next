@@ -32,7 +32,7 @@ function getYears(dates: (Date | null | undefined)[]) {
   return Array.from(new Set(dates.map((date) => getYear(date))));
 }
 
-export default function GalleryList({
+export function GalleryList({
   album,
   label,
   size = 320,
