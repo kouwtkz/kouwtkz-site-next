@@ -2,6 +2,7 @@
 
 import { statSync } from "fs";
 import updateDef from "@/app/data/updateDef.json";
+const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 export default function GetStateText() {
   const defaultMtime = GetDataMtime();
@@ -23,7 +24,7 @@ export default function GetStateText() {
 /** @param {string | Date | undefined} file */
 function GetDataMtime(file = undefined) {
   try {
-    if (typeof file === "string") return Math.ceil(statSync(file).mtime.getTime() / 1000);
+    if (typeof file === "string") return Math.ceil(statSync(`${cwd}/${file}`).mtime.getTime() / 1000);
     else if (file) return Math.ceil(file.getTime() / 1000);
   } catch (e) {
     console.error(e);

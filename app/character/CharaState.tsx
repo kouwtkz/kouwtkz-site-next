@@ -6,7 +6,6 @@ import { create } from "zustand";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
-import HTMLReactParser from "html-react-parser";
 import { GalleryList } from "../gallery/GalleryList";
 type CharaStateType = {
   charaList: Array<CharaType>;

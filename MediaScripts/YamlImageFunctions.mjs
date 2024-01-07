@@ -5,6 +5,7 @@ import fs from "fs";
 import { resolve, extname, dirname, parse } from "path";
 import RetouchImage from "./RetouchImage.mjs"
 import sharp from "sharp";
+const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 /**
  * @typedef {{ name: string; dir: string; }} _Dirent
@@ -26,14 +27,15 @@ export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, 
   // ディレクトリ内の各ファイルを取得
   /** @type fs.Dirent[] */
   let files = [];
+  const _from = resolve(`${cwd}/${from}`);
   try {
-    files = fs.readdirSync(from, { recursive: true, withFileTypes: true })
+    files = fs.readdirSync(_from, { recursive: true, withFileTypes: true })
       .filter(dirent => dirent.isFile())
   } catch (e) {
     console.error(e);
   }
   const ls = files.reduce((a, dirent) => {
-    const dirChild = dirent.path.replace(/\\/g, "/").replace(from, "");
+    const dirChild = dirent.path.replace(_from, "").replace(/\\/g, "/");
     /** @type _Dirent */
     const v = { name: dirent.name, dir: dirChild }
     const ext = extname(dirent.name);
@@ -51,7 +53,7 @@ export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, 
   // 次にyamlファイルのリストを作成
   /** @type YamlGroupType[] */
   let yamls = ls.yamls.map((yaml) => {
-    const dataStr = String(fs.readFileSync(resolve(`${from}/${yaml.dir}/${yaml.name}`)))
+    const dataStr = String(fs.readFileSync(resolve(`${cwd}/${from}/${yaml.dir}/${yaml.name}`)))
     /** @type YamlDataType */
     const data = dataStr ? yamlParse(dataStr) : {};
     /** @type YamlDataImageType[] */
@@ -72,7 +74,7 @@ export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, 
       yamls.unshift(candidate);
     }
     if (!candidate.list?.some(c => c.src === img.name)) {
-      const stat = fs.statSync(resolve(`${from}/${img.dir}/${img.name}`));
+      const stat = fs.statSync(resolve(`${cwd}/${from}/${img.dir}/${img.name}`));
       candidate.list.push({ name: parse(img.name).name, src: img.name, dir, time: stat.mtime.toLocaleString("sv-SE", { timeZone: "JST" }) + "+09:00" });
     }
   })
@@ -120,7 +122,6 @@ export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, 
  * @param {{yamls: YamlGroupType[], makeImage?: boolean, deleteImage?: boolean, publicDir?: string, resizedDir?: string}} args
  */
 export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, publicDir = 'public', resizedDir = 'resized' }) {
-  const cwd = process.cwd();
   const toList = (makeImage) ? Array.from(new Set(yamls.map(({ to }) => to))) : [];
   /** @type {{isFile: boolean, path: string}[]} */
   let currentPublicItems = [];
@@ -139,8 +140,13 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
     y.list.forEach((image) => {
       const imageDir = `/${y.to}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
       if (makeImage) {
-        image.fullPath = resolve(`${cwd}/${y.from}/${y.dir}/${image.dir || ""}/${image.src}`);
-        image.mtime = new Date(fs.statSync(image.fullPath).mtime);
+        try {
+          image.fullPath = resolve(`${cwd}/${y.from}/${y.dir}/${image.dir || ""}/${image.src}`);
+          image.mtime = new Date(fs.statSync(image.fullPath).mtime);
+        } catch (e) {
+          console.error(`[${image.fullPath}]のパスのファイルを取得できませんでした。`);
+          image.fullPath = undefined;
+        }
       }
       const baseImageFullPath = image.fullPath;
       const toWebp = !/\.(svg|gif)$/i.test(image.src);
@@ -152,7 +158,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
       }
       if (makeImage && baseImageFullPath) {
         const baseImageFullPath = image.fullPath;
-        const imageFullPath = resolve(`${cwd}/${publicDir}${image.URL}`);
+        const imageFullPath = resolve(`./${publicDir}${image.URL}`);
         outputPublicImages.push(imageFullPath);
         let copy = true;
         const mtimeBase = image.mtime;
@@ -196,7 +202,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
           const resizedImageUrl = `${resizedImageDir}${image.src.replace(/[^.]+$/, "webp")}`;
           resized.push({ mode: resizeOption.mode, src: resizedImageUrl })
           if (makeImage && baseImageFullPath) {
-            const resizedImageFullPath = resolve(`${cwd}/${publicDir}${resizedImageUrl}`);
+            const resizedImageFullPath = resolve(`./${publicDir}${resizedImageUrl}`);
             let make = true;
             const mtimeBase = image.mtime;
             if (mtimeBase && currentPublicItems.some(({ path }) => path === resizedImageFullPath)) {
@@ -232,7 +238,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
  */
 export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImage = true, ...args }) {
   // yamlを管理するメディアディレクトリ
-  const baseDir = args.from;
+  const baseDir = `${cwd}/${args.from}`;
   const yamls = GetYamlImageList({ readImage: false, ...args });
   const mtimeYamlPath = resolve(`${dirname(process.argv[1])}/yamldata_mtimes.json`);
   /** @type {{[key: string]: Date}} */
@@ -386,6 +392,9 @@ export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImag
                     resolve(`${baseDir}/${y.dir}/${dir}/${img.src}`)
                   )
                 }
+                img.dir = dir;
+                const found = y.list.find(item => item.src === img.src);
+                if (found) found.dir = dir;
               }
             }
           }

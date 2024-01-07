@@ -10,7 +10,6 @@ import {
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
 import { site } from "@/app/site/SiteData.mjs";
-import { currentDate } from "@/app/components/functions/general";
 import ImageViewer from "./gallery/ImageViewer";
 import ToasterContext from "@/app/context/toastContext";
 import ServerStateMake from "./components/System/ServerStateMake";
@@ -19,6 +18,7 @@ import EmbedSync from "./components/System/EmbedSync";
 import SoundPlayer from "./sound/SoundPlayer";
 import DataState from "./context/update/DataState";
 import { WithContext, WebSite } from "schema-dts";
+const currentDate = new Date();
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),

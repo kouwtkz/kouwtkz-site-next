@@ -1,5 +1,4 @@
 // @ts-check
-
 import CopyDirDiff from "./CopyDirDiff.mjs";
 import { UpdateImageYaml } from "./YamlImageFunctions.mjs";
 

@@ -1,8 +1,9 @@
 import { readFileSync, writeFileSync } from "fs";
 import { Post } from "../Post";
-const cwd = process.cwd();
+import { resolve } from "path";
 const postJsonUrl = "/_data/post.json";
-const postJsonPath = `${cwd}${postJsonUrl}`
+const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
+const postJsonPath = resolve(`${cwd}/${postJsonUrl}`)
 
 export function getPostsFromJson() {
   const posts = (JSON.parse(String(readFileSync(postJsonPath))) as Post[]).filter(post => post);
@@ -11,5 +12,5 @@ export function getPostsFromJson() {
 }
 
 export function setPostsToJson(posts: Post[]) {
-  return writeFileSync(postJsonPath, JSON.stringify(posts));
+  return writeFileSync(postJsonPath, JSON.stringify(posts, null, "\t"));
 }

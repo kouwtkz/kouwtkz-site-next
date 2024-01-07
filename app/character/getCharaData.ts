@@ -1,12 +1,12 @@
 import { parse } from "yaml";
 import { readFileSync } from "fs";
-import { setPath } from "@/app/components/functions/general";
 import { CharaType, CharaObjectType } from "./CharaType";
 
-const dataDir = `${process.env.DATA_DIR}`;
+const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
+const dataDir = process.env.DATA_DIR || "";
 let rawData: any = {}
 try {
-  rawData = parse(readFileSync(setPath(`@/${dataDir}/characters.yaml`), "utf8"));
+  rawData = parse(readFileSync(`${cwd}/${dataDir}/characters.yaml`, "utf8"));
 } catch { }
 
 export const charaObject = <CharaObjectType>rawData;

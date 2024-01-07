@@ -45,7 +45,7 @@
     {
       "label": "update: media",
       "type": "shell",
-      "command": "node ./MediaScripts/MediaUpdate.mjs",
+      "command": "node -r dotenv/config ./MediaScripts/MediaUpdate.mjs",
       "detail": "gallery yaml update & make thumbnail & media copy"
     },
     {

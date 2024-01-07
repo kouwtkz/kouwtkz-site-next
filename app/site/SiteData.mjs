@@ -8,12 +8,13 @@ import { readFileSync } from "fs";
  * @typedef { import("./SiteDataType.d.js").SiteSnsItemType } SiteSnsItemType
  */
 
-const projectRoot = process.cwd(), dataDir = process.env.DATA_DIR || '';
+const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
+const dataDir = process.env.DATA_DIR || "";
 
 /** @type any */
 let rawData = {}
 try {
-  rawData = parse(readFileSync(`${projectRoot}/${dataDir}/site.yaml`, "utf8"));
+  rawData = parse(readFileSync(`${cwd}/${dataDir}/site.yaml`, "utf8"));
 } catch (e) {
   console.error(e);
   rawData = { title: "title", description: "description", short: { description: "short" }, author: { since: 2023 } }
