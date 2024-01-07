@@ -78,18 +78,18 @@ export function GalleryList({
       {_h2 || _h4 ? (
         <div className="pt-6 pb-2">
           {_h2 ? (
-            <h2 className="my-4 text-4xl text-main font-MochiyPopOne">{_h2}</h2>
+            <h2 className="my-4 text-2xl md:text-3xl text-main font-MochiyPopOne">{_h2}</h2>
           ) : null}
           {_h4 ? <h4 className="text-main-soft">{_h4}</h4> : null}
         </div>
       ) : null}
       <div className="pt-6 pb-6 w-[100%]">
-        <div className="mx-4 relative">
+        <div className="mx-2 relative">
           {filterButton ? (
             <div>
               <select
                 title="フィルタリング"
-                className="text-main [&_option]:text-main-dark absolute right-0 text-xl m-2 h-6 min-w-[4rem] bg-transparent"
+                className="text-main [&_option]:text-main-dark absolute right-0 text-lg m-2 h-6 min-w-[4rem] bg-transparent"
                 ref={yearSelectRef}
                 onChange={() => {
                   if (yearSelectRef.current)
@@ -108,7 +108,7 @@ export function GalleryList({
             </div>
           ) : null}
           {showLabel ? (
-            <h2 className=" mb-6 font-LuloClean text-3xl sm:text-4xl text-center text-main">
+            <h2 className=" mb-6 font-LuloClean text-2xl sm:text-3xl text-center text-main">
               {headingElm}
             </h2>
           ) : null}

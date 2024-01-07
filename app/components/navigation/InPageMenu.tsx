@@ -11,8 +11,10 @@ type InPageRefObject = {
 
 export default function InPageMenu({
   list = [],
+  adjust = 16,
 }: {
   list?: InPageRefObject[];
+  adjust?: number;
 }) {
   const [refPrompt, setRefPrompt] = useState(false);
   useEffect(() => {
@@ -21,7 +23,7 @@ export default function InPageMenu({
     }
   }, [refPrompt]);
   const [x, y] = useScroll();
-  const jy = y + 64;
+  const jy = y + adjust;
   const firstTop = list.length > 0 ? list[0].ref.current?.offsetTop || 0 : 0;
   return (
     <div className="fixed z-10 right-0 bottom-0 mb-2 pr-1 font-LuloClean">
@@ -35,7 +37,7 @@ export default function InPageMenu({
           <div
             key={i}
             className={
-              "flex flex-row items-center px-2 py-1 w-44 text-left text-base sm:text-xl font-black cursor-pointer " +
+              "flex flex-row items-center px-2 py-1 w-40 md:w-44 text-left text-base sm:text-xl font-black cursor-pointer " +
               (currentMode
                 ? "text-main-strong hover:text-main-deep"
                 : "text-main-soft hover:text-main")
@@ -47,7 +49,7 @@ export default function InPageMenu({
           >
             <div className="flex-1">
               {currentMode ? (
-                <TriangleCursor className="mx-auto fill-main h-4" />
+                <TriangleCursor className="mx-auto fill-main h-3 md:h-4" />
               ) : null}
             </div>
             <div className="flex-[5]">{item.name}</div>

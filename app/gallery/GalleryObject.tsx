@@ -86,6 +86,7 @@ export default function GalleryObject({
             name: item.name,
             ref: refList.current[i],
           }))}
+          adjust={128}
         />
       ) : null}
       {list.map((item, i) => (
