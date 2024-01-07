@@ -1,6 +1,8 @@
 import Link from "next/link";
-import StaticBlogPage from "./StaticBlogPage";
+import PostsPage from "./PostsPage";
 import { Metadata } from "next";
+import { Suspense } from "react";
+import isStatic from "../components/System/isStatic.mjs";
 const title = "BLOG";
 export const metadata: Metadata = { title };
 
@@ -13,7 +15,9 @@ export default async function BlogPage({}: {}) {
             MINI BLOG
           </h2>
         </Link>
-        <StaticBlogPage />
+        <Suspense>
+          <PostsPage isStatic={isStatic} />
+        </Suspense>
         <div className="mt-8">
           <a target="_blank" href="/blog/rss.xml">
             RSSフィード
