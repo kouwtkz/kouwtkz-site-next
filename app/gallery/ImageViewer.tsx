@@ -124,7 +124,7 @@ function ImageViewerWindow() {
             </div>
             {image.album?.visible?.info ? (
               <div className="window info">
-                <div className="text-center md:text-left ml-4 mr-2">
+                <div className="text-center md:text-left">
                   {image.album.visible.title &&
                   (image.album.visible.filename || !titleEqFilename) ? (
                     <h2 className="mx-1 my-8 text-center text-2xl md:text-3xl font-MochiyPopOne text-main-dark break-all">
@@ -145,7 +145,7 @@ function ImageViewerWindow() {
                       )
                       .map((chara, i) => (
                         <Link
-                          className="m-1 text-lg whitespace-nowrap inline-block"
+                          className="mx-2 my-1 text-xl whitespace-nowrap inline-block"
                           href={`/character/${chara.id}`}
                           onClick={() => {
                             imageViewer.onClose();
@@ -159,7 +159,7 @@ function ImageViewerWindow() {
                               mode="icon"
                               width={40}
                               height={40}
-                              className="inline-block mr-1"
+                              className="charaIcon text-3xl mr-1"
                             />
                           ) : (
                             <></>

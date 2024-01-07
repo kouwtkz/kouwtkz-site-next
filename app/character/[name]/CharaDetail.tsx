@@ -60,15 +60,15 @@ export default function CharaDetail({ name }: DetailProps) {
           />
         </div>
       ) : null}
-      <h1 className="text-main-deep font-bold text-3xl h-10 flex justify-center items-center">
+      <h1 className="text-main-deep font-bold text-3xl h-10 inline-block">
         {chara.media?.icon ? (
           <ImageMeeIcon
             imageItem={chara.media.icon}
             size={40}
-            className="inline-block mr-2"
+            className="charaIcon text-4xl mr-2"
           />
         ) : null}
-        <span>{`${chara.name}${chara.honorific || ""}`}</span>
+        <span className="align-middle">{`${chara.name}${chara.honorific || ""}`}</span>
       </h1>
       <div className="text-main text-xl">{chara.description}</div>
       <EmbedNode className="my-8 mx-2 md:mx-8" embed={chara.embed} />
