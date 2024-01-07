@@ -80,12 +80,14 @@ export default function GalleryObject({
   });
   return (
     <>
-      <InPageMenu
-        list={list.map((item, i) => ({
-          name: item.name,
-          ref: refList.current[i],
-        }))}
-      />
+      {list.length > 1 ? (
+        <InPageMenu
+          list={list.map((item, i) => ({
+            name: item.name,
+            ref: refList.current[i],
+          }))}
+        />
+      ) : null}
       {list.map((item, i) => (
         <div key={i} ref={refList.current[i]}>
           <GalleryItem item={item} {...args} />

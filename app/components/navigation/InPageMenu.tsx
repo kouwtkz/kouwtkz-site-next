@@ -2,6 +2,7 @@
 
 import { RefObject, useEffect, useState } from "react";
 import useScroll from "../hook/useScroll";
+import TriangleCursor from "../svg/cursor/Triangle";
 
 type InPageRefObject = {
   name: string;
@@ -34,16 +35,22 @@ export default function InPageMenu({
           <div
             key={i}
             className={
-              "px-2 py-1 text-left text-base sm:text-xl font-black cursor-pointer " +
+              "flex flex-row items-center px-2 py-1 w-44 text-left text-base sm:text-xl font-black cursor-pointer " +
               (currentMode
-                ? "text-main-dark hover:text-main-grayish"
-                : "text-main-strong hover:text-main-deep")
+                ? "text-main-strong hover:text-main-deep"
+                : "text-main-soft hover:text-main")
             }
             onClick={() => {
+              const top = (elm?.offsetTop || 0) - firstTop;
               scrollTo({ top, behavior: "smooth" });
             }}
           >
-            {item.name}
+            <div className="flex-1">
+              {currentMode ? (
+                <TriangleCursor className="mx-auto fill-main h-4" />
+              ) : null}
+            </div>
+            <div className="flex-[5]">{item.name}</div>
           </div>
         );
       })}
