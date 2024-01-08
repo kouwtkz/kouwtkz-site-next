@@ -11,7 +11,8 @@ const outputDir = process.env.DIST_DIR || "out";
 const publicDir = "public";
 
 import CopyDirDiff from "../scripts/CopyDirDiff.mjs";
-CopyDirDiff(publicDir, outputDir, { withDir: false });
+CopyDirDiff(`${publicDir}/_media`, outputDir, {identical: true})
+CopyDirDiff(`${publicDir}/sound`, outputDir, {identical: true})
 
 import { GetStateText, GetUpdateDef } from "../app/context/update/GetStateText.mjs";
 import { resolve } from "path";
