@@ -6,12 +6,13 @@ import SchedulePage from "./SchedulePage";
 import { Suspense } from "react";
 const title = "Schedule".toUpperCase();
 export const metadata: Metadata = { title };
+const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 export default function Page() {
   let googleCalenderOptions: GoogleCalendarOptionsType | undefined;
   try {
     googleCalenderOptions = JSON.parse(
-      String(readFileSync("_data/regist/googleCalendar.json"))
+      String(readFileSync(cwd + "/_data/regist/googleCalendar.json"))
     );
   } catch {}
   return (

@@ -7,7 +7,8 @@ import Link from "next/link";
 import PostDetail from "./PostDetail";
 import { findMany } from "./functions/findMany.mjs";
 import getPosts from "./functions/getPosts.mjs";
-import Fixed from "./fixed/PostsPageFixed";
+import PostsPageFixed from "./fixed/PostsPageFixed";
+import PostDetailFixed from "./fixed/PostDetailFixed";
 
 export default function PostsPage({ isStatic }: { isStatic: boolean }) {
   const { posts } = usePostState();
@@ -18,9 +19,12 @@ export default function PostsPage({ isStatic }: { isStatic: boolean }) {
   const postId = search.get("postId") || undefined;
   if (postId) {
     return (
-      <PostDetail
-        post={findMany({ list: posts, where: { postId }, take: 1 })[0]}
-      />
+      <>
+        <PostDetailFixed isStatic={isStatic} postId={postId} />
+        <PostDetail
+          post={findMany({ list: posts, where: { postId }, take: 1 })[0]}
+        />
+      </>
     );
   } else {
     if (posts.length === 0) return <></>;
@@ -37,7 +41,7 @@ export default function PostsPage({ isStatic }: { isStatic: boolean }) {
     });
     return (
       <>
-        <Fixed isStatic={isStatic} max={max} />
+        <PostsPageFixed isStatic={isStatic} max={max} />
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           {postsResult.length > 0 ? (
             <>
