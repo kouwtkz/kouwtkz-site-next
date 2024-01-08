@@ -37,7 +37,7 @@ const distDir = process.env.DIST_DIR;
 
 if (isBuild) {
   const { exec } = require('child_process');
-  exec('node -r dotenv/config ./MediaScripts/MediaUpdate.mjs',
+  exec('node -r dotenv/config ./mediaScripts/MediaUpdate.mjs',
     (err, stdout, stderr) => { if (err) console.error(stderr); else console.log(stdout) })
 }
 

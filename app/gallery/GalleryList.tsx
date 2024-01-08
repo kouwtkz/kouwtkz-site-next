@@ -1,6 +1,6 @@
 "use client";
 
-import { MediaImageAlbumType } from "@/MediaScripts/MediaImageDataType";
+import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 
 import React, { useRef, useState } from "react";
 import { useRouter } from "next/navigation";

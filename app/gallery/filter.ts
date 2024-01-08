@@ -1,4 +1,4 @@
-import { MediaImageItemType } from "@/MediaScripts/MediaImageDataType";
+import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 export const publicParam = { list: <Array<MediaImageItemType>>[] };
 const buildTime = new Date();
 

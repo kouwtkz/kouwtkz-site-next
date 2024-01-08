@@ -1,5 +1,5 @@
 
-import { MediaImageItemType } from "@/MediaScripts/MediaImageDataType";
+import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { PlaylistType } from "../sound/MediaSoundType";
 import { ReactNode } from "react";
 import { EmbedTextType } from "../context/embed/EmbedState";

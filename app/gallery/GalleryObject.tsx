@@ -3,9 +3,9 @@
 import React, { RefObject, createRef, useRef } from "react";
 import { GalleryList, GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
-import { GroupFormat } from "@/MediaScripts/MediaImageYamlType";
+import { GroupFormat } from "@/mediaScripts/MediaImageYamlType";
 import { basename } from "path";
-import { MediaImageAlbumType } from "@/MediaScripts/MediaImageDataType";
+import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import InPageMenu from "../components/navigation/InPageMenu";
 
 export interface GalleryItemObjectType extends GalleryListPropsBase {

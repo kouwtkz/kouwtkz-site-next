@@ -2,8 +2,8 @@
 "use client";
 
 import React, { useState } from "react";
-import { MediaImageItemType } from "@/MediaScripts/MediaImageDataType";
-import { ResizeMode } from "@/MediaScripts/MediaImageYamlType";
+import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
+import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 
 interface ImageMeeProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   imageItem?: MediaImageItemType;

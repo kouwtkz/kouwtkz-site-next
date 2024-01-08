@@ -5,7 +5,7 @@ import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson";
 import { site } from "@/app/site/SiteData.mjs";
 import { Post } from "../../Post";
 import path from "path";
-import { MediaUpdate } from "@/MediaScripts/MediaUpdateModule";
+import { MediaUpdate } from "@/mediaScripts/MediaUpdateModule";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 type PostFormType = {

@@ -5,7 +5,7 @@ import { create } from "zustand";
 import {
   MediaImageItemType,
   MediaImageAlbumType,
-} from "@/MediaScripts/MediaImageDataType";
+} from "@/mediaScripts/MediaImageDataType";
 import axios from "axios";
 
 function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
