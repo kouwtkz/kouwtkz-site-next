@@ -4,10 +4,8 @@
   },
   "VsCodeTaskButtons.tasks": [
     { "label": "update", "task": "update: media" },
-    { "label": "dev", "task": "npm: dev" },
     { "label": "build", "task": "npm: build" },
-    { "label": "serve", "task": "serve: static" },
-    { "label": "deploy", "task": "deploy: pages" }
+    { "label": "server", "task": "npm: start" }
   ],
   // Explorer で非表示にするもの
   "files.exclude": {
