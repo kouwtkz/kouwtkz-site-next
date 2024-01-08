@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-const prisma: any = {};
 import isStatic from "@/app/components/System/isStatic.mjs";
 import fs from "fs";
 import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson";
 import { site } from "@/app/site/SiteData.mjs";
 import { Post } from "../../Post";
 import path from "path";
-import sharp from "sharp";
+import { MediaUpdate } from "@/MediaScripts/MediaUpdateModule";
+const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 type PostFormType = {
   title?: string,
@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 
 // 投稿または更新
 export async function POST(req: NextRequest) {
-  if (process.env.NODE_ENV !== "development") return new Response("開発モード限定です");
+  if (isStatic && process.env.NODE_ENV === "production") return new Response("サーバーモード限定です");
 
   const formData = await req.formData();
   let success = false
@@ -36,11 +36,11 @@ export async function POST(req: NextRequest) {
     if (!success) success = true;
     const attached_mtime = (formData.getAll("attached_mtime[]") || []) as any[];
     const now = new Date();
-    const cwd = process.cwd();
     const mediaDir = process.env.MEDIA_DIR || "_media";
+    const dataDir = process.env.DATA_DIR || "";
     const publicDir = "public";
     const blogImageDir = `${mediaDir}/images/blog/uploads`;
-    const blogImagesFullDir = path.resolve(`${cwd}/${blogImageDir}`);
+    const blogImagesFullDir = path.resolve(`${cwd}/${dataDir}/${blogImageDir}`);
     const blogPublicImagesFullDir = path.resolve(`${cwd}/${publicDir}/${blogImageDir}`);
     try { fs.mkdirSync(blogImagesFullDir, { recursive: true }); } catch { }
     try { fs.mkdirSync(blogPublicImagesFullDir, { recursive: true }); } catch { }
@@ -49,13 +49,12 @@ export async function POST(req: NextRequest) {
         const mTime = new Date(Number(attached_mtime[i]));
         const filename = file.name.replaceAll(" ", "_");
         const filePath = path.resolve(`${blogImagesFullDir}/${filename}`);
+        console.log(filePath);
         fs.writeFileSync(filePath, Buffer.from(abuf));
         fs.utimesSync(filePath, now, new Date(mTime));
-        const webpImageSrc = filename.replace(/[^.]+$/, "webp");
-        const webpFullPath = path.resolve(`${blogPublicImagesFullDir}/${webpImageSrc}`);
-        sharp(filePath).webp().toFile(webpFullPath);
       })
     })
+    await MediaUpdate();
   }
   const userId = site.author.account;
 
