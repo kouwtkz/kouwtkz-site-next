@@ -31,8 +31,15 @@ if (mediaHost) {
 
 // SSGでImageを出力する際はローダーが必要
 const outputMode = process.env.OUTPUT_MODE || null;
-const isStaticBuild = outputMode === 'export' && process.env.NODE_ENV !== 'development';
+const isBuild = process.env.NODE_ENV === 'production';
+const isStaticBuild = outputMode === 'export' && isBuild;
 const distDir = process.env.DIST_DIR;
+
+if (isBuild) {
+  const { exec } = require('child_process');
+  exec('node -r dotenv/config ./MediaScripts/MediaUpdate.mjs',
+    (err, stdout, stderr) => { if (err) console.error(stderr); else console.log(stdout) })
+}
 
 const exportConfig = (() => {
   if (isStaticBuild) {
