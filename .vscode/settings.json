@@ -6,6 +6,7 @@
     { "label": "update", "task": "update: media" },
     { "label": "dev", "task": "npm: dev" },
     { "label": "build", "task": "npm: build" },
+    { "label": "Lite build", "task": "lite: build" },
     { "label": "serve", "task": "serve: static" },
     { "label": "deploy", "task": "deploy: pages" }
   ],

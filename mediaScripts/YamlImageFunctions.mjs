@@ -239,8 +239,9 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
 export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImage = true, ...args }) {
   // yamlを管理するメディアディレクトリ
   const baseDir = `${cwd}/${args.from}`;
+  const dataDir = process.env.DATA_DIR || "";
   const yamls = GetYamlImageList({ readImage: false, ...args });
-  const mtimeYamlPath = resolve(`${dirname(process.argv[1])}/yamldata_mtimes.json`);
+  const mtimeYamlPath = resolve(`${cwd}/${dataDir}/yamldata_mtimes.json`);
   /** @type {{[key: string]: Date}} */
   const mtimeYamlList = (() => {
     let JsonStr = "{}";

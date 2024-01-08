@@ -4,9 +4,6 @@
 /public/_media
 /public/sound
 
-# 自動生成するもの
-yamldata_mtimes.json
-
 # シークレットキーなど
 .secret/
 
