@@ -1,19 +1,31 @@
 // @ts-check
 
-import { statSync } from "fs";
-import updateDef from "@/app/data/updateDef.json";
+import { readFileSync, statSync } from "fs";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
+const updateDefPath = "app/data/updateDef.json";
 
-export default function GetStateText() {
+/**
+ * @typedef {{ [k: string]: { json: string, data: string | undefined } | undefined }} updateDefType
+ */
+
+/** @returns {updateDefType} */
+export function GetUpdateDef() {
+  return JSON.parse(String(readFileSync(updateDefPath)))
+}
+
+/** @param {updateDefType | undefined} updateDef */
+export function GetStateText(updateDef = undefined) {
+  const _updateDef = updateDef ? updateDef : GetUpdateDef();
   const defaultMtime = GetDataMtime();
   const StateData =
-    Object.fromEntries(updateDef.map(v => {
-      if (Array.isArray(v)) {
-        return [v[0], GetDataMtime(v[1])];
-      } else {
-        return [v, defaultMtime];
-      }
-    }));
+    Object.fromEntries(Object.values(_updateDef)
+      .filter(v => v).map(v => {
+        if (v?.data) {
+          return [v.json, GetDataMtime(v.data)];
+        } else {
+          return [v?.json, defaultMtime];
+        }
+      }));
   const data = { ...StateData };
   return Object.entries(data).map(
     ([key, value]) =>

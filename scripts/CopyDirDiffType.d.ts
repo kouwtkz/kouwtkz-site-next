@@ -5,4 +5,8 @@ export interface CopyDirOptions {
   withDir?: boolean
   /** @default false */
   force?: boolean
+  /** @default undefined */
+  ignore?: string | RegExp
+  /** @default undefined */
+  ignoreDir?: string | RegExp
 }  

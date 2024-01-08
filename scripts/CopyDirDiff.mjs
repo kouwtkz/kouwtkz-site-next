@@ -10,7 +10,7 @@ const cwd = resolve(`${process.cwd()}/${process.env.ROOT || ""}`);
  * @param {import("./CopyDirDiffType").CopyDirOptions} options
  * @returns 
  */
-export default function CopyDirDiff(from, to, { identical = false, withDir = true, force = false }) {
+export default function CopyDirDiff(from, to, { identical = false, withDir = true, force = false, ignore, ignoreDir } = {}) {
   from = from.replace(/[\\/]+/g, "/").replace(/\/$/, "");
   to = (withDir ? to + "/" + basename(from) : to).replace(/[\\/]+/g, "/");
   try { mkdirSync(to, { recursive: true }) } catch { }
@@ -23,8 +23,11 @@ export default function CopyDirDiff(from, to, { identical = false, withDir = tru
     const cutPath = dirent.path.replace(cwd, "").replace(/[\\/]+/g, "/").replace(/^\//, "");
     const itemFrom = resolve(`${dirent.path}/${dirent.name}`);
     const itemTo = resolve(`${to}/${cutPath.replace(/[\\/]+/g, "/").replace(from, "")}/${dirent.name}`);
+    const isDirectory = dirent.isDirectory();
+    if (ignoreDir && (isDirectory ? `${cutPath}/${dirent.name}` : cutPath).match(ignoreDir)) return;
+    if (ignore && !isDirectory && dirent.name.match(ignore)) return;
     if (identical) outputDirents.push({ path: itemTo, isFile: dirent.isFile() });
-    if (dirent.isDirectory()) {
+    if (isDirectory) {
       if (alreadyDirents.every(dirent => dirent.path !== itemTo)) mkdirSync(itemTo);
     } else {
       if (force || alreadyDirents.every(dirent => dirent.path !== itemTo)) {

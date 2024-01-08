@@ -5,8 +5,8 @@ import { usePostState } from "./PostState";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import PostDetail from "./PostDetail";
-import { findMany } from "./functions/findMany";
-import getPosts from "./functions/getPosts";
+import { findMany } from "./functions/findMany.mjs";
+import getPosts from "./functions/getPosts.mjs";
 import Fixed from "./fixed/PostsPageFixed";
 
 export default function PostsPage({ isStatic }: { isStatic: boolean }) {

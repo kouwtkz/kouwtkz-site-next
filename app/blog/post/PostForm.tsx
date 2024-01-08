@@ -33,7 +33,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import SetRegister from "@/app/components/form/hook/SetRegister";
 import axios from "axios";
 import { usePostState } from "../PostState";
-import { findMany } from "../functions/findMany";
+import { findMany } from "../functions/findMany.mjs";
 
 const schema = z.object({
   update: z.string(),

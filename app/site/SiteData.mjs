@@ -2,10 +2,10 @@ import { parse } from "yaml";
 import { readFileSync } from "fs";
 
 /**
- * @typedef { import("./SiteDataType.d.js").SiteDataType } SiteDataType
- * @typedef { import("./SiteDataType.d.js").SiteAuthorType } SiteAuthorType
- * @typedef { import("./SiteDataType.d.js").SiteMenuItemType } SiteMenuItemType
- * @typedef { import("./SiteDataType.d.js").SiteSnsItemType } SiteSnsItemType
+ * @typedef { import("./SiteDataType.d").SiteDataType } SiteDataType
+ * @typedef { import("./SiteDataType.d").SiteAuthorType } SiteAuthorType
+ * @typedef { import("./SiteDataType.d").SiteMenuItemType } SiteMenuItemType
+ * @typedef { import("./SiteDataType.d").SiteSnsItemType } SiteSnsItemType
  */
 
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;

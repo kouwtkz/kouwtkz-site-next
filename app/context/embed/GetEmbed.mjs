@@ -4,7 +4,7 @@ import { parse } from "yaml";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 const dataDir = process.env.DATA_DIR || "";
 
-export default function GetEmbed() {
+export function GetEmbed() {
   let obj = {};
   try {
     obj = parse(String(readFileSync(`${cwd}/${dataDir}/embed.yaml`, "utf8")))

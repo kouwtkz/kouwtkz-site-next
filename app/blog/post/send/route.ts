@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import isStatic from "@/app/components/System/isStatic.mjs";
 import fs from "fs";
-import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson";
+import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson.mjs";
 import { site } from "@/app/site/SiteData.mjs";
 import { Post } from "../../Post";
 import path from "path";
-import { MediaUpdate } from "@/mediaScripts/MediaUpdateModule";
+import { MediaUpdate } from "@/mediaScripts/MediaUpdateModule.mjs";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 type PostFormType = {

@@ -49,6 +49,11 @@
       "detail": "gallery yaml update & make thumbnail & media copy"
     },
     {
+      "label": "lite: build",
+      "type": "shell",
+      "command": "node -r dotenv/config ./mediaScripts/LiteBuild.mjs"
+    },
+    {
       "label": "serve: static",
       "type": "shell",
       "command": "node ./.vscode/scripts/wsv.js ./out/html 3003"

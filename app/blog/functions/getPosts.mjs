@@ -1,18 +1,24 @@
-import { AutoAllotDate } from "@/app/components/System/DateFunctions";
-import { Post } from "../Post";
-import { findMany } from "./findMany";
+// @ts-check
 
-type getPostsProps = {
-  posts: Post[]
-  update?: boolean
-  take?: number
-  page?: number
-  q?: string
-  common?: boolean
-  pinned?: boolean
-}
+/** @typedef { import("../Post.d").Post } Post */
+import { AutoAllotDate } from "../../components/System/DateFunctions.mjs";
+import { findMany } from "./findMany.mjs";
 
-export default function getPosts({ posts, take, page, common, q = "", pinned = false }: getPostsProps) {
+/**
+ * @typedef 
+ * {{
+ *  posts: Post[]
+ *  update?: boolean
+ *  take?: number
+ *  page?: number
+ *  q?: string
+ *  common?: boolean
+ *  pinned?: boolean
+ * }} getPostsProps
+ */
+
+/** @param {getPostsProps} args */
+export default function getPosts({ posts, take, page, common, q = "", pinned = false }) {
   if (page) page--;
   const skip = (take && page) ? take * page : 0;
   const options = {};
@@ -21,12 +27,14 @@ export default function getPosts({ posts, take, page, common, q = "", pinned = f
   if (common) where.push(
     { draft: false, date: { lte: new Date() } }
   )
-  const orderBy: any[] = []
+  /** @type any[] */
+  const orderBy = []
   if (pinned) orderBy.push({ pin: "desc" })
   orderBy.push({ date: "desc" })
 
   try {
-    let postsResult: Post[] = findMany({
+    /** @type Post[] */
+    let postsResult = findMany({
       list: posts,
       where: {
         AND: where,
@@ -46,14 +54,23 @@ export default function getPosts({ posts, take, page, common, q = "", pinned = f
   }
 }
 
-type WhereOptionsType = {
-  hidden?: {
-    draft?: boolean
-  };
-}
-function setWhere(q: string, options: WhereOptionsType) {
+/**
+ * @typedef 
+ * {{
+ *  hidden?: {
+ *    draft?: boolean
+ *  };
+ * }} WhereOptionsType
+ */
+
+/**
+ * @param {string} q
+ * @param {WhereOptionsType} options
+ */
+function setWhere(q, options) {
   const hiddenOption = options.hidden || { draft: false }
-  const where = [] as any[];
+    /** @type any[] */
+  const where = [];
   let OR = false, OR_skip = false;
   const searchArray = q.replace(/^\s+|\s+$/, "").split(/\s+/);
   searchArray.forEach((item) => {

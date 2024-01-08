@@ -1,3 +1,5 @@
+// @ts-check
+
 import { promisify } from 'util';
 import childProcess from "child_process";
 const exec = promisify(childProcess.exec);

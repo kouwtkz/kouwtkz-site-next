@@ -6,6 +6,6 @@ import { UpdateImageYaml } from "./YamlImageFunctions.mjs";
 UpdateImageYaml({ from: "_data/_media", to: "_media" });
 
 // 音楽ファイルのコピー
-CopyDirDiff("_data/sound", "public", {identical: true})
+CopyDirDiff("_data/sound", "public", {identical: true, ignore: "_data.yaml"})
 
 console.log("メディアの更新しました");
