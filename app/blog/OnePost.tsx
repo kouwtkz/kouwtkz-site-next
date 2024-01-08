@@ -47,7 +47,7 @@ export default function OnePost({ post, isStatic }: Props) {
         )}
         {formattedDate ? (
           <Link
-            className="text-main-grayish hover:text-main-grayish-fluo"
+            className="text-main-grayish hover:text-main-grayish hover:opacity-70"
             href={`/blog?postId=${post.postId}`}
           >
             {formattedDate}

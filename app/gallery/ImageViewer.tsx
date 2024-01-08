@@ -127,7 +127,7 @@ function ImageViewerWindow() {
                 <div className="text-center md:text-left">
                   {image.album.visible.title &&
                   (image.album.visible.filename || !titleEqFilename) ? (
-                    <h2 className="mx-1 my-8 text-center text-2xl md:text-3xl font-MochiyPopOne text-main-dark break-all">
+                    <h2 className="mx-1 my-8 text-center text-2xl md:text-3xl font-MochiyPopOne text-main-deep break-all">
                       {image.name}
                     </h2>
                   ) : (

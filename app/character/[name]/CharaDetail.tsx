@@ -60,7 +60,7 @@ export default function CharaDetail({ name }: DetailProps) {
           />
         </div>
       ) : null}
-      <h1 className="text-main-deep font-bold text-3xl h-10 inline-block">
+      <h1 className="text-main-strong font-bold text-3xl h-10 inline-block">
         {chara.media?.icon ? (
           <ImageMeeIcon
             imageItem={chara.media.icon}

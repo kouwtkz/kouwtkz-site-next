@@ -89,7 +89,7 @@ export default function SoundPage() {
                           />
                         ) : null}
                       </div>
-                      <div className="flex-[10] pr-1 text-2xl text-main-dark text-left h-20 align-middle flex items-center">
+                      <div className="flex-[10] pr-1 text-2xl text-main-deep text-left h-20 align-middle flex items-center">
                         <span>{sound.title}</span>
                       </div>
                       <PlayPauseButton

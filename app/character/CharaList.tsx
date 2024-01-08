@@ -12,7 +12,7 @@ export default function CharaList() {
         return (
           <Link
             key={index}
-            className="block p-4 w-[50%] sm:w-[33%] hover:bg-main-pale-fluo hover:text-main-dark"
+            className="block p-4 w-[50%] sm:w-[33%] hover:bg-main-pale-fluo hover:text-main-deep"
             href={`character/${chara.id}`}
           >
             {chara.media?.image ? (
