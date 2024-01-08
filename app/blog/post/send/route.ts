@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import isStatic from "@/app/components/System/isStatic.mjs";
+const isStaticProduction = isStatic && process.env.NODE_ENV === "production"
 import fs from "fs";
 import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson.mjs";
 import { site } from "@/app/site/SiteData.mjs";
@@ -25,7 +26,7 @@ export async function GET(req: NextRequest) {
 
 // 投稿または更新
 export async function POST(req: NextRequest) {
-  if (isStatic && process.env.NODE_ENV === "production") return new Response("サーバーモード限定です");
+  if (isStaticProduction) return new Response("サーバーモード限定です");
 
   const formData = await req.formData();
   let success = false
@@ -125,7 +126,7 @@ export async function POST(req: NextRequest) {
 
 // 削除
 export async function DELETE(req: NextRequest) {
-  if (process.env.NODE_ENV !== "development") return new Response("開発モード限定です");
+  if (isStaticProduction) return new Response("サーバーモード限定です");
   const data = await req.json();
   const postId = String(data.postId || "");
   if (postId) {
