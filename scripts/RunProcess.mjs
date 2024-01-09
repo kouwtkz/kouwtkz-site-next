@@ -7,7 +7,7 @@ import iconv from "iconv-lite";
 export default function RunProcess(cmd, utf = true) {
   const enc = utf || !/windows/i.test(process.env.OS || "") ? "utf-8" : "Shift_JIS";
   try {
-    const buf = childProcess.execSync(cmd);
+    const buf = childProcess.execSync(cmd, {windowsHide: true});
     const stdout = iconv.decode(buf, enc)
     console.log(stdout);
     return stdout;
