@@ -36,9 +36,12 @@ const isStaticBuild = outputMode === 'export' && isBuild;
 const distDir = process.env.DIST_DIR;
 
 if (isBuild) {
-  const { exec } = require('child_process');
-  exec('node -r dotenv/config ./mediaScripts/MediaUpdate.mjs',
-    (err, stdout, stderr) => { if (err) console.error(stderr); else console.log(stdout) })
+  const { execSync } = require('child_process');
+  const ROOT = process.env.ROOT || "";
+  const cd = ROOT ? `cd ${ROOT} && ` : "";
+  console.log(String(
+    execSync(cd + 'node -r dotenv/config ./mediaScripts/MediaUpdate.mjs', { windowsHide: true })
+  ))
 }
 
 const exportConfig = (() => {
