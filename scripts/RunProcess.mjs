@@ -1,12 +1,19 @@
 // @ts-check
 
-import { promisify } from 'util';
 import childProcess from "child_process";
-const exec = promisify(childProcess.exec);
+import iconv from "iconv-lite";
 
 /** @param { string } cmd  */
-export default async function RunProcess(cmd) {
-  const { stdout, stderr } = await exec(cmd);
-  if (stderr) { console.error(stderr); return stderr; }
-  else { console.log(stdout); return stdout; }
+export default function RunProcess(cmd, utf = true) {
+  const enc = utf || !/windows/i.test(process.env.OS || "") ? "utf-8" : "Shift_JIS";
+  try {
+    const buf = childProcess.execSync(cmd);
+    const stdout = iconv.decode(buf, enc)
+    console.log(stdout);
+    return stdout;
+  } catch ( /** @type {any} */ e) {
+    const stderr = iconv.decode(e.stderr, enc)
+    console.error(stderr);
+    return stderr;
+  }
 }

@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
         fs.utimesSync(filePath, now, new Date(mTime));
       })
     })
-    await MediaUpdate();
+    MediaUpdate();
   }
   const userId = site.author.account;
 
