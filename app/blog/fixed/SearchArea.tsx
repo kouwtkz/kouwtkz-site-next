@@ -1,12 +1,19 @@
 "use client";
 
-import React, { Suspense, useEffect, useLayoutEffect, useRef } from "react";
+import React, {
+  HTMLAttributes,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
-type SearchAreaProps = {};
+interface SearchAreaProps extends HTMLAttributes<HTMLFormElement> {}
 
-function Main({}: SearchAreaProps) {
+function Main({ className, ...args }: SearchAreaProps) {
+  className = className ? ` ${className}` : "";
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
   useHotkeys("slash", (e) => {
@@ -38,7 +45,7 @@ function Main({}: SearchAreaProps) {
 
   return (
     <form
-      className="m-4"
+      className={"m-4" + className}
       onSubmit={(e) => {
         if (searchRef.current) {
           const q = searchRef.current.value
@@ -63,10 +70,10 @@ function Main({}: SearchAreaProps) {
   );
 }
 
-export default function SearchArea({}: SearchAreaProps) {
+export default function SearchArea(args: SearchAreaProps) {
   return (
     <Suspense>
-      <Main />
+      <Main {...args} />
     </Suspense>
   );
 }
