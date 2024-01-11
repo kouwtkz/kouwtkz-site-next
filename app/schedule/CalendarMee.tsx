@@ -69,11 +69,10 @@ export default function CalendarMee({
           today: "現在",
           listWeek: "予定",
         }}
-        eventContent={({ event, timeText, ...args }) => {
+        eventContent={({ event, timeText }) => {
           let title = event._def.title;
           if (title === "undefined") title = "予定あり";
           const titleNode = <div className="fc-event-title">{title}</div>;
-          console.log(event._def, timeText, args);
           if (timeText) {
             const timeNode = <div className="fc-event-time">{timeText}</div>;
             if (/^\d+\:/.test(timeText))
