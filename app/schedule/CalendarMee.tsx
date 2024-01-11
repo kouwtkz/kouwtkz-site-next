@@ -62,6 +62,10 @@ export default function CalendarMee({
           );
           args.jsEvent.preventDefault();
         }}
+        moreLinkClick={(args) => {
+          console.log(args);
+          args.jsEvent.preventDefault();
+        }}
         headerToolbar={{
           end: "dayGridMonth,listWeek prev,today,next",
         }}
@@ -69,10 +73,12 @@ export default function CalendarMee({
           today: "現在",
           listWeek: "予定",
         }}
-        eventContent={({ event, timeText }) => {
+        eventContent={({ event, timeText, view }) => {
           let title = event._def.title;
           if (title === "undefined") title = "予定あり";
-          const titleNode = <div className="fc-event-title">{title}</div>;
+          let titleNode = <div className="fc-event-title">{title}</div>;
+          if (/^list/.test(view.type))
+            titleNode = <a href={event.url}>{titleNode}</a>;
           if (timeText) {
             const timeNode = <div className="fc-event-time">{timeText}</div>;
             if (/^\d+\:/.test(timeText))
