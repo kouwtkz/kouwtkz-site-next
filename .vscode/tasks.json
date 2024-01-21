@@ -45,13 +45,13 @@
     {
       "label": "update: media",
       "type": "shell",
-      "command": "node -r dotenv/config ./mediaScripts/MediaUpdate.mjs",
+      "command": "cmd /c 'cd cmd & updateMedia.cmd'",
       "detail": "gallery yaml update & make thumbnail & media copy"
     },
     {
       "label": "lite: build",
       "type": "shell",
-      "command": "node -r dotenv/config ./mediaScripts/LiteBuild.mjs"
+      "command": "cmd /c 'cd cmd & liteBuild.cmd'"
     },
     {
       "label": "serve: static",
