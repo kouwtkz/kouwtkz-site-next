@@ -16,7 +16,7 @@ export default async function BlogPage({}: {}) {
           </h2>
         </Link>
         <Suspense>
-          <PostsPage isStatic={isStatic} />
+          <PostsPage />
         </Suspense>
         <div className="mt-8">
           <a target="_blank" href="/blog/rss.xml">
