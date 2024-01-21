@@ -12,6 +12,9 @@ import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOp
 import ImageMee from "../components/image/ImageMee";
 import CloseButton from "../components/svg/button/CloseButton";
 import { EmbedNode, useEmbedState } from "../context/embed/EmbedState";
+import { useServerState } from "../components/System/ServerState";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -53,8 +56,10 @@ function ImageViewerWindow() {
   const { imageItemList } = useMediaImageState();
   const charaData = useCharaState();
   const { data: embedData } = useEmbedState();
+  const { isServerMode } = useServerState();
   const [backCheck, setBackCheck] = useState(false);
   const imageParam = search.get("image");
+  const { setImageFromUrl } = useMediaImageState();
 
   const backAction = () => {
     router.back();
@@ -104,6 +109,31 @@ function ImageViewerWindow() {
               e.stopPropagation();
             }}
           />
+          {isServerMode ? (
+            <>
+              <button
+                title="編集"
+                type="button"
+                className="absolute right-0 bottom-0 z-50 m-2 w-12 h-12 text-2xl rounded-full p-0"
+                onClick={async () => {
+                  const { album, resized, resizeOption, URL, ..._image } =
+                    image;
+                  const res = await axios.patch("/gallery/send", {
+                    ..._image,
+                    albumDir: album?.dir,
+                  });
+                  if (res.status === 200) {
+                    toast("更新しました！", {
+                      duration: 2000,
+                    });
+                    setImageFromUrl();
+                  }
+                }}
+              >
+                🖊
+              </button>
+            </>
+          ) : null}
           <div className="window modal z-30 font-KosugiMaru">
             <div className="preview">
               {image.embed ? (

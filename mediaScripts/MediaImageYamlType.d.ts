@@ -55,6 +55,7 @@ export type GetYamlImageFilterType = {
   topImage?: boolean;
   archive?: boolean;
   listup?: boolean;
+  endsWith?: boolean;
 }
 
 export type GetYamlImageListProps = {
@@ -70,6 +71,10 @@ export type GetYamlImageListProps = {
   readImage?: boolean;
   makeImage?: boolean;
   deleteImage?: boolean;
+}
+
+export interface UpdateImageYamlProps extends GetYamlImageListProps {
+  yamls?: YamlGroupType[]
 }
 
 export type OutputOptionType = {

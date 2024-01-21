@@ -46,5 +46,6 @@ export type MediaImageItemType = {
   album?: MediaImageAlbumType;
   fullPath?: string;
   mtime?: Date;
+  origin?: string;
   title?: string; // 互換用、nameに統一することにした
 }
