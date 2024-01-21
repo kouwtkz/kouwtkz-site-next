@@ -12,7 +12,7 @@ export default function About() {
       <ul className="text-left max-w-sm mx-auto">
         <li>
           <h3 className="my-6 text-main-deep">さくしゃ</h3>
-          <ul>
+          <ul className="default">
             <li>なまえ: わたかぜコウ</li>
             <li>すきなこと: おえかき</li>
           </ul>
