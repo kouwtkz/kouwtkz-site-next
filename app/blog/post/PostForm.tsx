@@ -194,11 +194,13 @@ export default function PostForm() {
             duration: 2000,
           });
           setPostsFromUrl();
-          if (res.data.postId) {
-            router.push(`/blog?postId=${res.data.postId}`);
-          } else {
-            router.push(`/blog`);
-          }
+          setTimeout(() => {
+            if (res.data.postId) {
+              router.push(`/blog?postId=${res.data.postId}`);
+            } else {
+              router.push(`/blog`);
+            }
+          }, 50);
         }
       } else {
         toast.error("更新するデータがありませんでした", { duration: 2000 });
