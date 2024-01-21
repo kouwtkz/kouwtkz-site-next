@@ -20,7 +20,7 @@ export default function PostsPage({ isStatic }: { isStatic: boolean }) {
   if (postId) {
     return (
       <>
-        <PostDetailFixed isStatic={isStatic} postId={postId} />
+        <PostDetailFixed postId={postId} />
         <PostDetail
           post={findMany({ list: posts, where: { postId }, take: 1 })[0]}
         />
@@ -41,7 +41,7 @@ export default function PostsPage({ isStatic }: { isStatic: boolean }) {
     });
     return (
       <>
-        <PostsPageFixed isStatic={isStatic} max={max} />
+        <PostsPageFixed max={max} />
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           {postsResult.length > 0 ? (
             <>

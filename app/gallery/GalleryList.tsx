@@ -2,11 +2,17 @@
 
 import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ImageMeeThumbnail } from "../components/image/ImageMee";
 import MoreButton from "../components/svg/button/MoreButton";
 import Link from "next/link";
+import { useDropzone } from "react-dropzone";
+import toast from "react-hot-toast";
+import { useServerState } from "../components/System/ServerState";
+import axios from "axios";
+import { useMediaImageState } from "../context/MediaImageState";
+
 export interface GalleryListPropsBase {
   size?: number;
   h2?: string;
@@ -32,6 +38,46 @@ function getYears(dates: (Date | null | undefined)[]) {
   return Array.from(new Set(dates.map((date) => getYear(date))));
 }
 
+async function upload({
+  isServerMode,
+  files,
+  album,
+  setImageFromUrl,
+}: {
+  isServerMode: boolean;
+  files: File[];
+  album: MediaImageAlbumType;
+  setImageFromUrl: Function;
+}) {
+  const checkTime = new Date().getTime() - 10;
+  const targetFiles = files.filter(
+    (file) =>
+      file.lastModified < checkTime &&
+      !album?.list.some((image) => image.src === file.name)
+  );
+  if (targetFiles.length === 0) return;
+  if (isServerMode) {
+    const formData = new FormData();
+    formData.append("dir", album.dir || "");
+    targetFiles.forEach((file) => {
+      formData.append("attached[]", file);
+      if (file.lastModified)
+        formData.append("attached_mtime[]", String(file.lastModified));
+    });
+    const res = await axios.post("/gallery/send", formData);
+    if (res.status === 200) {
+      toast("アップロードしました！", {
+        duration: 2000,
+      });
+      setImageFromUrl();
+    }
+  } else {
+    toast.error("サーバーモードの場合のみアップロードできます", {
+      duration: 2000,
+    });
+  }
+}
+
 export function GalleryList({
   album,
   label,
@@ -46,6 +92,20 @@ export function GalleryList({
   h2: _h2,
   h4: _h4,
 }: GalleryListProps) {
+  const { setImageFromUrl } = useMediaImageState();
+  const { isServerMode } = useServerState();
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      if (album)
+        upload({ isServerMode, album, files: acceptedFiles, setImageFromUrl });
+    },
+    [isServerMode, album, setImageFromUrl]
+  );
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    noClick: true,
+  });
+
   const router = useRouter();
   const [curMax, setCurMax] = useState(max);
   const yearSelectRef = useRef<HTMLSelectElement>(null);
@@ -78,12 +138,15 @@ export function GalleryList({
       {_h2 || _h4 ? (
         <div className="pt-6 pb-2">
           {_h2 ? (
-            <h2 className="my-4 text-2xl md:text-3xl text-main font-MochiyPopOne">{_h2}</h2>
+            <h2 className="my-4 text-2xl md:text-3xl text-main font-MochiyPopOne">
+              {_h2}
+            </h2>
           ) : null}
           {_h4 ? <h4 className="text-main-soft">{_h4}</h4> : null}
         </div>
       ) : null}
-      <div className="pt-6 pb-6 w-[100%]">
+      <div className="pt-6 pb-6 w-[100%]" {...getRootProps()}>
+        <input name="upload" {...getInputProps()} />
         <div className="mx-2 relative">
           {filterButton ? (
             <div>

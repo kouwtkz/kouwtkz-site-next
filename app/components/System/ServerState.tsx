@@ -5,14 +5,18 @@ import { create } from "zustand";
 type ServerStateType = {
   set: boolean;
   isStatic: boolean;
+  isProduction: boolean;
+  isServerMode: boolean;
   setIsStatic: (value: boolean) => void;
 };
 
 export const useServerState = create<ServerStateType>((set) => ({
   set: false,
-  isStatic: false,
+  isStatic: true,
+  isProduction: process.env.NODE_ENV === "production",
+  isServerMode: false,
   setIsStatic: (value) => {
-    set({ isStatic: value, set: true });
+    set((state) => ({ isStatic: value, isServerMode: !(value && state.isProduction) , set: true }));
   },
 }));
 
@@ -21,6 +25,7 @@ type ServerStateProps = {
 };
 
 export default function ServerState({ isStatic }: ServerStateProps) {
+  
   const serverData = useServerState();
   if (!serverData.set) serverData.setIsStatic(isStatic);
   return <></>;
