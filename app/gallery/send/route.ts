@@ -25,7 +25,6 @@ export async function PATCH(req: NextRequest) {
   const { albumDir, src, origin, dir, time, ...image } = data;
   const fromto = { from: "_data/_media", to: "_media" };
   const yamls = GetYamlImageList({ ...fromto, readImage: false, filter: { group: albumDir, endsWith: true } });
-  if (!image.description) image.description = "めぇめぇ";
   const imageTime = time ? new Date(time) : null;
 
   yamls.forEach(album => {

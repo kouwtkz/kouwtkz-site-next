@@ -47,5 +47,5 @@ export type MediaImageItemType = {
   fullPath?: string;
   mtime?: Date;
   origin?: string;
-  title?: string; // 互換用、nameに統一することにした
+  [name: string]: any;
 }
