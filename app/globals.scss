@@ -80,20 +80,22 @@ body,
   pointer-events: none;
 }
 
-button:not(.plain),
-.button:not(.plain) {
-  color: white;
-  background-color: var(--main-color);
-  display: inline-block;
-  cursor: pointer;
-  font-weight: 700;
-  border: 0;
-  outline: none;
-  -webkit-user-select: none;
-  user-select: none;
-  &:hover {
+button,
+.button {
+  &:not(.plain) {
     color: white;
-    background-color: var(--main-color-soft);
+    background-color: var(--main-color);
+    display: inline-block;
+    cursor: pointer;
+    font-weight: 700;
+    border: 0;
+    outline: none;
+    -webkit-user-select: none;
+    user-select: none;
+    &:hover {
+      color: white;
+      background-color: var(--main-color-soft);
+    }
   }
 }
 
@@ -113,8 +115,15 @@ button:not(.plain),
   max-width: none !important;
   -webkit-user-select: none;
   user-select: none;
-  button:hover {
-    background-color: var(--main-color-fluo);
+  button {
+    color: lightgray;
+    background-color: transparent;
+    display: inherit;
+    // padding: 0 0.5rem;
+    &:hover {
+      color: lightgray;
+      background-color: var(--main-color-fluo);
+    }
   }
 }
 
