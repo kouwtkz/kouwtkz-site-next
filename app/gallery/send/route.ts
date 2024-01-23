@@ -3,7 +3,7 @@ import isStatic from "@/app/components/System/isStatic.mjs";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { uploadAttached } from "./uploadAttached";
 import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
-export const fromto = { from: "_data/_media", to: "_media" };
+import { fromto } from "@/mediaScripts/UpdateOption.mjs";
 
 export async function GET() {
   return new Response("");

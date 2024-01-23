@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
-import { fromto } from "./route";
+import { fromto } from "@/mediaScripts/UpdateOption.mjs";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 type Props = {

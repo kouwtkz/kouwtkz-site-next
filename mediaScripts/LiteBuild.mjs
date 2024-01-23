@@ -11,8 +11,8 @@ const outputDir = process.env.DIST_DIR || "out";
 const publicDir = "public";
 
 import CopyDirDiff from "../scripts/CopyDirDiff.mjs";
-CopyDirDiff(`${publicDir}/_media`, outputDir, {identical: true})
-CopyDirDiff(`${publicDir}/sound`, outputDir, {identical: true})
+CopyDirDiff(`${publicDir}/_media`, outputDir, { identical: true })
+CopyDirDiff(`${publicDir}/sound`, outputDir, { identical: true })
 
 import { GetStateText, GetUpdateDef } from "../app/context/update/GetStateText.mjs";
 import { resolve } from "path";
@@ -26,6 +26,7 @@ import { soundAlbum } from "../app/sound/MediaSoundData.mjs";
 import { getPostsFromJson } from "../app/blog/posts.json/fromJson.mjs";
 import getPosts from "../app/blog/functions/getPosts.mjs";
 import { GenerateRss, GetPostsRssOption } from "../app/blog/functions/GeneratePosts.mjs";
+import { fromto } from "./UpdateOption.mjs";
 
 const updateDef = GetUpdateDef();
 /** @type { Map<string, string> } */
@@ -44,7 +45,7 @@ console.log("簡易ビルド中…");
 
 writeJsonOut("character", charaObject);
 writeJsonOut("embed", GetEmbed());
-writeJsonOut("image", GetMediaImageAlbums({ from: "_data/_media", to: "_media", filter: { archive: false } }));
+writeJsonOut("image", GetMediaImageAlbums({ ...fromto, filter: { archive: false } }));
 writeJsonOut("site", site);
 writeJsonOut("sound", soundAlbum);
 
