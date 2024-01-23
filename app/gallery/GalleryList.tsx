@@ -69,7 +69,9 @@ async function upload({
       toast("アップロードしました！", {
         duration: 2000,
       });
-      setImageFromUrl();
+      setTimeout(() => {
+        setImageFromUrl();
+      }, 100);
     }
   } else {
     toast.error("サーバーモードの場合のみアップロードできます", {
