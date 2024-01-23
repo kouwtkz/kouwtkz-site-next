@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 const title = "ABOUT";
 export const metadata: Metadata = { title };
 
@@ -8,20 +9,18 @@ export default function About() {
       <h2 className="font-LuloClean text-3xl sm:text-4xl text-center text-main pt-8 mb-12">
         {title}
       </h2>
-      <ul className="[&>li]:my-4 [&_h3]:text-main-deep [&_h3]:m-2">
+      <ul className="text-left max-w-sm mx-auto">
         <li>
-          <h3>さくしゃ</h3>
-          <ul>
+          <h3 className="my-6 text-main-deep">さくしゃ</h3>
+          <ul className="default">
             <li>なまえ: わたかぜコウ</li>
             <li>すきなこと: おえかき</li>
           </ul>
         </li>
         <li>
-          <h3>このサイト</h3>
-          <ul>
-            <li>フレームワーク: Next.js(SSG)</li>
-            <li>サーバー: Cloudflare pages</li>
-          </ul>
+          <h3 className="my-6">
+            <Link href="/about/teck">このサイトの技術スタック</Link>
+          </h3>
         </li>
       </ul>
     </div>

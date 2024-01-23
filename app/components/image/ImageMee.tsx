@@ -1,12 +1,14 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 
 interface ImageMeeProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   imageItem?: MediaImageItemType;
+  hoverSrc?: string;
+  hoverImageItem?: MediaImageItemType;
   mode?: ResizeMode;
   unoptimized?: boolean;
 }
@@ -16,6 +18,8 @@ export default function ImageMee({
   mode = "simple",
   alt: _alt,
   src: _src,
+  hoverSrc,
+  hoverImageItem,
   loading,
   srcSet,
   placeholder,
@@ -23,6 +27,7 @@ export default function ImageMee({
   ...attributes
 }: ImageMeeProps) {
   const [loaded, setLoaded] = useState(false);
+  const refImg = useRef<HTMLImageElement | null>(null);
   const src = _src || imageItem?.URL || "";
   const alt = _alt || imageItem?.name || imageItem?.src || "";
   const thumbnail = imageItem?.resized?.find(
@@ -51,7 +56,24 @@ export default function ImageMee({
           ) : null}
         </>
       ) : (
-        <img src={imageSrc} alt={alt} {...attributes} />
+        <img
+          src={imageSrc}
+          alt={alt}
+          ref={refImg}
+          onMouseEnter={() => {
+            if (refImg.current) {
+              if (hoverSrc) refImg.current.src = hoverSrc;
+              else if (hoverImageItem?.URL)
+                refImg.current.src = hoverSrc || hoverImageItem?.URL;
+            }
+          }}
+          onMouseLeave={() => {
+            if (refImg.current) {
+              if (hoverSrc || hoverImageItem) refImg.current.src = imageSrc;
+            }
+          }}
+          {...attributes}
+        />
       )}
     </>
   );

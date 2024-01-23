@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React from "react";
 
 export function ChangeThemeButton() {
@@ -9,7 +9,7 @@ export function ChangeThemeButton() {
         onClick={() =>
           document?.documentElement.classList.toggle("theme-orange")
         }
-        className="cursor-pointer text-2xl bg-main"
+        className="cursor-pointer text-2xl bg-main rounded-lg px-4 py-2"
       >
         テーマきりかえ
       </button>

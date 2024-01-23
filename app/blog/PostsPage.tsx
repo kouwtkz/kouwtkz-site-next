@@ -9,18 +9,19 @@ import { findMany } from "./functions/findMany.mjs";
 import getPosts from "./functions/getPosts.mjs";
 import PostsPageFixed from "./fixed/PostsPageFixed";
 import PostDetailFixed from "./fixed/PostDetailFixed";
+import { useServerState } from "../components/System/ServerState";
 
-export default function PostsPage({ isStatic }: { isStatic: boolean }) {
+export default function PostsPage() {
   const { posts } = usePostState();
   const search = useSearchParams();
-
+  const {isServerMode} = useServerState();
   const page = Number(search.get("p") || 1);
   const q = search.get("q") || undefined;
   const postId = search.get("postId") || undefined;
   if (postId) {
     return (
       <>
-        <PostDetailFixed isStatic={isStatic} postId={postId} />
+        <PostDetailFixed postId={postId} />
         <PostDetail
           post={findMany({ list: posts, where: { postId }, take: 1 })[0]}
         />
@@ -37,16 +38,16 @@ export default function PostsPage({ isStatic }: { isStatic: boolean }) {
       page,
       q,
       take: 5,
-      common: isStatic,
+      common: !isServerMode,
     });
     return (
       <>
-        <PostsPageFixed isStatic={isStatic} max={max} />
+        <PostsPageFixed max={max} />
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
           {postsResult.length > 0 ? (
             <>
               {postsResult.map((post, index) => (
-                <OnePost post={post} isStatic={isStatic} key={index} />
+                <OnePost post={post} key={index} />
               ))}
               {max > 1 && (page || 1) < max ? (
                 <div className="text-center">

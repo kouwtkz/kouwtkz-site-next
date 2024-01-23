@@ -1,13 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import isStatic from "@/app/components/System/isStatic.mjs";
-const isStaticProduction = isStatic && process.env.NODE_ENV === "production"
-import fs from "fs";
+const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson.mjs";
 import { site } from "@/app/site/SiteData.mjs";
 import { Post } from "../../Post";
-import path from "path";
-import { MediaUpdate } from "@/mediaScripts/MediaUpdateModule.mjs";
-const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
+import { uploadAttached } from "@/app/gallery/send/uploadAttached";
 
 type PostFormType = {
   title?: string,
@@ -19,44 +16,24 @@ type PostFormType = {
   postId?: string,
   userId?: string
 }
-export async function GET(req: NextRequest) {
-  const header = Object.fromEntries(req.headers);
-  return Response.json(isStatic ? {} : header);
+
+export async function GET() {
+  return new Response("");
 }
 
 // 投稿または更新
 export async function POST(req: NextRequest) {
-  if (isStaticProduction) return new Response("サーバーモード限定です");
+  if (!isServerMode) return new Response("サーバーモード限定です", { status: 403 });
 
   const formData = await req.formData();
   let success = false
 
-  let attached = (formData.getAll("attached[]") || []) as File[];
-  attached = attached.filter(file => Boolean(file.name));
-  if (attached.length > 0) {
-    if (!success) success = true;
-    const attached_mtime = (formData.getAll("attached_mtime[]") || []) as any[];
-    const now = new Date();
-    const mediaDir = process.env.MEDIA_DIR || "_media";
-    const dataDir = process.env.DATA_DIR || "";
-    const publicDir = "public";
-    const blogImageDir = `${mediaDir}/images/blog/uploads`;
-    const blogImagesFullDir = path.resolve(`${cwd}/${dataDir}/${blogImageDir}`);
-    const blogPublicImagesFullDir = path.resolve(`${cwd}/${publicDir}/${blogImageDir}`);
-    try { fs.mkdirSync(blogImagesFullDir, { recursive: true }); } catch { }
-    try { fs.mkdirSync(blogPublicImagesFullDir, { recursive: true }); } catch { }
-    attached.forEach((file, i) => {
-      file.arrayBuffer().then((abuf) => {
-        const mTime = new Date(Number(attached_mtime[i]));
-        const filename = file.name.replaceAll(" ", "_");
-        const filePath = path.resolve(`${blogImagesFullDir}/${filename}`);
-        console.log(filePath);
-        fs.writeFileSync(filePath, Buffer.from(abuf));
-        fs.utimesSync(filePath, now, new Date(mTime));
-      })
-    })
-    MediaUpdate();
-  }
+  success = success || uploadAttached({
+    attached: (formData.getAll("attached[]") || []) as File[],
+    attached_mtime: formData.getAll("attached_mtime[]") || [],
+    uploadDir: "images/blog/uploads"
+  })
+
   const userId = site.author.account;
 
   const data = {} as PostFormType & Post;
@@ -126,7 +103,7 @@ export async function POST(req: NextRequest) {
 
 // 削除
 export async function DELETE(req: NextRequest) {
-  if (isStaticProduction) return new Response("サーバーモード限定です");
+  if (!isServerMode) return new Response("サーバーモード限定です");
   const data = await req.json();
   const postId = String(data.postId || "");
   if (postId) {

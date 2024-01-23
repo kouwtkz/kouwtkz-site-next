@@ -1,12 +1,14 @@
 "use client";
 
 import React, { RefObject, createRef, useRef } from "react";
-import { GalleryList, GalleryListPropsBase } from "./GalleryList";
+import GalleryList, { GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { GroupFormat } from "@/mediaScripts/MediaImageYamlType";
 import { basename } from "path";
 import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import InPageMenu from "../components/navigation/InPageMenu";
+import { useServerState } from "../components/System/ServerState";
+import ArrowUpButton from "../components/svg/button/arrow/ArrowUpButton";
 
 export interface GalleryItemObjectType extends GalleryListPropsBase {
   name: string;
@@ -71,6 +73,7 @@ export default function GalleryObject({
   items = [],
   ...args
 }: GalleryObjectProps) {
+  const { isServerMode } = useServerState();
   const list = (Array.isArray(items) ? items : [items]).map((item) =>
     typeof item === "string" ? { name: item } : item
   );
@@ -88,6 +91,18 @@ export default function GalleryObject({
           }))}
           adjust={128}
         />
+      ) : isServerMode ? (
+        <button
+          type="button"
+          className="plain fixed z-30 right-0 bottom-0 m-4 cursor-pointer"
+          title="アップロードする"
+          onClick={() => {
+            const uploadElm = document.querySelector(`input[name="upload"]`);
+            if (uploadElm) (uploadElm as HTMLInputElement).click();
+          }}
+        >
+          <ArrowUpButton className="fill-main-soft hover:fill-main m-0" />
+        </button>
       ) : null}
       {list.map((item, i) => (
         <div key={i} ref={refList.current[i]}>

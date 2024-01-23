@@ -4,21 +4,20 @@ import React from "react";
 import PagingArea from "./PagingArea";
 import SearchArea from "./SearchArea";
 import PostButton from "./PostButton";
+import { useServerState } from "@/app/components/System/ServerState";
 
-type props = { isStatic: boolean; max?: number };
+type props = { max?: number };
 
-export default function Fixed({ isStatic, max }: props) {
+export default function Fixed({ max }: props) {
+  const { isServerMode } = useServerState();
+
   return (
-    <div className="fixed z-30 right right-0 bottom-0">
+    <div className="fixed z-30 right right-0 bottom-0 pointer-events-none">
       <div className="flex flex-wrap justify-end m-2 ml-36">
-        <PagingArea max={max} />
-        <div className="flex flex-row">
+        <PagingArea max={max} className="pointer-events-auto" />
+        <div className="flex flex-row [&>*]:pointer-events-auto">
           <SearchArea />
-          {!isStatic || process.env.NODE_ENV !== "production" ? (
-            <PostButton />
-          ) : (
-            <></>
-          )}
+          {isServerMode ? <PostButton /> : <></>}
         </div>
       </div>
     </div>

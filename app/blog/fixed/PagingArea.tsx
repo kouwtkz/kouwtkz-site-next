@@ -1,12 +1,21 @@
 "use client";
 
-import React, { Suspense, useEffect, useLayoutEffect, useRef } from "react";
+import React, {
+  HTMLAttributes,
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 
-type PagingAreaProps = { max?: number };
+interface PagingAreaProps extends HTMLAttributes<HTMLFormElement> {
+  max?: number;
+}
 
-function Main({ max }: PagingAreaProps) {
+function Main({ max, className, ...args }: PagingAreaProps) {
+  className = className ? ` ${className}` : "";
   const _min = 1;
   const _max = max || 1;
   const pagingInputRef = useRef<HTMLInputElement>(null);
@@ -46,7 +55,8 @@ function Main({ max }: PagingAreaProps) {
       } else {
         delete newSearch["p"];
       }
-      if (newSearch.q) newSearch.q = newSearch.q.replace("#", "%23").replace("+", "%2B");
+      if (newSearch.q)
+        newSearch.q = newSearch.q.replace("#", "%23").replace("+", "%2B");
       router.push(
         `${url.pathname}?${Object.entries(newSearch)
           .map((v) => v.join("="))
@@ -58,7 +68,12 @@ function Main({ max }: PagingAreaProps) {
   };
 
   return (
-    <form ref={FormRef} className="flex flex-row" onSubmit={submit}>
+    <form
+      {...args}
+      ref={FormRef}
+      className={"flex flex-row" + className}
+      onSubmit={submit}
+    >
       <button
         type="button"
         className={
@@ -109,10 +124,10 @@ function Main({ max }: PagingAreaProps) {
   );
 }
 
-export default function PagingArea({ max }: PagingAreaProps) {
+export default function PagingArea(args: PagingAreaProps) {
   return (
     <Suspense>
-      <Main max={max} />
+      <Main {...args} />
     </Suspense>
   );
 }

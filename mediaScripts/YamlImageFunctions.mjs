@@ -13,6 +13,7 @@ const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
  * @typedef { import("./MediaImageYamlType").YamlGroupType } YamlGroupType
  * @typedef { import("./MediaImageYamlType").YamlDataImageType } YamlDataImageType
  * @typedef { import("./MediaImageYamlType").GetYamlImageListProps } GetYamlImageListProps
+ * @typedef { import("./MediaImageYamlType").UpdateImageYamlProps } UpdateImageYamlProps
  * @typedef { import("./MediaImageDataType.d.ts").MediaImageItemType } MediaImageItemType
  * @typedef { import("./MediaImageDataType.d.ts").MediaImageAlbumType } MediaImageAlbumType
  */
@@ -88,19 +89,37 @@ export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, 
       return item;
     }
     );
+  });
+  yamls.forEach((y) => {
+    y.list.forEach(item => {
+      item.origin = y.dir + item.dir + '/' + item.src;
+    })
   })
   if (filter && Object.keys(filter).length > 0) {
     const filterGroup = filter.group;
-    if (filterGroup) yamls = yamls.filter((y) => (y.data.name || y.dir).match(filterGroup))
+    if (filterGroup) yamls = yamls.filter((y) => {
+      const ynames = [y.dir]
+      if (y.data.name) ynames.push(y.data.name);
+      if (typeof filterGroup === "object") return ynames.some(v => filterGroup.test(v));
+      else {
+        if (filter.endsWith) return ynames.some(v => v.endsWith(filterGroup));
+        else return ynames.some(v => v.match(filterGroup));
+      }
+    })
     const filterListup = filter.listup;
     if (filterListup !== undefined) yamls = yamls.filter(({ data }) => data?.listup === undefined ? false : data.listup === filterListup);
     const filterArchive = filter.archive;
     if (filterArchive !== undefined) yamls = yamls.filter(({ dir }) => (/\.archive$/.test(dir)) === filterArchive)
     const filterPath = filter.path;
     if (filterPath) yamls.forEach((y) => {
-      y.list = y.list.filter(({ dir, src }) => {
-        const matched = (y.dir + dir + '/' + src).match(filterPath);
-        return matched;
+      y.list = y.list.filter(({ origin }) => {
+        if (origin) {
+          if (typeof filterPath === "object") filterPath.test(origin)
+          else {
+            if (filter.endsWith) origin.endsWith(filterPath)
+            else origin.match(filterPath)
+          }
+        }
       })
     })
     const filterTags = filter.tags ? (typeof filter.tags === "string" ? [filter.tags] : filter.tags) : [];
@@ -233,14 +252,14 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
 }
 
 /**
- * @param {GetYamlImageListProps} args
+ * @param {UpdateImageYamlProps} args
  * @returns
  */
-export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImage = true, ...args }) {
+export function UpdateImageYaml({ yamls: _yamls, readImage = true, makeImage = true, deleteImage = true, ...args }) {
   // yamlを管理するメディアディレクトリ
   const baseDir = `${cwd}/${args.from}`;
   const dataDir = process.env.DATA_DIR || "";
-  const yamls = GetYamlImageList({ readImage: false, ...args });
+  const yamls = _yamls || GetYamlImageList({ readImage: false, ...args });
   const mtimeYamlPath = resolve(`${cwd}/${dataDir}/yamldata_mtimes.json`);
   /** @type {{[key: string]: Date}} */
   const mtimeYamlList = (() => {
@@ -412,6 +431,7 @@ export function UpdateImageYaml({ readImage = true, makeImage = true, deleteImag
       if (item.description === "") delete item.description;
       if (item.tags?.length === 0 || item.tags === null) delete item.tags;
       if (item.title) { item.name = item.title; delete item.title; }
+      delete item.origin;
     })
     // ソート
     if (y.data.list) {

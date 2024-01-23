@@ -73,8 +73,8 @@ export default async function RootLayout({
         <DataState />
         <Header site={site} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
-          <div className="mx-auto content-parent min-h-[70vh]">
-            {children}
+          <div className="mx-auto min-h-[70vh]">
+            <div className="min-h-[50vh] content-parent">{children}</div>
             <Footer site={site} currentDate={currentDate} />
           </div>
         </div>

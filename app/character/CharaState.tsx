@@ -6,7 +6,7 @@ import { create } from "zustand";
 import axios from "axios";
 import { useMediaImageState } from "../context/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
-import { GalleryList } from "../gallery/GalleryList";
+import GalleryList from "../gallery/GalleryList";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
@@ -111,7 +111,6 @@ export const CharaGalleryAlbum = memo(function GalleryFromAlbum({
   const { imageAlbumList } = useMediaImageState();
   if (!name || imageAlbumList.length === 0) return <></>;
   const matchAlbum = imageAlbumList.find((album) => album.name === name);
-  if (name === "3D") console.log(imageAlbumList);
   if (!matchAlbum) return <></>;
   const album = {
     ...matchAlbum,

@@ -61,7 +61,7 @@ export function addFilterAutoSeason(filter = '', delimiter = ','): string {
       addMonthFilter = 'november,autumn'
       break;
     case 12:
-      addMonthFilter = 'december,winter,birthday'
+      addMonthFilter = 'december,winter,myBirthday'
       break;
   }
   if (addMonthFilter !== '') filters.push(addMonthFilter);

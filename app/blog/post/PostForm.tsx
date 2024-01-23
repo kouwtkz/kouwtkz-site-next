@@ -194,11 +194,13 @@ export default function PostForm() {
             duration: 2000,
           });
           setPostsFromUrl();
-          if (res.data.postId) {
-            router.push(`/blog?postId=${res.data.postId}`);
-          } else {
-            router.push(`/blog`);
-          }
+          setTimeout(() => {
+            if (res.data.postId) {
+              router.push(`/blog?postId=${res.data.postId}`);
+            } else {
+              router.push(`/blog`);
+            }
+          }, 50);
         }
       } else {
         toast.error("更新するデータがありませんでした", { duration: 2000 });
@@ -443,9 +445,9 @@ export default function PostForm() {
         style={{ display: "none" }}
         disabled={loading}
       />
-      <div className="[&>button]:mx-4 pt-2">
+      <div className="pt-2">
         <button
-          className="bg-main"
+          className="mx-4 px-4 py-2 rounded-lg"
           type="button"
           onClick={() =>
             togglePreviewMode(
@@ -459,7 +461,7 @@ export default function PostForm() {
         >
           プレビュー
         </button>
-        <button className="bg-main" type="submit">
+        <button className="mx-4 px-4 py-2 rounded-lg" type="submit">
           {updateMode ? "更新する" : "投稿する"}
         </button>
       </div>

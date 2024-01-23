@@ -2,12 +2,9 @@ import { Post } from "@/app/blog/Post.d";
 import MultiParser from "@/app/components/functions/MultiParser";
 import Link from "next/link";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
-type Props = {
-  isStatic: boolean;
-  post: Post;
-};
+type Props = { post: Post };
 
-export default function OnePost({ post, isStatic }: Props) {
+export default function OnePost({ post }: Props) {
   const formattedDate = post.date ? post.date.toLocaleString("ja", opt) : "";
   return (
     <div className="mx-4 my-6">

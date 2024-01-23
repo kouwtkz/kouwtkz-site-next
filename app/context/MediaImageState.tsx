@@ -7,6 +7,7 @@ import {
   MediaImageAlbumType,
 } from "@/mediaScripts/MediaImageDataType";
 import axios from "axios";
+const defaultUrl = "/data/images.json";
 
 function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
   const imageList: MediaImageItemType[] = [];
@@ -28,6 +29,7 @@ type ImageDataType = {
   imageItemList: Array<MediaImageItemType>;
   imageAlbumList: Array<MediaImageAlbumType>;
   setImageAlbum: (albumList: Array<MediaImageAlbumType>) => void;
+  setImageFromUrl: (url?: string) => void;
 };
 
 export const useMediaImageState = create<ImageDataType>((set) => ({
@@ -39,16 +41,21 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
       imageItemList: parseImageItems(data),
     }));
   },
+  setImageFromUrl: (url = defaultUrl) => {
+    set((state) => {
+      axios(url).then((r) => {
+        state.setImageAlbum(r.data);
+      });
+      return state;
+    });
+  },
 }));
 
-export default function MediaImageState({ url }: { url: string }) {
-  const { setImageAlbum } = useMediaImageState();
+export default function MediaImageState({ url }: { url?: string }) {
+  const { setImageFromUrl } = useMediaImageState();
   const setImage = useRef(false);
   useEffect(() => {
-    if (!setImage.current)
-      axios(url).then((r) => {
-        setImageAlbum(r.data);
-      });
+    if (!setImage.current) setImageFromUrl(url);
     setImage.current = true;
   });
 
