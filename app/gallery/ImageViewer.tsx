@@ -15,19 +15,7 @@ import { EmbedNode } from "../context/embed/EmbedState";
 import { useServerState } from "../components/System/ServerState";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import ImageEditForm from "./ImageEditForm";
-export const eventTags = [
-  { value: "spring", name: "🌸春" },
-  { value: "summer", name: "🌻夏" },
-  { value: "autumn", name: "🍂秋" },
-  { value: "winter", name: "⛄冬" },
-  { value: "valentine", name: "🍫バレンタインデー" },
-  { value: "easter", name: "🐰イースター" },
-  { value: "halloween", name: "🎃ハロウィン" },
-  { value: "christmas", name: "🎄クリスマス" },
-  { value: "yosonoko", name: "🎨よその子" },
-  { value: "birthday", name: "🎂誕生日" },
-  { value: "myBirthday", name: "🎂自分の誕生日" },
-];
+import { eventTags } from "./GalleryTags";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -168,13 +156,14 @@ function ImageViewerWindow() {
                     const item = eventTags.find(({ value }) => value === tag);
                     if (!item) return item;
                     return (
-                      <MultiParser
-                        key={i}
-                        only={{ toTwemoji: true }}
-                        className="mx-2 my-1 whitespace-nowrap inline-block text-main-dark [&_.emoji]:mr-1"
-                      >
-                        {item.name}
-                      </MultiParser>
+                      <Link href={`?tag=${item.value}`} className="text-main-dark hover:text-main-strong" key={i}>
+                        <MultiParser
+                          only={{ toTwemoji: true }}
+                          className="mx-2 my-1 whitespace-nowrap inline-block [&_.emoji]:mr-1"
+                        >
+                          {item.name}
+                        </MultiParser>
+                      </Link>
                     );
                   })}
               </div>

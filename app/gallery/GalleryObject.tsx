@@ -1,7 +1,7 @@
 "use client";
 
 import React, { RefObject, createRef, useRef } from "react";
-import { GalleryList, GalleryListPropsBase } from "./GalleryList";
+import GalleryList, { GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { GroupFormat } from "@/mediaScripts/MediaImageYamlType";
 import { basename } from "path";

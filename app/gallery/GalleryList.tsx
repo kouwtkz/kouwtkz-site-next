@@ -2,8 +2,8 @@
 
 import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 
-import React, { useCallback, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { Suspense, useCallback, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ImageMeeThumbnail } from "../components/image/ImageMee";
 import MoreButton from "../components/svg/button/MoreButton";
 import Link from "next/link";
@@ -78,7 +78,15 @@ async function upload({
   }
 }
 
-export function GalleryList({
+export default function GalleryList(args: GalleryListProps) {
+  return (
+    <Suspense>
+      <Main {...args} />
+    </Suspense>
+  );
+}
+
+function Main({
   album,
   label,
   size = 320,
@@ -107,6 +115,7 @@ export function GalleryList({
   });
 
   const router = useRouter();
+  const search = useSearchParams();
   const [curMax, setCurMax] = useState(max);
   const yearSelectRef = useRef<HTMLSelectElement>(null);
   const [year, setYear] = useState("");
@@ -117,6 +126,13 @@ export function GalleryList({
   if (year) {
     albumList = albumList.filter((item) => getYear(item.time) === year);
   }
+  const searchTag = search.get("tag");
+  if (searchTag) {
+    albumList = albumList.filter((item) =>
+      item.tags?.some((tag) => tag === searchTag)
+    );
+  }
+
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
   const heading = label || album.name;

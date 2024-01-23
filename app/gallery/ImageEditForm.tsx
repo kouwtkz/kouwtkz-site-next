@@ -6,21 +6,7 @@ import ImageMee from "../components/image/ImageMee";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/MediaImageState";
-import { eventTags } from "./ImageViewer";
-const monthTags = [
-  { value: "january", name: "1月" },
-  { value: "february", name: "2月" },
-  { value: "march", name: "3月" },
-  { value: "april", name: "4月" },
-  { value: "may", name: "5月" },
-  { value: "june", name: "6月" },
-  { value: "july", name: "7月" },
-  { value: "august", name: "8月" },
-  { value: "september", name: "9月" },
-  { value: "october", name: "10月" },
-  { value: "november", name: "11月" },
-  { value: "december", name: "12月" },
-];
+import { eventTags, monthTags } from "./GalleryTags";
 
 interface Props extends HTMLAttributes<HTMLFormElement> {
   image: MediaImageItemType;
@@ -234,7 +220,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
             <p>その他のタグ</p>
             <div>
               {(() => {
-                const otherTagCandidates = monthTags.concat(eventTags);
+                const otherTagCandidates = eventTags.concat(monthTags);
                 const noUsedCandidates = otherTagCandidates.filter(
                   ({ value }) => otherTags.every((tag) => value !== tag)
                 );
