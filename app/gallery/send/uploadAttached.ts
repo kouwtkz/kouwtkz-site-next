@@ -1,14 +1,16 @@
 import fs from "fs";
 import path from "path";
-import { MediaUpdate } from "@/mediaScripts/MediaUpdateModule.mjs";
+import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
+import { fromto } from "./route";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 type Props = {
   attached: File[];
-  attached_mtime: any[];
+  attached_mtime?: any[];
+  tags?: any[];
   uploadDir: string;
 }
-export function uploadAttached({ attached, attached_mtime = [], uploadDir }: Props) {
+export function uploadAttached({ attached, attached_mtime = [], tags = [], uploadDir }: Props) {
   let retVal = false
   attached = attached.filter(file => Boolean(file.name));
   if (attached.length > 0) {
@@ -32,7 +34,18 @@ export function uploadAttached({ attached, attached_mtime = [], uploadDir }: Pro
       })
     })
     setTimeout(() => {
-      MediaUpdate();
+      UpdateImageYaml({ ...fromto })
+      const tagsFlag = tags.length > 0;
+      if (tagsFlag) {
+        const yamls = GetYamlImageList({ ...fromto, readImage: false, filter: { group: uploadDir, endsWith: true } });
+        yamls.forEach(album => {
+          attached.forEach(file => {
+            const imageItem = album.list.find(item => item.src === file.name)
+            if (imageItem) imageItem.tags = (imageItem.tags || []).concat(tags);
+          })
+        })
+        UpdateImageYaml({ yamls, deleteImage: false, ...fromto })
+      }
     }, 10);
   }
   return retVal;
