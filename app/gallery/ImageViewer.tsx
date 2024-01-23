@@ -125,7 +125,7 @@ function ImageViewerWindow() {
                   .map((chara, i) => {
                     return (
                       <Link
-                        className="mx-2 my-1 whitespace-nowrap inline-block"
+                        className="mx-2 my-1 inline-block"
                         href={`/character/${chara.id}`}
                         onClick={() => {
                           onClose();
@@ -159,7 +159,7 @@ function ImageViewerWindow() {
                       <Link href={`?tag=${item.value}`} className="text-main-dark hover:text-main-strong" key={i}>
                         <MultiParser
                           only={{ toTwemoji: true }}
-                          className="mx-2 my-1 whitespace-nowrap inline-block [&_.emoji]:mr-1"
+                          className="mx-2 my-1 inline-block [&_.emoji]:mr-1"
                         >
                           {item.name}
                         </MultiParser>

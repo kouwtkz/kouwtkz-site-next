@@ -161,7 +161,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
                 const chara = charaList.find((chara) => chara.id === tag);
                 return (
                   <span
-                    className="m-1 select-none hover:line-through hover:cursor-pointer"
+                    className="m-1 inline-block hover:line-through hover:cursor-pointer"
                     onClick={() => {
                       setCharaTags(charaTags.filter((_tag) => _tag !== tag));
                     }}
@@ -231,7 +231,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
                     {otherTags.map((tag, i) => {
                       return (
                         <span
-                          className="m-1 select-none hover:line-through hover:cursor-pointer"
+                          className="m-1 inline-block hover:line-through hover:cursor-pointer"
                           onClick={() => {
                             setOtherTags(
                               otherTags.filter((_tag) => _tag !== tag)
