@@ -3,6 +3,7 @@ import isStatic from "@/app/components/System/isStatic.mjs";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { uploadAttached } from "./uploadAttached";
 import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
+export const fromto = { from: "_data/_media", to: "_media" };
 
 export async function GET() {
   return new Response("");
@@ -10,11 +11,11 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   if (!isServerMode) return new Response("サーバーモード限定です", { status: 403 });
-
   const formData = await req.formData();
   uploadAttached({
     attached: (formData.getAll("attached[]") || []) as File[],
-    attached_mtime: formData.getAll("attached_mtime[]") || [],
+    attached_mtime: formData.getAll("attached_mtime[]"),
+    tags: formData.getAll("tags[]"),
     uploadDir: String(formData.get("dir")) || "images/uploads"
   })
   return new Response("");
@@ -23,7 +24,6 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const data = await req.json();
   const { albumDir, src, origin, dir, time, ...image } = data;
-  const fromto = { from: "_data/_media", to: "_media" };
   const yamls = GetYamlImageList({ ...fromto, readImage: false, filter: { group: albumDir, endsWith: true } });
   const imageTime = time ? new Date(time) : null;
 

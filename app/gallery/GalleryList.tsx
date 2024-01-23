@@ -24,6 +24,7 @@ export interface GalleryListPropsBase {
   step?: number;
   autoDisable?: boolean;
   filterButton?: boolean;
+  tags?: string | string[];
 }
 
 interface GalleryListProps extends GalleryListPropsBase {
@@ -42,13 +43,16 @@ async function upload({
   isServerMode,
   files,
   album,
+  tags: _tags,
   setImageFromUrl,
 }: {
   isServerMode: boolean;
   files: File[];
   album: MediaImageAlbumType;
+  tags: string | string[];
   setImageFromUrl: Function;
 }) {
+  const tags = typeof _tags === "string" ? [_tags] : _tags;
   const checkTime = new Date().getTime() - 10;
   const targetFiles = files.filter(
     (file) =>
@@ -59,6 +63,9 @@ async function upload({
   if (isServerMode) {
     const formData = new FormData();
     formData.append("dir", album.dir || "");
+    tags.forEach((tag) => {
+      formData.append("tags[]", tag);
+    });
     targetFiles.forEach((file) => {
       formData.append("attached[]", file);
       if (file.lastModified)
@@ -99,6 +106,7 @@ function Main({
   autoDisable = false,
   filterButton = false,
   loading = false,
+  tags = [],
   h2: _h2,
   h4: _h4,
 }: GalleryListProps) {
@@ -107,9 +115,15 @@ function Main({
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (album)
-        upload({ isServerMode, album, files: acceptedFiles, setImageFromUrl });
+        upload({
+          isServerMode,
+          album,
+          files: acceptedFiles,
+          setImageFromUrl,
+          tags,
+        });
     },
-    [isServerMode, album, setImageFromUrl]
+    [isServerMode, album, setImageFromUrl, tags]
   );
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
