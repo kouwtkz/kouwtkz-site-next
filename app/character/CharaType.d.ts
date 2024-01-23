@@ -8,6 +8,7 @@ export interface CharaType {
   id?: string
   name: string,
   honorific?: string,
+  defEmoji?: string,
   description?: string,
   path?: string,
   icon?: string,

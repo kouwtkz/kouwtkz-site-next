@@ -208,7 +208,9 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
                       <option>＋追加</option>
                       {noUsedCharaList.map((chara, i) => (
                         <option key={i} value={chara.id}>
-                          {chara.name + (chara.honorific || "")}
+                          {(chara.defEmoji || "") +
+                            chara.name +
+                            (chara.honorific || "")}
                         </option>
                       ))}
                     </select>
