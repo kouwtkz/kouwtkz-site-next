@@ -22,7 +22,7 @@ const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
  * @param {GetYamlImageListProps} args
  * @returns {YamlGroupType[]}
  */
-export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, readImage = true, makeImage = false, deleteImage = false }) {
+export function GetYamlImageList({ from, to: _to, filter, readImage = true, makeImage = false, deleteImage = false }) {
   from = from.replace(/[\\/]+/g, "/");
   const to = _to === undefined ? from : _to;
   // ディレクトリ内の各ファイルを取得
@@ -130,7 +130,7 @@ export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, 
       y.list = y.list.filter(({ topImage }) => topImage)
     })
     // サムネサイズ設定や画像生成処理
-    if (readImage) ReadImageFromYamls({ yamls, publicDir, makeImage, deleteImage })
+    if (readImage) ReadImageFromYamls({ yamls, makeImage, deleteImage })
 
     yamls = yamls.filter(({ list }) => list.length > 0)
   }
@@ -138,14 +138,15 @@ export function GetYamlImageList({ from, to: _to, publicDir = "public", filter, 
 }
 
 /**
- * @param {{yamls: YamlGroupType[], makeImage?: boolean, deleteImage?: boolean, publicDir?: string, resizedDir?: string}} args
+ * @param {{yamls: YamlGroupType[], makeImage?: boolean, deleteImage?: boolean, publicDir?: string, selfRoot?: boolean, resizedDir?: string}} args
  */
-export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, publicDir = 'public', resizedDir = 'resized' }) {
+export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, publicDir = 'public', selfRoot = false, resizedDir = 'resized' }) {
+  const publicFullDir = makeImage ? resolve((selfRoot ? "." : cwd) + "/" + publicDir) : publicDir;
   const toList = (makeImage) ? Array.from(new Set(yamls.map(({ to }) => to))) : [];
   /** @type {{isFile: boolean, path: string}[]} */
   let currentPublicItems = [];
   toList.forEach(to => {
-    const path = resolve(`${cwd}/${publicDir}/${to}`);
+    const path = resolve(`${publicFullDir}/${to}`);
     try { fs.mkdirSync(path, { recursive: true }) } catch { }
     currentPublicItems = currentPublicItems.concat(
       fs.readdirSync(path, { recursive: true, withFileTypes: true })
@@ -177,7 +178,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
       }
       if (makeImage && baseImageFullPath) {
         const baseImageFullPath = image.fullPath;
-        const imageFullPath = resolve(`./${publicDir}${image.URL}`);
+        const imageFullPath = resolve(`${publicFullDir}/${image.URL}`);
         outputPublicImages.push(imageFullPath);
         let copy = true;
         const mtimeBase = image.mtime;
@@ -221,7 +222,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
           const resizedImageUrl = `${resizedImageDir}${image.src.replace(/[^.]+$/, "webp")}`;
           resized.push({ mode: resizeOption.mode, src: resizedImageUrl })
           if (makeImage && baseImageFullPath) {
-            const resizedImageFullPath = resolve(`./${publicDir}${resizedImageUrl}`);
+            const resizedImageFullPath = resolve(`${publicFullDir}/${resizedImageUrl}`);
             let make = true;
             const mtimeBase = image.mtime;
             if (mtimeBase && currentPublicItems.some(({ path }) => path === resizedImageFullPath)) {
@@ -452,7 +453,7 @@ export function UpdateImageYaml({ yamls: _yamls, readImage = true, makeImage = t
     } catch { }
   })
 
-  if (readImage) ReadImageFromYamls({ yamls, makeImage, deleteImage })
+  if (readImage) ReadImageFromYamls({ yamls, makeImage, deleteImage, ...args })
 }
 
 /**

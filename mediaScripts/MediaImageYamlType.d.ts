@@ -67,6 +67,7 @@ export type GetYamlImageListProps = {
   to?: string;
   /** @default "public" */
   publicDir?: string;
+  selfRoot?: boolean;
   filter?: GetYamlImageFilterType;
   readImage?: boolean;
   makeImage?: boolean;
