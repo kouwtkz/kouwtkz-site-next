@@ -3,9 +3,12 @@
     "*.css": "tailwindcss"
   },
   "VsCodeTaskButtons.tasks": [
+    { "label": "setup", "task": "npm: setup" },
     { "label": "update", "task": "update: media" },
     { "label": "build", "task": "npm: build" },
-    { "label": "server", "task": "npm: start" }
+    { "label": "server", "task": "npm: start" },
+    { "label": "lite build", "task": "lite: build" },
+    { "label": "deploy", "task": "deploy: pages" }
   ],
   // Explorer で非表示にするもの
   "files.exclude": {

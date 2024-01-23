@@ -39,7 +39,7 @@
     {
       "label": "deploy: pages",
       "type": "shell",
-      "command": "wrangler pages deploy out/html --project-name kouwtkz --commit-dirty true --branch master",
+      "command": "cmd /c 'cd cmd & deploy.cmd'",
       "detail": "deploy to cloudflare pages"
     },
     {
