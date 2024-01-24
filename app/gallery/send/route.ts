@@ -12,7 +12,7 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   if (!isServerMode) return new Response("サーバーモード限定です", { status: 403 });
   const formData = await req.formData();
-  uploadAttached({
+  await uploadAttached({
     attached: (formData.getAll("attached[]") || []) as File[],
     attached_mtime: formData.getAll("attached_mtime[]"),
     tags: formData.getAll("tags[]"),
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 export async function PATCH(req: NextRequest) {
   const data = await req.json();
   const { albumDir, src, origin, dir, time, ...image } = data;
-  const yamls = GetYamlImageList({ ...fromto, readImage: false, filter: { group: albumDir, endsWith: true } });
+  const yamls = await GetYamlImageList({ ...fromto, readImage: false, filter: { group: albumDir, endsWith: true } });
   const imageTime = time ? new Date(time) : null;
 
   yamls.forEach(album => {
@@ -40,7 +40,7 @@ export async function PATCH(req: NextRequest) {
       });
     }
   })
-  UpdateImageYaml({ yamls, deleteImage: false, ...fromto })
+  await UpdateImageYaml({ yamls, deleteImage: false, ...fromto })
   console.log("メディアの更新しました");
 
   return new Response("");

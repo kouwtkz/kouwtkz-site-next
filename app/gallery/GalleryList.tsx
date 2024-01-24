@@ -90,15 +90,22 @@ function Main({
   let albumList = album.list.sort(
     (a, b) => (b.time?.getTime() || 0) - (a.time?.getTime() || 0)
   );
-  if (year) {
-    albumList = albumList.filter((item) => getYear(item.time) === year);
-  }
+  let afterFilter = false;
   const searchTag = search.get("tag");
   if (searchTag) {
+    afterFilter = true;
     albumList = albumList.filter((item) =>
       item.tags?.some((tag) => tag === searchTag)
     );
   }
+  const yearList = getYears(albumList.map((item) => item.time));
+  if (year) {
+    afterFilter = true;
+    albumList = albumList.filter((item) => getYear(item.time) === year);
+  }
+  if (!loading && afterFilter && albumList.length === 0) return <></>;
+
+  console.log(album);
 
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
@@ -143,13 +150,11 @@ function Main({
                 }}
               >
                 <option value="">all</option>
-                {getYears(album.list.map((item) => item.time)).map(
-                  (year, i) => (
-                    <option key={i} value={year}>
-                      {year}
-                    </option>
-                  )
-                )}
+                {yearList.map((year, i) => (
+                  <option key={i} value={year}>
+                    {year}
+                  </option>
+                ))}
               </select>
             </div>
           ) : null}

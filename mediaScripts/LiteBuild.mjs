@@ -4,7 +4,7 @@ import isStatic from "../app/components/System/isStatic.mjs";
 if (!isStatic) process.exit();
 
 import { MediaUpdate } from "./MediaUpdateModule.mjs"
-await MediaUpdate();
+MediaUpdate();
 
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 const outputDir = process.env.DIST_DIR || "out";

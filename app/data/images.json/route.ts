@@ -7,6 +7,6 @@ import { fromto } from "@/mediaScripts/UpdateOption.mjs";
 import { GetMediaImageAlbums } from "@/mediaScripts/YamlImageFunctions.mjs";
 
 export async function GET() {
-  const albums = GetMediaImageAlbums({ ...fromto, filter: { archive: false } });
+  const albums = await GetMediaImageAlbums({ ...fromto, filter: { archive: false } });
   return NextResponse.json(albums);
 }
