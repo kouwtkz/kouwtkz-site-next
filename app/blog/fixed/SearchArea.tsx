@@ -51,7 +51,13 @@ function Main({ className, ...args }: SearchAreaProps) {
           const q = searchRef.current.value
             .replace("#", "%23")
             .replace("+", "%2B");
-          router.push(`${location.pathname}?q=${q}`);
+          const params = Object.fromEntries(search);
+          if (q) params.q = q;
+          else delete params.q;
+          delete params.p;
+          const query = new URLSearchParams(params).toString();
+          const url = location.pathname + (query ? "?" + query : "");
+          if (url !== location.href) router.push(url);
           (document.activeElement as HTMLElement).blur();
           e.preventDefault();
         }
