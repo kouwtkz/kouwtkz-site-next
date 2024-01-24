@@ -90,9 +90,8 @@ function Main({
 
   const router = useRouter();
   const search = useSearchParams();
-  const [curMax, setCurMax] = useState(max);
   const yearSelectRef = useRef<HTMLSelectElement>(null);
-  const [year, setYear] = useState("");
+  const [curMax, setCurMax] = useState(max);
   if (!album || (autoDisable && album.list.length === 0)) return null;
   let albumList = album.list.sort(
     (a, b) => (b.time?.getTime() || 0) - (a.time?.getTime() || 0)
@@ -105,6 +104,7 @@ function Main({
       item.tags?.some((tag) => tag === searchTag)
     );
   }
+  const year = search.get("year");
   const yearList = getYearObjects(albumList.map((item) => item.time));
   if (year) {
     afterFilter = true;
@@ -149,9 +149,18 @@ function Main({
                 title="フィルタリング"
                 className="text-main [&_option]:text-main-dark absolute right-0 text-lg m-2 h-6 min-w-[4rem] bg-transparent"
                 ref={yearSelectRef}
+                value={year || ""}
                 onChange={() => {
-                  if (yearSelectRef.current)
-                    setYear(yearSelectRef.current.value);
+                  if (yearSelectRef.current) {
+                    const params = Object.fromEntries(search);
+                    if (yearSelectRef.current.value)
+                      params.year = yearSelectRef.current.value;
+                    else delete params.year;
+                    const query = new URLSearchParams(params).toString();
+                    const url = location.pathname + (query ? "?" + query : "");
+                    if (url !== location.href)
+                      router.push(url, { scroll: false });
+                  }
                 }}
               >
                 <option value="">
