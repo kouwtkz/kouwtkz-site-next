@@ -35,6 +35,7 @@ export async function PATCH(req: NextRequest) {
       const uploadImagesFullDir = resolve(`${cwd}/${album.from}/${origin}`);
       try { unlinkSync(uploadImagesFullDir) } catch { }
       album.list = album.list.filter(item => item.origin !== origin);
+      album.data.list = album.data.list?.filter(item => item.origin !== origin);
     } else {
       const imageItem = album.list.find(item => item.origin === origin)
       if (imageItem) {
