@@ -42,7 +42,7 @@ export async function uploadAttached({ attached, attached_mtime = [], tags = [],
             yamls.forEach(album => {
               attached.forEach(file => {
                 const imageItem = album.list.find(item => item.src === file.name)
-                if (imageItem) imageItem.tags = (imageItem.tags || []).concat(tags);
+                if (imageItem) imageItem.tags = Array.from(new Set((imageItem.tags || []).concat(tags)));
               })
             })
             UpdateImageYaml({ yamls, deleteImage: false, ...fromto }).then(() => resolve());

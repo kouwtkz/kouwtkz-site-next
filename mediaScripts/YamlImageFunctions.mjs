@@ -192,7 +192,9 @@ export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage
           } catch { } finally {
             if (baseImageFullPath) {
               if (toWebp) await sharp(baseImageFullPath).webp().toFile(imageFullPath);
-              else fs.copyFile(baseImageFullPath, imageFullPath, () => { })
+              else {
+                try { fs.copyFileSync(baseImageFullPath, imageFullPath) } catch { }
+              }
             }
           }
         }
@@ -250,7 +252,7 @@ export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage
   if (deleteImage) {
     const currentPublicImages = currentPublicItems.filter(item => item.isFile).map(({ path }) => path);
     const deletePublicImages = currentPublicImages.filter(path => !outputPublicImages.some(_path => _path === path))
-    deletePublicImages.forEach(path => { fs.unlink(resolve(path), () => { }); })
+    deletePublicImages.forEach(path => { try { fs.unlinkSync(resolve(path)) } catch { } })
   }
 }
 
@@ -433,6 +435,9 @@ export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeIma
       if (item.dir === "") delete item.dir;
       if (item.description === "") delete item.description;
       if (item.tags?.length === 0 || item.tags === null) delete item.tags;
+      else if (item.tags) {
+        item.tags = Array.from(new Set(item.tags)); // タグの重複削除
+      }
       if (item.title) { item.name = item.title; delete item.title; }
       delete item.origin;
     })

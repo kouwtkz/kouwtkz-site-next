@@ -7,6 +7,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/MediaImageState";
 import { eventTags, monthTags } from "./GalleryTags";
+import { useRouter } from "next/navigation";
 
 interface Props extends HTMLAttributes<HTMLFormElement> {
   image: MediaImageItemType;
@@ -15,6 +16,7 @@ interface Props extends HTMLAttributes<HTMLFormElement> {
 export default function ImageEditForm({ image, className, ...args }: Props) {
   const { setImageFromUrl } = useMediaImageState();
   const { editMode, toggleEditMode } = useImageViewer();
+  const router = useRouter();
   const wasEdit = useRef(false);
   const refForm = useRef<HTMLFormElement>(null);
   const { charaList } = useCharaState();
@@ -35,17 +37,24 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
     );
     tagsSet.current = true;
   }
-  const sendUpdate = async (image: MediaImageItemType) => {
+  const sendUpdate = async (
+    image: MediaImageItemType,
+    deleteMode: boolean = false
+  ) => {
     const { album, resized, resizeOption, URL, ..._image } = image;
     const res = await axios.patch("/gallery/send", {
       ..._image,
       albumDir: album?.dir,
+      deleteMode,
     });
     if (res.status === 200) {
-      toast("更新しました！", {
+      toast(deleteMode ? "削除しました" : "更新しました！", {
         duration: 2000,
       });
       setImageFromUrl();
+      return true;
+    } else {
+      return false;
     }
   };
   const onToggleEdit = async () => {
@@ -113,14 +122,39 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
 
   return (
     <>
-      <button
-        title="編集"
-        type="button"
-        className="fixed right-0 bottom-0 z-50 m-2 w-12 h-12 text-2xl rounded-full p-2"
-        onClick={toggleEditMode}
-      >
-        {editMode ? "✓" : "🖊"}
-      </button>
+      <div className="fixed right-0 bottom-0 z-50 m-2 flex flex-row-reverse">
+        <button
+          title="編集"
+          type="button"
+          className="ml-2 w-12 h-12 text-2xl rounded-full p-2"
+          onClick={toggleEditMode}
+        >
+          {editMode ? "✓" : "🖊"}
+        </button>
+        {editMode ? (
+          <>
+            <button
+              title="削除"
+              type="button"
+              className="plain ml-2 bg-red-400 hover:bg-red-500 w-12 h-12 text-2xl rounded-full p-2"
+              onClick={async () => {
+                if (confirm("本当に削除しますか？")) {
+                  if (await sendUpdate(image, true)) {
+                    router.back();
+                    const href = location.href;
+                    setTimeout(() => {
+                      if (href === location.href)
+                        router.push(location.pathname, { scroll: false });
+                    }, 10);
+                  }
+                }
+              }}
+            >
+              🗑️
+            </button>
+          </>
+        ) : null}
+      </div>
       {editMode ? (
         <form
           {...args}
