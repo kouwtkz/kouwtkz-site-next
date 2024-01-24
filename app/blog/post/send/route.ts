@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
   const formData = await req.formData();
   let success = false
 
-  success = success || uploadAttached({
+  success = success || await uploadAttached({
     attached: (formData.getAll("attached[]") || []) as File[],
     attached_mtime: formData.getAll("attached_mtime[]") || [],
     uploadDir: "images/blog/uploads"
