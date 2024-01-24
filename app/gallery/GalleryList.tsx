@@ -34,8 +34,15 @@ interface GalleryListProps extends GalleryListPropsBase {
 function getYear(date?: Date | null) {
   return date?.toLocaleString("ja", { timeZone: "JST" }).split("/", 1)[0];
 }
-function getYears(dates: (Date | null | undefined)[]) {
-  return Array.from(new Set(dates.map((date) => getYear(date))));
+function getYearObjects(dates: (Date | null | undefined)[]) {
+  return dates
+    .map((date) => getYear(date))
+    .reduce((a, c) => {
+      const g = a.find(({ year }) => c === year);
+      if (g) g.count++;
+      else if (c) a.push({ year: c, count: 1 });
+      return a;
+    }, [] as { year: string; count: number }[]);
 }
 
 export default function GalleryList(args: GalleryListProps) {
@@ -98,7 +105,7 @@ function Main({
       item.tags?.some((tag) => tag === searchTag)
     );
   }
-  const yearList = getYears(albumList.map((item) => item.time));
+  const yearList = getYearObjects(albumList.map((item) => item.time));
   if (year) {
     afterFilter = true;
     albumList = albumList.filter((item) => getYear(item.time) === year);
@@ -147,10 +154,12 @@ function Main({
                     setYear(yearSelectRef.current.value);
                 }}
               >
-                <option value="">all</option>
-                {yearList.map((year, i) => (
+                <option value="">
+                  all ({yearList.reduce((a, c) => a + c.count, 0)})
+                </option>
+                {yearList.map(({ year, count }, i) => (
                   <option key={i} value={year}>
-                    {year}
+                    {year} ({count})
                   </option>
                 ))}
               </select>
