@@ -20,9 +20,9 @@ const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 /**
  * @param {GetYamlImageListProps} args
- * @returns {YamlGroupType[]}
+ * @returns {Promise<YamlGroupType[]>}
  */
-export function GetYamlImageList({ from, to: _to, filter, readImage = true, makeImage = false, deleteImage = false }) {
+export async function GetYamlImageList({ from, to: _to, filter, readImage = true, makeImage = false, deleteImage = false }) {
   from = from.replace(/[\\/]+/g, "/");
   const to = _to === undefined ? from : _to;
   // ディレクトリ内の各ファイルを取得
@@ -140,7 +140,7 @@ export function GetYamlImageList({ from, to: _to, filter, readImage = true, make
 /**
  * @param {{yamls: YamlGroupType[], makeImage?: boolean, deleteImage?: boolean, publicDir?: string, selfRoot?: boolean, resizedDir?: string}} args
  */
-export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, publicDir = 'public', selfRoot = false, resizedDir = 'resized' }) {
+export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, publicDir = 'public', selfRoot = false, resizedDir = 'resized' }) {
   const publicFullDir = makeImage ? resolve((selfRoot ? "." : cwd) + "/" + publicDir) : publicDir;
   const toList = (makeImage) ? Array.from(new Set(yamls.map(({ to }) => to))) : [];
   /** @type {{isFile: boolean, path: string}[]} */
@@ -155,9 +155,9 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
   })
   /** @type string[] */
   const outputPublicImages = [];
-  yamls.forEach(y => {
+  yamls.forEach((y) => {
     // 画像URLの定義
-    y.list.forEach((image) => {
+    y.list.forEach(async (image) => {
       const imageDir = `/${y.to}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
       if (makeImage) {
         try {
@@ -187,12 +187,14 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
           copy = mtimeBase > mtimeCurrent;
         }
         if (copy) {
-          fs.mkdir(dirname(imageFullPath), { recursive: true }, () => {
+          try {
+            fs.mkdirSync(dirname(imageFullPath), { recursive: true });
+          } catch { } finally {
             if (baseImageFullPath) {
-              if (toWebp) sharp(baseImageFullPath).webp().toFile(imageFullPath);
+              if (toWebp) await sharp(baseImageFullPath).webp().toFile(imageFullPath);
               else fs.copyFile(baseImageFullPath, imageFullPath, () => { })
             }
-          })
+          }
         }
       }
     });
@@ -205,7 +207,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
         const resizeOptions = yResizeOptions.concat(image.resizeOption ? (Array.isArray(image.resizeOption) ? image.resizeOption : [image.resizeOption]) : [])
         image.resized = [];
         const resized = image.resized;
-        resizeOptions.forEach(resizeOption => {
+        resizeOptions.forEach(async resizeOption => {
           if (!resizeOption.mode) resizeOption.mode = "thumbnail";
           switch (resizeOption.mode) {
             case "icon":
@@ -230,7 +232,7 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
               make = mtimeBase > mtimeCurrent;
             }
             if (make) {
-              RetouchImage({ ...{ src: baseImageFullPath, output: resizedImageFullPath }, ...resizeOption });
+              await RetouchImage({ ...{ src: baseImageFullPath, output: resizedImageFullPath }, ...resizeOption });
             }
             outputPublicImages.push(resizedImageFullPath);
           }
@@ -256,11 +258,11 @@ export function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = fal
  * @param {UpdateImageYamlProps} args
  * @returns
  */
-export function UpdateImageYaml({ yamls: _yamls, readImage = true, makeImage = true, deleteImage = true, ...args }) {
+export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeImage = true, deleteImage = true, ...args }) {
   // yamlを管理するメディアディレクトリ
   const baseDir = `${cwd}/${args.from}`;
   const dataDir = process.env.DATA_DIR || "";
-  const yamls = _yamls || GetYamlImageList({ readImage: false, ...args });
+  const yamls = _yamls || await GetYamlImageList({ readImage: false, ...args });
   const mtimeYamlPath = resolve(`${cwd}/${dataDir}/yamldata_mtimes.json`);
   /** @type {{[key: string]: Date}} */
   const mtimeYamlList = (() => {
@@ -477,11 +479,11 @@ export function GetMediaImageAlbumFromYamls(yamls) {
 
 /**
  * @param {GetYamlImageListProps} args
- * @returns {MediaImageAlbumType[]}
+ * @returns {Promise<MediaImageAlbumType[]>}
  */
-export function GetMediaImageAlbums(args) {
+export async function GetMediaImageAlbums(args) {
   return GetMediaImageAlbumFromYamls(
-    GetYamlImageList(args)
+    await GetYamlImageList(args)
   );
 }
 
@@ -503,10 +505,10 @@ export function CastMediaImagesFromAlbums(albums) {
 
 /**
  * @param {GetYamlImageListProps} args
- * @returns {MediaImageItemType[]}
+ * @returns {Promise<MediaImageItemType[]>}
  */
-export function GetMediaImages(args) {
+export async function GetMediaImages(args) {
   return CastMediaImagesFromAlbums(
-    GetMediaImageAlbums(args)
+    await GetMediaImageAlbums(args)
   );
 }

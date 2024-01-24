@@ -4,7 +4,7 @@ import { UpdateImageYaml } from "./YamlImageFunctions.mjs";
 import { fromto } from "./UpdateOption.mjs";
 
 // yamlを管理するメディアディレクトリ
-UpdateImageYaml({ ...fromto });
+await UpdateImageYaml({ ...fromto });
 
 // 音楽ファイルのコピー
 CopyDirDiff("_data/sound", "public", { identical: true, ignore: "_data.yaml" })
