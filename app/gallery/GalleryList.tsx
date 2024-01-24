@@ -11,6 +11,7 @@ import { useDropzone } from "react-dropzone";
 import { useServerState } from "../components/System/ServerState";
 import { useMediaImageState } from "../context/MediaImageState";
 import { upload } from "./send/uploadFunction";
+import queryPush from "@/app/components/functions/queryPush";
 
 export interface GalleryListPropsBase {
   size?: number;
@@ -152,14 +153,16 @@ function Main({
                 value={year || ""}
                 onChange={() => {
                   if (yearSelectRef.current) {
-                    const params = Object.fromEntries(search);
-                    if (yearSelectRef.current.value)
-                      params.year = yearSelectRef.current.value;
-                    else delete params.year;
-                    const query = new URLSearchParams(params).toString();
-                    const url = location.pathname + (query ? "?" + query : "");
-                    if (url !== location.href)
-                      router.push(url, { scroll: false });
+                    const yearSelect = yearSelectRef.current;
+                    queryPush({
+                      process: (params) => {
+                        if (yearSelect.value) params.year = yearSelect.value;
+                        else delete params.year;
+                      },
+                      scroll: false,
+                      push: router.push,
+                      search,
+                    });
                   }
                 }}
               >
@@ -205,10 +208,20 @@ function Main({
                         className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                         onClick={() => {
                           if (image.direct) router.push(image.direct);
-                          else
-                            router.push(`?image=${image.URL}`, {
-                              scroll: false,
-                            });
+                          else {
+                            if (image.URL !== undefined) {
+                              const URL = image.URL;
+                              queryPush({
+                                process: (params) => ({
+                                  image: URL,
+                                  ...params,
+                                }),
+                                scroll: false,
+                                push: router.push,
+                                search,
+                              });
+                            }
+                          }
                         }}
                       />
                     </div>
