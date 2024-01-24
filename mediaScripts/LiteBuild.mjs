@@ -3,8 +3,9 @@
 import isStatic from "../app/components/System/isStatic.mjs";
 if (!isStatic) process.exit();
 
-import { MediaUpdate } from "./MediaUpdateModule.mjs"
-MediaUpdate();
+import { GetMediaImageAlbums, UpdateImageYaml } from "../mediaScripts/YamlImageFunctions.mjs";
+import { fromto } from "./UpdateOption.mjs";
+await UpdateImageYaml({ ...fromto });
 
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 const outputDir = process.env.DIST_DIR || "out";
@@ -20,13 +21,11 @@ import { writeFileSync } from "fs";
 
 import { charaObject } from "../app/character/getCharaData.mjs";
 import { GetEmbed } from "../app/context/embed/GetEmbed.mjs"
-import { GetMediaImageAlbums } from "../mediaScripts/YamlImageFunctions.mjs";
 import { site } from "../app/site/SiteData.mjs";
 import { soundAlbum } from "../app/sound/MediaSoundData.mjs";
 import { getPostsFromJson } from "../app/blog/posts.json/fromJson.mjs";
 import getPosts from "../app/blog/functions/getPosts.mjs";
 import { GenerateRss, GetPostsRssOption } from "../app/blog/functions/GeneratePosts.mjs";
-import { fromto } from "./UpdateOption.mjs";
 
 const updateDef = GetUpdateDef();
 /** @type { Map<string, string> } */
@@ -45,7 +44,7 @@ console.log("簡易ビルド中…");
 
 writeJsonOut("character", charaObject);
 writeJsonOut("embed", GetEmbed());
-writeJsonOut("image", GetMediaImageAlbums({ ...fromto, filter: { archive: false } }));
+writeJsonOut("image", await GetMediaImageAlbums({ ...fromto, filter: { archive: false } }));
 writeJsonOut("site", site);
 writeJsonOut("sound", soundAlbum);
 
