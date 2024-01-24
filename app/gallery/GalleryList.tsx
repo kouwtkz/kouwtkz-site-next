@@ -11,6 +11,7 @@ import { useDropzone } from "react-dropzone";
 import { useServerState } from "../components/System/ServerState";
 import { useMediaImageState } from "../context/MediaImageState";
 import { upload } from "./send/uploadFunction";
+import queryPush from "@/app/components/functions/queryPush";
 
 export interface GalleryListPropsBase {
   size?: number;
@@ -34,8 +35,15 @@ interface GalleryListProps extends GalleryListPropsBase {
 function getYear(date?: Date | null) {
   return date?.toLocaleString("ja", { timeZone: "JST" }).split("/", 1)[0];
 }
-function getYears(dates: (Date | null | undefined)[]) {
-  return Array.from(new Set(dates.map((date) => getYear(date))));
+function getYearObjects(dates: (Date | null | undefined)[]) {
+  return dates
+    .map((date) => getYear(date))
+    .reduce((a, c) => {
+      const g = a.find(({ year }) => c === year);
+      if (g) g.count++;
+      else if (c) a.push({ year: c, count: 1 });
+      return a;
+    }, [] as { year: string; count: number }[]);
 }
 
 export default function GalleryList(args: GalleryListProps) {
@@ -83,9 +91,8 @@ function Main({
 
   const router = useRouter();
   const search = useSearchParams();
-  const [curMax, setCurMax] = useState(max);
   const yearSelectRef = useRef<HTMLSelectElement>(null);
-  const [year, setYear] = useState("");
+  const [curMax, setCurMax] = useState(max);
   if (!album || (autoDisable && album.list.length === 0)) return null;
   let albumList = album.list.sort(
     (a, b) => (b.time?.getTime() || 0) - (a.time?.getTime() || 0)
@@ -98,7 +105,8 @@ function Main({
       item.tags?.some((tag) => tag === searchTag)
     );
   }
-  const yearList = getYears(albumList.map((item) => item.time));
+  const year = search.get("year");
+  const yearList = getYearObjects(albumList.map((item) => item.time));
   if (year) {
     afterFilter = true;
     albumList = albumList.filter((item) => getYear(item.time) === year);
@@ -142,15 +150,28 @@ function Main({
                 title="フィルタリング"
                 className="text-main [&_option]:text-main-dark absolute right-0 text-lg m-2 h-6 min-w-[4rem] bg-transparent"
                 ref={yearSelectRef}
+                value={year || ""}
                 onChange={() => {
-                  if (yearSelectRef.current)
-                    setYear(yearSelectRef.current.value);
+                  if (yearSelectRef.current) {
+                    const yearSelect = yearSelectRef.current;
+                    queryPush({
+                      process: (params) => {
+                        if (yearSelect.value) params.year = yearSelect.value;
+                        else delete params.year;
+                      },
+                      scroll: false,
+                      push: router.push,
+                      search,
+                    });
+                  }
                 }}
               >
-                <option value="">all</option>
-                {yearList.map((year, i) => (
+                <option value="">
+                  all ({yearList.reduce((a, c) => a + c.count, 0)})
+                </option>
+                {yearList.map(({ year, count }, i) => (
                   <option key={i} value={year}>
-                    {year}
+                    {year} ({count})
                   </option>
                 ))}
               </select>
@@ -187,10 +208,20 @@ function Main({
                         className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                         onClick={() => {
                           if (image.direct) router.push(image.direct);
-                          else
-                            router.push(`?image=${image.URL}`, {
-                              scroll: false,
-                            });
+                          else {
+                            if (image.URL !== undefined) {
+                              const URL = image.URL;
+                              queryPush({
+                                process: (params) => ({
+                                  image: URL,
+                                  ...params,
+                                }),
+                                scroll: false,
+                                push: router.push,
+                                search,
+                              });
+                            }
+                          }
                         }}
                       />
                     </div>

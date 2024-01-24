@@ -16,6 +16,7 @@ import { useServerState } from "../components/System/ServerState";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import ImageEditForm from "./ImageEditForm";
 import { eventTags } from "./GalleryTags";
+import queryPush from "@/app/components/functions/queryPush";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -63,7 +64,6 @@ function ImageViewerWindow() {
   const search = useSearchParams();
   const { imageItemList } = useMediaImageState();
   const { charaList } = useCharaState();
-  const [backCheck, setBackCheck] = useState(false);
   const imageParam = search.get("image");
   const { isServerMode } = useServerState();
 
@@ -71,8 +71,15 @@ function ImageViewerWindow() {
     router.back();
     const href = location.href;
     setTimeout(() => {
-      if (href === location.href)
-        router.push(location.pathname, { scroll: false });
+      if (href === location.href) {
+        queryPush({
+          process: (params) => {
+            delete params.image;
+          },
+          search,
+          push: router.push,
+        });
+      }
     }, 10);
   };
   useEffect(() => {

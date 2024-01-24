@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
+import queryPush from "@/app/components/functions/queryPush";
 
 interface SearchAreaProps extends HTMLAttributes<HTMLFormElement> {}
 
@@ -51,7 +52,15 @@ function Main({ className, ...args }: SearchAreaProps) {
           const q = searchRef.current.value
             .replace("#", "%23")
             .replace("+", "%2B");
-          router.push(`${location.pathname}?q=${q}`);
+          queryPush({
+            process: (params) => {
+              if (q) params.q = q;
+              else delete params.q;
+              delete params.p;
+            },
+            push: router.push,
+            search,
+          });
           (document.activeElement as HTMLElement).blur();
           e.preventDefault();
         }

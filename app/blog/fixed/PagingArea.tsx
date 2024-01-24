@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
+import queryPush from "@/app/components/functions/queryPush";
 
 interface PagingAreaProps extends HTMLAttributes<HTMLFormElement> {
   max?: number;
@@ -47,21 +48,18 @@ function Main({ max, className, ...args }: PagingAreaProps) {
   const submit = (e?: React.FormEvent<HTMLFormElement>) => {
     if (pagingInputRef.current) {
       const p = pagingInputRef.current;
-      const url = new URL(location.href);
-      const newSearch = Object.fromEntries(url.searchParams);
-      const newP = Number(p.value);
-      if (newP > 1) {
-        newSearch["p"] = String(newP);
-      } else {
-        delete newSearch["p"];
-      }
-      if (newSearch.q)
-        newSearch.q = newSearch.q.replace("#", "%23").replace("+", "%2B");
-      router.push(
-        `${url.pathname}?${Object.entries(newSearch)
-          .map((v) => v.join("="))
-          .join("&")}`
-      );
+      queryPush({
+        process: (params) => {
+          const newP = Number(p.value);
+          if (newP > 1) params.p = String(newP);
+          else delete params.p;
+          if (params.q)
+            params.q = params.q.replace("#", "%23").replace("+", "%2B");
+          else delete params.q;
+        },
+        search,
+        push: router.push,
+      });
       (document.activeElement as HTMLElement).blur();
       e?.preventDefault();
     }
