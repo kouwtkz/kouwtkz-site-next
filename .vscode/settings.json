@@ -3,6 +3,7 @@
     "*.css": "tailwindcss"
   },
   "VsCodeTaskButtons.tasks": [
+    { "label": "merge", "task": "git: merge from main" },
     { "label": "setup", "task": "npm: setup" },
     { "label": "update", "task": "update: media" },
     { "label": "build", "task": "npm: build" },

@@ -57,6 +57,11 @@
       "label": "serve: static",
       "type": "shell",
       "command": "node ./.vscode/scripts/wsv.js ./out/html 3003"
+    },
+    {
+      "label": "git: merge from main",
+      "type": "shell",
+      "command": "git merge main"
     }
   ]
 }
