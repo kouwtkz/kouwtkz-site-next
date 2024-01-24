@@ -192,7 +192,9 @@ export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage
           } catch { } finally {
             if (baseImageFullPath) {
               if (toWebp) await sharp(baseImageFullPath).webp().toFile(imageFullPath);
-              else fs.copyFile(baseImageFullPath, imageFullPath, () => { })
+              else {
+                try { fs.copyFileSync(baseImageFullPath, imageFullPath) } catch { }
+              }
             }
           }
         }
@@ -250,7 +252,7 @@ export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage
   if (deleteImage) {
     const currentPublicImages = currentPublicItems.filter(item => item.isFile).map(({ path }) => path);
     const deletePublicImages = currentPublicImages.filter(path => !outputPublicImages.some(_path => _path === path))
-    deletePublicImages.forEach(path => { fs.unlink(resolve(path), () => { }); })
+    deletePublicImages.forEach(path => { try { fs.unlinkSync(resolve(path)) } catch { } })
   }
 }
 

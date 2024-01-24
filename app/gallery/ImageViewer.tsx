@@ -69,15 +69,12 @@ function ImageViewerWindow() {
 
   const backAction = () => {
     router.back();
-    setBackCheck(true);
+    const href = location.href;
+    setTimeout(() => {
+      if (href === location.href)
+        router.push(location.pathname, { scroll: false });
+    }, 10);
   };
-  useEffect(() => {
-    if (backCheck) {
-      router.push(location.pathname, { scroll: false });
-      setBackCheck(false);
-    }
-  }, [backCheck, imageParam, router]);
-
   useEffect(() => {
     if (!imageParam) {
       if (isOpen) onClose();
@@ -156,7 +153,11 @@ function ImageViewerWindow() {
                     const item = eventTags.find(({ value }) => value === tag);
                     if (!item) return item;
                     return (
-                      <Link href={`?tag=${item.value}`} className="text-main-dark hover:text-main-strong" key={i}>
+                      <Link
+                        href={`?tag=${item.value}`}
+                        className="text-main-dark hover:text-main-strong"
+                        key={i}
+                      >
                         <MultiParser
                           only={{ toTwemoji: true }}
                           className="mx-2 my-1 inline-block [&_.emoji]:mr-1"
