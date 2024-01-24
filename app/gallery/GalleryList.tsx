@@ -105,8 +105,6 @@ function Main({
   }
   if (!loading && afterFilter && albumList.length === 0) return <></>;
 
-  console.log(album);
-
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
   const heading = label || album.name;

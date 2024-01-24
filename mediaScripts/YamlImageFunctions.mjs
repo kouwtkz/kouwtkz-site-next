@@ -433,6 +433,9 @@ export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeIma
       if (item.dir === "") delete item.dir;
       if (item.description === "") delete item.description;
       if (item.tags?.length === 0 || item.tags === null) delete item.tags;
+      else if (item.tags) {
+        item.tags = Array.from(new Set(item.tags)); // タグの重複削除
+      }
       if (item.title) { item.name = item.title; delete item.title; }
       delete item.origin;
     })
