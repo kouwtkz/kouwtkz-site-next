@@ -9,6 +9,7 @@ import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import InPageMenu from "../components/navigation/InPageMenu";
 import { useServerState } from "../components/System/ServerState";
 import ArrowUpButton from "../components/svg/button/arrow/ArrowUpButton";
+import GalleryTagsLink from "./GalleryTagsLink";
 
 export interface GalleryItemObjectType extends GalleryListPropsBase {
   name: string;
@@ -104,6 +105,7 @@ export default function GalleryObject({
           <ArrowUpButton className="fill-main-soft hover:fill-main m-0" />
         </button>
       ) : null}
+      <GalleryTagsLink />
       {list.map((item, i) => (
         <div key={i} ref={refList.current[i]}>
           <GalleryItem item={item} {...args} />
