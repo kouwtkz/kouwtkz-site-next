@@ -98,11 +98,11 @@ function Main({
     (a, b) => (b.time?.getTime() || 0) - (a.time?.getTime() || 0)
   );
   let afterFilter = false;
-  const searchTag = search.get("tag");
-  if (searchTag) {
+  const searchTags = search.get("tag")?.split(",");
+  if (searchTags) {
     afterFilter = true;
     albumList = albumList.filter((item) =>
-      item.tags?.some((tag) => tag === searchTag)
+      searchTags.every((stag) => item.tags?.some((tag) => stag === tag))
     );
   }
   const year = search.get("year");
