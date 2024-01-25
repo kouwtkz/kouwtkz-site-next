@@ -9,10 +9,18 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import fadein from "./styles/transitions/fadein.module.scss";
 import ImageMee from "./components/image/ImageMee";
 import { useMediaImageState } from "@/app/context/MediaImageState";
-
+import { filterMonthList } from "./gallery/FilterImages";
+const month = new Date().getMonth() + 1;
+const monthlyFilter = filterMonthList.find((item) => item.month === month);
 function Main() {
   const { imageItemList } = useMediaImageState();
-  const topImages = imageItemList.filter((image) => image.topImage);
+  const topImages = imageItemList.filter(
+    (image) =>
+      image.topImage ||
+      image.tags?.some((tag) =>
+        monthlyFilter?.tags.some((mtag) => mtag === tag)
+      )
+  );
   const [topImageState, setTopImage] = useState<MediaImageItemType>();
   const firstLoad = useRef(true);
   const currentTopImage = useRef<MediaImageItemType | null>(null);
@@ -43,24 +51,26 @@ function Main() {
 
   return (
     <div>
-      {currentTopImage.current && topImage ? (
-        <TransitionGroup className="wrapper h-80 relative">
-          <CSSTransition
-            key={currentTopImage.current.src || ""}
-            classNames={fadein}
-            timeout={750}
-          >
-            <ImageMee
-              imageItem={topImage}
-              loading="eager"
-              className="w-[100%] h-[100%] absolute"
-              suppressHydrationWarning={true}
-            />
-          </CSSTransition>
-        </TransitionGroup>
-      ) : (
-        <div className="h-80 bg-main-grayish-fluo"></div>
-      )}
+      <div className="h-[36rem]">
+        {currentTopImage.current && topImage ? (
+          <TransitionGroup className="h-[100%] wrapper relative">
+            <CSSTransition
+              key={currentTopImage.current.src || ""}
+              classNames={fadein}
+              timeout={750}
+            >
+              <ImageMee
+                imageItem={topImage}
+                loading="eager"
+                className="w-[100%] h-[100%] absolute"
+                suppressHydrationWarning={true}
+              />
+            </CSSTransition>
+          </TransitionGroup>
+        ) : (
+          <div className="h-[100%] bg-main-grayish-fluo"></div>
+        )}
+      </div>
       <main className="pb-8">
         <div className="my-8">
           <div className="text-4xl [&>*]:m-4 mb-8">

@@ -12,6 +12,7 @@ import { useServerState } from "../components/System/ServerState";
 import { useMediaImageState } from "../context/MediaImageState";
 import { upload } from "./send/uploadFunction";
 import queryPush from "@/app/components/functions/queryPush";
+import { getFilterImageList } from "./FilterImages";
 
 export interface GalleryListPropsBase {
   size?: number;
@@ -98,12 +99,10 @@ function Main({
     (a, b) => (b.time?.getTime() || 0) - (a.time?.getTime() || 0)
   );
   let afterFilter = false;
-  const searchTags = search.get("tag")?.split(",");
-  if (searchTags) {
+  const searchTag = search.get("tag");
+  if (searchTag) {
     afterFilter = true;
-    albumList = albumList.filter((item) =>
-      searchTags.every((stag) => item.tags?.some((tag) => stag === tag))
-    );
+    albumList = getFilterImageList({ list: albumList, filter: searchTag });
   }
   const year = search.get("year");
   const yearList = getYearObjects(albumList.map((item) => item.time));
