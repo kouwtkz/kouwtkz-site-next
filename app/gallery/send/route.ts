@@ -56,6 +56,8 @@ export async function PATCH(req: NextRequest) {
             const imageFullpath = resolve(`${cwd}/${editYaml.from}/${origin}`);
             const moveImageFullpath = resolve(`${cwd}/${moveYaml.from}/${origin.replace(editYaml.dir, moveYaml.dir)}`);
             renameSync(imageFullpath, moveImageFullpath);
+            editYaml.list = editYaml.list.filter(({ src }) => imageItem.src !== src)
+            moveYaml.list.push(imageItem);
           }
         }
       }
