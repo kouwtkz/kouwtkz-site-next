@@ -8,13 +8,15 @@ import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/MediaImageState";
 import { eventTags, monthTags } from "./GalleryTags";
 import { useRouter } from "next/navigation";
+import { useEmbedState } from "../context/embed/EmbedState";
 
 interface Props extends HTMLAttributes<HTMLFormElement> {
   image: MediaImageItemType;
 }
 
 export default function ImageEditForm({ image, className, ...args }: Props) {
-  const { setImageFromUrl } = useMediaImageState();
+  const { setImageFromUrl, imageAlbumList } = useMediaImageState();
+  const { data: embedData } = useEmbedState();
   const { editMode, toggleEditMode } = useImageViewer();
   const router = useRouter();
   const wasEdit = useRef(false);
@@ -41,10 +43,11 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
     image: MediaImageItemType,
     deleteMode: boolean = false
   ) => {
-    const { album, resized, resizeOption, URL, ..._image } = image;
+    const { album, resized, resizeOption, URL, move, ..._image } = image;
     const res = await axios.patch("/gallery/send", {
       ..._image,
       albumDir: album?.dir,
+      move,
       deleteMode,
     });
     if (res.status === 200) {
@@ -52,6 +55,14 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
         duration: 2000,
       });
       setImageFromUrl();
+      if (move) {
+        const search = new URLSearchParams(location.search);
+        const queryImage = search.get("image");
+        if (queryImage && album?.dir) {
+          search.set("image", queryImage.replace(album.dir, move));
+          router.replace(`?${search.toString()}`, { scroll: false });
+        }
+      }
       return true;
     } else {
       return false;
@@ -63,11 +74,17 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
       let sendFlag = false;
       if (form) {
         const fmData = new FormData(form);
-        const data = Object.fromEntries(fmData);
+        const data = Object.fromEntries(fmData) as { [k: string]: any };
         const ftData = Object.entries(data).filter(([k, v]) => {
           switch (k) {
             case "time":
               return image.time?.getTime() !== new Date(String(v)).getTime();
+            case "move":
+              return v !== image.album?.dir;
+            case "topImage":
+            case "pickup":
+              const flag = v !== String(image[k]);
+              return flag;
             default:
               return (image[k] || "") !== v;
           }
@@ -77,6 +94,18 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
           switch (k) {
             case "time":
               image.time = new Date(String(v));
+              break;
+            case "topImage":
+            case "pickup":
+              switch (v) {
+                case "true":
+                case "false":
+                  image[k] = v === "true";
+                  break;
+                default:
+                  image[k] = null;
+                  break;
+              }
               break;
             default:
               image[k] = v;
@@ -312,6 +341,35 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
               })()}
             </div>
           </label>
+          <div className="[&_label]:mx-2">
+            <p>固定設定</p>
+            <label>
+              トップ画像
+              <select
+                name="topImage"
+                className="ml-1"
+                title="トップ画像"
+                defaultValue={String(image.topImage)}
+              >
+                <option value="undefined">自動</option>
+                <option value="true">固定する</option>
+                <option value="false">固定しない</option>
+              </select>
+            </label>
+            <label>
+              ピックアップ
+              <select
+                name="pickup"
+                className="ml-1"
+                title="ピックアップ画像"
+                defaultValue={String(image.pickup)}
+              >
+                <option value="undefined">自動</option>
+                <option value="true">固定する</option>
+                <option value="false">固定しない</option>
+              </select>
+            </label>
+          </div>
           <label>
             <p>リンク</p>
             <div className="mx-1">
@@ -325,18 +383,53 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
             </div>
           </label>
           <label>
-            <p>時間</p>
-            <div className="mx-1">
-              <input
-                className="rounded-none px-1 text-lg md:text-xl"
-                title="時間"
-                type="datetime-local"
-                name="time"
-                defaultValue={image.time
-                  ?.toLocaleString("sv-SE", { timeZone: "JST" })
-                  .replace(" ", "T")}
-              />
-            </div>
+            <div className="inline-block mr-4">埋め込み</div>
+            <select title="埋め込み" name="embed" defaultValue={image.embed}>
+              <option value="" />
+              {/* <option value="_new">新規</option> */}
+              {embedData
+                ? Object.keys(embedData).map((embed, i) => (
+                    <option key={i} value={embed}>
+                      {embed}
+                    </option>
+                  ))
+                : null}
+            </select>
+          </label>
+          <label>
+            <div className="inline-block mr-4">時間</div>
+            <input
+              className="rounded-none px-1 text-lg md:text-xl"
+              title="時間"
+              type="datetime-local"
+              name="time"
+              defaultValue={image.time
+                ?.toLocaleString("sv-SE", { timeZone: "JST" })
+                .replace(" ", "T")}
+            />
+          </label>
+          <label>
+            <div className="inline-block mr-4">コピーライト</div>
+            <input
+              className="rounded-none px-1 text-lg md:text-xl"
+              title="コピーライト"
+              type="text"
+              name="copyright"
+              defaultValue={image.copyright}
+            />
+          </label>
+          <label>
+            <div className="inline-block mr-4">アルバム移動</div>
+            <select title="移動" name="move" defaultValue={image.album?.dir}>
+              {imageAlbumList
+                .filter((album) => album.listup && !album.name.startsWith("/"))
+                .sort((a, b) => ((a.name || "") > (b.name || "") ? 1 : -1))
+                .map((album, i) => (
+                  <option key={i} value={album.dir}>
+                    {album.name}
+                  </option>
+                ))}
+            </select>
           </label>
         </form>
       ) : null}

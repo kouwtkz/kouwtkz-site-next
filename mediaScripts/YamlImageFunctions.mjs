@@ -100,11 +100,12 @@ export async function GetYamlImageList({ from, to: _to, filter, readImage = true
     if (filterGroup) yamls = yamls.filter((y) => {
       const ynames = [y.dir]
       if (y.data.name) ynames.push(y.data.name);
-      if (typeof filterGroup === "object") return ynames.some(v => filterGroup.test(v));
-      else {
-        if (filter.endsWith) return ynames.some(v => v.endsWith(filterGroup));
-        else return ynames.some(v => v.match(filterGroup));
+      if (typeof filterGroup === "object") {
+        if (Array.isArray(filterGroup)) return ynames.some(v =>
+          filterGroup.some(group => filter.endsWith ? v.endsWith(group) : v.match(group)))
+        else return ynames.some(v => filterGroup.test(v));
       }
+      else return ynames.some(v => filter.endsWith ? v.endsWith(filterGroup) : v.match(filterGroup));
     })
     const filterListup = filter.listup;
     if (filterListup !== undefined) yamls = yamls.filter(({ data }) => data?.listup === undefined ? false : data.listup === filterListup);
@@ -396,8 +397,6 @@ export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeIma
           })
         // 付与処理
         y.data.list?.forEach((img) => {
-          if (y.data.fanart !== undefined && img.fanart === undefined) img.fanart = y.data.fanart;
-          if (y.data.collaboration !== undefined && img.collaboration === undefined) img.collaboration = y.data.collaboration;
           if (y.data.copyright !== undefined && img.copyright === undefined) img.copyright = y.data.copyright;
           // オートフォルダリング
           if (y.data.auto) {
@@ -469,7 +468,7 @@ export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeIma
  */
 export function GetMediaImageAlbumFromYamls(yamls) {
   return yamls.map((y) => {
-    const { list: ydList, name: ydName, description = "", visible = {}, time: ydTime = null } = y.data;
+    const { list: ydList, name: ydName, description = "", visible = {}, time: ydTime = null, listup } = y.data;
     const list = y.list.map((item) => {
       const { time = null, ..._item } = item
       /** @type MediaImageItemType */
@@ -478,7 +477,7 @@ export function GetMediaImageAlbumFromYamls(yamls) {
     });
     const name = ydName || y.dir;
     const time = ydTime ? new Date(ydTime) : null;
-    return { dir: y.dir, list, name, description, visible, time }
+    return { dir: y.dir, list, name, description, listup, visible, time }
   })
 }
 

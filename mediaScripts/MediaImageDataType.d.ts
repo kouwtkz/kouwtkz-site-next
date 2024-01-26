@@ -12,6 +12,7 @@ export type MediaImageAlbumType = {
   dir?: string;
   name: string;
   group?: string;
+  listup?: boolean;
   link?: string;
   time?: Date | null;
   description?: string;
@@ -34,12 +35,11 @@ export type MediaImageItemType = {
   tags?: string[];
   description?: string;
   embed?: string;
-  fanart?: boolean;
-  collaboration?: boolean;
-  copyright?: string | boolean;
+  copyright?: string;
   time?: Date | null;
   timeOptions?: Intl.DateTimeFormatOptions;
-  topImage?: boolean;
+  topImage?: boolean | null;
+  pickup?: boolean | null;
   tool?: string | string[];
   resizeOption?: ResizeOptionType | ResizeOptionType[];
   resized?: ResizedType[]
