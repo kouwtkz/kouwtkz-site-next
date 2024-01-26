@@ -100,7 +100,7 @@ button,
 }
 
 .content-parent {
-  > *:not(.wide) {
+  > div:not(.wide) {
     max-width: 1160px;
     margin-left: auto;
     margin-right: auto;

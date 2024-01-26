@@ -1,6 +1,6 @@
 :root {
   --main-color: #c2d555;
-  --main-color-soft: #d4e18b;
+  --main-color-soft: #c7d578;
   --main-color-pale: #dfec98;
   --main-color-fluo: #c5d85840;
   --main-color-pale-fluo: #dfec9840;
@@ -45,8 +45,8 @@
   --lightbox-background-text: rgb(246, 246, 243);
 }
 :root.theme-orange {
-  --play-background-color-top: #fff9d4;
-  --play-background-color-bottom: #ffead4;
+  --play-background-color-top: #fffbdf;
+  --play-background-color-bottom: #fff4d6;
 }
 
 :root {

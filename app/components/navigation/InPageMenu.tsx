@@ -30,6 +30,7 @@ export default function InPageMenu({
       {list.map((item, i) => {
         if (!refPrompt && !item.ref.current) setRefPrompt(true);
         const elm = list[i].ref.current;
+        if ((elm?.children.length || 0) === 0) return null;
         const top = (elm?.offsetTop || 0) - firstTop;
         const bottom = top + (elm?.offsetHeight || 0);
         const currentMode = top <= jy && jy < bottom;

@@ -31,6 +31,7 @@ export interface GalleryListPropsBase {
 interface GalleryListProps extends GalleryListPropsBase {
   album: MediaImageAlbumType | null;
   loading?: boolean;
+  hideWhenFilter?: boolean;
 }
 
 function getYear(date?: Date | null) {
@@ -66,6 +67,7 @@ function Main({
   autoDisable = false,
   filterButton = false,
   loading = false,
+  hideWhenFilter = false,
   tags = [],
   h2: _h2,
   h4: _h4,
@@ -101,8 +103,27 @@ function Main({
   let afterFilter = false;
   const searchTag = search.get("tag");
   if (searchTag) {
-    afterFilter = true;
-    albumList = getFilterImageList({ list: albumList, filter: searchTag });
+    if (hideWhenFilter) return <></>;
+    else {
+      afterFilter = true;
+      albumList = getFilterImageList({ list: albumList, filter: searchTag });
+    }
+  }
+  const searchFilter = search.get("filter");
+  if (searchFilter) {
+    if (hideWhenFilter) return <></>;
+    else {
+      afterFilter = true;
+      switch (searchFilter) {
+        case "topImage":
+        case "pickup":
+          albumList = albumList.filter((item) => item[searchFilter]);
+          break;
+        default:
+          albumList = [];
+          break;
+      }
+    }
   }
   const year = search.get("year");
   const yearList = getYearObjects(albumList.map((item) => item.time));
