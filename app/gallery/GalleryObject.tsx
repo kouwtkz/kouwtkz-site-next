@@ -69,6 +69,7 @@ function GalleryItem({ item, ...args }: GalleryItemProps) {
               name,
             }}
             loading={loading}
+            hideWhenFilter={true}
             {...setArgs}
           />
         );
@@ -111,17 +112,28 @@ export default function GalleryObject({
           adjust={128}
         />
       ) : isServerMode ? (
-        <button
-          type="button"
-          className="plain fixed z-30 right-0 bottom-0 m-4 cursor-pointer"
-          title="アップロードする"
-          onClick={() => {
-            const uploadElm = document.querySelector(`input[name="upload"]`);
-            if (uploadElm) (uploadElm as HTMLInputElement).click();
-          }}
-        >
-          <ArrowUpButton className="fill-main-soft hover:fill-main m-0" />
-        </button>
+        list.map((item, i) => {
+          switch (item.name) {
+            case "pickup":
+            case "topImage":
+              return null;
+          }
+          return (
+            <button
+              type="button"
+              key={i}
+              className="plain fixed z-30 right-0 bottom-0 m-4 cursor-pointer"
+              title="アップロードする"
+              onClick={() => {
+                const uploadElm =
+                  document.querySelector(`input[name="upload"]`);
+                if (uploadElm) (uploadElm as HTMLInputElement).click();
+              }}
+            >
+              <ArrowUpButton className="fill-main-soft hover:fill-main m-0" />
+            </button>
+          );
+        })
       ) : null}
       <GalleryTagsLink />
       {list.map((item, i) => (
