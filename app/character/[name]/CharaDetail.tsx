@@ -68,7 +68,9 @@ export default function CharaDetail({ name }: DetailProps) {
             className="charaIcon text-4xl mr-2"
           />
         ) : null}
-        <span className="align-middle">{`${chara.name}${chara.honorific || ""}`}</span>
+        <span className="align-middle">{`${chara.name}${
+          chara.honorific || ""
+        }`}</span>
       </h1>
       <div className="text-main text-xl">{chara.description}</div>
       <EmbedNode className="my-8 mx-2 md:mx-8" embed={chara.embed} />
@@ -76,6 +78,7 @@ export default function CharaDetail({ name }: DetailProps) {
       <CharaGalleryAlbum chara={chara} name="goods" />
       <CharaGalleryAlbum chara={chara} name="3D" />
       <CharaGalleryAlbum chara={chara} name="picture" />
+      <CharaGalleryAlbum chara={chara} name="fanart" label="parody" max={12} />
       <CharaGalleryAlbum chara={chara} name="given" label="FAN ART" max={40} />
     </div>
   );

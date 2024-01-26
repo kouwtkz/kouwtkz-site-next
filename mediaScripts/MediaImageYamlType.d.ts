@@ -26,9 +26,7 @@ export type YamlDataType = {
   description?: string;
   visible?: AlbumVisibleType;
   auto?: null | "year"
-  fanart?: boolean;
-  collaboration?: boolean;
-  copyright?: boolean | string;
+  copyright?: string;
   format?: GroupFormat;
   time?: string;
   list?: YamlDataImageType[];
@@ -50,7 +48,7 @@ export type YamlGroupType = {
 
 export type GetYamlImageFilterType = {
   path?: string | RegExp;
-  group?: string | RegExp;
+  group?: string[] | string | RegExp;
   tags?: string[] | string;
   topImage?: boolean;
   archive?: boolean;

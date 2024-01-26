@@ -122,6 +122,7 @@ export const CharaGalleryAlbum = memo(function GalleryFromAlbum({
   return (
     <GalleryList
       album={album}
+      label={label}
       tags={chara.id}
       autoDisable={true}
       max={max}
