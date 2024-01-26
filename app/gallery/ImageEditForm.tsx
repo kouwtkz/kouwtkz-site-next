@@ -75,8 +75,6 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
       if (form) {
         const fmData = new FormData(form);
         const data = Object.fromEntries(fmData) as { [k: string]: any };
-        data.pickup = data.pickup === "on";
-        data.topImage = data.topImage === "on";
         const ftData = Object.entries(data).filter(([k, v]) => {
           switch (k) {
             case "time":
@@ -85,7 +83,8 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
               return v !== image.album?.dir;
             case "topImage":
             case "pickup":
-              return (image[k] || false) !== v;
+              const flag = v !== String(image[k]);
+              return flag;
             default:
               return (image[k] || "") !== v;
           }
@@ -95,6 +94,18 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
           switch (k) {
             case "time":
               image.time = new Date(String(v));
+              break;
+            case "topImage":
+            case "pickup":
+              switch (v) {
+                case "true":
+                case "false":
+                  image[k] = v === "true";
+                  break;
+                default:
+                  image[k] = null;
+                  break;
+              }
               break;
             default:
               image[k] = v;
@@ -333,24 +344,30 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
           <div className="[&_label]:mx-2">
             <p>固定設定</p>
             <label>
-              <input
-                className="mr-1"
-                type="checkbox"
+              トップ画像
+              <select
                 name="topImage"
-                defaultChecked={image.topImage}
+                className="ml-1"
                 title="トップ画像"
-              />
-              トップに固定
+                defaultValue={String(image.topImage)}
+              >
+                <option value="undefined">自動</option>
+                <option value="true">固定する</option>
+                <option value="false">固定しない</option>
+              </select>
             </label>
             <label>
-              <input
-                className="mr-1"
-                type="checkbox"
-                name="pickup"
-                defaultChecked={image.pickup}
-                title="ピックアップ画像"
-              />
               ピックアップ
+              <select
+                name="pickup"
+                className="ml-1"
+                title="ピックアップ画像"
+                defaultValue={String(image.pickup)}
+              >
+                <option value="undefined">自動</option>
+                <option value="true">固定する</option>
+                <option value="false">固定しない</option>
+              </select>
             </label>
           </div>
           <label>

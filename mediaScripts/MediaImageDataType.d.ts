@@ -38,8 +38,8 @@ export type MediaImageItemType = {
   copyright?: string;
   time?: Date | null;
   timeOptions?: Intl.DateTimeFormatOptions;
-  topImage?: boolean;
-  pickup?: boolean;
+  topImage?: boolean | null;
+  pickup?: boolean | null;
   tool?: string | string[];
   resizeOption?: ResizeOptionType | ResizeOptionType[];
   resized?: ResizedType[]

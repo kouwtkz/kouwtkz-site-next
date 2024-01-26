@@ -48,8 +48,8 @@ export async function PATCH(req: NextRequest) {
         Object.entries(image).forEach(([k, v]) => {
           imageItem[k] = v;
         });
-        if (typeof (imageItem.topImage) === "boolean" && !imageItem.topImage) delete imageItem.topImage;
-        if (typeof (imageItem.pickup) === "boolean" && !imageItem.pickup) delete imageItem.pickup;
+        if (imageItem.topImage === null) delete imageItem.topImage;
+        if (imageItem.pickup === null) delete imageItem.pickup;
         if (move) {
           const moveYaml = yamls.find(album => album.dir === move);
           if (moveYaml) {

@@ -1,6 +1,23 @@
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 export const publicParam = { list: <Array<MediaImageItemType>>[] };
-const buildTime = new Date();
+const currentTime = new Date();
+const currentMonth = currentTime.getMonth() + 1;
+
+export const filterMonthList = [
+  { month: 1, tags: ["january", "winter"] },
+  { month: 2, tags: ["february", "winter", "valentine"] },
+  { month: 3, tags: ["march", "spring", "easter"] },
+  { month: 4, tags: ["april", "spring", "easter"] },
+  { month: 5, tags: ["may", "spring"] },
+  { month: 6, tags: ["june", "rainy"] },
+  { month: 7, tags: ["july", "summer"] },
+  { month: 8, tags: ["august", "summer"] },
+  { month: 9, tags: ["september", "autumn"] },
+  { month: 10, tags: ["october", "halloween", "autumn"] },
+  { month: 11, tags: ["november", "autumn"] },
+  { month: 12, tags: ["december", "winter", "myBirthday"] },
+]
+const monthlyFilter = filterMonthList.find((item) => item.month === currentMonth);
 
 export function getFilterImageList(option: { sort?: "asc" | "desc", filter?: string, list?: Array<MediaImageItemType> } = {}) {
   const { sort = "desc" } = option;
@@ -23,25 +40,27 @@ export function filterImageList(option: { filter?: string, list?: Array<MediaIma
   }
 }
 
-export const filterMonthList = [
-  { month: 1, tags: ["january", "winter"] },
-  { month: 2, tags: ["february", "winter", "valentine"] },
-  { month: 3, tags: ["march", "spring", "easter"] },
-  { month: 4, tags: ["april", "spring", "easter"] },
-  { month: 5, tags: ["may", "spring"] },
-  { month: 6, tags: ["june", "rainy"] },
-  { month: 7, tags: ["july", "summer"] },
-  { month: 8, tags: ["august", "summer"] },
-  { month: 9, tags: ["september", "autumn"] },
-  { month: 10, tags: ["october", "halloween", "autumn"] },
-  { month: 11, tags: ["november", "autumn"] },
-  { month: 12, tags: ["december", "winter", "myBirthday"] },
-]
-
 export function addFilterAutoSeason(filter = '', delimiter = ','): string {
   const filters = [filter];
-  const month = buildTime.getMonth() + 1;
+  const month = currentTime.getMonth() + 1;
   const monthObject = filterMonthList.find(item => item.month === month);
   if (monthObject) filters.push(monthObject.tags.join(delimiter));
   return filters.join(delimiter);
+}
+
+type filterPickFixedProps = {
+  images: MediaImageItemType[];
+  name: "topImage" | "pickup";
+  monthly?: boolean;
+}
+
+export function filterPickFixed({ images, name: kind, monthly = true }: filterPickFixedProps) {
+  return images.filter(
+    (image) =>
+      image[kind] ||
+      (monthly && image[kind] !== false &&
+        image.tags?.some((tag) =>
+          monthlyFilter?.tags.some((mtag) => mtag === tag)
+        ))
+  )
 }

@@ -10,6 +10,7 @@ import InPageMenu from "../components/navigation/InPageMenu";
 import { useServerState } from "../components/System/ServerState";
 import ArrowUpButton from "../components/svg/button/arrow/ArrowUpButton";
 import GalleryTagsLink from "./GalleryTagsLink";
+import { filterPickFixed } from "./FilterImages";
 
 export interface GalleryItemObjectType extends GalleryListPropsBase {
   name: string;
@@ -26,7 +27,7 @@ interface GalleryItemProps extends GalleryListPropsBase {
 }
 
 function GalleryItem({ item, ...args }: GalleryItemProps) {
-  const { imageAlbumList } = useMediaImageState();
+  const { imageAlbumList, imageItemList } = useMediaImageState();
   const loading = imageAlbumList.length === 0;
   const { name, match, format = "image", ..._args } = item;
   const setArgs = {
@@ -58,11 +59,28 @@ function GalleryItem({ item, ...args }: GalleryItemProps) {
     const album: MediaImageAlbumType = { name, list: thumbnails };
     return <GalleryList album={album} loading={loading} {...setArgs} />;
   } else {
-    let groupAlbum = match
-      ? imageAlbumList.find((album) => album.dir?.match(match))
-      : imageAlbumList.find((album) => album.name === name);
-    if (!groupAlbum) groupAlbum = { name, list: [] };
-    return <GalleryList album={groupAlbum} loading={loading} {...setArgs} />;
+    switch (name) {
+      case "pickup":
+      case "topImage":
+        return (
+          <GalleryList
+            album={{
+              list: filterPickFixed({ images: imageItemList, name }),
+              name,
+            }}
+            loading={loading}
+            {...setArgs}
+          />
+        );
+      default:
+        let groupAlbum = match
+          ? imageAlbumList.find((album) => album.dir?.match(match))
+          : imageAlbumList.find((album) => album.name === name);
+        if (!groupAlbum) groupAlbum = { name, list: [] };
+        return (
+          <GalleryList album={groupAlbum} loading={loading} {...setArgs} />
+        );
+    }
   }
 }
 

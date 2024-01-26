@@ -9,18 +9,13 @@ import { TransitionGroup, CSSTransition } from "react-transition-group";
 import fadein from "./styles/transitions/fadein.module.scss";
 import ImageMee from "./components/image/ImageMee";
 import { useMediaImageState } from "@/app/context/MediaImageState";
-import { filterMonthList } from "./gallery/FilterImages";
-const month = new Date().getMonth() + 1;
-const monthlyFilter = filterMonthList.find((item) => item.month === month);
+import { filterPickFixed } from "./gallery/FilterImages";
 function Main() {
   const { imageItemList } = useMediaImageState();
-  const topImages = imageItemList.filter(
-    (image) =>
-      image.topImage ||
-      image.tags?.some((tag) =>
-        monthlyFilter?.tags.some((mtag) => mtag === tag)
-      )
-  );
+  const topImages = filterPickFixed({
+    images: imageItemList,
+    name: "topImage",
+  });
   const [topImageState, setTopImage] = useState<MediaImageItemType>();
   const firstLoad = useRef(true);
   const currentTopImage = useRef<MediaImageItemType | null>(null);
