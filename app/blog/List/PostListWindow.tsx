@@ -11,7 +11,7 @@ type PostListWindowProps = {
 } & HTMLAttributes<HTMLDivElement>;
 
 export default function PostListWindow({
-  heading = "NEW POSTS",
+  heading = null,
   options,
   ...attributes
 }: PostListWindowProps) {
@@ -20,23 +20,25 @@ export default function PostListWindow({
   const { posts } = usePostState();
   const topPosts = findMany({ take: 3, ...options, list: posts });
   return (
-    <div {...attributes}>
+    <>
       {heading}
-      <div className="my-4">
+      <div {...attributes}>
         {topPosts.map((post, i) => (
           <Link
-            className="m-1 flex flex-row justify-center items-center"
+            className="mx-2 my-1 flex flex-row justify-left items-center"
             href={`/blog?postId=${post.postId}`}
             key={i}
           >
-            <div className="flex-1 text-right mr-2">{post.date.toLocaleDateString("ja")}</div>
-            <MultiParser className="flex-[3] text-left" only={{ toTwemoji: true }}>
+            <div className="text-right mr-2 min-w-[5em]">
+              {post.date.toLocaleDateString("ja")}
+            </div>
+            <MultiParser className="text-left" only={{ toTwemoji: true }}>
               {post.title}
             </MultiParser>
           </Link>
         ))}
       </div>
-    </div>
+    </>
   );
 }
 

@@ -45,8 +45,8 @@ function Main() {
   });
 
   return (
-    <div>
-      <div className="h-[36rem]">
+    <>
+      <div className="h-[48rem] min-h-[30rem] max-h-[75vh] wide">
         {currentTopImage.current && topImage ? (
           <TransitionGroup className="h-[100%] wrapper relative">
             <CSSTransition
@@ -67,43 +67,46 @@ function Main() {
         )}
       </div>
       <main className="pb-8">
-        <div className="my-8">
-          <div className="text-4xl [&>*]:m-4 mb-8">
-            <h1>
-              <MultiParser only={{ toTwemoji: true }}>
+        <div className="mt-8 mb-6">
+          <div className="text-4xl">
+            <h1 className="m-4">
+              {/* <MultiParser only={{ toTwemoji: true }}>
                 わたかぜコウのサイトへようこそ！🐏
-              </MultiParser>
+              </MultiParser> */}
             </h1>
-            <div>
-              <Link href="gallery">ギャラリー</Link>
-            </div>
-            <div>
-              <Link href="character">キャラクター</Link>
-            </div>
-            <div>
-              <Link href="sound">サウンド</Link>
-            </div>
-            <div>
-              <Link href="schedule">スケジュール</Link>
-            </div>
-            <div>
-              <Link href="about">このサイトについて</Link>
-            </div>
-            <div>
-              <Link href="setting">せってい</Link>
-            </div>
+            <ul className="[&>*]:mx-4 [&>*]:my-2 flex flex-col lg:flex-row items-center justify-center flex-wrap">
+              <li>
+                <Link href="gallery">ギャラリー</Link>
+              </li>
+              <li>
+                <Link href="character">キャラクター</Link>
+              </li>
+              <li>
+                <Link href="sound">サウンド</Link>
+              </li>
+              <li>
+                <Link href="schedule">スケジュール</Link>
+              </li>
+              <li>
+                <Link href="about">このサイトについて</Link>
+              </li>
+              <li>
+                <Link href="setting">せってい</Link>
+              </li>
+            </ul>
           </div>
         </div>
-        <PostListWindow
-          heading={
-            <Link href="blog">
-              <h3 className="inline-block text-3xl">ブログ</h3>
-            </Link>
-          }
-          className="max-w-md h-40 mx-auto my-6"
-        />
+        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-start items-center flex-wrap">
+          <Link href="blog" className="mr-2">
+            <h3 className="text-3xl">ブログ</h3>
+          </Link>
+          <PostListWindow
+            options={{ where: { title: { not: "" } } }}
+            className="text-lg my-4 lg:my-0 flex lg:flex-row flex-col justify-left max-w-md h-32 lg:max-w-max lg:h-auto"
+          />
+        </div>
       </main>
-    </div>
+    </>
   );
 }
 export default function TopPage() {
