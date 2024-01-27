@@ -90,9 +90,6 @@ function Main() {
               <li>
                 <Link href="about">このサイトについて</Link>
               </li>
-              <li>
-                <Link href="setting">せってい</Link>
-              </li>
             </ul>
           </div>
         </div>
