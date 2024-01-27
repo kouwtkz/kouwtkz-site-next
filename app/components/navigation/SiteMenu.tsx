@@ -32,21 +32,45 @@ const SetSiteMenu = React.memo(function SiteMenu({
 }) {
   const { SetIsOpen } = useSiteMenuState();
   return (
-    <div className="absolute right-0 bg-white bg-opacity-90 flex font-LuloClean flex-wrap justify-center flex-col text-right">
-      {nav.map((item, i) => (
-        <Link
-          key={i}
-          href={item.url}
-          className="min-w-48 px-4 py-2 hover:bg-main-pale-fluo"
-          onClick={() => {
-            setTimeout(() => {
-              SetIsOpen(false);
-            }, 350);
-          }}
-        >
-          {item.name}
-        </Link>
-      ))}
+    <div className="absolute right-0 bg-white bg-opacity-90 flex font-LuloClean flex-wrap justify-center flex-col text-right select-none">
+      {nav.map((item, i) => {
+        const base = {
+          className: "min-w-48 px-4 py-2 hover:bg-main-pale-fluo",
+        };
+        if (item.url)
+          return (
+            <Link
+              key={i}
+              href={item.url}
+              {...base}
+              onClick={() => {
+                setTimeout(() => {
+                  SetIsOpen(false);
+                }, 350);
+              }}
+            >
+              {item.name}
+            </Link>
+          );
+        else {
+          const className =
+            "text-main-strong hover:text-main cursor-pointer " + base.className;
+          switch (item.switch) {
+            case "theme":
+              return (
+                <div
+                  key={i}
+                  className={className}
+                  onClick={() => {
+                    document?.documentElement.classList.toggle("theme-orange");
+                  }}
+                >
+                  {item.name}
+                </div>
+              );
+          }
+        }
+      })}
     </div>
   );
 });

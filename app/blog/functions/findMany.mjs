@@ -73,6 +73,8 @@ function whereLoop(value, where) {
               switch (k) {
                 case "equals":
                   return cval == v;
+                case "not":
+                  return cval != v;
                 case "contains":
                   return String(cval).match(new RegExp(v, 'i'));
                 case "startsWith":

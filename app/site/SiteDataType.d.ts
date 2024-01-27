@@ -35,7 +35,8 @@ export type SiteAuthorType = {
 
 export type SiteMenuItemType = {
   name: string
-  url: string
+  url?: string
+  switch?: "theme"
 }
 
 export type SiteSnsItemType = {
