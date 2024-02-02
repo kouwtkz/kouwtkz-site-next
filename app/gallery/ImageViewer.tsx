@@ -169,7 +169,7 @@ function ImageViewerWindow() {
                           only={{ toTwemoji: true }}
                           className="mx-2 my-1 inline-block [&_.emoji]:mr-1"
                         >
-                          {item.name}
+                          {item.label}
                         </MultiParser>
                       </Link>
                     );
