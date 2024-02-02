@@ -198,7 +198,7 @@ function Main({
             </div>
           ) : null}
           {showLabel ? (
-            <h2 className=" mb-6 font-LuloClean text-2xl sm:text-3xl text-center text-main">
+            <h2 className=" mb-6 font-LuloClean text-2xl sm:text-3xl text-center text-main-strong">
               {headingElm}
             </h2>
           ) : null}

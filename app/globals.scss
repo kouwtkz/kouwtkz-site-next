@@ -105,10 +105,10 @@ button,
     margin-left: auto;
     margin-right: auto;
   }
-  > *:not(.transparent) {
-    // background-color: #ffffff80;
-    overflow: hidden;
-  }
+}
+
+style {
+  display: none!important;
 }
 
 .react-comic-viewer {

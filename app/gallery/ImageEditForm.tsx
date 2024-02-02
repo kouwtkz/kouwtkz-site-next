@@ -303,7 +303,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
                           key={i}
                         >
                           {otherTagCandidates.find(({ value }) => tag === value)
-                            ?.name || tag}
+                            ?.label || tag}
                         </span>
                       );
                     })}
@@ -330,9 +330,9 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
                     >
                       <option value="">＋追加</option>
                       <option value="_new">新規</option>
-                      {noUsedCandidates.map(({ value, name }, i) => (
+                      {noUsedCandidates.map(({ value, label }, i) => (
                         <option key={i} value={value}>
-                          {name}
+                          {label}
                         </option>
                       ))}
                     </select>
