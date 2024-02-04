@@ -4,7 +4,7 @@ export type Post = {
   userId: string;
   title: string;
   body: string;
-  category: string;
+  category: string[];
   pin: number;
   noindex: boolean;
   draft: boolean;

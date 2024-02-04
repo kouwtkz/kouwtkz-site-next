@@ -34,6 +34,9 @@ import SetRegister from "@/app/components/form/hook/SetRegister";
 import axios from "axios";
 import { usePostState } from "../PostState";
 import { findMany } from "../functions/findMany.mjs";
+import ReactSelect from "react-select";
+
+type labelValues = { label: string; value: string }[];
 
 const schema = z.object({
   update: z.string(),
@@ -41,7 +44,6 @@ const schema = z.object({
   title: z.string().nullish(),
   body: z.string().min(1, { message: "本文を入力してください" }),
   date: z.string().nullish(),
-  category: z.string().nullish(),
   pin: z.coerce.number().nullish(),
   draft: z.boolean().nullish(),
   attached: z.custom<FileList>().nullish(),
@@ -62,10 +64,33 @@ export default function PostForm() {
   const updateMode = postTarget && !duplicationMode;
 
   const categoryCount = posts.reduce((prev, cur) => {
-    const category = cur.category;
-    if (category) prev[category] = (prev[category] || 0) + 1;
+    const categories = cur.category;
+    categories.forEach((category) => {
+      if (category) prev[category] = (prev[category] || 0) + 1;
+    });
     return prev;
   }, {} as { [K: string]: number });
+  const categoryList = Object.entries(categoryCount).map(([name, count]) => ({
+    label: `${name} (${count})`,
+    value: name,
+  }));
+  const refFirstCategory = useRef(true);
+  const postCategories = postTarget
+    ? typeof postTarget.category === "string"
+      ? [postTarget.category]
+      : postTarget.category
+    : [];
+  const [categoryValues, setCategoryValues] = useState<labelValues>([]);
+  if (refFirstCategory.current && categoryList.length > 0) {
+    setCategoryValues(
+      (postTarget?.category
+        ? postCategories.map(
+            (category) => categoryList.find((_) => category === _.value) || []
+          )
+        : []) as labelValues
+    );
+    refFirstCategory.current = false;
+  }
 
   const [loading, setLoading] = useState(false);
   const { togglePreviewMode } = usePreviewMode();
@@ -91,7 +116,6 @@ export default function PostForm() {
     date: postTarget?.date
       .toLocaleString("sv-SE", { timeZone: "JST" })
       .replace(" ", "T"),
-    category: postTarget?.category,
     pin: Number(postTarget?.pin || 0),
     draft: Boolean(postTarget?.draft),
   };
@@ -187,6 +211,12 @@ export default function PostForm() {
             break;
         }
       });
+
+      const categoryValuesValue = categoryValues
+        .map((item) => item.value)
+        .join(",");
+      if (postCategories.join(",") !== categoryValuesValue)
+        append("category", categoryValuesValue);
       if (sendEnable) {
         const res = await axios.post("post/send", formData);
         if (res.status === 200) {
@@ -269,6 +299,45 @@ export default function PostForm() {
         disabled={loading}
         className="block mx-auto h-8 px-3 py-2 w-[80%] max-w-md"
       />
+      <div className="[&>*]:inline-block">
+        <ReactSelect
+          placeholder="カテゴリ"
+          className="block mx-auto w-[80%] max-w-md"
+          isMulti
+          options={categoryList}
+          onChange={(v, a) => {
+            if (a.option) setCategoryValues(categoryValues.concat(a.option));
+            else if (a.removedValue)
+              setCategoryValues(
+                categoryValues.filter(
+                  (item) => item.value !== a.removedValue?.value
+                )
+              );
+            else if (a.removedValues)
+              setCategoryValues(
+                categoryValues.filter((item) =>
+                  a.removedValues?.every((_item) => item.value !== _item.value)
+                )
+              );
+          }}
+          value={categoryValues}
+        />
+        <button
+          title="新規カテゴリ"
+          type="button"
+          className="ml-2 px-4 py-1 rounded-lg"
+          onClick={() => {
+            const answer = prompt("新規カテゴリーを入力してください");
+            if (answer !== null) {
+              const newCategory = { label: answer, value: answer };
+              setCategoryValues(categoryValues.concat(newCategory));
+              categoryList.push(newCategory);
+            }
+          }}
+        >
+          新規
+        </button>
+      </div>
       <div className="mx-auto max-w-2xl flex justify-around">
         <label>
           <input
@@ -284,32 +353,6 @@ export default function PostForm() {
           />
           ピン
         </label>
-        <select
-          {...SetRegister({
-            name: "category",
-            ref: categorySelectRef,
-            onChange: () =>
-              setCategory({
-                selectCategory: categorySelectRef.current,
-                newCategoryBase: categoryNewRef.current,
-              }),
-            register,
-          })}
-          title="カテゴリ"
-          className="w-[30%]"
-          data-before={postTarget?.category || undefined}
-          disabled={loading}
-        >
-          <option value="">カテゴリ</option>
-          <option value="new" ref={categoryNewRef}>
-            新規作成
-          </option>
-          {Object.entries(categoryCount).map(([category, count], i) => (
-            <option key={i} value={category}>
-              {category} ({count})
-            </option>
-          ))}
-        </select>
         <select
           title="操作"
           ref={operationRef}

@@ -4,7 +4,6 @@ import React, {
   HTMLAttributes,
   Suspense,
   useEffect,
-  useLayoutEffect,
   useRef,
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -54,7 +53,7 @@ function Main({ max, className, ...args }: PagingAreaProps) {
           if (newP > 1) params.p = String(newP);
           else delete params.p;
           if (params.q)
-            params.q = params.q.replace("#", "%23").replace("+", "%2B");
+            params.q = params.q.replaceAll("%23", "#").replaceAll("%2B", "+");
           else delete params.q;
         },
         search,

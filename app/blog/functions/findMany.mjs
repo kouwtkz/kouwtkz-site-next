@@ -67,7 +67,7 @@ function whereLoop(value, where) {
           if (typeof (fval) === "object") {
             /** @type {[any, any][]} */
             const _conditions = Object.entries(fval);
-            /** @type {[import("./findManyType.d").filterConditionsType, any][]} */
+            /** @type {[import("./findManyType.d").filterConditionsType | import("./findManyType.d").filterConditionsStringType, any][]} */
             const conditions = _conditions;
             return (conditions).every(([k, v]) => {
               switch (k) {
@@ -76,7 +76,8 @@ function whereLoop(value, where) {
                 case "not":
                   return cval != v;
                 case "contains":
-                  return String(cval).match(new RegExp(v, 'i'));
+                  if (Array.isArray(cval)) return cval.some(x => x === v);
+                  else return String(cval).match(v);
                 case "startsWith":
                   return String(cval).startsWith(v);
                 case "endsWith":

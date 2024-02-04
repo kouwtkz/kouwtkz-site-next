@@ -83,7 +83,7 @@ function setWhere(q, options) {
       where.push({
         OR: [{
           category: {
-            equals: filterValue
+            contains: filterValue
           }
         }, {
           body: {
@@ -109,7 +109,7 @@ function setWhere(q, options) {
           where.push(
             {
               category: {
-                equals: filterValue
+                contains: filterValue
               }
             })
           break;
