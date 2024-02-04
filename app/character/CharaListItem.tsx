@@ -13,7 +13,7 @@ export default function CharaListItem({ chara }: CharaListItemProps) {
   const { charaObject } = useCharaState();
   const currentChara = charaObject && chara.id ? charaObject[chara.id] : null;
   return (
-    <Link className="text-3xl m-2" href={`character/${chara.id}`}>
+    <Link className="text-3xl m-2" href={`character?name=${chara.id}`}>
       {currentChara?.media?.icon ? (
         <ImageMeeIcon
           imageItem={currentChara.media.icon}

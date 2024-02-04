@@ -130,7 +130,7 @@ function ImageViewerWindow() {
                     return (
                       <Link
                         className="mx-2 my-1 inline-block"
-                        href={`/character/${chara.id}`}
+                        href={`/character?name=${chara.id}`}
                         onClick={() => {
                           onClose();
                           return true;
