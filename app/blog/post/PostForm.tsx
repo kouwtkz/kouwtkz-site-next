@@ -96,8 +96,6 @@ export default function PostForm() {
   const { togglePreviewMode } = usePreviewMode();
 
   const formRef = useRef<HTMLFormElement>(null);
-  const categorySelectRef = useRef<HTMLSelectElement | null>(null);
-  const categoryNewRef = useRef<HTMLOptionElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const decorationRef = useRef<HTMLSelectElement>(null);
   const colorChangerRef = useRef<HTMLInputElement>(null);
@@ -297,12 +295,29 @@ export default function PostForm() {
         type="text"
         placeholder="タイトル"
         disabled={loading}
-        className="block mx-auto h-8 px-3 py-2 w-[80%] max-w-md"
+        className="block mx-auto text-lg h-9 px-3 py-2 w-[25rem] max-w-[80%]"
       />
-      <div className="[&>*]:inline-block">
+      <div className="flex flex-row items-center min-w-[25rem] w-fit max-w-[80%] mx-auto">
         <ReactSelect
           placeholder="カテゴリ"
-          className="block mx-auto w-[80%] max-w-md"
+          className="flex-1"
+          styles={{
+            control: (provided) => ({
+              ...provided,
+              textAlign: "left",
+            }),
+          }}
+          theme={(theme) => ({
+            ...theme,
+            borderRadius: 10,
+            colors: {
+              ...theme.colors,
+              primary: "var(--main-color-deep)",
+              primary25: "var(--main-color-pale)",
+              primary50: "var(--main-color-soft)",
+              primary75: "var(--main-color)",
+            },
+          })}
           isMulti
           options={categoryList}
           onChange={(v, a) => {
@@ -353,6 +368,19 @@ export default function PostForm() {
           />
           ピン
         </label>
+        <label>
+          <input {...register("draft")} type="checkbox" disabled={loading} />
+          下書き
+        </label>
+        <input
+          {...register("date")}
+          type="datetime-local"
+          placeholder="日付"
+          title="日付"
+          step={1}
+          className="px-1"
+          disabled={loading}
+        />
         <select
           title="操作"
           ref={operationRef}
@@ -371,21 +399,6 @@ export default function PostForm() {
           <option value="duplication">複製</option>
           <option value="delete">削除</option>
         </select>
-      </div>
-      <div className="mx-auto max-w-2xl flex justify-around">
-        <label>
-          <input {...register("draft")} type="checkbox" disabled={loading} />
-          下書き
-        </label>
-        <input
-          {...register("date")}
-          type="datetime-local"
-          placeholder="日付"
-          title="日付"
-          step={1}
-          className="px-1"
-          disabled={loading}
-        />
       </div>
       <div className="mx-auto max-w-2xl flex justify-around">
         <select
