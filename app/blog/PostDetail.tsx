@@ -25,13 +25,20 @@ export default function PostDetail({ post }: PostDetailProps) {
               {post.title}
             </h1>
           </MultiParser>
-          <div className="inline-block">
-            <div className="mx-3 underline inline-block">
-              <Link href={`/blog/?q=%23${post.category}`}>{post.category}</Link>
-            </div>
+          <div className="inline-block mx-3">
+            {(typeof post.category === "string"
+              ? [post.category]
+              : post.category
+            ).map((category, i) => (
+              <div key={i} className="mx-1 underline inline-block">
+                <Link href={`/blog/?q=%23${category}`}>{category}</Link>
+              </div>
+            ))}
           </div>
         </div>
-        <MultiParser className="mx-2" detailsOpen={true}>{post.body}</MultiParser>
+        <MultiParser className="mx-2" detailsOpen={true}>
+          {post.body}
+        </MultiParser>
         <div className="text-right [&>*]:ml-4">
           {post.draft ? (
             <span className="text-main-grayish">(下書き)</span>

@@ -47,6 +47,6 @@ export function NoticeWindow({
   category = "notice",
   ...args
 }: PostListWindowProps & { category?: string }) {
-  options = { where: { category }, ...options };
+  options = { where: { category: { contains: category } }, ...options };
   return PostListWindow({ heading: "NOTICE", ...args });
 }

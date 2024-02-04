@@ -25,10 +25,15 @@ export default function OnePost({ post }: Props) {
         <></>
       )}
       {post.category ? (
-        <div className="underline inline-block">
-          <Link href={`/blog/?q=category:${post.category}`}>
-            {post.category}
-          </Link>
+        <div className="inline-block mx-1">
+          {(typeof post.category === "string"
+            ? [post.category]
+            : post.category
+          ).map((category, i) => (
+            <div key={i} className="mx-1 underline inline-block">
+              <Link href={`/blog/?q=%23${category}`}>{category}</Link>
+            </div>
+          ))}
         </div>
       ) : (
         <></>

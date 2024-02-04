@@ -9,7 +9,7 @@ import { uploadAttached } from "@/app/gallery/send/uploadAttached";
 type PostFormType = {
   title?: string,
   body?: string,
-  category?: string,
+  category?: string[],
   pin?: number,
   draft?: boolean,
   date?: Date,
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
   if (body !== null || !update) data.body = String(body || "");
 
   const category = formData.get("category");
-  if (category !== null) data.category = String(category);
+  if (category !== null) data.category = String(category).split(",");
 
   const pin = formData.get("pin");
   if (pin !== null) data.pin = Number(pin);
@@ -89,7 +89,7 @@ export async function POST(req: NextRequest) {
       const now = new Date();
       posts.push({
         ...{
-          id: maxId + 1, postId, userId, title: "", body: "", category: "", pin: 0, noindex: false, draft: false, date: now, updatedAt: now, flags: null, memo: null
+          id: maxId + 1, postId, userId, title: "", body: "", category: [], pin: 0, noindex: false, draft: false, date: now, updatedAt: now, flags: null, memo: null
         } as Post, ...data
       })
       setPostsToJson(posts);

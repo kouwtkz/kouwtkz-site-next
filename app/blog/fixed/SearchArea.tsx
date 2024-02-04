@@ -49,9 +49,7 @@ function Main({ className, ...args }: SearchAreaProps) {
       className={"m-4" + className}
       onSubmit={(e) => {
         if (searchRef.current) {
-          const q = searchRef.current.value
-            .replace("#", "%23")
-            .replace("+", "%2B");
+          const q = searchRef.current.value;
           queryPush({
             process: (params) => {
               if (q) params.q = q;

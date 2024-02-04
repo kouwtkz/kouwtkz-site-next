@@ -1,6 +1,7 @@
 export type logicalConditionsType = "AND" | "OR";
-export type filterConditionsType = "equals" | "contains" | "gt" | "gte" | "lt" | "lte" | "not" | "in" | "startsWith" | "endsWith";
-export type objectSubmitDataType<T> = { [K in keyof T]?: T[K] | { [C in filterConditionsType]?: T[K] } }
+export type filterConditionsStringType = "contains" | "startsWith" | "endsWith";
+export type filterConditionsType = "equals" | "gt" | "gte" | "lt" | "lte" | "not" | "in";
+export type objectSubmitDataType<T> = { [K in keyof T]?: T[K] | { [C in filterConditionsType]?: T[K] } | { [C in filterConditionsStringType]?: string } }
 export type findWhereType<T> = { [K in logicalConditionsType]?: (findWhereType<T> | objectSubmitDataType<T>)[] } | objectSubmitDataType<T>
 // includeは無理…それ以外を再現した
 export type findManyProps<T> = {
