@@ -1,29 +1,34 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useRef } from "react";
-import { eventTags } from "./GalleryTags";
-import MultiParser from "../components/functions/MultiParser";
+import { GalleryTagsOption, eventTags } from "./GalleryTags";
 import { useServerState } from "../components/System/ServerState";
 import queryPush from "../components/functions/queryPush";
 import Select from "react-select";
 
-function Main() {
+export default function GalleryTagsLink() {
   const router = useRouter();
   const search = useSearchParams();
   const searchTags = search.get("tag")?.split(",");
   const { isServerMode } = useServerState();
-  const _eventTags = eventTags.concat();
+  const _eventTags = [
+    { label: "季節もの", options: eventTags.concat() },
+  ] as GalleryTagsOption[];
   const currentEventTags = _eventTags.filter((tag) =>
     searchTags?.some((stag) => tag.value === stag)
   );
   if (isServerMode) {
     const filters = [
-      { value: "topImage", label: "📍トップ画像" },
-      { value: "pickup", label: "📍ピックアップ" },
+      {
+        label: "固定編集用",
+        options: [
+          { value: "topImage", label: "📍トップ画像" },
+          { value: "pickup", label: "📍ピックアップ" },
+        ],
+      } as GalleryTagsOption,
     ];
     filters.forEach((item) => _eventTags.push(item));
     const searchFilters = search.get("filter")?.split(",") || [];
-    const currentFilters = filters.filter(({ value }) =>
-      searchFilters.some((sf) => sf === value)
+    const currentFilters = filters.filter((filter) =>
+      searchFilters.some((sf) => sf === filter.value)
     );
     if (currentFilters)
       currentFilters.forEach((item) => currentEventTags.push(item));
@@ -57,7 +62,7 @@ function Main() {
                 filterList.push(value);
                 break;
               default:
-                tagList.push(value);
+                if (value) tagList.push(value);
                 break;
             }
           });
@@ -74,13 +79,5 @@ function Main() {
         }}
       />
     </div>
-  );
-}
-
-export default function GalleryTagsLink() {
-  return (
-    <Suspense>
-      <Main />
-    </Suspense>
   );
 }

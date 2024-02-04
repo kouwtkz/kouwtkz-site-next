@@ -1,3 +1,10 @@
+export interface GalleryTagsOption {
+  readonly label: string;
+  readonly color?: string;
+  readonly value?: string;
+  readonly options?: GalleryTagsOption[];
+}
+
 export const eventTags = [
   { value: "spring", label: "🌸春" },
   { value: "summer", label: "🌻夏" },
@@ -10,7 +17,7 @@ export const eventTags = [
   { value: "yosonoko", label: "🎨よその子" },
   { value: "birthday", label: "🎂誕生日" },
   { value: "myBirthday", label: "🎂自分の誕生日" },
-];
+] as GalleryTagsOption[];
 
 export const monthTags = [
   { value: "january", label: "1月" },
@@ -25,4 +32,4 @@ export const monthTags = [
   { value: "october", label: "10月" },
   { value: "november", label: "11月" },
   { value: "december", label: "12月" },
-];
+] as GalleryTagsOption[];

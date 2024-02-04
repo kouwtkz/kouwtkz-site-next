@@ -1,6 +1,6 @@
 "use client";
 
-import React, { RefObject, createRef, useRef } from "react";
+import React, { RefObject, Suspense, createRef, useRef } from "react";
 import GalleryList, { GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { GroupFormat } from "@/mediaScripts/MediaImageYamlType";
@@ -135,8 +135,10 @@ export default function GalleryObject({
           );
         })
       ) : null}
-      <GalleryTagsLink />
-      {list.map((item, i) => (
+      <Suspense>
+        <GalleryTagsLink />
+      </Suspense>
+    {list.map((item, i) => (
         <div key={i} ref={refList.current[i]}>
           <GalleryItem item={item} {...args} />
         </div>
