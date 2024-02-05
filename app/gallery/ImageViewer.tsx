@@ -15,7 +15,7 @@ import { EmbedNode } from "../context/embed/EmbedState";
 import { useServerState } from "../components/System/ServerState";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import ImageEditForm from "./ImageEditForm";
-import { eventTags } from "./GalleryTags";
+import { defaultTags, getTagsOptions } from "./tag/GalleryTags";
 import queryPush from "@/app/components/functions/queryPush";
 
 const body = typeof window === "object" ? document?.body : null;
@@ -66,6 +66,7 @@ function ImageViewerWindow() {
   const { charaList } = useCharaState();
   const imageParam = search.get("image");
   const { isServerMode } = useServerState();
+  const tagsOptions = getTagsOptions(defaultTags);
 
   const backAction = () => {
     router.back();
@@ -130,7 +131,7 @@ function ImageViewerWindow() {
                     return (
                       <Link
                         className="mx-2 my-1 inline-block"
-                        href={`/character/${chara.id}`}
+                        href={`/character?name=${chara.id}`}
                         onClick={() => {
                           onClose();
                           return true;
@@ -154,22 +155,22 @@ function ImageViewerWindow() {
                   })}
                 {image.tags
                   ?.filter((tag) =>
-                    eventTags.some(({ value }) => value === tag)
+                    tagsOptions.some(({ value }) => value === tag)
                   )
                   .map((tag, i) => {
-                    const item = eventTags.find(({ value }) => value === tag);
+                    const item = tagsOptions.find(({ value }) => value === tag);
                     if (!item) return item;
                     return (
                       <Link
                         href={`?tag=${item.value}`}
-                        className="text-main-dark hover:text-main-strong"
+                        className="align-middle inline-block mx-2 my-1 text-main-dark hover:text-main-strong"
                         key={i}
                       >
                         <MultiParser
                           only={{ toTwemoji: true }}
-                          className="mx-2 my-1 inline-block [&_.emoji]:mr-1"
+                          className="mx-2 my-1 [&_.emoji]:mr-1"
                         >
-                          {item.label}
+                          <span>{item.label}</span>
                         </MultiParser>
                       </Link>
                     );

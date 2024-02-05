@@ -2,7 +2,7 @@
 
 import { useServerState } from "@/app/components/System/ServerState";
 import ImageMee, { ImageMeeIcon } from "@/app/components/image/ImageMee";
-import { CharaGalleryAlbum, useCharaState } from "../CharaState";
+import { CharaGalleryAlbum, useCharaState } from "./CharaState";
 import { useSoundPlayer } from "@/app/sound/SoundPlayer";
 import { memo, useEffect, useRef } from "react";
 import { EmbedNode, useEmbedState } from "@/app/context/embed/EmbedState";
