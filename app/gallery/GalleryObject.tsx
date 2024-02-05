@@ -137,8 +137,8 @@ export default function GalleryObject({
         })
       ) : null}
       <Suspense>
-        <div className="m-2 flex justify-end items-center">
-          <GallerySearchArea className="mr-4" />
+        <div className="m-1 [&>*]:m-1 flex flex-wrap justify-end items-center">
+          <GallerySearchArea />
           <GalleryTagsLink />
         </div>
       </Suspense>

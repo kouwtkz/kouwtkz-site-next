@@ -6,6 +6,8 @@ import { CharaGalleryAlbum, useCharaState } from "./CharaState";
 import { useSoundPlayer } from "@/app/sound/SoundPlayer";
 import { memo, useEffect, useRef } from "react";
 import { EmbedNode, useEmbedState } from "@/app/context/embed/EmbedState";
+import GallerySearchArea from "../gallery/tag/GallerySearchArea";
+import GalleryTagsLink from "../gallery/tag/GalleryTagsLink";
 
 type DetailProps = {
   name: string;
@@ -74,12 +76,28 @@ export default function CharaDetail({ name }: DetailProps) {
       </h1>
       <div className="text-main text-xl">{chara.description}</div>
       <EmbedNode className="my-8 mx-2 md:mx-8" embed={chara.embed} />
-      <CharaGalleryAlbum chara={chara} name="art" />
-      <CharaGalleryAlbum chara={chara} name="goods" />
-      <CharaGalleryAlbum chara={chara} name="3D" />
-      <CharaGalleryAlbum chara={chara} name="picture" />
-      <CharaGalleryAlbum chara={chara} name="fanart" label="parody" max={12} />
-      <CharaGalleryAlbum chara={chara} name="given" label="FAN ART" max={40} />
+      <div className="mt-4">
+        <div className="m-1 [&>*]:m-1 flex flex-wrap justify-end items-center">
+          <GallerySearchArea />
+          <GalleryTagsLink />
+        </div>
+        <CharaGalleryAlbum chara={chara} name="art" />
+        <CharaGalleryAlbum chara={chara} name="goods" />
+        <CharaGalleryAlbum chara={chara} name="3D" />
+        <CharaGalleryAlbum chara={chara} name="picture" />
+        <CharaGalleryAlbum
+          chara={chara}
+          name="fanart"
+          label="parody"
+          max={12}
+        />
+        <CharaGalleryAlbum
+          chara={chara}
+          name="given"
+          label="FAN ART"
+          max={40}
+        />
+      </div>
     </div>
   );
 }
