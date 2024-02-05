@@ -6,6 +6,7 @@ export interface GalleryTagsOption {
   index?: number;
   group?: string;
   editable?: boolean;
+  query?: string;
   options?: GalleryTagsOption[];
 }
 
@@ -63,6 +64,21 @@ export const defaultTags: GalleryTagsOption[] = [
   },
 ]
 
+export const filterMonthList = [
+  { month: 1, tags: ["january", "winter"] },
+  { month: 2, tags: ["february", "winter", "valentine"] },
+  { month: 3, tags: ["march", "spring", "easter"] },
+  { month: 4, tags: ["april", "spring", "easter"] },
+  { month: 5, tags: ["may", "spring"] },
+  { month: 6, tags: ["june", "rainy"] },
+  { month: 7, tags: ["july", "summer"] },
+  { month: 8, tags: ["august", "summer"] },
+  { month: 9, tags: ["september", "autumn"] },
+  { month: 10, tags: ["october", "halloween", "autumn"] },
+  { month: 11, tags: ["november", "autumn"] },
+  { month: 12, tags: ["december", "winter", "myBirthday"] },
+]
+
 export const defaultFilterTags: GalleryTagsOption[] = [
   {
     label: "固定編集用",
@@ -89,4 +105,21 @@ export function getTagsOptions(tags: GalleryTagsOption[]) {
     (a, c) => a.concat(c.options || c),
     [] as GalleryTagsOption[]
   );
+}
+
+export function autoFixTagsOptions(tagsOptions: GalleryTagsOption[]) {
+  return tagsOptions.filter(
+    ({ editable }) => editable !== false
+  ).map((item) => {
+    const values = (item.value?.split(":", 2) || [""]).concat("");
+    switch (values[0]) {
+      case "month":
+        const monthTag = filterMonthList.find(({ month }) => String(month) === values[1])?.tags[0];
+        if (monthTag) {
+          return { ...item, value: monthTag, query: `?month=${values[1]}` };
+        } else return item;
+      default:
+        return item;
+    }
+  })
 }
