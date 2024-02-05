@@ -1,22 +1,8 @@
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
+import { filterMonthList } from "./tag/GalleryTags";
 export const publicParam = { list: <Array<MediaImageItemType>>[] };
 const currentTime = new Date();
 const currentMonth = currentTime.getMonth() + 1;
-
-export const filterMonthList = [
-  { month: 1, tags: ["january", "winter"] },
-  { month: 2, tags: ["february", "winter", "valentine"] },
-  { month: 3, tags: ["march", "spring", "easter"] },
-  { month: 4, tags: ["april", "spring", "easter"] },
-  { month: 5, tags: ["may", "spring"] },
-  { month: 6, tags: ["june", "rainy"] },
-  { month: 7, tags: ["july", "summer"] },
-  { month: 8, tags: ["august", "summer"] },
-  { month: 9, tags: ["september", "autumn"] },
-  { month: 10, tags: ["october", "halloween", "autumn"] },
-  { month: 11, tags: ["november", "autumn"] },
-  { month: 12, tags: ["december", "winter", "myBirthday"] },
-]
 
 interface filterTagsBaseProps {
   every?: boolean;

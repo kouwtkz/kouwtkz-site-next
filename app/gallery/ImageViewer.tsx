@@ -15,8 +15,12 @@ import { EmbedNode } from "../context/embed/EmbedState";
 import { useServerState } from "../components/System/ServerState";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import ImageEditForm from "./ImageEditForm";
-import { defaultTags, getTagsOptions } from "./tag/GalleryTags";
-import { queryMakeUrl, queryPush } from "@/app/components/functions/queryPush";
+import {
+  defaultTags,
+  getTagsOptions,
+  autoFixTagsOptions,
+} from "./tag/GalleryTags";
+import { queryPush } from "@/app/components/functions/queryPush";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -67,7 +71,7 @@ function ImageViewerWindow() {
   const pathname = usePathname();
   const imageParam = search.get("image");
   const { isServerMode } = useServerState();
-  const tagsOptions = getTagsOptions(defaultTags);
+  const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
 
   const backAction = () => {
     router.back();
@@ -161,10 +165,9 @@ function ImageViewerWindow() {
                   .map((tag, i) => {
                     const item = tagsOptions.find(({ value }) => value === tag);
                     if (!item) return item;
-                    console.log(pathname);
                     const url =
                       (pathname.startsWith("/gallery") ? "" : "/gallery") +
-                      `?tag=${item.value}`;
+                      (item.query || `?tag=${item.value}`);
                     return (
                       <Link
                         href={url}

@@ -12,7 +12,8 @@ import { useServerState } from "../components/System/ServerState";
 import { useMediaImageState } from "../context/MediaImageState";
 import { upload } from "./send/uploadFunction";
 import { queryPush } from "@/app/components/functions/queryPush";
-import { filterImagesTags, filterMonthList } from "./FilterImages";
+import { filterImagesTags } from "./FilterImages";
+import { filterMonthList } from "./tag/GalleryTags";
 
 export interface GalleryListPropsBase {
   size?: number;
