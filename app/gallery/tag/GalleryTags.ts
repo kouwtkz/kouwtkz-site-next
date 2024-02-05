@@ -4,10 +4,29 @@ export interface GalleryTagsOption {
   color?: string;
   value?: string;
   index?: number;
+  group?: string;
+  editable?: boolean;
   options?: GalleryTagsOption[];
 }
 
 export const defaultTags: GalleryTagsOption[] = [
+  {
+    label: "マンスリー", name: "monthly", options: [
+      { value: "filter:monthlyOnly", label: "🔎マンスリータグ", editable: false },
+      { value: "month:1", label: "🎍1月" },
+      { value: "month:2", label: "👹2月" },
+      { value: "month:3", label: "🎎3月" },
+      { value: "month:4", label: "🌸4月" },
+      { value: "month:5", label: "🎏5月" },
+      { value: "month:6", label: "☔6月" },
+      { value: "month:7", label: "🎋7月" },
+      { value: "month:8", label: "🥒8月" },
+      { value: "month:9", label: "🎑9月" },
+      { value: "month:10", label: "🍇10月" },
+      { value: "month:11", label: "🍲11月" },
+      { value: "month:12", label: "🎅12月" },
+    ]
+  },
   {
     label: "シーズン", name: "season", options: [
       { value: "spring", label: "🌸春" },
@@ -18,35 +37,49 @@ export const defaultTags: GalleryTagsOption[] = [
       { value: "easter", label: "🐰イースター" },
       { value: "halloween", label: "🎃ハロウィン" },
       { value: "christmas", label: "🎄クリスマス" },
-      { value: "yosonoko", label: "🎨よその子" },
-      { value: "birthday", label: "🎂誕生日" },
       { value: "myBirthday", label: "🎂自分の誕生日" },
     ]
   },
   {
-    label: "マンスリー", name: "monthly", options: [
-      { value: "january", label: "1月" },
-      { value: "february", label: "2月" },
-      { value: "march", label: "3月" },
-      { value: "april", label: "4月" },
-      { value: "may", label: "5月" },
-      { value: "june", label: "6月" },
-      { value: "july", label: "7月" },
-      { value: "august", label: "8月" },
-      { value: "september", label: "9月" },
-      { value: "october", label: "10月" },
-      { value: "november", label: "11月" },
-      { value: "december", label: "12月" },
+    label: "コミュニティ", name: "community", options: [
+      { value: "project", label: "🎪企画・イベント" },
+      { value: "synopsis", label: "📰設定資料" },
+      { value: "yosonoko", label: "🐕よその子" },
+      { value: "birthday", label: "🎂誕生日" },
     ]
-  }
+  },
+  {
+    label: "すがた", name: "form", options: [
+      { value: "darkForm", label: "😈やみのすがた" },
+      { value: "foodForm", label: "🍲たべもののすがた" },
+    ]
+  },
+  {
+    label: "活動", name: "activity", options: [
+      { value: "competition", label: "🚩コンペ" },
+      { value: "prize", label: "👑入賞" },
+      { value: "commission", label: "📒コミッション" },
+    ]
+  },
 ]
 
 export const defaultFilterTags: GalleryTagsOption[] = [
   {
     label: "固定編集用",
     options: [
-      { value: "topImage", label: "📍トップ画像" },
-      { value: "pickup", label: "📍ピックアップ" },
+      { value: "filter:topImage", label: "📍トップ画像" },
+      { value: "filter:pickup", label: "📍ピックアップ" },
+    ],
+  },
+]
+
+export const defaultSortTags: GalleryTagsOption[] = [
+  {
+    label: "ソート",
+    options: [
+      { value: "sort:leastRecently", label: "🕒古い順" },
+      { value: "sort:nameOrder", label: "⬇️名前（昇順）" },
+      { value: "sort:leastNameOrder", label: "⬆️名前（降順）" },
     ],
   },
 ]

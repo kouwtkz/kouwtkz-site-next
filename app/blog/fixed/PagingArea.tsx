@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import queryPush from "@/app/components/functions/queryPush";
+import { queryPush } from "@/app/components/functions/queryPush";
 
 interface PagingAreaProps extends HTMLAttributes<HTMLFormElement> {
   max?: number;

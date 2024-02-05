@@ -17,38 +17,36 @@ export const filterMonthList = [
   { month: 11, tags: ["november", "autumn"] },
   { month: 12, tags: ["december", "winter", "myBirthday"] },
 ]
+
+interface filterTagsBaseProps {
+  every?: boolean;
+  tags: string[];
+}
+
+interface filterTagsProps extends filterTagsBaseProps {
+  image: MediaImageItemType;
+}
+
+export function filterTags({ image, every = true, tags }: filterTagsProps) {
+  return image.tags?.some((tag) =>
+    every ? tags.every((mtag) => mtag === tag) : tags.some((mtag) => mtag === tag)
+  )
+}
+
+interface filterImagesTagsProps extends filterTagsBaseProps {
+  images: MediaImageItemType[];
+}
+
+export function filterImagesTags({ images, ...args }: filterImagesTagsProps) {
+  return images.filter(
+    (image) =>
+      filterTags({ image, ...args })
+  )
+}
+
 const monthlyFilter = filterMonthList.find((item) => item.month === currentMonth);
 
-export function getFilterImageList(option: { sort?: "asc" | "desc", filter?: string, list?: Array<MediaImageItemType> } = {}) {
-  const { sort = "desc" } = option;
-  return filterImageList(option).sort((a, b) => {
-    const at = a.time || 0, bt = b.time || 0;
-    return (sort === "desc" ? (at > bt) : (at < bt)) ? -1 : 1
-  });
-}
-
-export function filterImageList(option: { filter?: string, list?: Array<MediaImageItemType> } = {}): Array<MediaImageItemType> {
-  const { list = publicParam.list, filter = '' } = option;
-  if (filter) {
-    // ページ検索と同じような記述でタグ指定できる処理
-    const queryList = filter.split(/[\s,]+/).map(s => { return { str: s.replace(/^!/, ''), not: s.startsWith('!') } });
-    return list.filter((item) =>
-      queryList.every(({ str, not }) => not ? item.tags?.every((tag) => (str !== tag)) : item.tags?.some((tag) => str === tag))
-    );
-  } else {
-    return list;
-  }
-}
-
-export function addFilterAutoSeason(filter = '', delimiter = ','): string {
-  const filters = [filter];
-  const month = currentTime.getMonth() + 1;
-  const monthObject = filterMonthList.find(item => item.month === month);
-  if (monthObject) filters.push(monthObject.tags.join(delimiter));
-  return filters.join(delimiter);
-}
-
-type filterPickFixedProps = {
+interface filterPickFixedProps {
   images: MediaImageItemType[];
   name: "topImage" | "pickup";
   monthly?: boolean;
@@ -58,9 +56,7 @@ export function filterPickFixed({ images, name: kind, monthly = true }: filterPi
   return images.filter(
     (image) =>
       image[kind] ||
-      (monthly && image[kind] !== false &&
-        image.tags?.some((tag) =>
-          monthlyFilter?.tags.some((mtag) => mtag === tag)
-        ))
+      (monthly && monthlyFilter && image[kind] !== false
+        && filterTags({ image, tags: monthlyFilter.tags, every: false }))
   )
 }

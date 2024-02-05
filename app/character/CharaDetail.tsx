@@ -7,7 +7,7 @@ import { useSoundPlayer } from "@/app/sound/SoundPlayer";
 import { memo, useEffect, useRef } from "react";
 import { EmbedNode, useEmbedState } from "@/app/context/embed/EmbedState";
 import GallerySearchArea from "../gallery/tag/GallerySearchArea";
-import GalleryTagsLink from "../gallery/tag/GalleryTagsLink";
+import GalleryTagsSelect from "../gallery/tag/GalleryTagsSelect";
 
 type DetailProps = {
   name: string;
@@ -79,7 +79,7 @@ export default function CharaDetail({ name }: DetailProps) {
       <div className="mt-4">
         <div className="m-1 [&>*]:m-1 flex flex-wrap justify-end items-center">
           <GallerySearchArea />
-          <GalleryTagsLink />
+          <GalleryTagsSelect />
         </div>
         <CharaGalleryAlbum chara={chara} name="art" />
         <CharaGalleryAlbum chara={chara} name="goods" />

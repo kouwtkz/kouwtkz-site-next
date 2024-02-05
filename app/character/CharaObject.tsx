@@ -12,7 +12,6 @@ interface CharaObjectProps {
 export default function CharaObject({ title }: CharaObjectProps) {
   const search = useSearchParams();
   const name = search.get("name");
-  console.log(Object.fromEntries(search));
   if (name) {
     return <CharaDetail name={name} />;
   } else {

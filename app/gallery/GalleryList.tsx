@@ -11,8 +11,8 @@ import { useDropzone } from "react-dropzone";
 import { useServerState } from "../components/System/ServerState";
 import { useMediaImageState } from "../context/MediaImageState";
 import { upload } from "./send/uploadFunction";
-import queryPush from "@/app/components/functions/queryPush";
-import { getFilterImageList } from "./FilterImages";
+import { queryPush } from "@/app/components/functions/queryPush";
+import { filterImagesTags, filterMonthList } from "./FilterImages";
 
 export interface GalleryListPropsBase {
   size?: number;
@@ -101,14 +101,7 @@ function Main({
     (a, b) => (b.time?.getTime() || 0) - (a.time?.getTime() || 0)
   );
   let afterFilter = false;
-  const searchTag = search.get("tag");
-  if (searchTag) {
-    if (hideWhenFilter) return <></>;
-    else {
-      afterFilter = true;
-      albumList = getFilterImageList({ list: albumList, filter: searchTag });
-    }
-  }
+  let monthlyEventMode = true;
   const searchFilter = search.get("filter");
   if (searchFilter) {
     if (hideWhenFilter) return <></>;
@@ -119,15 +112,53 @@ function Main({
         case "pickup":
           albumList = albumList.filter((item) => item[searchFilter]);
           break;
+        case "monthlyOnly":
+          monthlyEventMode = false;
+          break;
         default:
           albumList = [];
           break;
       }
     }
   }
+  const month = search.get("month");
+  if (month) {
+    if (hideWhenFilter) return <></>;
+    else {
+      afterFilter = true;
+      const filterMonthly = filterMonthList.find(
+        (v) => String(v.month) === month
+      );
+      if (filterMonthly) {
+        if (monthlyEventMode) {
+          albumList = filterImagesTags({
+            images: albumList,
+            tags: filterMonthly.tags,
+            every: false,
+          });
+        } else {
+          albumList = filterImagesTags({
+            images: albumList,
+            tags: filterMonthly.tags.filter((v, i) => i === 0),
+          });
+        }
+      }
+    }
+  }
+  const searchTag = search.get("tag");
+  if (searchTag) {
+    if (hideWhenFilter) return <></>;
+    else {
+      afterFilter = true;
+      albumList = filterImagesTags({
+        images: albumList,
+        tags: searchTag.split(","),
+      });
+    }
+  }
   const searches = search
     .get("q")
-    ?.split(" ")
+    ?.split(" ", 3)
     .map((q) => {
       const qs = q.split(":");
       const key = qs.length > 1 ? qs[0] : "keyword";
@@ -180,6 +211,26 @@ function Main({
     albumList = albumList.filter((item) => getYear(item.time) === year);
   }
   if (!loading && afterFilter && albumList.length === 0) return <></>;
+
+  const sort = search.get("sort") || "recently";
+  switch (sort) {
+    case "recently":
+      albumList = albumList.sort((a, b) =>
+        (a.time?.getTime() || 0) < (b.time?.getTime() || 0) ? 1 : -1
+      );
+      break;
+    case "leastRecently":
+      albumList = albumList.sort((a, b) =>
+        (a.time?.getTime() || 0) > (b.time?.getTime() || 0) ? 1 : -1
+      );
+      break;
+    case "nameOrder":
+      albumList = albumList.sort((a, b) => (a.name > b.name ? 1 : -1));
+      break;
+    case "leastNameOrder":
+      albumList = albumList.sort((a, b) => (a.name < b.name ? 1 : -1));
+      break;
+  }
 
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
