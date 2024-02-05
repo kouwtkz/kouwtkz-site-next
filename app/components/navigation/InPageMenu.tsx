@@ -38,7 +38,7 @@ export default function InPageMenu({
           <div
             key={i}
             className={
-              "flex flex-row items-center px-2 py-1 w-40 md:w-44 text-left text-base sm:text-xl font-black cursor-pointer " +
+              "flex flex-row items-baseline px-1 py-1 w-32 md:w-44 text-left text-sm sm:text-xl font-black cursor-pointer " +
               (currentMode
                 ? "text-main-strong hover:text-main-deep"
                 : "text-main-soft hover:text-main")
@@ -48,12 +48,12 @@ export default function InPageMenu({
               scrollTo({ top, behavior: "smooth" });
             }}
           >
-            <div className="flex-1">
+            <div className="w-3 h-3 md:w-4 md:h-4 mr-1">
               {currentMode ? (
-                <TriangleCursor className="mx-auto fill-main h-3 md:h-4" />
+                <TriangleCursor className="mx-auto fill-main h-full" />
               ) : null}
             </div>
-            <div className="flex-[5]">{item.name}</div>
+            <div className="flex-1">{item.name}</div>
           </div>
         );
       })}
