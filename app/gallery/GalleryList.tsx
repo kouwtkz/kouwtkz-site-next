@@ -213,25 +213,47 @@ function Main({
   }
   if (!loading && afterFilter && albumList.length === 0) return <></>;
 
-  const sort = search.get("sort") || "recently";
-  switch (sort) {
+  const sortList: { key: string; order: "asc" | "desc" }[] = [];
+  const searchSort = search.get("sort") || "";
+  switch (searchSort) {
     case "recently":
-      albumList = albumList.sort((a, b) =>
-        (a.time?.getTime() || 0) < (b.time?.getTime() || 0) ? 1 : -1
-      );
+      sortList.push({ key: "time", order: "desc" });
       break;
     case "leastRecently":
-      albumList = albumList.sort((a, b) =>
-        (a.time?.getTime() || 0) > (b.time?.getTime() || 0) ? 1 : -1
-      );
+      sortList.push({ key: "time", order: "asc" });
       break;
     case "nameOrder":
-      albumList = albumList.sort((a, b) => (a.name > b.name ? 1 : -1));
+      sortList.push({ key: "name", order: "asc" });
       break;
     case "leastNameOrder":
-      albumList = albumList.sort((a, b) => (a.name < b.name ? 1 : -1));
+      sortList.push({ key: "name", order: "desc" });
       break;
   }
+  if (sortList.every(({ key }) => key !== "time"))
+    sortList.unshift({ key: "time", order: "desc" });
+  if (sortList.every(({ key }) => key !== "name"))
+    sortList.unshift({ key: "name", order: "asc" });
+  sortList.forEach(({ key, order }) => {
+    switch (key) {
+      case "time":
+        albumList.sort((a, b) => {
+          const atime = a.time?.getTime() || 0;
+          const btime = b.time?.getTime() || 0;
+          if (atime === btime) return 0;
+          else {
+            const result = atime > btime;
+            return (order === "asc" ? result : !result) ? 1 : -1;
+          }
+        });
+        break;
+      default:
+        albumList.sort((a, b) => {
+          if (a[key] === b[key]) return 0;
+          const result = a[key] > b[key];
+          return (order === "asc" ? result : !result) ? 1 : -1;
+        });
+    }
+  });
 
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
