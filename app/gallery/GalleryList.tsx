@@ -125,14 +125,52 @@ function Main({
       }
     }
   }
-  const searches = search.get("q")?.split(" ");
+  const searches = search
+    .get("q")
+    ?.split(" ")
+    .map((q) => {
+      const qs = q.split(":");
+      const key = qs.length > 1 ? qs[0] : "keyword";
+      const value = qs.length > 1 ? qs[1] : qs[0];
+      const option = qs.length > 2 ? qs[2] : undefined;
+      return { key, value, option };
+    });
   if (searches) {
     if (hideWhenFilter) return <></>;
     else {
       afterFilter = true;
-      albumList = albumList.filter((image) =>
-        searches.every((q) => image.name.match(q))
-      );
+      albumList = albumList.filter((image) => {
+        const ImageDataStr = [
+          image.name,
+          image.description,
+          image.src,
+          image.copyright,
+        ]
+          .concat(image.tags)
+          .join(" ");
+        return searches.every(({ key, value, option }) => {
+          switch (key) {
+            case "tag":
+              return image.tags?.some((tag) => {
+                switch (option) {
+                  case "match":
+                    return tag.match(value);
+                  default:
+                    return tag === value;
+                }
+              });
+            case "name":
+            case "description":
+            case "URL":
+            case "copyright":
+              const imageValue = image[key];
+              if (imageValue) return imageValue.match(value);
+              else return false;
+            default:
+              return ImageDataStr.match(value);
+          }
+        });
+      });
     }
   }
   const year = search.get("year");

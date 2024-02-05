@@ -62,6 +62,7 @@ export default function GalleryTagsLink({ className }: SelectAreaProps) {
             },
             push: router.push,
             search,
+            scroll: false,
           });
         }}
       />

@@ -61,6 +61,7 @@ export default function GallerySearchArea({
             },
             push: router.push,
             search,
+            scroll: false,
           });
           (document.activeElement as HTMLElement).blur();
           e.preventDefault();
@@ -73,7 +74,7 @@ export default function GallerySearchArea({
         placeholder="検索"
         defaultValue={q}
         ref={searchRef}
-        className="w-48 py-1 px-2"
+        className="w-56 py-1 px-2"
       />
     </form>
   );
