@@ -300,6 +300,7 @@ export default function PostForm() {
       <div className="flex flex-row items-center min-w-[25rem] w-fit max-w-[80%] mx-auto">
         <ReactSelect
           placeholder="カテゴリ"
+          instanceId="blogTagSelect"
           className="flex-1"
           styles={{
             control: (provided) => ({

@@ -125,6 +125,16 @@ function Main({
       }
     }
   }
+  const searches = search.get("q")?.split(" ");
+  if (searches) {
+    if (hideWhenFilter) return <></>;
+    else {
+      afterFilter = true;
+      albumList = albumList.filter((image) =>
+        searches.every((q) => image.name.match(q))
+      );
+    }
+  }
   const year = search.get("year");
   const yearList = getYearObjects(albumList.map((item) => item.time));
   if (year) {

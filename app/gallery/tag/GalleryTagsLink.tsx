@@ -1,49 +1,36 @@
 import { useRouter, useSearchParams } from "next/navigation";
-import { GalleryTagsOption, eventTags } from "./GalleryTags";
-import { useServerState } from "../components/System/ServerState";
-import queryPush from "../components/functions/queryPush";
-import Select from "react-select";
+import { defaultFilterTags, defaultTags, getTagsOptions } from "./GalleryTags";
+import { useServerState } from "@/app/components/System/ServerState";
+import queryPush from "@/app/components/functions/queryPush";
+import ReactSelect from "react-select";
+import { HTMLAttributes } from "react";
 
-export default function GalleryTagsLink() {
+interface SelectAreaProps extends HTMLAttributes<HTMLDivElement> {}
+
+export default function GalleryTagsLink({ className }: SelectAreaProps) {
   const router = useRouter();
   const search = useSearchParams();
-  const searchTags = search.get("tag")?.split(",");
+  const searchTags = search.get("tag")?.split(",") || [];
+  const searchFilters = search.get("filter")?.split(",") || [];
+  const searchQuery = searchTags.concat(searchFilters);
   const { isServerMode } = useServerState();
-  const _eventTags = [
-    { label: "季節もの", options: eventTags.concat() },
-  ] as GalleryTagsOption[];
-  const currentEventTags = _eventTags.filter((tag) =>
-    searchTags?.some((stag) => tag.value === stag)
+  const tags = defaultTags.concat(isServerMode ? defaultFilterTags : []);
+  const currentTags = getTagsOptions(tags).filter((tag) =>
+    searchQuery.some((stag) => tag.value === stag)
   );
-  if (isServerMode) {
-    const filters = [
-      {
-        label: "固定編集用",
-        options: [
-          { value: "topImage", label: "📍トップ画像" },
-          { value: "pickup", label: "📍ピックアップ" },
-        ],
-      } as GalleryTagsOption,
-    ];
-    filters.forEach((item) => _eventTags.push(item));
-    const searchFilters = search.get("filter")?.split(",") || [];
-    const currentFilters = filters.filter((filter) =>
-      searchFilters.some((sf) => sf === filter.value)
-    );
-    if (currentFilters)
-      currentFilters.forEach((item) => currentEventTags.push(item));
-  }
   return (
-    <div className="[&>*]:inline-block text-right">
-      <Select
-        options={_eventTags}
-        value={currentEventTags}
+    <div className={className}>
+      <ReactSelect
+        options={tags}
+        value={currentTags}
         isMulti
         classNamePrefix="select"
         placeholder="タグ選択"
-        className="min-w-[16rem] text-left"
+        instanceId="galleryTagSelect"
+        className="min-w-[18rem] text-left"
         theme={(theme) => ({
           ...theme,
+          borderRadius: 6,
           colors: {
             ...theme.colors,
             primary: "var(--main-color-deep)",

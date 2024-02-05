@@ -9,8 +9,9 @@ import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import InPageMenu from "../components/navigation/InPageMenu";
 import { useServerState } from "../components/System/ServerState";
 import ArrowUpButton from "../components/svg/button/arrow/ArrowUpButton";
-import GalleryTagsLink from "./GalleryTagsLink";
+import GalleryTagsLink from "./tag/GalleryTagsLink";
 import { filterPickFixed } from "./FilterImages";
+import GallerySearchArea from "./tag/GallerySearchArea";
 
 export interface GalleryItemObjectType extends GalleryListPropsBase {
   name: string;
@@ -136,9 +137,12 @@ export default function GalleryObject({
         })
       ) : null}
       <Suspense>
-        <GalleryTagsLink />
+        <div className="m-2 flex justify-end items-center">
+          <GallerySearchArea className="mr-4" />
+          <GalleryTagsLink />
+        </div>
       </Suspense>
-    {list.map((item, i) => (
+      {list.map((item, i) => (
         <div key={i} ref={refList.current[i]}>
           <GalleryItem item={item} {...args} />
         </div>
