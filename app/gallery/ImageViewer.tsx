@@ -5,7 +5,7 @@ import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
 import MultiParser from "@/app/components/functions/MultiParser";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
@@ -16,7 +16,7 @@ import { useServerState } from "../components/System/ServerState";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import ImageEditForm from "./ImageEditForm";
 import { defaultTags, getTagsOptions } from "./tag/GalleryTags";
-import queryPush from "@/app/components/functions/queryPush";
+import { queryMakeUrl, queryPush } from "@/app/components/functions/queryPush";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -61,9 +61,10 @@ function ImageViewerWindow() {
   const router = useRouter();
   const { isOpen, onClose, imagePath, setImagePath, editMode, toggleEditMode } =
     useImageViewer();
-  const search = useSearchParams();
   const { imageItemList } = useMediaImageState();
   const { charaList } = useCharaState();
+  const search = useSearchParams();
+  const pathname = usePathname();
   const imageParam = search.get("image");
   const { isServerMode } = useServerState();
   const tagsOptions = getTagsOptions(defaultTags);
@@ -130,7 +131,7 @@ function ImageViewerWindow() {
                   .map((chara, i) => {
                     return (
                       <Link
-                        className="mx-2 my-1 inline-block"
+                        className="mx-2 my-1 inline-block align-middle"
                         href={`/character?name=${chara.id}`}
                         onClick={() => {
                           onClose();
@@ -160,15 +161,19 @@ function ImageViewerWindow() {
                   .map((tag, i) => {
                     const item = tagsOptions.find(({ value }) => value === tag);
                     if (!item) return item;
+                    console.log(pathname);
+                    const url =
+                      (pathname.startsWith("/gallery") ? "" : "/gallery") +
+                      `?tag=${item.value}`;
                     return (
                       <Link
-                        href={`?tag=${item.value}`}
+                        href={url}
                         className="align-middle inline-block mx-2 my-1 text-main-dark hover:text-main-strong"
                         key={i}
                       >
                         <MultiParser
                           only={{ toTwemoji: true }}
-                          className="mx-2 my-1 [&_.emoji]:mr-1"
+                          className="align-middle [&_.emoji]:mr-1"
                         >
                           <span>{item.label}</span>
                         </MultiParser>

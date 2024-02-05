@@ -6,11 +6,7 @@ import ImageMee from "../components/image/ImageMee";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/MediaImageState";
-import {
-  defaultTags,
-  GalleryTagsOption,
-  getTagsOptions,
-} from "./tag/GalleryTags";
+import { defaultTags, getTagsOptions } from "./tag/GalleryTags";
 import { useRouter } from "next/navigation";
 import { useEmbedState } from "../context/embed/EmbedState";
 
@@ -289,7 +285,9 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
             <p>その他のタグ</p>
             <div>
               {(() => {
-                const otherTagCandidates = getTagsOptions(defaultTags);
+                const otherTagCandidates = getTagsOptions(defaultTags).filter(
+                  ({ editable }) => editable !== false
+                );
                 const noUsedCandidates = otherTagCandidates.filter(
                   ({ value }) => otherTags.every((tag) => value !== tag)
                 );

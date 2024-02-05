@@ -9,7 +9,7 @@ import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import InPageMenu from "../components/navigation/InPageMenu";
 import { useServerState } from "../components/System/ServerState";
 import ArrowUpButton from "../components/svg/button/arrow/ArrowUpButton";
-import GalleryTagsLink from "./tag/GalleryTagsLink";
+import GalleryTagsSelect from "./tag/GalleryTagsSelect";
 import { filterPickFixed } from "./FilterImages";
 import GallerySearchArea from "./tag/GallerySearchArea";
 
@@ -139,7 +139,7 @@ export default function GalleryObject({
       <Suspense>
         <div className="m-1 [&>*]:m-1 flex flex-wrap justify-end items-center">
           <GallerySearchArea />
-          <GalleryTagsLink />
+          <GalleryTagsSelect />
         </div>
       </Suspense>
       {list.map((item, i) => (

@@ -63,7 +63,6 @@ export default function CalendarMee({
           args.jsEvent.preventDefault();
         }}
         moreLinkClick={(args) => {
-          console.log(args);
           args.jsEvent.preventDefault();
         }}
         headerToolbar={{
