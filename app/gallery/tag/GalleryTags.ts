@@ -76,7 +76,7 @@ export const filterMonthList = [
   { month: 9, tags: ["september", "autumn"] },
   { month: 10, tags: ["october", "halloween", "autumn"] },
   { month: 11, tags: ["november", "autumn"] },
-  { month: 12, tags: ["december", "winter", "myBirthday"] },
+  { month: 12, tags: ["december", "winter", "christmas", "myBirthday"] },
 ]
 
 export const defaultFilterTags: GalleryTagsOption[] = [
