@@ -37,7 +37,7 @@ export default function PostsPage() {
       posts,
       page,
       q,
-      take: 5,
+      take: 10,
       common: !isServerMode,
     });
     return (
