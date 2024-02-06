@@ -26,7 +26,7 @@ export function GenerateRss(posts) {
     title: site.title,
     description: site.description,
     feed_url: `${SITE_URL}/rss.xml`,
-    site_url: SITE_URL,
+    site_url: SITE_URL + "/blog",
     language: "ja",
     image_url: `${SITE_URL}${site.image}`
   });
