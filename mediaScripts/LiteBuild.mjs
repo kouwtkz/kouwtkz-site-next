@@ -21,7 +21,7 @@ import { writeFileSync } from "fs";
 
 import { charaObject } from "../app/character/getCharaData.mjs";
 import { GetEmbed } from "../app/context/embed/GetEmbed.mjs"
-import { site } from "../app/site/SiteData.mjs";
+import { site } from "../app/context/site/SiteData.mjs";
 import { soundAlbum } from "../app/sound/MediaSoundData.mjs";
 import { getPostsFromJson } from "../app/blog/posts.json/fromJson.mjs";
 import getPosts from "../app/blog/functions/getPosts.mjs";

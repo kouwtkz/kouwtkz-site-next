@@ -3,8 +3,8 @@ import { NextResponse } from "next/server"
 import isStatic from "@/app/components/System/isStatic.mjs";
 export const dynamic = isStatic ? "auto" : "force-dynamic";
 
-import { site } from "@/app/context/site/SiteData.mjs";
+import { MarkdownDataObject } from "@/app/context/md/MarkdownData.mjs";
 
 export async function GET() {
-  return NextResponse.json(site);
+  return NextResponse.json(MarkdownDataObject("client"));
 }

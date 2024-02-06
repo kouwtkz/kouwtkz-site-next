@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import isStatic from "@/app/components/System/isStatic.mjs";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson.mjs";
-import { site } from "@/app/site/SiteData.mjs";
+import { site } from "@/app/context/site/SiteData.mjs";
 import { Post } from "../../Post";
 import { uploadAttached } from "@/app/gallery/send/uploadAttached";
 
