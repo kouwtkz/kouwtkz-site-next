@@ -13,10 +13,12 @@ export default function InPageMenu({
   list = [],
   firstTopRef,
   adjust = 16,
+  lastAdjust = 128,
 }: {
   list?: InPageRefObject[];
   firstTopRef?: RefObject<HTMLElement>;
   adjust?: number;
+  lastAdjust?: number;
 }) {
   const [refPrompt, setRefPrompt] = useState(false);
   useEffect(() => {
@@ -24,19 +26,32 @@ export default function InPageMenu({
       setRefPrompt(false);
     }
   }, [refPrompt, list]);
-  const [x, y] = useScroll();
+  const { y, h, wh } = useScroll();
   const jy = y + adjust;
+  const isLastScroll = h - y - lastAdjust <= wh;
   const firstTop =
     list.length > 0 ? (firstTopRef || list[0].ref)?.current?.offsetTop || 0 : 0;
+  const filterList = list
+    .filter(({ ref }) => {
+      if (!refPrompt && !ref.current) setRefPrompt(true);
+      return (ref.current?.children.length || 0) !== 0;
+    })
+    .map((item) => {
+      const elm = item.ref.current;
+      const top = (elm?.offsetTop || 0) - firstTop;
+      return { ...item, elm, currentMode: top <= jy };
+    });
+  if (filterList.length > 0 && isLastScroll)
+    filterList[filterList.length - 1].currentMode = true;
+  const lastIndexCm = filterList.findLastIndex(
+    ({ currentMode }) => currentMode
+  );
+  filterList.forEach((item, i) => {
+    item.currentMode = i === lastIndexCm;
+  });
   return (
     <div className="fixed z-10 right-0 bottom-0 mb-2 pr-1 font-LuloClean">
-      {list.map((item, i) => {
-        if (!refPrompt && !item.ref.current) setRefPrompt(true);
-        const elm = list[i].ref.current;
-        if ((elm?.children.length || 0) === 0) return null;
-        const top = (elm?.offsetTop || 0) - firstTop;
-        const bottom = top + (elm?.offsetHeight || 0);
-        const currentMode = top <= jy && jy < bottom;
+      {filterList.map(({ name, elm, currentMode }, i) => {
         return (
           <div
             key={i}
@@ -57,7 +72,7 @@ export default function InPageMenu({
               ) : null}
             </div>
             <div className="flex-1">
-              <span className="mr-2">{item.name}</span>
+              <span className="mr-2">{name}</span>
             </div>
           </div>
         );
