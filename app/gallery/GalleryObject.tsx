@@ -1,6 +1,6 @@
 "use client";
 
-import React, { RefObject, Suspense, createRef, useRef } from "react";
+import React, { Suspense, createRef } from "react";
 import GalleryList, { GalleryListPropsBase } from "./GalleryList";
 import { useMediaImageState } from "@/app/context/MediaImageState";
 import { GroupFormat } from "@/mediaScripts/MediaImageYamlType";
@@ -98,17 +98,14 @@ export default function GalleryObject({
   const list = (Array.isArray(items) ? items : [items]).map((item) =>
     typeof item === "string" ? { name: item } : item
   );
-  const refList = useRef<RefObject<HTMLDivElement>[]>([]);
-  list.forEach((_, index) => {
-    refList.current[index] = createRef<HTMLDivElement>();
-  });
+  const refList = list.map(() => createRef<HTMLDivElement>());
   return (
     <>
       {list.length > 1 ? (
         <InPageMenu
           list={list.map(({ name, label }, i) => ({
             name: label || name,
-            ref: refList.current[i],
+            ref: refList[i],
           }))}
           adjust={128}
         />
@@ -143,7 +140,7 @@ export default function GalleryObject({
         </div>
       </Suspense>
       {list.map((item, i) => (
-        <div key={i} ref={refList.current[i]}>
+        <div key={i} ref={refList[i]}>
           <GalleryItem item={item} {...args} />
         </div>
       ))}
