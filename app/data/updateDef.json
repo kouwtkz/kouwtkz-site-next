@@ -7,6 +7,9 @@
     "json": "/data/site.json",
     "data": "_data/site.yaml"
   },
+  "md": {
+    "json": "/data/md.json"
+  },
   "image": {
     "json": "/data/images.json"
   },
