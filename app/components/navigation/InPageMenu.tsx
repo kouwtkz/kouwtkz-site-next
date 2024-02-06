@@ -38,7 +38,7 @@ export default function InPageMenu({
           <div
             key={i}
             className={
-              "flex flex-row items-baseline px-1 py-1 w-32 md:w-44 text-left text-sm sm:text-xl font-black cursor-pointer " +
+              "flex flex-row items-baseline px-1 py-1 min-w-[8rem] md:min-w-[11rem] text-left text-sm sm:text-xl font-black cursor-pointer " +
               (currentMode
                 ? "text-main-strong hover:text-main-deep"
                 : "text-main-soft hover:text-main")
@@ -53,11 +53,13 @@ export default function InPageMenu({
                 <TriangleCursor className="mx-auto fill-main h-full" />
               ) : null}
             </div>
-            <div className="flex-1">{item.name}</div>
+            <div className="flex-1">
+              <span className="mr-2">{item.name}</span>
+            </div>
           </div>
         );
       })}
-      <div className="bg-background-top opacity-70 xl:hidden absolute top-0 -z-10 w-[100%] h-[100%]" />
+      <div className="bg-background-top opacity-70 2xl:hidden absolute top-0 -z-10 w-[100%] h-[100%]" />
     </div>
   );
 }

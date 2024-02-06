@@ -106,8 +106,8 @@ export default function GalleryObject({
     <>
       {list.length > 1 ? (
         <InPageMenu
-          list={list.map((item, i) => ({
-            name: item.name,
+          list={list.map(({ name, label }, i) => ({
+            name: label || name,
             ref: refList.current[i],
           }))}
           adjust={128}
