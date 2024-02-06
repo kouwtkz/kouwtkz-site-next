@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { Suspense } from "react";
-import CharaObject from "./CharaObject";
+import CharaObject from "./CharaPage";
 const title = "Character".toUpperCase();
 export const metadata: Metadata = { title };
 

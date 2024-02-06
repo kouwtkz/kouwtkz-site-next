@@ -11,20 +11,23 @@ type InPageRefObject = {
 
 export default function InPageMenu({
   list = [],
+  firstTopRef,
   adjust = 16,
 }: {
   list?: InPageRefObject[];
+  firstTopRef?: RefObject<HTMLElement>;
   adjust?: number;
 }) {
   const [refPrompt, setRefPrompt] = useState(false);
   useEffect(() => {
-    if (refPrompt) {
+    if (refPrompt && list.some(({ ref }) => ref.current)) {
       setRefPrompt(false);
     }
-  }, [refPrompt]);
+  }, [refPrompt, list]);
   const [x, y] = useScroll();
   const jy = y + adjust;
-  const firstTop = list.length > 0 ? list[0].ref.current?.offsetTop || 0 : 0;
+  const firstTop =
+    list.length > 0 ? (firstTopRef || list[0].ref)?.current?.offsetTop || 0 : 0;
   return (
     <div className="fixed z-10 right-0 bottom-0 mb-2 pr-1 font-LuloClean">
       {list.map((item, i) => {

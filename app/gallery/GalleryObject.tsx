@@ -98,6 +98,7 @@ export default function GalleryObject({
   const list = (Array.isArray(items) ? items : [items]).map((item) =>
     typeof item === "string" ? { name: item } : item
   );
+  const firstTopRef = createRef<HTMLDivElement>();
   const refList = list.map(() => createRef<HTMLDivElement>());
   return (
     <>
@@ -107,6 +108,7 @@ export default function GalleryObject({
             name: label || name,
             ref: refList[i],
           }))}
+          firstTopRef={firstTopRef}
           adjust={128}
         />
       ) : isServerMode ? (
@@ -133,17 +135,19 @@ export default function GalleryObject({
           );
         })
       ) : null}
-      <Suspense>
-        <div className="m-1 [&>*]:m-1 flex flex-wrap justify-end items-center">
-          <GallerySearchArea />
-          <GalleryTagsSelect />
-        </div>
-      </Suspense>
-      {list.map((item, i) => (
-        <div key={i} ref={refList[i]}>
-          <GalleryItem item={item} {...args} />
-        </div>
-      ))}
+      <div ref={firstTopRef}>
+        <Suspense>
+          <div className="m-1 [&>*]:m-1 flex flex-wrap justify-end items-center">
+            <GallerySearchArea />
+            <GalleryTagsSelect />
+          </div>
+        </Suspense>
+        {list.map((item, i) => (
+          <div key={i} ref={refList[i]}>
+            <GalleryItem item={item} {...args} />
+          </div>
+        ))}
+      </div>
     </>
   );
 }

@@ -94,14 +94,14 @@ export default function CharaState({ url }: { url: string }) {
   return <></>;
 }
 
-interface CharaGalleryAlbumProps extends HTMLAttributes<HTMLDivElement> {
+export interface CharaGalleryAlbumProps extends HTMLAttributes<HTMLDivElement> {
   name: string;
   chara: CharaType;
   label?: string;
   max?: number;
 }
 
-export const CharaGalleryAlbum = memo(function GalleryFromAlbum({
+export function CharaGalleryAlbum({
   name,
   label,
   chara,
@@ -130,4 +130,4 @@ export const CharaGalleryAlbum = memo(function GalleryFromAlbum({
       {...args}
     />
   );
-});
+}
