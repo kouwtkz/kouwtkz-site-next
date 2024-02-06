@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { SiteDataType, SiteSnsItemType } from "@/app/site/SiteData.mjs";
+import { SiteDataType, SiteSnsItemType } from "@/app/context/site/SiteData.mjs";
 
 const SnsList = React.memo(function SnsList({
   snsList,

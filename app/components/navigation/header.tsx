@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { SiteDataType } from "@/app/site/SiteData.mjs";
+import { SiteDataType } from "@/app/context/site/SiteData.mjs";
 import Breakcrumb from "./breadcrumb";
 import { SiteMenu, SiteMenuButton } from "./SiteMenu";
 

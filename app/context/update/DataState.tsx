@@ -2,7 +2,7 @@
 
 import CharaState from "@/app/character/CharaState";
 import MediaImageState from "@/app/context/MediaImageState";
-import SiteState from "@/app/site/SiteState";
+import SiteState from "@/app/context/site/SiteState";
 import PostState from "@/app/blog/PostState";
 import SoundState from "@/app/sound/SoundState";
 import DataTextState, { useDataTextState } from "./DataTextState";

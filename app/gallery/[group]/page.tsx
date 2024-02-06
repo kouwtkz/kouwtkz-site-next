@@ -1,7 +1,7 @@
 import React from "react";
 import { Metadata } from "next";
 import GalleryObject from "../GalleryObject";
-import { site } from "@/app/site/SiteData.mjs";
+import { site } from "@/app/context/site/SiteData.mjs";
 
 export async function generateStaticParams() {
   return (

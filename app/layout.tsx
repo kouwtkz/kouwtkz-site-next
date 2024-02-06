@@ -9,7 +9,7 @@ import {
 } from "@/app/fonts/list";
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
-import { site } from "@/app/site/SiteData.mjs";
+import { site } from "@/app/context/site/SiteData.mjs";
 import ImageViewer from "./gallery/ImageViewer";
 import ToasterContext from "@/app/context/toastContext";
 import ServerStateMake from "./components/System/ServerStateMake";
