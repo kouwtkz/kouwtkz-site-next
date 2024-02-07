@@ -16,6 +16,7 @@ export default function About() {
               <a
                 href="https://github.com/kouwtkz/kouwtkz-site-next"
                 target="_blank"
+                className="underline"
               >
                 このサイトのGithub
               </a>

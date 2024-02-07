@@ -72,7 +72,7 @@ export default async function RootLayout({
         <SoundPlayer />
         <ImageViewer />
         <DataState />
-        <Header title={site.title} nav={site.menu?.nav} />
+        <Header title={site.title} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
           <div className="mx-auto min-h-[70vh]">
             <div className="min-h-[50vh] content-parent">{children}</div>

@@ -53,10 +53,6 @@ function State() {
   );
 }
 
-interface DataStateProps {
-  title: string;
-}
-
 export default function DataState() {
   const stateList = [
     useCharaState(),

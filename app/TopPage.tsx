@@ -46,7 +46,7 @@ function Main() {
 
   return (
     <>
-      <div className="h-[48rem] min-h-[30rem] max-h-[75vh] wide">
+      <div className="h-[48rem] min-h-[30rem] max-h-[70vh] wide">
         {currentTopImage.current && topImage ? (
           <TransitionGroup className="h-[100%] wrapper relative">
             <CSSTransition
@@ -82,13 +82,16 @@ function Main() {
                 <Link href="character">キャラクター</Link>
               </li>
               <li>
-                <Link href="sound">サウンド</Link>
+                <Link href="work">おしごと</Link>
               </li>
               <li>
-                <Link href="schedule">スケジュール</Link>
+                <Link href="sound">おんがく</Link>
               </li>
               <li>
-                <Link href="about">このサイトについて</Link>
+                <Link href="schedule">よてい</Link>
+              </li>
+              <li>
+                <Link href="about">じょうほう</Link>
               </li>
             </ul>
           </div>

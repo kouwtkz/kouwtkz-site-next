@@ -7,10 +7,13 @@ import { SiteMenuItemType } from "@/app/context/site/SiteDataType";
 
 type HeaderProps = {
   title: string;
-  nav?: SiteMenuItemType[];
 };
 
-export const SiteTitle = React.memo(function SiteTitle({ title }: { title: string }) {
+export const SiteTitle = React.memo(function SiteTitle({
+  title,
+}: {
+  title: string;
+}) {
   return (
     <div className="container my-3 inline-block">
       <Link href="/" className="inline-block px-2 h-10">
@@ -25,13 +28,13 @@ export const SiteTitle = React.memo(function SiteTitle({ title }: { title: strin
   );
 });
 
-export default function Header({ title, nav }: HeaderProps) {
+export default function Header({ title }: HeaderProps) {
   return (
     <header className="fixed w-[100%] z-10 text-center">
       <SiteMenuButton />
       <Breakcrumb className="absolute left-0 m-1 h-14 w-14" />
       <SiteTitle title={title} />
-      <SiteMenu nav={nav} />
+      <SiteMenu />
       <div className="absolute top-0 m-0 h-[100%] w-[100%] bg-background-top opacity-90 -z-10" />
     </header>
   );
