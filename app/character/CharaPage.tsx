@@ -9,7 +9,7 @@ interface CharaObjectProps {
   title?: string;
 }
 
-export default function CharaObject({ title }: CharaObjectProps) {
+export default function CharaPage({ title }: CharaObjectProps) {
   const search = useSearchParams();
   const name = search.get("name");
   if (name) {

@@ -13,6 +13,7 @@ import { EmbedNode } from "@/app/context/embed/EmbedState";
 import GallerySearchArea from "../gallery/tag/GallerySearchArea";
 import GalleryTagsSelect from "../gallery/tag/GalleryTagsSelect";
 import InPageMenu from "../components/navigation/InPageMenu";
+import Link from "next/link";
 
 type DetailProps = {
   name: string;
@@ -20,7 +21,7 @@ type DetailProps = {
 
 export default function CharaDetail({ name }: DetailProps) {
   const { isStatic } = useServerState();
-  const { charaObject } = useCharaState();
+  const { charaList, charaObject } = useCharaState();
   const { RegistPlaylist, current, playlist } = useSoundPlayer();
   const isSetPlaylist = useRef(false);
   const chara = charaObject ? charaObject[name] : null;
@@ -40,6 +41,9 @@ export default function CharaDetail({ name }: DetailProps) {
     }
   });
   if (!chara) return null;
+  const charaIndex = charaList.findIndex(({ id }) => id === chara.id);
+  const beforeChara = charaList[charaIndex - 1];
+  const afterChara = charaList[charaIndex + 1];
   const galleryList: CharaGalleryAlbumProps[] = [
     { chara, name: "art" },
     { chara, name: "goods" },
@@ -53,18 +57,60 @@ export default function CharaDetail({ name }: DetailProps) {
   const otherRefList = otherMenuList.map(() => createRef<HTMLDivElement>());
   return (
     <>
-      <InPageMenu
-        list={otherMenuList
-          .map(({ name }, i) => ({ name, ref: otherRefList[i] }))
-          .concat(
-            galleryList.map(({ name, label }, i) => ({
-              name: label || name,
-              ref: galleryRefList[i],
-            }))
-          )}
-        adjust={128}
-      />
       <div className="p-0" ref={otherRefList[0]}>
+        <div className="mx-2 my-1 flex justify-between">
+          <div>
+            {beforeChara ? (
+              <Link
+                href={`?name=${beforeChara.id}`}
+                className="flex items-center h-8"
+              >
+                <span className="mr-2">＜</span>
+                {beforeChara.media?.icon ? (
+                  <ImageMeeIcon
+                    imageItem={beforeChara.media.icon}
+                    size={40}
+                    className="charaIcon text-2xl mr-2"
+                  />
+                ) : null}
+                <span className="text-xl">{beforeChara.name}</span>
+              </Link>
+            ) : null}
+          </div>
+          <div>
+            {afterChara ? (
+              <Link
+                href={`?name=${afterChara.id}`}
+                className="flex items-center h-8"
+              >
+                {afterChara.media?.icon ? (
+                  <ImageMeeIcon
+                    imageItem={afterChara.media.icon}
+                    size={40}
+                    className="charaIcon text-2xl mr-2"
+                  />
+                ) : null}
+                <span className="text-xl">{afterChara.name}</span>
+                <span className="ml-2">＞</span>
+              </Link>
+            ) : null}
+          </div>
+        </div>
+        <div className="mb-4">
+          <h1 className="text-main-strong font-bold text-3xl h-10 inline-block">
+            {chara.media?.icon ? (
+              <ImageMeeIcon
+                imageItem={chara.media.icon}
+                size={40}
+                className="charaIcon text-4xl mr-2"
+              />
+            ) : null}
+            <span className="align-middle">{`${chara.name}${
+              chara.honorific || ""
+            }`}</span>
+          </h1>
+          <div className="text-main text-xl">{chara.description}</div>
+        </div>
         {chara.media?.headerImage ? (
           <div>
             <ImageMee
@@ -89,19 +135,6 @@ export default function CharaDetail({ name }: DetailProps) {
             />
           </div>
         ) : null}
-        <h1 className="text-main-strong font-bold text-3xl h-10 inline-block">
-          {chara.media?.icon ? (
-            <ImageMeeIcon
-              imageItem={chara.media.icon}
-              size={40}
-              className="charaIcon text-4xl mr-2"
-            />
-          ) : null}
-          <span className="align-middle">{`${chara.name}${
-            chara.honorific || ""
-          }`}</span>
-        </h1>
-        <div className="text-main text-xl">{chara.description}</div>
         <EmbedNode className="my-8 mx-2 md:mx-8" embed={chara.embed} />
       </div>
       <div className="mt-4">
@@ -115,6 +148,17 @@ export default function CharaDetail({ name }: DetailProps) {
           </div>
         ))}
       </div>
+      <InPageMenu
+        list={otherMenuList
+          .map(({ name }, i) => ({ name, ref: otherRefList[i] }))
+          .concat(
+            galleryList.map(({ name, label }, i) => ({
+              name: label || name,
+              ref: galleryRefList[i],
+            }))
+          )}
+        adjust={128}
+      />
     </>
   );
 }

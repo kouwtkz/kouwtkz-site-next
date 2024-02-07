@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 import { EmbedTextType } from "../context/embed/EmbedState";
 
 export interface CharaType {
-  id?: string
+  id: string
   name: string,
   honorific?: string,
   defEmoji?: string,
