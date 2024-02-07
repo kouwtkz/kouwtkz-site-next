@@ -61,7 +61,7 @@
     {
       "label": "git: merge from main",
       "type": "shell",
-      "command": "git merge main"
+      "command": "git checkout main; git pull; git checkout dynamic_win; git merge main"
     }
   ]
 }
