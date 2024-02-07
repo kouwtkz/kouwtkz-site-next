@@ -46,7 +46,7 @@ export default function getPosts({ posts, take, page, common, q = "", pinned = f
       if (take !== undefined && i >= (take + skip)) return false;
       return ++i > skip;
     })
-    const max = Math.ceil(count / (take || 1));
+    const max = Math.ceil(count / (take || count));
     return { posts: postsResult, count, max };
   } catch (e) {
     console.log(e);
