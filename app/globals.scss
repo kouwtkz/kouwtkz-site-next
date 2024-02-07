@@ -108,7 +108,7 @@ button,
 }
 
 style {
-  display: none!important;
+  display: none !important;
 }
 
 .react-comic-viewer {
@@ -258,6 +258,10 @@ form select {
   border: solid 1px var(--main-color-deep);
   border-radius: 0.5em;
   box-sizing: border-box;
+}
+
+input[list] {
+  line-height: normal;
 }
 
 form select {
