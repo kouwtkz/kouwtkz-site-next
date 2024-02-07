@@ -13,7 +13,7 @@ import { queryPush } from "@/app/components/functions/queryPush";
 
 interface SearchAreaProps extends HTMLAttributes<HTMLFormElement> {}
 
-function Main({ className, ...args }: SearchAreaProps) {
+export default function SearchArea({ className, ...args }: SearchAreaProps) {
   className = className ? ` ${className}` : "";
   const router = useRouter();
   const searchRef = useRef<HTMLInputElement>(null);
@@ -75,13 +75,5 @@ function Main({ className, ...args }: SearchAreaProps) {
         className="w-48 py-1 px-2"
       />
     </form>
-  );
-}
-
-export default function SearchArea(args: SearchAreaProps) {
-  return (
-    <Suspense>
-      <Main {...args} />
-    </Suspense>
   );
 }
