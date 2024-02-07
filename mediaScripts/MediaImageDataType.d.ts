@@ -47,5 +47,6 @@ export type MediaImageItemType = {
   fullPath?: string;
   mtime?: Date;
   origin?: string;
+  size?: {w: number; h: number}
   [name: string]: any;
 }
