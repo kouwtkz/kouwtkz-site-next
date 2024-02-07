@@ -25,9 +25,16 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
   return imageList;
 }
 
+interface ValueCountType {
+  value: string;
+  count: number;
+}
+
 type ImageDataType = {
   imageItemList: Array<MediaImageItemType>;
   imageAlbumList: Array<MediaImageAlbumType>;
+  tagList: ValueCountType[];
+  copyrightList: ValueCountType[];
   setImageAlbum: (albumList: Array<MediaImageAlbumType>) => void;
   setImageFromUrl: (url?: string) => void;
 };
@@ -35,10 +42,35 @@ type ImageDataType = {
 export const useMediaImageState = create<ImageDataType>((set) => ({
   imageItemList: [],
   imageAlbumList: [],
+  tagList: [],
+  copyrightList: [],
   setImageAlbum: (data) => {
+    const imageItemList = parseImageItems(data);
+    const tagList = imageItemList
+      .reduce((list, c) => {
+        c.tags?.forEach((value) => {
+          const item = list.find((item) => item.value === value);
+          if (item) item.count++;
+          else list.push({ value, count: 0 });
+        });
+        return list;
+      }, [] as ValueCountType[])
+      .sort((a, b) => (a.value > b.value ? 1 : -1));
+    const copyrightList = imageItemList
+      .reduce((list, { copyright: value }) => {
+        if (value) {
+          const item = list.find((item) => item.value === value);
+          if (item) item.count++;
+          else list.push({ value, count: 0 });
+        }
+        return list;
+      }, [] as ValueCountType[])
+      .sort((a, b) => (a.value > b.value ? 1 : -1));
     set(() => ({
       imageAlbumList: data,
-      imageItemList: parseImageItems(data),
+      imageItemList,
+      tagList,
+      copyrightList,
     }));
   },
   setImageFromUrl: (url = defaultUrl) => {

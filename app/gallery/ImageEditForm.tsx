@@ -6,7 +6,11 @@ import ImageMee from "../components/image/ImageMee";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/MediaImageState";
-import { defaultTags, getTagsOptions, autoFixTagsOptions } from "./tag/GalleryTags";
+import {
+  defaultTags,
+  getTagsOptions,
+  autoFixTagsOptions,
+} from "./tag/GalleryTags";
 import { useRouter } from "next/navigation";
 import { useEmbedState } from "../context/embed/EmbedState";
 
@@ -15,7 +19,8 @@ interface Props extends HTMLAttributes<HTMLFormElement> {
 }
 
 export default function ImageEditForm({ image, className, ...args }: Props) {
-  const { setImageFromUrl, imageAlbumList } = useMediaImageState();
+  const { setImageFromUrl, imageAlbumList, copyrightList } =
+    useMediaImageState();
   const { data: embedData } = useEmbedState();
   const { editMode, toggleEditMode } = useImageViewer();
   const router = useRouter();
@@ -285,7 +290,9 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
             <p>その他のタグ</p>
             <div>
               {(() => {
-                const otherTagCandidates = autoFixTagsOptions(getTagsOptions(defaultTags));
+                const otherTagCandidates = autoFixTagsOptions(
+                  getTagsOptions(defaultTags)
+                );
                 const noUsedCandidates = otherTagCandidates.filter(
                   ({ value }) => otherTags.every((tag) => value !== tag)
                 );
@@ -411,12 +418,18 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
           <label>
             <div className="inline-block mr-4">コピーライト</div>
             <input
-              className="rounded-none px-1 text-lg md:text-xl"
+              className="py-1 px-2 text-lg md:text-xl"
               title="コピーライト"
               type="text"
               name="copyright"
               defaultValue={image.copyright}
+              list="galleryEditCopyrightList"
             />
+            <datalist id="galleryEditCopyrightList">
+              {copyrightList.map(({ value }, i) => (
+                <option value={value} key={i} />
+              ))}
+            </datalist>
           </label>
           <label>
             <div className="inline-block mr-4">アルバム移動</div>

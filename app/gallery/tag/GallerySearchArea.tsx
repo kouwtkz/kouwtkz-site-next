@@ -71,7 +71,7 @@ export default function GallerySearchArea({
       <input
         name="q"
         type="search"
-        placeholder="検索"
+        placeholder="ギャラリー検索"
         defaultValue={q}
         ref={searchRef}
         className="w-56 py-1 px-2"

@@ -55,6 +55,7 @@ function Main({ className, ...args }: SearchAreaProps) {
               if (q) params.q = q;
               else delete params.q;
               delete params.p;
+              delete params.postId;
             },
             push: router.push,
             search,
