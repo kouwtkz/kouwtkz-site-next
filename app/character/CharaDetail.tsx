@@ -14,6 +14,7 @@ import GallerySearchArea from "../gallery/tag/GallerySearchArea";
 import GalleryTagsSelect from "../gallery/tag/GalleryTagsSelect";
 import InPageMenu from "../components/navigation/InPageMenu";
 import Link from "next/link";
+import { MdClientNode } from "../context/md/MarkdownDataClient";
 
 type DetailProps = {
   name: string;
@@ -135,6 +136,7 @@ export default function CharaDetail({ name }: DetailProps) {
             />
           </div>
         ) : null}
+        <MdClientNode name={`character/${chara.id}.md`} />
         <EmbedNode className="my-8 mx-2 md:mx-8" embed={chara.embed} />
       </div>
       <div className="mt-4">
