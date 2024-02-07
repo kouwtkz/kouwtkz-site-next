@@ -70,7 +70,7 @@ export default async function RootLayout({
         <ServerStateMake />
         <SoundPlayer />
         <ImageViewer />
-        <DataState title={site.title} />
+        <DataState />
         <Header title={site.title} nav={site.menu?.nav} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
           <div className="mx-auto min-h-[70vh]">

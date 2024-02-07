@@ -58,7 +58,7 @@ interface DataStateProps {
   title: string;
 }
 
-export default function DataState({ title }: DataStateProps) {
+export default function DataState() {
   const stateList = [
     useCharaState(),
     useSiteState(),
@@ -94,12 +94,7 @@ export default function DataState({ title }: DataStateProps) {
             "flex flex-col items-center justify-center"
           }
         >
-          <div className="text-center my-4">
-            <SiteTitle title={title} />
-          </div>
-          <span className="text-main text-2xl font-KosugiMaru">
-            よみこみちゅう…
-          </span>
+          <span className="text-main text-2xl font-mono">よみこみちゅう…</span>
           <img
             className="my-4"
             src="/images/gif/watakaze_icon_background.gif"
