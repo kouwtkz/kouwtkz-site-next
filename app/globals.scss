@@ -37,6 +37,13 @@ body,
     background: var(--main-color-soft);
     border-radius: round;
   }
+  &.loading {
+    min-height: 5000rem;
+    padding-right: var(--scroll-margin) !important;
+    overflow-y: hidden;
+  }
+
+  &.loading,
   &.overflow-y-hidden {
     &,
     .fixed {

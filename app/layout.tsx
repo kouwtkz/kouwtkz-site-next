@@ -58,6 +58,7 @@ export default async function RootLayout({
           MandaliFont.variable,
           // ZenMaruFont.variable,
           LuloCleanFont.variable,
+          "loading",
         ].join(" ")}
       >
         <script
