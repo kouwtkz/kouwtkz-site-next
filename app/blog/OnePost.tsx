@@ -38,7 +38,7 @@ export default function OnePost({ post }: Props) {
       ) : (
         <></>
       )}
-      <MultiParser>{post.body}</MultiParser>
+      <MultiParser className="blog">{post.body}</MultiParser>
       <div className="text-right [&>*]:ml-4">
         {post.draft ? (
           <span className="text-main-grayish">(下書き)</span>

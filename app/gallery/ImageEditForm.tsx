@@ -48,7 +48,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
     image: MediaImageItemType,
     deleteMode: boolean = false
   ) => {
-    const { album, resized, resizeOption, URL, move, ..._image } = image;
+    const { album, resized, resizeOption, URL, move, size, ..._image } = image;
     const res = await axios.patch("/gallery/send", {
       ..._image,
       albumDir: album?.dir,

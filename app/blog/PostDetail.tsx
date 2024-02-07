@@ -36,7 +36,7 @@ export default function PostDetail({ post }: PostDetailProps) {
             ))}
           </div>
         </div>
-        <MultiParser className="mx-2" detailsOpen={true}>
+        <MultiParser className="blog mx-2" detailsOpen={true}>
           {post.body}
         </MultiParser>
         <div className="text-right [&>*]:ml-4">

@@ -139,6 +139,40 @@ a {
   color: var(--main-color-strong);
   &:hover {
     color: var(--main-color);
+    &.external::after {
+      background-color: var(--main-color);
+    }
+  }
+  &.roundLink {
+    color: white;
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 1rem;
+    &.external::after {
+      background-color: white;
+    }
+    background-color: var(--main-color);
+    &:hover {
+      background-color: var(--main-color-soft);
+    }
+  }
+  &.external::after {
+    $externalUrl: url("/images/svg/external.svg");
+    display: inline-block;
+    margin-left: 0.2em;
+    content: "";
+    width: 1em;
+    height: 1em;
+    -webkit-mask-image: $externalUrl;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-image: $externalUrl;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: var(--main-color-strong);
+    font-size: 90%;
   }
 }
 
@@ -279,9 +313,16 @@ form select {
   outline: solid 1px var(--main-color-dark);
 }
 
-.parsed p {
-  margin: 1.5rem auto;
-  white-space: pre-line;
+.parsed {
+  &.blog > * {
+    margin: 1.5rem auto;
+  }
+  p {
+    white-space: pre-line;
+  }
+  h4 {
+    color: var(--main-color-dark);
+  }
 }
 
 .preview-area .parsed p:first-child {

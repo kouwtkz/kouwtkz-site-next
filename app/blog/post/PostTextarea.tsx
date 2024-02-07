@@ -60,7 +60,7 @@ export default function PostTextarea({
           bodyClass + " preview-area" + (previewMode ? " block" : " hidden")
         }
       >
-        <MultiParser>{previewBody}</MultiParser>
+        <MultiParser className="blog">{previewBody}</MultiParser>
       </div>
     </>
   );
