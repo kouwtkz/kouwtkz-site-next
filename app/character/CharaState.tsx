@@ -10,17 +10,19 @@ import GalleryList from "../gallery/GalleryList";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
+  isSet: boolean;
   setCharaObject: (list: CharaObjectType) => void;
 };
 
 export const useCharaState = create<CharaStateType>((set) => ({
   charaObject: null,
   charaList: [],
-  set: false,
+  isSet: false,
   setCharaObject: (data) => {
     set(() => ({
       charaList: Object.values(data),
       charaObject: data,
+      isSet: true,
     }));
   },
 }));

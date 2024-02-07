@@ -6,12 +6,12 @@ import axios from "axios";
 
 type DataTextStateType = {
   values: { [key: string]: string | boolean | number | object } | null;
-  set: (value: string) => void;
+  dataSet: (value: string) => void;
 };
 
 export const useDataTextState = create<DataTextStateType>((set) => ({
   values: null,
-  set: (value) => {
+  dataSet: (value) => {
     const values = Object.fromEntries(
       value.split("\n").map((v) => {
         const pos = v.indexOf("=");
@@ -31,12 +31,12 @@ export const useDataTextState = create<DataTextStateType>((set) => ({
 }));
 
 export default function DataTextState({ url }: { url: string }) {
-  const { set } = useDataTextState();
+  const { dataSet } = useDataTextState();
   const isSet = useRef(false);
   useEffect(() => {
     if (!isSet.current) {
       axios(url).then((r) => {
-        set(r.data);
+        dataSet(r.data);
       });
       isSet.current = true;
     }

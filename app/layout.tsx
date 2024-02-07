@@ -70,12 +70,17 @@ export default async function RootLayout({
         <ServerStateMake />
         <SoundPlayer />
         <ImageViewer />
-        <DataState />
-        <Header site={site} />
+        <DataState title={site.title} />
+        <Header title={site.title} nav={site.menu?.nav} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
           <div className="mx-auto min-h-[70vh]">
             <div className="min-h-[50vh] content-parent">{children}</div>
-            <Footer site={site} currentDate={currentDate} />
+            <Footer
+              since={site.author.since}
+              authorEName={site.author.ename}
+              sns={site.menu?.sns}
+              currentDate={currentDate}
+            />
           </div>
         </div>
         <div id="audio_background"></div>

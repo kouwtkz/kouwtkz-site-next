@@ -14,13 +14,15 @@ function parsePosts(posts: Post[]) {
 }
 type PostStateType = {
   posts: Post[];
+  isSet: boolean;
   setPosts: (value: any) => void;
   setPostsFromUrl: (url?: string) => void;
 };
 export const usePostState = create<PostStateType>((set) => ({
   posts: [],
+  isSet: false,
   setPosts: (value) => {
-    set(() => ({ posts: parsePosts(value), set: true }));
+    set(() => ({ posts: parsePosts(value), isSet: true }));
   },
   setPostsFromUrl: (url = defaultUrl) => {
     set((state) => {

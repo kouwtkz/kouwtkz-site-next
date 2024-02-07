@@ -7,13 +7,15 @@ import { SiteDataType } from "./SiteDataType";
 type SiteStateType = {
   site: SiteDataType | null;
   setSite: (value: SiteDataType) => void;
+  isSet: boolean;
 };
 
 export const useSiteState = create<SiteStateType>((set) => ({
   site: null,
   setSite: (value) => {
-    set({ site: value });
+    set({ site: value, isSet: true });
   },
+  isSet: false,
 }));
 
 export default function SiteState({ url }: { url: string }) {

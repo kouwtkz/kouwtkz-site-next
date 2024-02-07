@@ -9,13 +9,15 @@ export type EmbedDataType = { [k: string]: string } | null;
 
 type EmbedStateType = {
   data: EmbedDataType;
+  isSet: boolean;
   setData: (value: any) => void;
 };
 
 export const useEmbedState = create<EmbedStateType>((set) => ({
   data: null,
+  isSet: false,
   setData: (value) => {
-    set({ data: value });
+    set({ data: value, isSet: true });
   },
 }));
 
