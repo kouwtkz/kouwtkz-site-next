@@ -14,14 +14,26 @@ import { useServerState } from "../components/System/ServerState";
 export default function PostsPage() {
   const { posts } = usePostState();
   const search = useSearchParams();
-  const {isServerMode} = useServerState();
+  const { isServerMode } = useServerState();
   const page = Number(search.get("p") || 1);
   const q = search.get("q") || undefined;
   const postId = search.get("postId") || undefined;
+  const take = postId ? undefined : 10;
+  const {
+    posts: postsResult,
+    max,
+    count,
+  } = getPosts({
+    posts,
+    page,
+    q,
+    take,
+    common: !isServerMode,
+  });
   if (postId) {
     return (
       <>
-        <PostDetailFixed postId={postId} />
+        <PostDetailFixed postId={postId} posts={postsResult} />
         <PostDetail
           post={findMany({ list: posts, where: { postId }, take: 1 })[0]}
         />
@@ -29,17 +41,6 @@ export default function PostsPage() {
     );
   } else {
     if (posts.length === 0) return <></>;
-    const {
-      posts: postsResult,
-      max,
-      count,
-    } = getPosts({
-      posts,
-      page,
-      q,
-      take: 10,
-      common: !isServerMode,
-    });
     return (
       <>
         <PostsPageFixed max={max} />

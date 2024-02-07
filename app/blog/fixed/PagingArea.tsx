@@ -1,11 +1,6 @@
 "use client";
 
-import React, {
-  HTMLAttributes,
-  Suspense,
-  useEffect,
-  useRef,
-} from "react";
+import React, { HTMLAttributes, Suspense, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 import { queryPush } from "@/app/components/functions/queryPush";
@@ -14,7 +9,11 @@ interface PagingAreaProps extends HTMLAttributes<HTMLFormElement> {
   max?: number;
 }
 
-function Main({ max, className, ...args }: PagingAreaProps) {
+export default function PagingArea({
+  max,
+  className,
+  ...args
+}: PagingAreaProps) {
   className = className ? ` ${className}` : "";
   const _min = 1;
   const _max = max || 1;
@@ -118,13 +117,5 @@ function Main({ max, className, ...args }: PagingAreaProps) {
         ＞
       </button>
     </form>
-  );
-}
-
-export default function PagingArea(args: PagingAreaProps) {
-  return (
-    <Suspense>
-      <Main {...args} />
-    </Suspense>
   );
 }
