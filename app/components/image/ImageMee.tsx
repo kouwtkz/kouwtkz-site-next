@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 
@@ -33,9 +33,6 @@ export default function ImageMee({
   const [loaded, setLoaded] = useState(false);
   const refImg = useRef<HTMLImageElement | null>(null);
   const refImgSrc = useRef("");
-  useEffect(() => {
-    console.log(loaded, imageItem, mode, refImg.current);
-  });
   const src = _src || imageItem?.URL || "";
   if (refImgSrc.current !== src) {
     if (loaded) setLoaded(false);
