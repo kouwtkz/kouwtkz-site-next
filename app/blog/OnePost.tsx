@@ -19,7 +19,12 @@ export default function OnePost({ post }: Props) {
       )}
       {post.title ? (
         <h3 className="text-2xl text-main-dark font-bold inline-block m-2">
-          <Link href={`/blog/?postId=${post.postId}`}>{post.title}</Link>
+          <Link
+            href={{ pathname: "/blog", query: { postId: post.postId } }}
+            prefetch={false}
+          >
+            {post.title}
+          </Link>
         </h3>
       ) : (
         <></>
@@ -31,7 +36,12 @@ export default function OnePost({ post }: Props) {
             : post.category
           ).map((category, i) => (
             <div key={i} className="mx-1 underline inline-block">
-              <Link href={`/blog/?q=%23${category}`}>{category}</Link>
+              <Link
+                href={{ pathname: "/blog", query: { q: `#${category}` } }}
+                prefetch={false}
+              >
+                {category}
+              </Link>
             </div>
           ))}
         </div>
@@ -50,7 +60,8 @@ export default function OnePost({ post }: Props) {
         {formattedDate ? (
           <Link
             className="text-main-grayish hover:text-main-grayish hover:opacity-70"
-            href={`/blog?postId=${post.postId}`}
+            href={{ pathname: "/blog", query: { postId: post.postId } }}
+            prefetch={false}
           >
             {formattedDate}
           </Link>

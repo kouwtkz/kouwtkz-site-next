@@ -13,7 +13,8 @@ export default function CharaList() {
           <Link
             key={index}
             className="block p-4 w-[50%] sm:w-[33%] hover:bg-main-pale-fluo hover:text-main-deep"
-            href={`character?name=${chara.id}`}
+            href={{ pathname: "/character", query: { name: chara.id } }}
+            prefetch={false}
           >
             {chara.media?.image ? (
               <ImageMeeThumbnail

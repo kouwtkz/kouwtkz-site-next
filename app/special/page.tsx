@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 import { Metadata } from "next";
 const title = "SPECIAL PAGE";
 export const metadata: Metadata = { title };

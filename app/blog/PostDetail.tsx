@@ -31,7 +31,12 @@ export default function PostDetail({ post }: PostDetailProps) {
               : post.category
             ).map((category, i) => (
               <div key={i} className="mx-1 underline inline-block">
-                <Link href={`/blog/?q=%23${category}`}>{category}</Link>
+                <Link
+                  href={{ pathname: "/blog", query: { q: `#${category}` } }}
+                  prefetch={false}
+                >
+                  {category}
+                </Link>
               </div>
             ))}
           </div>

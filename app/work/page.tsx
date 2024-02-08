@@ -1,6 +1,4 @@
 import { Metadata } from "next";
-import Link from "next/link";
-import { MdServerNode } from "../context/md/MarkdownDataServer";
 import { MdClientNode } from "../context/md/MarkdownDataClient";
 const title = "WORK";
 export const metadata: Metadata = { title };

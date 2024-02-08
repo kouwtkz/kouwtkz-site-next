@@ -26,7 +26,8 @@ export default function PostListWindow({
         {topPosts.map((post, i) => (
           <Link
             className="mx-2 my-1 flex flex-row justify-left items-center"
-            href={`/blog?postId=${post.postId}`}
+            href={{ pathname: "/blog", query: { postId: post.postId } }}
+            prefetch={false}
             key={i}
           >
             <div className="text-right mr-2 min-w-[5em]">

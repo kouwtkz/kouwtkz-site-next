@@ -63,7 +63,8 @@ export default function CharaDetail({ name }: DetailProps) {
           <div>
             {beforeChara ? (
               <Link
-                href={`?name=${beforeChara.id}`}
+                href={{ query: { name: beforeChara.id } }}
+                prefetch={false}
                 className="flex items-center h-8"
               >
                 <span className="mr-2">＜</span>
@@ -81,7 +82,8 @@ export default function CharaDetail({ name }: DetailProps) {
           <div>
             {afterChara ? (
               <Link
-                href={`?name=${afterChara.id}`}
+                href={{ query: { name: afterChara.id } }}
+                prefetch={false}
                 className="flex items-center h-8"
               >
                 {afterChara.media?.icon ? (
