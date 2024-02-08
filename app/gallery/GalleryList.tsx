@@ -353,6 +353,7 @@ function Main({
                         style={{ objectFit: "cover" }}
                         className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
                         data-origin={image.origin}
+                        loadingScreen={true}
                         onClick={() => {
                           if (image.direct) router.push(image.direct);
                           else {
