@@ -1,6 +1,13 @@
 "use client";
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
@@ -72,6 +79,10 @@ function ImageViewerWindow() {
   const imageParam = search.get("image");
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
+  const [beforeAfterImage, setBeforeAfterImage] = useState<{
+    before?: MediaImageItemType;
+    after?: MediaImageItemType;
+  }>();
 
   const backAction = () => {
     router.back();
@@ -88,17 +99,59 @@ function ImageViewerWindow() {
       }
     }, 10);
   };
+  const updateFlag = useRef(false);
   useEffect(() => {
     if (!imageParam) {
       if (isOpen) onClose();
     } else if (imageParam !== imagePath) {
       setImagePath(imageParam);
+      updateFlag.current = true;
+    } else {
     }
   });
 
   const image = imagePath
     ? imageItemList.find((image) => image.URL === imageParam) || null
     : null;
+  useEffect(() => {
+    if (image && updateFlag.current) {
+      updateFlag.current = false;
+      const albumName = search.get("album");
+      const originList = (
+        Array.from(
+          document.querySelectorAll(
+            (albumName ? `[data-album=${albumName}] ` : "") + `[data-origin]`
+          )
+        ) as HTMLElement[]
+      ).map((elm) => elm.dataset.origin);
+      const imageIndex = originList.findIndex(
+        (origin) => image?.origin === origin
+      );
+      const beforeAfter: {
+        before?: MediaImageItemType;
+        after?: MediaImageItemType;
+      } = {};
+      const beforeOrigin =
+        originList[
+          imageIndex > 0 || originList.length < 3
+            ? imageIndex - 1
+            : originList.length - 1
+        ];
+      beforeAfter.before = imageItemList.find(
+        ({ origin }) => origin === beforeOrigin
+      );
+      const afterOrigin =
+        originList[
+          imageIndex < originList.length - 1 || originList.length < 3
+            ? imageIndex + 1
+            : 0
+        ];
+      beforeAfter.after = imageItemList.find(
+        ({ origin }) => origin === afterOrigin
+      );
+      setBeforeAfterImage(beforeAfter);
+    }
+  }, [search, imageItemList, image]);
 
   const titleEqFilename =
     process.env.NODE_ENV === "development"
@@ -110,7 +163,7 @@ function ImageViewerWindow() {
   const infoCmp = (image: MediaImageItemType) => {
     if (!image.album?.visible?.info) return <></>;
     return (
-      <div className="window info">
+      <div className="window info relative">
         <div className="text-center md:text-left">
           {editMode ? null : (
             <>
@@ -207,6 +260,46 @@ function ImageViewerWindow() {
             </>
           )}
           {isServerMode ? <ImageEditForm image={image} /> : null}
+        </div>
+        <div className="absolute bottom-0 flex w-[100%] px-2 h-16 text-main-strong">
+          {beforeAfterImage?.before ? (
+            <div
+              className="px-2 flex-1 flex justify-start items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
+              onClick={() => {
+                queryPush({
+                  process: (params) => {
+                    if (beforeAfterImage.before?.URL)
+                      params.image = beforeAfterImage.before.URL;
+                  },
+                  scroll: false,
+                  push: router.replace,
+                  search,
+                });
+              }}
+            >
+              <div className="mr-2">≪</div>
+              <div>{beforeAfterImage.before.name}</div>
+            </div>
+          ) : null}
+          {beforeAfterImage?.after ? (
+            <div
+              className="px-2 flex-1 flex justify-end items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
+              onClick={() => {
+                queryPush({
+                  process: (params) => {
+                    if (beforeAfterImage.after?.URL)
+                      params.image = beforeAfterImage.after.URL;
+                  },
+                  scroll: false,
+                  push: router.replace,
+                  search,
+                });
+              }}
+            >
+              <div>{beforeAfterImage.after.name}</div>
+              <div className="ml-2">≫</div>
+            </div>
+          ) : null}
         </div>
       </div>
     );

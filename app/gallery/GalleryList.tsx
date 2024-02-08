@@ -283,7 +283,11 @@ function Main({
           {_h4 ? <h4 className="text-main-soft">{_h4}</h4> : null}
         </div>
       ) : null}
-      <div className="pt-6 pb-6 w-[100%]" {...getRootProps()}>
+      <div
+        data-album={album.name}
+        className="pt-6 pb-6 w-[100%]"
+        {...getRootProps()}
+      >
         <input name="upload" {...getInputProps()} />
         <div className="mx-2 relative">
           {filterButton ? (
@@ -334,11 +338,11 @@ function Main({
             <div className="text-main-soft my-4">よみこみちゅう…</div>
           ) : (
             <>
-              {albumList
-                .map((image, key) => {
+              {albumList.map((image, i) => {
+                if (i < visibleMax) {
                   return (
                     <div
-                      key={key}
+                      key={i}
                       className={
                         `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` +
                         ` hover:brightness-90 transition cursor-pointer`
@@ -348,6 +352,7 @@ function Main({
                         imageItem={image}
                         style={{ objectFit: "cover" }}
                         className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
+                        data-origin={image.origin}
                         onClick={() => {
                           if (image.direct) router.push(image.direct);
                           else {
@@ -356,6 +361,7 @@ function Main({
                               queryPush({
                                 process: (params) => ({
                                   image: URL,
+                                  album: album.name,
                                   ...params,
                                 }),
                                 scroll: false,
@@ -368,8 +374,16 @@ function Main({
                       />
                     </div>
                   );
-                })
-                .filter((v, i) => i < visibleMax)}
+                } else {
+                  return (
+                    <div
+                      data-origin={image.origin || ""}
+                      key={i}
+                      hidden={true}
+                    />
+                  );
+                }
+              })}
               {showMoreButton ? (
                 <MoreButton
                   className="w-[24.532%] h-auto cursor-pointer m-[0.234%] p-0 fill-main-soft hover:fill-main-pale"
