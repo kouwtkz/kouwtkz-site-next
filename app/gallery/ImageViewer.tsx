@@ -3,8 +3,6 @@
 import React, {
   Suspense,
   useEffect,
-  useLayoutEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
@@ -131,21 +129,11 @@ function ImageViewerWindow() {
         before?: MediaImageItemType;
         after?: MediaImageItemType;
       } = {};
-      const beforeOrigin =
-        originList[
-          imageIndex > 0 || originList.length < 3
-            ? imageIndex - 1
-            : originList.length - 1
-        ];
+      const beforeOrigin = originList[imageIndex - 1];
       beforeAfter.before = imageItemList.find(
         ({ origin }) => origin === beforeOrigin
       );
-      const afterOrigin =
-        originList[
-          imageIndex < originList.length - 1 || originList.length < 3
-            ? imageIndex + 1
-            : 0
-        ];
+      const afterOrigin = originList[imageIndex + 1];
       beforeAfter.after = imageItemList.find(
         ({ origin }) => origin === afterOrigin
       );
@@ -163,8 +151,8 @@ function ImageViewerWindow() {
   const infoCmp = (image: MediaImageItemType) => {
     if (!image.album?.visible?.info) return <></>;
     return (
-      <div className="window info relative">
-        <div className="text-center md:text-left">
+      <div className="window info flex flex-col justify-between">
+        <div className="text-center md:text-left flex-shrink-0">
           {editMode ? null : (
             <>
               {image.album.visible.title &&
@@ -261,7 +249,7 @@ function ImageViewerWindow() {
           )}
           {isServerMode ? <ImageEditForm image={image} /> : null}
         </div>
-        <div className="absolute bottom-0 flex w-[100%] px-2 h-16 text-main-strong">
+        <div className="flex w-[100%] px-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
           {beforeAfterImage?.before ? (
             <div
               className="px-2 flex-1 flex justify-start items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
@@ -280,7 +268,9 @@ function ImageViewerWindow() {
               <div className="mr-2">≪</div>
               <div>{beforeAfterImage.before.name}</div>
             </div>
-          ) : null}
+          ) : (
+            <div className="flex-1" />
+          )}
           {beforeAfterImage?.after ? (
             <div
               className="px-2 flex-1 flex justify-end items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
@@ -299,7 +289,9 @@ function ImageViewerWindow() {
               <div>{beforeAfterImage.after.name}</div>
               <div className="ml-2">≫</div>
             </div>
-          ) : null}
+          ) : (
+            <div className="flex-1" />
+          )}
         </div>
       </div>
     );

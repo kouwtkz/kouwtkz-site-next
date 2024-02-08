@@ -1,4 +1,4 @@
-import { HTMLAttributes, useRef, useState } from "react";
+import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { useImageViewer } from "./ImageViewer";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { useCharaState } from "../character/CharaState";
@@ -31,19 +31,25 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
   const [otherTags, setOtherTags] = useState<string[]>([]);
   const charaTagsSelect = useRef<HTMLSelectElement>(null);
   const otherTagsSelect = useRef<HTMLSelectElement>(null);
-  const tagsSet = useRef(false);
-  if (!tagsSet.current && charaList.length > 0) {
-    const _charaTags = (image.tags || []).filter((tag) =>
-      charaList.some((chara) => tag === chara.id)
-    );
-    setCharaTags(_charaTags);
-    setOtherTags(
-      (image.tags || []).filter((tag) =>
-        _charaTags.every((_tag) => tag !== _tag)
-      )
-    );
-    tagsSet.current = true;
-  }
+  const imageOrigin = useRef("");
+  useEffect(() => {
+    if (
+      image.origin &&
+      imageOrigin.current !== image.origin &&
+      charaList.length > 0
+    ) {
+      imageOrigin.current = image.origin;
+      const _charaTags = (image.tags || []).filter((tag) =>
+        charaList.some((chara) => tag === chara.id)
+      );
+      setCharaTags(_charaTags);
+      setOtherTags(
+        (image.tags || []).filter((tag) =>
+          _charaTags.every((_tag) => tag !== _tag)
+        )
+      );
+    }
+  }, [image.origin, image.tags, charaList]);
   const sendUpdate = async (
     image: MediaImageItemType,
     deleteMode: boolean = false
