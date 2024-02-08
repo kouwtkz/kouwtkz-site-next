@@ -4,6 +4,8 @@
 import React, { useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
+const blankImage =
+  "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
 interface ImageMeeProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   imageItem?: MediaImageItemType;
@@ -11,6 +13,7 @@ interface ImageMeeProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   hoverImageItem?: MediaImageItemType;
   mode?: ResizeMode;
   unoptimized?: boolean;
+  size?: number;
   loadingScreen?: boolean;
 }
 
@@ -25,6 +28,9 @@ export default function ImageMee({
   srcSet,
   placeholder,
   unoptimized,
+  size,
+  width,
+  height,
   loadingScreen = false,
   className,
   style,
@@ -42,6 +48,19 @@ export default function ImageMee({
   const thumbnail = imageItem?.resized?.find(
     (item) => item.mode === "thumbnail"
   )?.src;
+
+  if (size) {
+    [width, height] = new Array<number>(2).fill(size);
+  } else if (imageItem?.size) {
+    if (!width)
+      width = height
+        ? Math.ceil((imageItem.size.w * Number(height)) / imageItem.size.h)
+        : imageItem.size.w;
+    if (!height)
+      height = width
+        ? Math.ceil((imageItem.size.h * Number(width)) / imageItem.size.w)
+        : imageItem.size.h;
+  }
   const imageSrc =
     mode === "simple"
       ? src
@@ -67,28 +86,27 @@ export default function ImageMee({
   const loadThumbMode = mode === "simple" && thumbnail;
   const mainImgSrc = !loaded && loadThumbMode ? thumbnail : imageSrc;
   const nowLoadingNotThumb = !loaded && mainImgSrc === imageSrc;
+  const blankMode = nowLoadingNotThumb && loadingScreen;
+  if (blankMode)
+    style = {
+      ...style,
+      background: "var(--main-color-grayish-fluo)",
+    };
   return (
     <>
       <img
-        src={mainImgSrc}
+        src={blankMode ? blankImage : mainImgSrc}
         alt={alt}
         ref={refImg}
-        {...{ className, style }}
-        hidden={nowLoadingNotThumb}
+        {...{
+          className,
+          width,
+          height,
+          style,
+        }}
         {...onMouseEvent}
         {...attributes}
       />
-      {nowLoadingNotThumb && loadingScreen ? (
-        <div
-          {...{
-            className: className,
-            style: {
-              ...style,
-              background: "var(--main-color-grayish-fluo)",
-            },
-          }}
-        />
-      ) : null}
       {!loaded ? (
         <>
           <img
@@ -107,14 +125,14 @@ export default function ImageMee({
 
 interface ImageMeeSimpleProps
   extends React.ImgHTMLAttributes<HTMLImageElement> {
-  size?: number;
   imageItem: MediaImageItemType;
+  size?: number;
   loadingScreen?: boolean;
 }
 
 export function ImageMeeIcon({ size, ...args }: ImageMeeSimpleProps) {
-  return ImageMee({ ...args, mode: "icon", width: size, height: size });
+  return ImageMee({ ...args, mode: "icon" });
 }
 export function ImageMeeThumbnail({ size, ...args }: ImageMeeSimpleProps) {
-  return ImageMee({ ...args, mode: "thumbnail", width: size, height: size });
+  return ImageMee({ ...args, mode: "thumbnail" });
 }

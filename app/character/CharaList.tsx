@@ -19,6 +19,7 @@ export default function CharaList() {
               <ImageMeeThumbnail
                 imageItem={chara.media.image}
                 className="block mx-auto my-2 max-w-[90%]"
+                loadingScreen={true}
               />
             ) : null}
             <div className="text-center text-xl md:text-2xl">{chara.name}</div>

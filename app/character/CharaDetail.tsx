@@ -120,8 +120,6 @@ export default function CharaDetail({ name }: DetailProps) {
               unoptimized={isStatic}
               suppressHydrationWarning={true}
               className="inline-block w-[100%]"
-              width={chara.media.headerImage.size?.w}
-              height={chara.media.headerImage.size?.h}
             />
           </div>
         ) : null}
