@@ -4,7 +4,7 @@
 import CharaState, { useCharaState } from "@/app/character/CharaState";
 import MediaImageState, {
   useMediaImageState,
-} from "@/app/context/MediaImageState";
+} from "@/app/context/image/MediaImageState";
 import SiteState, { useSiteState } from "@/app/context/site/SiteState";
 import PostState, { usePostState } from "@/app/blog/PostState";
 import SoundState, { useSoundState } from "@/app/sound/SoundState";

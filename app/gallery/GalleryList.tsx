@@ -9,7 +9,7 @@ import MoreButton from "../components/svg/button/MoreButton";
 import Link from "next/link";
 import { useDropzone } from "react-dropzone";
 import { useServerState } from "../components/System/ServerState";
-import { useMediaImageState } from "../context/MediaImageState";
+import { useMediaImageState } from "../context/image/MediaImageState";
 import { upload } from "./send/uploadFunction";
 import { queryPush } from "@/app/components/functions/queryPush";
 import { filterImagesTags } from "./FilterImages";

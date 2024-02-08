@@ -4,7 +4,7 @@ import React, { HTMLAttributes, memo, useEffect, useRef } from "react";
 import { CharaType, CharaObjectType } from "./CharaType";
 import { create } from "zustand";
 import axios from "axios";
-import { useMediaImageState } from "../context/MediaImageState";
+import { useMediaImageState } from "../context/image/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
 import GalleryList from "../gallery/GalleryList";
 type CharaStateType = {

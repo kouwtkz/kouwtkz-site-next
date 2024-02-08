@@ -5,7 +5,7 @@ import { useCharaState } from "../character/CharaState";
 import ImageMee from "../components/image/ImageMee";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useMediaImageState } from "../context/MediaImageState";
+import { useMediaImageState } from "../context/image/MediaImageState";
 import {
   defaultTags,
   getTagsOptions,

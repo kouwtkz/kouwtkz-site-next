@@ -2,7 +2,7 @@
 
 import React, { Suspense } from "react";
 import ComicViewer from "react-comic-viewer";
-import { useMediaImageState } from "@/app/context/MediaImageState";
+import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import GalleryObject from "../GalleryObject";
