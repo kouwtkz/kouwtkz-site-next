@@ -7,7 +7,7 @@ import MultiParser from "./components/functions/MultiParser";
 import PostListWindow from "./blog/List/PostListWindow";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import fadein from "./styles/transitions/fadein.module.scss";
-import ImageMee from "./components/image/ImageMee";
+import ImageMee from "./components/tag/ImageMee";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { filterPickFixed } from "./gallery/FilterImages";
 function Main() {

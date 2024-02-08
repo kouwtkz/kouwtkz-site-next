@@ -14,7 +14,7 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
-import ImageMee from "../components/image/ImageMee";
+import ImageMee from "../components/tag/ImageMee";
 import CloseButton from "../components/svg/button/CloseButton";
 import { EmbedNode } from "../context/embed/EmbedState";
 import { useServerState } from "../components/System/ServerState";

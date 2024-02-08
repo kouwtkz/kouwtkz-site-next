@@ -4,7 +4,7 @@ import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 
 import React, { Suspense, useCallback, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ImageMeeThumbnail } from "../components/image/ImageMee";
+import { ImageMeeThumbnail } from "../components/tag/ImageMee";
 import MoreButton from "../components/svg/button/MoreButton";
 import Link from "next/link";
 import { useDropzone } from "react-dropzone";

@@ -3,7 +3,7 @@
 import { CharaType } from "@/app/character/CharaType";
 import Link from "next/link";
 import { useCharaState } from "./CharaState";
-import { ImageMeeIcon } from "@/app/components/image/ImageMee";
+import { ImageMeeIcon } from "@/app/components/tag/ImageMee";
 
 type CharaListItemProps = {
   chara: CharaType;

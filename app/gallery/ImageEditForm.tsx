@@ -2,7 +2,7 @@ import { HTMLAttributes, useEffect, useRef, useState } from "react";
 import { useImageViewer } from "./ImageViewer";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { useCharaState } from "../character/CharaState";
-import ImageMee from "../components/image/ImageMee";
+import ImageMee from "../components/tag/ImageMee";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/image/MediaImageState";

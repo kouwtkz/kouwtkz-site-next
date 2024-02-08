@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ImageMeeThumbnail } from "../components/image/ImageMee";
+import { ImageMeeThumbnail } from "../components/tag/ImageMee";
 import { useCharaState } from "./CharaState";
 
 export default function CharaList() {
