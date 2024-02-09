@@ -19,6 +19,7 @@ import EmbedSync from "./components/System/EmbedSync";
 import SoundPlayer from "./sound/SoundPlayer";
 import DataState from "./context/update/DataState";
 import { WithContext, WebSite } from "schema-dts";
+import { Suspense } from "react";
 const currentDate = new Date();
 
 export const metadata: Metadata = {
@@ -72,7 +73,9 @@ export default async function RootLayout({
         <EmbedSync />
         <ServerStateMake />
         <SoundPlayer />
-        <ImageViewer />
+        <Suspense>
+          <ImageViewer />
+        </Suspense>
         <DataState />
         <Header title={site.title} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">

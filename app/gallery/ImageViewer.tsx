@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Suspense, useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
@@ -32,17 +32,20 @@ const bodyLock = (m: boolean) => {
 };
 
 type ImageViewerType = {
+  imagePath: string;
+  albumImages: string[];
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
   editMode: boolean;
   toggleEditMode: () => void;
-  imagePath: string;
   setImagePath: (path: string) => void;
+  setAlbumImages: (list: string[]) => void;
 };
 export const useImageViewer = create<ImageViewerType>((set) => ({
-  isOpen: false,
   imagePath: "",
+  albumImages: [],
+  isOpen: false,
   onOpen: () => {
     set(() => ({ isOpen: true }));
     bodyLock(true);
@@ -56,15 +59,25 @@ export const useImageViewer = create<ImageViewerType>((set) => ({
     set((state) => ({ editMode: !state.editMode }));
   },
   setImagePath: (path) => {
-    set(() => ({ imagePath: path, isOpen: true }));
+    set(() => ({ imagePath: path, albumImages: [], isOpen: true }));
     bodyLock(true);
+  },
+  setAlbumImages(list) {
+    set(() => ({ albumImages: list }));
   },
 }));
 
-function ImageViewerWindow() {
+export default function ImageViewer() {
   const router = useRouter();
-  const { isOpen, onClose, imagePath, setImagePath, editMode, toggleEditMode } =
-    useImageViewer();
+  const {
+    isOpen,
+    onClose,
+    imagePath,
+    setImagePath,
+    editMode,
+    toggleEditMode,
+    albumImages,
+  } = useImageViewer();
   const { imageItemList } = useMediaImageState();
   const { charaList } = useCharaState();
   const search = useSearchParams();
@@ -72,10 +85,6 @@ function ImageViewerWindow() {
   const imageParam = search.get("image");
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
-  const [beforeAfterImage, setBeforeAfterImage] = useState<{
-    before?: MediaImageItemType;
-    after?: MediaImageItemType;
-  }>();
 
   const backAction = () => {
     router.back();
@@ -106,35 +115,19 @@ function ImageViewerWindow() {
   const image = imagePath
     ? imageItemList.find((image) => image.URL === imageParam) || null
     : null;
-  useEffect(() => {
-    if (image && updateFlag.current) {
-      updateFlag.current = false;
-      const albumName = search.get("album");
-      const originList = (
-        Array.from(
-          document.querySelectorAll(
-            (albumName ? `[data-album=${albumName}] ` : "") + `[data-origin]`
-          )
-        ) as HTMLElement[]
-      ).map((elm) => elm.dataset.origin);
-      const imageIndex = originList.findIndex(
-        (origin) => image?.origin === origin
-      );
-      const beforeAfter: {
-        before?: MediaImageItemType;
-        after?: MediaImageItemType;
-      } = {};
-      const beforeOrigin = originList[imageIndex - 1];
-      beforeAfter.before = imageItemList.find(
-        ({ origin }) => origin === beforeOrigin
-      );
-      const afterOrigin = originList[imageIndex + 1];
-      beforeAfter.after = imageItemList.find(
-        ({ origin }) => origin === afterOrigin
-      );
-      setBeforeAfterImage(beforeAfter);
-    }
-  }, [search, imageItemList, image]);
+
+  const imageIndex = albumImages.findIndex((URL) => image?.URL === URL);
+  const albumImageItems = useMemo(
+    () =>
+      albumImages.map((imageURL) =>
+        imageItemList.find(({ URL }) => URL === imageURL)
+      ),
+    [albumImages, imageItemList]
+  );
+  const beforeAfterImage = {
+    before: albumImageItems[imageIndex - 1],
+    after: albumImageItems[imageIndex + 1],
+  };
 
   const titleEqFilename =
     process.env.NODE_ENV === "development"
@@ -146,7 +139,7 @@ function ImageViewerWindow() {
   const infoCmp = (image: MediaImageItemType) => {
     if (!image.album?.visible?.info) return <></>;
     return (
-      <div className="window info flex flex-col justify-between">
+      <div className="window info">
         <div className="text-center md:text-left flex-shrink-0">
           {editMode ? null : (
             <>
@@ -251,7 +244,7 @@ function ImageViewerWindow() {
           )}
           {isServerMode ? <ImageEditForm image={image} /> : null}
         </div>
-        <div className="flex w-[100%] px-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
+        <div className="flex w-[100%] px-2 pb-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
           {beforeAfterImage?.before ? (
             <div
               className="px-2 flex-1 flex justify-start items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
@@ -342,13 +335,5 @@ function ImageViewerWindow() {
         <></>
       )}
     </div>
-  );
-}
-
-export default function ImageViewer() {
-  return (
-    <Suspense>
-      <ImageViewerWindow />
-    </Suspense>
   );
 }

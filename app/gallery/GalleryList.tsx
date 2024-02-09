@@ -1,8 +1,17 @@
 "use client";
 
-import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
+import {
+  MediaImageAlbumType,
+  MediaImageItemType,
+} from "@/mediaScripts/MediaImageDataType";
 
-import React, { Suspense, useCallback, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ImageMeeThumbnail } from "../components/tag/ImageMee";
 import MoreButton from "../components/svg/button/MoreButton";
@@ -14,6 +23,7 @@ import { upload } from "./send/uploadFunction";
 import { queryPush } from "@/app/components/functions/queryPush";
 import { filterImagesTags } from "./FilterImages";
 import { filterMonthList } from "./tag/GalleryTags";
+import { useImageViewer } from "./ImageViewer";
 
 export interface GalleryListPropsBase {
   size?: number;
@@ -75,6 +85,19 @@ function Main({
 }: GalleryListProps) {
   const { setImageFromUrl } = useMediaImageState();
   const { isServerMode } = useServerState();
+  const { albumImages, setAlbumImages } = useImageViewer();
+  const refImages = useRef<MediaImageItemType[]>([]);
+
+  useEffect(() => {
+    const albumName = search.get("album");
+    if (album?.name === albumName && albumImages.length === 0) {
+      const URLList = refImages.current
+        .map(({ URL }) => URL || "")
+        .filter((URL) => URL);
+      if (URLList.length > 0) setAlbumImages(URLList);
+    }
+  });
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (album)
@@ -255,6 +278,8 @@ function Main({
     }
   });
 
+  refImages.current = albumList;
+
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
   const heading = label || album.name;
@@ -283,11 +308,7 @@ function Main({
           {_h4 ? <h4 className="text-main-soft">{_h4}</h4> : null}
         </div>
       ) : null}
-      <div
-        data-album={album.name}
-        className="pt-6 pb-6 w-[100%]"
-        {...getRootProps()}
-      >
+      <div className="pt-6 pb-6 w-[100%]" {...getRootProps()}>
         <input name="upload" {...getInputProps()} />
         <div className="mx-2 relative">
           {filterButton ? (
@@ -352,7 +373,6 @@ function Main({
                         imageItem={image}
                         style={{ objectFit: "cover" }}
                         className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
-                        data-origin={image.origin}
                         loadingScreen={true}
                         onClick={() => {
                           if (image.direct) router.push(image.direct);
@@ -376,13 +396,7 @@ function Main({
                     </div>
                   );
                 } else {
-                  return (
-                    <div
-                      data-origin={image.origin || ""}
-                      key={i}
-                      hidden={true}
-                    />
-                  );
+                  return <div key={i} hidden={true} />;
                 }
               })}
               {showMoreButton ? (
