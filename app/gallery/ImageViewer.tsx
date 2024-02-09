@@ -112,29 +112,40 @@ export default function ImageViewer() {
     }
   });
 
-  const image = imagePath
-    ? imageItemList.find((image) => image.URL === imageParam) || null
-    : null;
-
-  const imageIndex = albumImages.findIndex((URL) => image?.URL === URL);
+  const image = useMemo(
+    () =>
+      imagePath
+        ? imageItemList.find((image) => image.URL === imageParam) || null
+        : null,
+    [imageItemList, imageParam, imagePath]
+  );
   const albumImageItems = useMemo(
     () =>
-      albumImages.map((imageURL) =>
-        imageItemList.find(({ URL }) => URL === imageURL)
-      ),
+      albumImages
+        .map(
+          (imageURL) =>
+            imageItemList[
+              imageItemList.findIndex(({ URL }) => URL === imageURL)
+            ]
+        )
+        .filter((v) => v),
     [albumImages, imageItemList]
   );
+  const imageIndex = albumImageItems.findIndex(({ URL }) => image?.URL === URL);
   const beforeAfterImage = {
     before: albumImageItems[imageIndex - 1],
     after: albumImageItems[imageIndex + 1],
   };
 
-  const titleEqFilename =
-    process.env.NODE_ENV === "development"
-      ? false
-      : image?.name
-      ? image.src.startsWith(image.name)
-      : true;
+  const titleEqFilename = useMemo(
+    () =>
+      process.env.NODE_ENV === "development"
+        ? false
+        : image?.name
+        ? image.src.startsWith(image.name)
+        : true,
+    [image]
+  );
 
   const infoCmp = (image: MediaImageItemType) => {
     if (!image.album?.visible?.info) return <></>;
