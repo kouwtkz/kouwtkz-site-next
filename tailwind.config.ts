@@ -19,6 +19,7 @@ const config: Config = {
         "ZenMaru": ["var(--font-ZenMaru)"],
         "KosugiMaru": ["var(--font-KosugiMaru)"],
         "Mandali": ["var(--font-Mandali)"],
+        "MPlus1p": ["var(--font-MPlus1p)"],
         "LuloClean": ["var(--font-LuloClean)"],
       },
       colors: {

@@ -6,6 +6,7 @@ import {
   MandaliFont,
   // ZenMaruFont,
   LuloCleanFont,
+  MPLUS1pFont,
 } from "@/app/fonts/list";
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
@@ -58,6 +59,7 @@ export default async function RootLayout({
           MandaliFont.variable,
           // ZenMaruFont.variable,
           LuloCleanFont.variable,
+          MPLUS1pFont.variable,
           "loading",
         ].join(" ")}
       >

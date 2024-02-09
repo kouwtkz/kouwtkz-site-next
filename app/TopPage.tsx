@@ -2,15 +2,15 @@
 
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import Link from "next/link";
-import React, { Suspense, useEffect, useRef, useState } from "react";
-import MultiParser from "./components/functions/MultiParser";
+import React, { useEffect, useRef, useState } from "react";
 import PostListWindow from "./blog/List/PostListWindow";
 import { TransitionGroup, CSSTransition } from "react-transition-group";
 import fadein from "./styles/transitions/fadein.module.scss";
 import ImageMee from "./components/tag/ImageMee";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { filterPickFixed } from "./gallery/FilterImages";
-function Main() {
+
+export default function TopPage() {
   const { imageItemList } = useMediaImageState();
   const topImages = filterPickFixed({
     images: imageItemList,
@@ -68,7 +68,7 @@ function Main() {
       </div>
       <main className="pb-8">
         <div className="mt-8 mb-6">
-          <div className="text-4xl">
+          <div className="text-4xl font-KosugiMaru">
             <h1 className="m-4">
               {/* <MultiParser only={{ toTwemoji: true }}>
                 わたかぜコウのサイトへようこそ！🐏
@@ -107,12 +107,5 @@ function Main() {
         </div>
       </main>
     </>
-  );
-}
-export default function TopPage() {
-  return (
-    <Suspense>
-      <Main />
-    </Suspense>
   );
 }
