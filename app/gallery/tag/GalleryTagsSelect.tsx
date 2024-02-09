@@ -6,7 +6,7 @@ import {
   getTagsOptions,
 } from "./GalleryTags";
 import { useServerState } from "@/app/components/System/ServerState";
-import { queryPush } from "@/app/components/functions/queryPush";
+import { MakeURL } from "@/app/components/functions/MakeURL";
 import ReactSelect from "react-select";
 import { HTMLAttributes } from "react";
 
@@ -86,17 +86,12 @@ export default function GalleryTagsSelect({ className }: SelectAreaProps) {
                 break;
             }
           });
-          queryPush({
-            process: (params) => {
-              Object.entries(listObj).forEach(([key, list]) => {
-                if (list.length > 0) params[key] = list.join(",");
-                else delete params[key];
-              });
-            },
-            push: router.push,
-            search,
-            scroll: false,
+          const query = Object.fromEntries(search);
+          Object.entries(listObj).forEach(([key, list]) => {
+            if (list.length > 0) query[key] = list.join(",");
+            else delete query[key];
           });
+          router.push(MakeURL({ query }).href, { scroll: false });
         }}
       />
     </div>

@@ -20,7 +20,7 @@ import { useDropzone } from "react-dropzone";
 import { useServerState } from "../components/System/ServerState";
 import { useMediaImageState } from "../context/image/MediaImageState";
 import { upload } from "./send/uploadFunction";
-import { queryPush } from "@/app/components/functions/queryPush";
+import { MakeURL } from "@/app/components/functions/MakeURL";
 import { filterImagesTags } from "./FilterImages";
 import { filterMonthList } from "./tag/GalleryTags";
 import { useImageViewer } from "./ImageViewer";
@@ -321,15 +321,10 @@ function Main({
                 onChange={() => {
                   if (yearSelectRef.current) {
                     const yearSelect = yearSelectRef.current;
-                    queryPush({
-                      process: (params) => {
-                        if (yearSelect.value) params.year = yearSelect.value;
-                        else delete params.year;
-                      },
-                      scroll: false,
-                      push: router.push,
-                      search,
-                    });
+                    const query = Object.fromEntries(search);
+                    if (yearSelect.value) query.year = yearSelect.value;
+                    else delete query.year;
+                    router.push(MakeURL({ query }).href, { scroll: false });
                   }
                 }}
               >
@@ -379,16 +374,16 @@ function Main({
                           else {
                             if (image.URL !== undefined) {
                               const URL = image.URL;
-                              queryPush({
-                                process: (params) => ({
-                                  image: URL,
-                                  album: album.name,
-                                  ...params,
-                                }),
-                                scroll: false,
-                                push: router.push,
-                                search,
-                              });
+                              router.push(
+                                MakeURL({
+                                  query: {
+                                    ...Object.fromEntries(search),
+                                    image: URL,
+                                    album: album.name,
+                                  },
+                                }).href,
+                                { scroll: false }
+                              );
                             }
                           }
                         }}

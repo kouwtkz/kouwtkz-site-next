@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { Post } from "@/app/blog/Post.d";
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";

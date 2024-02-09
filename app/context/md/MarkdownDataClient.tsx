@@ -1,6 +1,6 @@
 "use client";
 
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import { useMarkdownDataState } from "./MarkdownDataState";
 
 export function MdClientNode({

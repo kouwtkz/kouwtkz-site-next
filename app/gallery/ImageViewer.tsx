@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { useRouter } from "next/navigation";
@@ -20,7 +20,7 @@ import {
   getTagsOptions,
   autoFixTagsOptions,
 } from "./tag/GalleryTags";
-import { queryPush } from "@/app/components/functions/queryPush";
+import { MakeURL } from "@/app/components/functions/MakeURL";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -91,13 +91,9 @@ export default function ImageViewer() {
     const href = location.href;
     setTimeout(() => {
       if (href === location.href) {
-        queryPush({
-          process: (params) => {
-            delete params.image;
-          },
-          search,
-          push: router.push,
-        });
+        const query = Object.fromEntries(search);
+        delete query.image;
+        router.push(MakeURL(query).href, { scroll: false });
       }
     }, 10);
   };
@@ -257,44 +253,40 @@ export default function ImageViewer() {
         </div>
         <div className="flex w-[100%] px-2 pb-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
           {beforeAfterImage?.before ? (
-            <div
+            <Link
               className="px-2 flex-1 flex justify-start items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
-              onClick={() => {
-                queryPush({
-                  process: (params) => {
-                    if (beforeAfterImage.before?.URL)
-                      params.image = beforeAfterImage.before.URL;
-                  },
-                  scroll: false,
-                  push: router.replace,
-                  search,
-                });
+              href={{
+                query: {
+                  ...Object.fromEntries(search),
+                  image: beforeAfterImage.before.URL,
+                },
               }}
+              scroll={false}
+              replace={true}
+              prefetch={false}
             >
               <div className="mr-2">≪</div>
               <div>{beforeAfterImage.before.name}</div>
-            </div>
+            </Link>
           ) : (
             <div className="flex-1" />
           )}
           {beforeAfterImage?.after ? (
-            <div
+            <Link
               className="px-2 flex-1 flex justify-end items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
-              onClick={() => {
-                queryPush({
-                  process: (params) => {
-                    if (beforeAfterImage.after?.URL)
-                      params.image = beforeAfterImage.after.URL;
-                  },
-                  scroll: false,
-                  push: router.replace,
-                  search,
-                });
+              href={{
+                query: {
+                  ...Object.fromEntries(search),
+                  image: beforeAfterImage.after.URL,
+                },
               }}
+              scroll={false}
+              replace={true}
+              prefetch={false}
             >
               <div>{beforeAfterImage.after.name}</div>
               <div className="ml-2">≫</div>
-            </div>
+            </Link>
           ) : (
             <div className="flex-1" />
           )}

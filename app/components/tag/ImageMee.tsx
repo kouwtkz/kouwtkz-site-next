@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 const blankImage =
@@ -61,12 +61,15 @@ export default function ImageMee({
         ? Math.ceil((imageItem.size.h * Number(width)) / imageItem.size.w)
         : imageItem.size.h;
   }
-  const imageSrc =
-    mode === "simple"
-      ? src
-      : mode === "thumbnail" && thumbnail
-      ? thumbnail
-      : imageItem?.resized?.find((item) => item.mode === mode)?.src || src;
+  const imageSrc = useMemo(
+    () =>
+      mode === "simple"
+        ? src
+        : mode === "thumbnail" && thumbnail
+        ? thumbnail
+        : imageItem?.resized?.find((item) => item.mode === mode)?.src || src,
+    [imageItem?.resized, mode, src, thumbnail]
+  );
   const onMouseEvent = hoverSrc
     ? {
         onMouseEnter: () => {

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import { usePostState } from "../PostState";
 import { findMany, findManyProps } from "../functions/findMany.mjs";
 import { HTMLAttributes, ReactNode } from "react";
