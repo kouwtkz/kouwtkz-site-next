@@ -354,46 +354,37 @@ function Main({
             <div className="text-main-soft my-4">よみこみちゅう…</div>
           ) : (
             <>
-              {albumList.map((image, i) => {
-                if (i < visibleMax) {
-                  return (
-                    <div
-                      key={i}
-                      className={
-                        `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` +
-                        ` hover:brightness-90 transition cursor-pointer`
-                      }
-                    >
-                      <ImageMeeThumbnail
-                        imageItem={image}
-                        style={{ objectFit: "cover" }}
-                        className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
-                        loadingScreen={true}
-                        onClick={() => {
-                          if (image.direct) router.push(image.direct);
-                          else {
-                            if (image.URL !== undefined) {
-                              const URL = image.URL;
-                              router.push(
-                                MakeURL({
-                                  query: {
-                                    ...Object.fromEntries(search),
-                                    image: URL,
-                                    album: album.name,
-                                  },
-                                }).href,
-                                { scroll: false }
-                              );
-                            }
-                          }
-                        }}
-                      />
-                    </div>
-                  );
-                } else {
-                  return <div key={i} hidden={true} />;
-                }
-              })}
+              {albumList
+                .filter((_, i) => i < visibleMax)
+                .map((image, i) => (
+                  <Link
+                    key={i}
+                    className={
+                      `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` +
+                      ` hover:brightness-90 transition cursor-pointer`
+                    }
+                    prefetch={false}
+                    {...(image.direct
+                      ? { href: image.direct }
+                      : {
+                          href: {
+                            query: {
+                              ...Object.fromEntries(search),
+                              image: image.URL,
+                              album: album.name,
+                            },
+                          },
+                          scroll: false,
+                        })}
+                  >
+                    <ImageMeeThumbnail
+                      imageItem={image}
+                      style={{ objectFit: "cover" }}
+                      className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
+                      loadingScreen={true}
+                    />
+                  </Link>
+                ))}
               {showMoreButton ? (
                 <MoreButton
                   className="w-[24.532%] h-auto cursor-pointer m-[0.234%] p-0 fill-main-soft hover:fill-main-pale"
