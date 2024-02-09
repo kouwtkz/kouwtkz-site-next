@@ -88,12 +88,13 @@ export default function ImageMee({
     : {};
   const loadThumbMode = mode === "simple" && thumbnail;
   const mainImgSrc = !loaded && loadThumbMode ? thumbnail : imageSrc;
-  const nowLoadingNotThumb = !loaded && mainImgSrc === imageSrc;
-  const blankMode = nowLoadingNotThumb && loadingScreen;
+  const blankMode = !loaded && mainImgSrc === imageSrc;
   if (blankMode)
     style = {
       ...style,
-      background: "var(--main-color-grayish-fluo)",
+      ...(loadingScreen
+        ? { background: "var(--main-color-grayish-fluo)" }
+        : {}),
     };
   return (
     <>
