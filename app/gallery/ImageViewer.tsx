@@ -1,11 +1,6 @@
 "use client";
 
-import React, {
-  Suspense,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
@@ -177,7 +172,11 @@ function ImageViewerWindow() {
                     return (
                       <Link
                         className="mx-2 my-1 inline-block align-middle"
-                        href={`/character?name=${chara.id}`}
+                        href={{
+                          pathname: "/character",
+                          query: { name: chara.id },
+                        }}
+                        prefetch={false}
                         onClick={() => {
                           onClose();
                           return true;
@@ -206,12 +205,15 @@ function ImageViewerWindow() {
                   .map((tag, i) => {
                     const item = tagsOptions.find(({ value }) => value === tag);
                     if (!item) return item;
-                    const url =
-                      (pathname.startsWith("/gallery") ? "" : "/gallery") +
-                      (item.query || `?tag=${item.value}`);
                     return (
                       <Link
-                        href={url}
+                        href={{
+                          ...(pathname.startsWith("/gallery")
+                            ? {}
+                            : { pathname: "/gallery" }),
+                          query: item.query || { tag: item.value },
+                        }}
+                        prefetch={false}
                         className="align-middle inline-block mx-2 my-1 text-main-dark hover:text-main-strong"
                         key={i}
                       >

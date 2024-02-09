@@ -13,7 +13,11 @@ export default function CharaListItem({ chara }: CharaListItemProps) {
   const { charaObject } = useCharaState();
   const currentChara = charaObject && chara.id ? charaObject[chara.id] : null;
   return (
-    <Link className="text-3xl m-2" href={`character?name=${chara.id}`}>
+    <Link
+      className="text-3xl m-2"
+      href={{ pathname: "/character", query: { name: chara.id } }}
+      prefetch={false}
+    >
       {currentChara?.media?.icon ? (
         <ImageMeeIcon
           imageItem={currentChara.media.icon}
