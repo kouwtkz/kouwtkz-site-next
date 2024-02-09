@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 const blankImage =
@@ -35,32 +35,37 @@ export default function ImageMee({
   style,
   ...attributes
 }: ImageMeeProps) {
-  const [loaded, setLoaded] = useState(false);
+  const [showIndex, setShowIndex] = useState<{ index: number; max: number }>({
+    index: 0,
+    max: 0,
+  });
   const refImg = useRef<HTMLImageElement | null>(null);
   const refImgSrc = useRef("");
+  const refShowList = useRef<string[]>([]);
+
   const src = _src || imageItem?.URL || "";
-  if (refImgSrc.current !== src) {
-    if (loaded) setLoaded(false);
-    refImgSrc.current = src;
-  }
   const alt = _alt || imageItem?.name || imageItem?.src || "";
+
+  [width, height] = useMemo(() => {
+    if (size) {
+      return new Array<number>(2).fill(size);
+    } else if (imageItem?.size) {
+      return [
+        height
+          ? Math.ceil((imageItem.size.w * Number(height)) / imageItem.size.h)
+          : imageItem.size.w,
+        width
+          ? Math.ceil((imageItem.size.h * Number(width)) / imageItem.size.w)
+          : imageItem.size.h,
+      ];
+    } else {
+      return [width, height];
+    }
+  }, [imageItem, size, width, height]);
   const thumbnail = useMemo(
     () => imageItem?.resized?.find((item) => item.mode === "thumbnail")?.src,
     [imageItem]
   );
-
-  if (size) {
-    [width, height] = new Array<number>(2).fill(size);
-  } else if (imageItem?.size) {
-    if (!width)
-      width = height
-        ? Math.ceil((imageItem.size.w * Number(height)) / imageItem.size.h)
-        : imageItem.size.w;
-    if (!height)
-      height = width
-        ? Math.ceil((imageItem.size.h * Number(width)) / imageItem.size.w)
-        : imageItem.size.h;
-  }
   const imageSrc = useMemo(
     () =>
       mode === "simple"
@@ -68,59 +73,62 @@ export default function ImageMee({
         : mode === "thumbnail" && thumbnail
         ? thumbnail
         : imageItem?.resized?.find((item) => item.mode === mode)?.src || src,
-    [imageItem?.resized, mode, src, thumbnail]
+    [imageItem, mode, src, thumbnail]
   );
-  const onMouseEvent = hoverSrc
-    ? {
-        onMouseEnter: () => {
-          if (refImg.current) {
-            if (hoverSrc) refImg.current.src = hoverSrc;
-            else if (hoverImageItem?.URL)
-              refImg.current.src = hoverSrc || hoverImageItem?.URL;
-          }
-        },
-        onMouseLeave: () => {
-          if (refImg.current) {
-            if (hoverSrc || hoverImageItem) refImg.current.src = imageSrc;
-          }
-        },
-      }
-    : {};
-  const loadThumbMode = mode === "simple" && thumbnail;
-  const mainImgSrc = !loaded && loadThumbMode ? thumbnail : imageSrc;
-  const blankMode = !loaded && mainImgSrc === imageSrc;
+  const imageShowList = useMemo(() => {
+    const list: string[] = [];
+    if (mode === "simple" && thumbnail) list.push(thumbnail);
+    else list.push(blankImage);
+    list.push(imageSrc);
+    return list;
+  }, [imageSrc, mode, thumbnail]);
+
+  let index = showIndex.index;
+  if (refImgSrc.current !== src) {
+    index = 0;
+    setShowIndex({ index, max: imageShowList.length - 1 });
+    refImgSrc.current = src;
+    refShowList.current = imageShowList;
+  }
+  const mainImgSrc = imageShowList[index];
+
   return (
-    <>
-      <img
-        src={blankMode ? blankImage : mainImgSrc}
-        alt={alt}
-        ref={refImg}
-        {...{
-          width,
-          height,
-          style: {
-            ...style,
-            ...(loadingScreen
-              ? { background: "var(--main-color-grayish-fluo)" }
-              : {}),
-          },
-        }}
-        {...onMouseEvent}
-        {...attributes}
-      />
-      {!loaded ? (
-        <>
-          <img
-            src={imageSrc}
-            alt="loading"
-            hidden
-            onLoad={() => {
-              setLoaded(true);
-            }}
-          />
-        </>
-      ) : null}
-    </>
+    <img
+      src={mainImgSrc}
+      alt={alt}
+      ref={refImg}
+      {...{
+        width,
+        height,
+        style: {
+          ...style,
+          ...(loadingScreen
+            ? { background: "var(--main-color-grayish-fluo)" }
+            : {}),
+        },
+      }}
+      onLoad={() => {
+        if (showIndex.index < showIndex.max)
+          setShowIndex({ ...showIndex, index: showIndex.index + 1 });
+      }}
+      {...(hoverSrc
+        ? {
+            onMouseEnter: () => {
+              if (refImg.current) {
+                if (hoverSrc) refImg.current.src = hoverSrc;
+                else if (hoverImageItem?.URL)
+                  refImg.current.src = hoverSrc || hoverImageItem?.URL;
+              }
+            },
+            onMouseLeave: () => {
+              if (refImg.current) {
+                if (hoverSrc || hoverImageItem) refImg.current.src = imageSrc;
+              }
+            },
+          }
+        : {})}
+      {...attributes}
+    />
   );
 }
 
