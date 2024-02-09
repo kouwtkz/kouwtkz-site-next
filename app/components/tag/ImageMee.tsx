@@ -32,7 +32,6 @@ export default function ImageMee({
   width,
   height,
   loadingScreen = false,
-  className,
   style,
   ...attributes
 }: ImageMeeProps) {
@@ -45,9 +44,10 @@ export default function ImageMee({
     refImgSrc.current = src;
   }
   const alt = _alt || imageItem?.name || imageItem?.src || "";
-  const thumbnail = imageItem?.resized?.find(
-    (item) => item.mode === "thumbnail"
-  )?.src;
+  const thumbnail = useMemo(
+    () => imageItem?.resized?.find((item) => item.mode === "thumbnail")?.src,
+    [imageItem]
+  );
 
   if (size) {
     [width, height] = new Array<number>(2).fill(size);
@@ -89,13 +89,6 @@ export default function ImageMee({
   const loadThumbMode = mode === "simple" && thumbnail;
   const mainImgSrc = !loaded && loadThumbMode ? thumbnail : imageSrc;
   const blankMode = !loaded && mainImgSrc === imageSrc;
-  if (blankMode)
-    style = {
-      ...style,
-      ...(loadingScreen
-        ? { background: "var(--main-color-grayish-fluo)" }
-        : {}),
-    };
   return (
     <>
       <img
@@ -103,10 +96,14 @@ export default function ImageMee({
         alt={alt}
         ref={refImg}
         {...{
-          className,
           width,
           height,
-          style,
+          style: {
+            ...style,
+            ...(loadingScreen
+              ? { background: "var(--main-color-grayish-fluo)" }
+              : {}),
+          },
         }}
         {...onMouseEvent}
         {...attributes}
