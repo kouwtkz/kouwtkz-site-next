@@ -15,7 +15,7 @@ import CopyDirDiff from "../scripts/CopyDirDiff.mjs";
 CopyDirDiff(`${publicDir}/_media`, outputDir, { identical: true })
 CopyDirDiff(`${publicDir}/sound`, outputDir, { identical: true })
 
-import { GetStateText, GetUpdateDef } from "../app/context/update/GetStateText.mjs";
+import { GetStateText, GetUpdateDef } from "../app/context/start/GetStateText.mjs";
 import { resolve } from "path";
 import { writeFileSync } from "fs";
 

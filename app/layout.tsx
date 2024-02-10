@@ -17,7 +17,7 @@ import ServerStateMake from "./components/System/ServerStateMake";
 import ClientSetup from "./components/System/ClientSetup";
 import EmbedSync from "./components/System/EmbedSync";
 import SoundPlayer from "./sound/SoundPlayer";
-import DataState from "./context/update/DataState";
+import DataState from "./context/start/DataState";
 import { WithContext, WebSite } from "schema-dts";
 import { Suspense } from "react";
 const currentDate = new Date();
