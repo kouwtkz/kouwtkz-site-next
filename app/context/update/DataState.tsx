@@ -15,6 +15,11 @@ import MarkdownDataState, {
 } from "../md/MarkdownDataState";
 import { create } from "zustand";
 import { useLayoutEffect, useRef } from "react";
+const loadingElementID = "Element_DateState_Loading";
+const reloadFunction =
+  process.env.NODE_ENV === "development"
+    ? `setTimeout(() => {if (document.getElementById("${loadingElementID}")) location.reload()}, 8000)`
+    : "";
 
 function addMdate(url: string, values: { [k: string]: any }) {
   if (values[url]) return `${url}?v=${values[url]}`;
@@ -77,7 +82,7 @@ export default function DataState() {
     if (first.current) {
       setTimeout(() => {
         if (!complete) setComplete(true);
-      }, 3000);
+      }, 5000);
       first.current = false;
     }
   });
@@ -92,6 +97,7 @@ export default function DataState() {
       {complete ? null : (
         <>
           <div
+            id={loadingElementID}
             className={
               "fixed top-0 w-[100vw] h-[100vh] bg-background-top z-[100] " +
               "flex flex-col items-center justify-center"
@@ -100,6 +106,9 @@ export default function DataState() {
             <span className="text-main text-2xl font-mono">
               よみこみちゅう…
             </span>
+            {first.current && reloadFunction ? (
+              <script dangerouslySetInnerHTML={{ __html: reloadFunction }} />
+            ) : null}
             <img
               className="my-4"
               src="/images/gif/watakaze_icon_background.gif"
