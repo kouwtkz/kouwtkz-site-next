@@ -6,6 +6,7 @@ import {
   MandaliFont,
   // ZenMaruFont,
   LuloCleanFont,
+  MPLUS1pFont,
 } from "@/app/fonts/list";
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
@@ -18,6 +19,7 @@ import EmbedSync from "./components/System/EmbedSync";
 import SoundPlayer from "./sound/SoundPlayer";
 import DataState from "./context/update/DataState";
 import { WithContext, WebSite } from "schema-dts";
+import { Suspense } from "react";
 const currentDate = new Date();
 
 export const metadata: Metadata = {
@@ -58,6 +60,8 @@ export default async function RootLayout({
           MandaliFont.variable,
           // ZenMaruFont.variable,
           LuloCleanFont.variable,
+          MPLUS1pFont.variable,
+          "loading",
         ].join(" ")}
       >
         <script
@@ -69,13 +73,20 @@ export default async function RootLayout({
         <EmbedSync />
         <ServerStateMake />
         <SoundPlayer />
-        <ImageViewer />
+        <Suspense>
+          <ImageViewer />
+        </Suspense>
         <DataState />
-        <Header site={site} />
+        <Header title={site.title} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
           <div className="mx-auto min-h-[70vh]">
             <div className="min-h-[50vh] content-parent">{children}</div>
-            <Footer site={site} currentDate={currentDate} />
+            <Footer
+              since={site.author.since}
+              authorEName={site.author.ename}
+              sns={site.menu?.sns}
+              currentDate={currentDate}
+            />
           </div>
         </div>
         <div id="audio_background"></div>

@@ -2,7 +2,7 @@
 
 import React, { Suspense, createRef } from "react";
 import GalleryList, { GalleryListPropsBase } from "./GalleryList";
-import { useMediaImageState } from "@/app/context/MediaImageState";
+import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { GroupFormat } from "@/mediaScripts/MediaImageYamlType";
 import { basename } from "path";
 import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";

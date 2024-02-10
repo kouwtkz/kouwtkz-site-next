@@ -54,13 +54,14 @@ export default function PostsPage() {
                 <div className="text-center">
                   <Link
                     className="inline-block mt-4 mb-2 text-xl"
-                    href={`/blog?${Object.entries({
-                      q: q?.replace("#", "%23").replace("+", "%2B"),
-                      p: String((page || 1) + 1),
-                    })
-                      .filter((v) => v[1])
-                      .map((v) => v.join("="))
-                      .join("&")}`}
+                    href={{
+                      pathname: "/blog",
+                      query: {
+                        ...(q ? { q } : {}),
+                        p: (page || 1) + 1,
+                      },
+                    }}
+                    prefetch={false}
                   >
                     次のページ ▽
                   </Link>

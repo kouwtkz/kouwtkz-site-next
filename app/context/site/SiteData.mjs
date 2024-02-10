@@ -11,17 +11,19 @@ import { readFileSync } from "fs";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 const dataDir = process.env.DATA_DIR || "";
 
-/** @type any */
-let rawData = {}
-try {
-  rawData = parse(readFileSync(`${cwd}/${dataDir}/site.yaml`, "utf8"));
-} catch (e) {
-  console.error(e);
-  rawData = { title: "title", description: "description", short: { description: "short" }, author: { since: 2023 } }
+/** @returns { SiteDataType } */
+export function getSiteData() {
+  /** @type any */
+  let rawData = {}
+  try {
+    rawData = parse(readFileSync(`${cwd}/${dataDir}/site.yaml`, "utf8"));
+  } catch (e) {
+    console.error(e);
+    rawData = { title: "title", description: "description", short: { description: "short" }, author: { since: 2023 } }
+  }
+  return rawData;
 }
 
-
-/** @type SiteDataType */
-const site = rawData;
+const site = getSiteData();
 
 export { site };

@@ -1,5 +1,5 @@
 import { SetRegisterReturn } from "@/app/components/form/hook/SetRegister";
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
 
@@ -60,7 +60,7 @@ export default function PostTextarea({
           bodyClass + " preview-area" + (previewMode ? " block" : " hidden")
         }
       >
-        <MultiParser>{previewBody}</MultiParser>
+        <MultiParser className="blog">{previewBody}</MultiParser>
       </div>
     </>
   );

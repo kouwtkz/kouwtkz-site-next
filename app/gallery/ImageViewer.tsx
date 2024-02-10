@@ -1,15 +1,15 @@
 "use client";
 
-import React, { Suspense, useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import { usePathname, useSearchParams } from "next/navigation";
-import { useMediaImageState } from "@/app/context/MediaImageState";
+import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
-import ImageMee from "../components/image/ImageMee";
+import ImageMee from "../components/tag/ImageMee";
 import CloseButton from "../components/svg/button/CloseButton";
 import { EmbedNode } from "../context/embed/EmbedState";
 import { useServerState } from "../components/System/ServerState";
@@ -20,7 +20,7 @@ import {
   getTagsOptions,
   autoFixTagsOptions,
 } from "./tag/GalleryTags";
-import { queryPush } from "@/app/components/functions/queryPush";
+import { MakeURL } from "@/app/components/functions/MakeURL";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -32,44 +32,71 @@ const bodyLock = (m: boolean) => {
 };
 
 type ImageViewerType = {
+  imageSrc: string;
+  albumName: string;
+  groupImages: string[];
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
   editMode: boolean;
   toggleEditMode: () => void;
-  imagePath: string;
-  setImagePath: (path: string) => void;
+  setImageName: (src: string, album?: string | null) => void;
+  setAlbumName: (name: string) => void;
+  setGroupImages: (list: string[]) => void;
 };
 export const useImageViewer = create<ImageViewerType>((set) => ({
+  imageSrc: "",
+  albumName: "",
+  groupImages: [],
   isOpen: false,
-  imagePath: "",
   onOpen: () => {
     set(() => ({ isOpen: true }));
     bodyLock(true);
   },
   onClose: () => {
-    set(() => ({ isOpen: false, editMode: false, imagePath: "" }));
+    set(() => ({ isOpen: false, editMode: false, imageSrc: "" }));
     bodyLock(false);
   },
   editMode: false,
   toggleEditMode() {
     set((state) => ({ editMode: !state.editMode }));
   },
-  setImagePath: (path) => {
-    set(() => ({ imagePath: path, isOpen: true }));
+  setImageName: (src, album) => {
+    const option: { imageSrc?: string; albumName?: string } = { imageSrc: src };
+    if (typeof album !== "undefined") option.albumName = album || "";
+    set(() => ({
+      ...option,
+      groupImages: [],
+      isOpen: true,
+    }));
     bodyLock(true);
+  },
+  setAlbumName(name) {
+    set(() => ({ albumName: name }));
+  },
+  setGroupImages(list) {
+    set(() => ({ groupImages: list }));
   },
 }));
 
-function ImageViewerWindow() {
+export default function ImageViewer() {
   const router = useRouter();
-  const { isOpen, onClose, imagePath, setImagePath, editMode, toggleEditMode } =
-    useImageViewer();
+  const {
+    isOpen,
+    onClose,
+    imageSrc,
+    albumName,
+    setImageName: setImagePath,
+    editMode,
+    toggleEditMode,
+    groupImages: albumImages,
+  } = useImageViewer();
   const { imageItemList } = useMediaImageState();
   const { charaList } = useCharaState();
   const search = useSearchParams();
   const pathname = usePathname();
   const imageParam = search.get("image");
+  const albumParam = search.get("album");
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
 
@@ -78,40 +105,66 @@ function ImageViewerWindow() {
     const href = location.href;
     setTimeout(() => {
       if (href === location.href) {
-        queryPush({
-          process: (params) => {
-            delete params.image;
-          },
-          search,
-          push: router.push,
-        });
+        const query = Object.fromEntries(search);
+        delete query.image;
+        router.push(MakeURL(query).href, { scroll: false });
       }
     }, 10);
   };
+  const updateFlag = useRef(false);
   useEffect(() => {
     if (!imageParam) {
       if (isOpen) onClose();
-    } else if (imageParam !== imagePath) {
-      setImagePath(imageParam);
+    } else if (
+      imageParam !== imageSrc ||
+      (albumParam && albumParam !== albumName)
+    ) {
+      setImagePath(imageParam, albumParam);
+      updateFlag.current = true;
     }
   });
 
-  const image = imagePath
-    ? imageItemList.find((image) => image.URL === imageParam) || null
-    : null;
+  const image = useMemo(() => {
+    const albumItemList = albumParam
+      ? imageItemList.filter(({ album }) => album?.name === albumParam)
+      : imageItemList;
+    return imageSrc
+      ? albumItemList.find((image) => image.originName === imageParam) || null
+      : null;
+  }, [imageItemList, albumParam, imageParam, imageSrc]);
+  const albumImageItems = useMemo(
+    () =>
+      albumImages
+        .map(
+          (imageURL) =>
+            imageItemList[
+              imageItemList.findIndex(({ URL }) => URL === imageURL)
+            ]
+        )
+        .filter((v) => v),
+    [albumImages, imageItemList]
+  );
+  const imageIndex = albumImageItems.findIndex(({ URL }) => image?.URL === URL);
+  const beforeAfterImage = {
+    before: albumImageItems[imageIndex - 1],
+    after: albumImageItems[imageIndex + 1],
+  };
 
-  const titleEqFilename =
-    process.env.NODE_ENV === "development"
-      ? false
-      : image?.name
-      ? image.src.startsWith(image.name)
-      : true;
+  const titleEqFilename = useMemo(
+    () =>
+      process.env.NODE_ENV === "development"
+        ? false
+        : image?.name
+        ? image.src.startsWith(image.name)
+        : true,
+    [image]
+  );
 
   const infoCmp = (image: MediaImageItemType) => {
     if (!image.album?.visible?.info) return <></>;
     return (
       <div className="window info">
-        <div className="text-center md:text-left">
+        <div className="text-center md:text-left flex-shrink-0">
           {editMode ? null : (
             <>
               {image.album.visible.title &&
@@ -136,7 +189,11 @@ function ImageViewerWindow() {
                     return (
                       <Link
                         className="mx-2 my-1 inline-block align-middle"
-                        href={`/character?name=${chara.id}`}
+                        href={{
+                          pathname: "/character",
+                          query: { name: chara.id },
+                        }}
+                        prefetch={false}
                         onClick={() => {
                           onClose();
                           return true;
@@ -165,12 +222,15 @@ function ImageViewerWindow() {
                   .map((tag, i) => {
                     const item = tagsOptions.find(({ value }) => value === tag);
                     if (!item) return item;
-                    const url =
-                      (pathname.startsWith("/gallery") ? "" : "/gallery") +
-                      (item.query || `?tag=${item.value}`);
                     return (
                       <Link
-                        href={url}
+                        href={{
+                          ...(pathname.startsWith("/gallery")
+                            ? {}
+                            : { pathname: "/gallery" }),
+                          query: item.query || { tag: item.value },
+                        }}
+                        prefetch={false}
                         className="align-middle inline-block mx-2 my-1 text-main-dark hover:text-main-strong"
                         key={i}
                       >
@@ -206,7 +266,53 @@ function ImageViewerWindow() {
               )}
             </>
           )}
-          {isServerMode ? <ImageEditForm image={image} /> : null}
+          {isServerMode ? <ImageEditForm /> : null}
+        </div>
+        <div className="flex w-[100%] px-2 pb-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
+          {beforeAfterImage?.before ? (
+            <Link
+              className="px-2 flex-1 flex justify-start items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
+              href={{
+                query: {
+                  ...Object.fromEntries(search),
+                  image: beforeAfterImage.before.originName,
+                  ...(beforeAfterImage.before.album?.name
+                    ? { album: beforeAfterImage.before.album.name }
+                    : {}),
+                },
+              }}
+              scroll={false}
+              replace={true}
+              prefetch={false}
+            >
+              <div className="mr-2">≪</div>
+              <div>{beforeAfterImage.before.name}</div>
+            </Link>
+          ) : (
+            <div className="flex-1" />
+          )}
+          {beforeAfterImage?.after ? (
+            <Link
+              className="px-2 flex-1 flex justify-end items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
+              href={{
+                query: {
+                  ...Object.fromEntries(search),
+                  image: beforeAfterImage.after.originName,
+                  ...(beforeAfterImage.after.album?.name
+                    ? { album: beforeAfterImage.after.album.name }
+                    : {}),
+                },
+              }}
+              scroll={false}
+              replace={true}
+              prefetch={false}
+            >
+              <div>{beforeAfterImage.after.name}</div>
+              <div className="ml-2">≫</div>
+            </Link>
+          ) : (
+            <div className="flex-1" />
+          )}
         </div>
       </div>
     );
@@ -255,13 +361,5 @@ function ImageViewerWindow() {
         <></>
       )}
     </div>
-  );
-}
-
-export default function ImageViewer() {
-  return (
-    <Suspense>
-      <ImageViewerWindow />
-    </Suspense>
   );
 }

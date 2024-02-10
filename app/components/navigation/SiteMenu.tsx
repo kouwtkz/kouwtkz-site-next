@@ -2,9 +2,13 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { SiteDataType, SiteMenuItemType } from "@/app/context/site/SiteData.mjs";
+import {
+  SiteDataType,
+  SiteMenuItemType,
+} from "@/app/context/site/SiteData.mjs";
 import MenuButton from "@/app/components/svg/button/MenuButton";
 import { create } from "zustand";
+import { useSiteState } from "@/app/context/site/SiteState";
 
 type SiteMenuStateType = {
   isOpen: boolean;
@@ -20,10 +24,6 @@ export const useSiteMenuState = create<SiteMenuStateType>((set) => ({
     set((state) => ({ isOpen: !state.isOpen }));
   },
 }));
-
-type SiteMenuProps = {
-  nav?: SiteMenuItemType[];
-};
 
 const SetSiteMenu = React.memo(function SiteMenu({
   nav,
@@ -75,13 +75,14 @@ const SetSiteMenu = React.memo(function SiteMenu({
   );
 });
 
-export function SiteMenu({ nav }: SiteMenuProps) {
+export function SiteMenu() {
   const { isOpen } = useSiteMenuState();
+  const { site } = useSiteState();
   return (
     <>
-      {nav ? (
+      {site?.menu?.nav ? (
         <div className={isOpen ? "" : "hidden"}>
-          <SetSiteMenu nav={nav} />
+          <SetSiteMenu nav={site.menu.nav} />
         </div>
       ) : null}
     </>

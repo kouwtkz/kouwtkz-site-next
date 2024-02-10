@@ -5,6 +5,7 @@ import fs from "fs";
 import { resolve, extname, dirname, parse } from "path";
 import RetouchImage from "./RetouchImage.mjs"
 import sharp from "sharp";
+import imageSize from "image-size";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 /**
@@ -22,7 +23,7 @@ const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
  * @param {GetYamlImageListProps} args
  * @returns {Promise<YamlGroupType[]>}
  */
-export async function GetYamlImageList({ from, to: _to, filter, readImage = true, makeImage = false, deleteImage = false }) {
+export async function GetYamlImageList({ from, to: _to, filter, readImage = true, makeImage = false, deleteImage = false, readSize = false }) {
   from = from.replace(/[\\/]+/g, "/");
   const to = _to === undefined ? from : _to;
   // ディレクトリ内の各ファイルを取得
@@ -92,7 +93,8 @@ export async function GetYamlImageList({ from, to: _to, filter, readImage = true
   });
   yamls.forEach((y) => {
     y.list.forEach(item => {
-      item.origin = y.dir + item.dir + '/' + item.src;
+      item.originName = item.src;
+      item.origin = y.dir + item.dir + '/' + item.originName;
     })
   })
   if (filter && Object.keys(filter).length > 0) {
@@ -131,7 +133,7 @@ export async function GetYamlImageList({ from, to: _to, filter, readImage = true
       y.list = y.list.filter(({ topImage }) => topImage)
     })
     // サムネサイズ設定や画像生成処理
-    if (readImage) ReadImageFromYamls({ yamls, makeImage, deleteImage })
+    if (readImage) ReadImageFromYamls({ yamls, makeImage, deleteImage, readSize })
 
     yamls = yamls.filter(({ list }) => list.length > 0)
   }
@@ -139,9 +141,9 @@ export async function GetYamlImageList({ from, to: _to, filter, readImage = true
 }
 
 /**
- * @param {{yamls: YamlGroupType[], makeImage?: boolean, deleteImage?: boolean, publicDir?: string, selfRoot?: boolean, resizedDir?: string}} args
+ * @param {{ yamls: YamlGroupType[], makeImage?: boolean, deleteImage?: boolean, readSize?: boolean, publicDir?: string, selfRoot?: boolean, resizedDir?: string }} args
  */
-export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, publicDir = 'public', selfRoot = false, resizedDir = 'resized' }) {
+export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage = false, readSize = false, publicDir = 'public', selfRoot = false, resizedDir = 'resized' }) {
   const publicFullDir = makeImage ? resolve((selfRoot ? "." : cwd) + "/" + publicDir) : publicDir;
   const toList = (makeImage) ? Array.from(new Set(yamls.map(({ to }) => to))) : [];
   /** @type {{isFile: boolean, path: string}[]} */
@@ -160,9 +162,9 @@ export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage
     // 画像URLの定義
     y.list.forEach(async (image) => {
       const imageDir = `/${y.to}/${y.dir}/${image.dir || ""}/`.replace(/\/+/g, '/');
+      image.fullPath = resolve(`${cwd}/${y.from}/${y.dir}/${image.dir || ""}/${image.src}`);
       if (makeImage) {
         try {
-          image.fullPath = resolve(`${cwd}/${y.from}/${y.dir}/${image.dir || ""}/${image.src}`);
           image.mtime = new Date(fs.statSync(image.fullPath).mtime);
         } catch (e) {
           console.error(`[${image.fullPath}]のパスのファイルを取得できませんでした。`);
@@ -243,9 +245,19 @@ export async function ReadImageFromYamls({ yamls, makeImage = false, deleteImage
         delete image.resizeOption;
       }
     })
+    y.list.forEach((image) => {
+      if (image.fullPath) {
+        if (readSize) {
+          try {
+            const size = imageSize(image.fullPath);
+            if (size.width && size.height) image.size = { w: size.width, h: size.height }
+          } catch { }
+        }
+        delete image.fullPath;
+      }
+    });
     if (makeImage) {
       y.list.forEach((image) => {
-        delete image.fullPath;
         delete image.mtime;
       });
     }
@@ -439,6 +451,7 @@ export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeIma
       }
       if (item.title) { item.name = item.title; delete item.title; }
       delete item.origin;
+      delete item.originName;
     })
     // ソート
     if (y.data.list) {

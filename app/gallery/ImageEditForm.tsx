@@ -1,11 +1,18 @@
-import { HTMLAttributes, useRef, useState } from "react";
+import {
+  HTMLAttributes,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useImageViewer } from "./ImageViewer";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { useCharaState } from "../character/CharaState";
-import ImageMee from "../components/image/ImageMee";
+import ImageMee from "../components/tag/ImageMee";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useMediaImageState } from "../context/MediaImageState";
+import { useMediaImageState } from "../context/image/MediaImageState";
 import {
   defaultTags,
   getTagsOptions,
@@ -13,12 +20,17 @@ import {
 } from "./tag/GalleryTags";
 import { useRouter } from "next/navigation";
 import { useEmbedState } from "../context/embed/EmbedState";
+import {
+  FieldValues,
+  RefCallBack,
+  SubmitHandler,
+  useForm,
+} from "react-hook-form";
+import { MakeURL } from "../components/functions/MakeURL";
 
-interface Props extends HTMLAttributes<HTMLFormElement> {
-  image: MediaImageItemType;
-}
+interface Props extends HTMLAttributes<HTMLFormElement> {}
 
-export default function ImageEditForm({ image, className, ...args }: Props) {
+export default function ImageEditForm({ className, ...args }: Props) {
   const { setImageFromUrl, imageAlbumList, copyrightList } =
     useMediaImageState();
   const { data: embedData } = useEmbedState();
@@ -31,121 +43,165 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
   const [otherTags, setOtherTags] = useState<string[]>([]);
   const charaTagsSelect = useRef<HTMLSelectElement>(null);
   const otherTagsSelect = useRef<HTMLSelectElement>(null);
-  const tagsSet = useRef(false);
-  if (!tagsSet.current && charaList.length > 0) {
-    const _charaTags = (image.tags || []).filter((tag) =>
-      charaList.some((chara) => tag === chara.id)
-    );
-    setCharaTags(_charaTags);
-    setOtherTags(
-      (image.tags || []).filter((tag) =>
-        _charaTags.every((_tag) => tag !== _tag)
-      )
-    );
-    tagsSet.current = true;
-  }
-  const sendUpdate = async (
-    image: MediaImageItemType,
-    deleteMode: boolean = false
-  ) => {
-    const { album, resized, resizeOption, URL, move, ..._image } = image;
-    const res = await axios.patch("/gallery/send", {
-      ..._image,
-      albumDir: album?.dir,
-      move,
-      deleteMode,
+  const { imageItemList } = useMediaImageState();
+  const { imageSrc, albumName } = useImageViewer();
+  const image = useMemo(() => {
+    const albumItemList = albumName
+      ? imageItemList.filter(({ album }) => album?.name === albumName)
+      : imageItemList;
+    return imageSrc
+      ? albumItemList.find((image) => image.originName === imageSrc) || null
+      : null;
+  }, [imageItemList, albumName, imageSrc]);
+
+  const defaultValues = useMemo(
+    () => ({
+      name: image?.name || "",
+      description: image?.description || "",
+      topImage: image?.topImage || "",
+      pickup: image?.pickup || "",
+      time:
+        image?.time
+          ?.toLocaleString("sv-SE", { timeZone: "JST" })
+          .replace(" ", "T") || "",
+      copyright: image?.copyright || "",
+      link: image?.link || "",
+      embed: image?.embed || "",
+      move: image?.album?.dir || "",
+      rename: image?.originName || "",
+    }),
+    [image]
+  );
+
+  const { register, handleSubmit, reset, getValues, setValue } =
+    useForm<FieldValues>({
+      defaultValues,
     });
-    if (res.status === 200) {
-      toast(deleteMode ? "削除しました" : "更新しました！", {
-        duration: 2000,
+
+  const sendUpdate = useCallback(
+    async (image: MediaImageItemType, deleteMode: boolean = false) => {
+      const {
+        album,
+        resized,
+        resizeOption,
+        URL,
+        move,
+        rename,
+        size,
+        ..._image
+      } = image;
+      const res = await axios.patch("/gallery/send", {
+        ..._image,
+        albumDir: album?.dir,
+        move,
+        rename,
+        deleteMode,
       });
-      setImageFromUrl();
-      if (move) {
-        const search = new URLSearchParams(location.search);
-        const queryImage = search.get("image");
-        if (queryImage && album?.dir) {
-          search.set("image", queryImage.replace(album.dir, move));
-          router.replace(`?${search.toString()}`, { scroll: false });
+      if (res.status === 200) {
+        toast(deleteMode ? "削除しました" : "更新しました！", {
+          duration: 2000,
+        });
+        setImageFromUrl();
+        if (move || rename) {
+          const query = Object.fromEntries(
+            new URLSearchParams(location.search)
+          );
+          const movedAlbum = move
+            ? imageAlbumList.find((a) => a.dir === move)
+            : null;
+          if (movedAlbum) query.album = movedAlbum.name;
+          if (rename) query.image = rename;
+          router.replace(MakeURL({ query }).href, { scroll: false });
         }
+        return true;
+      } else {
+        return false;
       }
-      return true;
-    } else {
-      return false;
-    }
-  };
-  const onToggleEdit = async () => {
-    if (image) {
-      const form = refForm.current;
-      let sendFlag = false;
-      if (form) {
-        const fmData = new FormData(form);
-        const data = Object.fromEntries(fmData) as { [k: string]: any };
-        const ftData = Object.entries(data).filter(([k, v]) => {
-          switch (k) {
-            case "time":
-              return image.time?.getTime() !== new Date(String(v)).getTime();
-            case "move":
-              return v !== image.album?.dir;
-            case "topImage":
-            case "pickup":
-              const flag = v !== String(image[k]);
-              return flag;
-            default:
-              return (image[k] || "") !== v;
-          }
-        });
-        if (ftData.length > 0) sendFlag = true;
-        ftData.forEach(([k, v]) => {
-          switch (k) {
-            case "time":
-              image.time = new Date(String(v));
-              break;
-            case "topImage":
-            case "pickup":
-              switch (v) {
-                case "true":
-                case "false":
-                  image[k] = v === "true";
-                  break;
-                default:
-                  image[k] = null;
-                  break;
-              }
-              break;
-            default:
-              image[k] = v;
-              break;
-          }
-        });
-        const tags = charaTags.concat(otherTags);
-        if (tags.length === 0) {
-          if (image.tags) {
-            delete image.tags;
+    },
+    [imageAlbumList, router, setImageFromUrl]
+  );
+  const onSubmit = useCallback(
+    async (image?: MediaImageItemType) => {
+      if (image) {
+        const form = refForm.current;
+        let sendFlag = false;
+        if (form) {
+          const fmData = new FormData(form);
+          const data = Object.fromEntries(fmData) as { [k: string]: any };
+          const ftData = Object.entries(data).filter(([k, v]) => {
+            switch (k) {
+              case "time":
+                return image.time?.getTime() !== new Date(String(v)).getTime();
+              case "move":
+                return v !== image.album?.dir;
+              case "rename":
+                return v !== image.originName;
+              case "topImage":
+              case "pickup":
+                const flag = v !== String(image[k]);
+                return flag;
+              default:
+                return (image[k] || "") !== v;
+            }
+          });
+          if (ftData.length > 0) sendFlag = true;
+          ftData.forEach(([k, v]) => {
+            switch (k) {
+              case "time":
+                image.time = new Date(String(v));
+                break;
+              case "topImage":
+              case "pickup":
+                switch (v) {
+                  case "true":
+                  case "false":
+                    image[k] = v === "true";
+                    break;
+                  default:
+                    image[k] = null;
+                    break;
+                }
+                break;
+              default:
+                image[k] = v;
+                break;
+            }
+          });
+          const tags = charaTags.concat(otherTags);
+          if (tags.length === 0) {
+            if (image.tags) {
+              delete image.tags;
+              if (!sendFlag) sendFlag = true;
+            }
+          } else if (image.tags) {
+            const tagNotMatch =
+              image.tags.length !== tags.length ||
+              !image.tags.every((tag) => tags.some((_tag) => tag === _tag));
+            if (!sendFlag) sendFlag = tagNotMatch;
+            if (tagNotMatch) {
+              const _tags = image.tags.filter((tag) =>
+                tags.some((_tag) => tag === _tag)
+              );
+              tags
+                .filter((_tag) => _tags.every((tag) => tag !== _tag))
+                .forEach((tag) => {
+                  _tags.push(tag);
+                });
+              image.tags = _tags;
+            }
+          } else {
+            image.tags = tags;
             if (!sendFlag) sendFlag = true;
           }
-        } else if (image.tags) {
-          const tagNotMatch =
-            image.tags.length !== tags.length ||
-            !image.tags.every((tag) => tags.some((_tag) => tag === _tag));
-          if (!sendFlag) sendFlag = tagNotMatch;
-          if (tagNotMatch) {
-            const _tags = image.tags.filter((tag) =>
-              tags.some((_tag) => tag === _tag)
-            );
-            tags
-              .filter((_tag) => _tags.every((tag) => tag !== _tag))
-              .forEach((tag) => {
-                _tags.push(tag);
-              });
-            image.tags = _tags;
-          }
-        } else {
-          image.tags = tags;
-          if (!sendFlag) sendFlag = true;
         }
+        if (sendFlag) sendUpdate(image);
       }
-      if (sendFlag) sendUpdate(image);
-    }
+    },
+    [charaTags, otherTags, sendUpdate]
+  );
+
+  const onToggleEdit = async () => {
+    if (image) await onSubmit(image);
     wasEdit.current = false;
   };
   if (editMode) {
@@ -153,6 +209,43 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
   } else {
     if (wasEdit.current) onToggleEdit();
   }
+
+  const imageUrl = useRef("");
+  useEffect(() => {
+    async function checkURL() {
+      if (
+        image?.URL &&
+        imageUrl.current !== image.URL &&
+        charaList.length > 0
+      ) {
+        if (editMode) {
+          await onSubmit(
+            imageItemList.find(({ URL }) => URL === imageUrl.current)
+          );
+        }
+        imageUrl.current = image.URL;
+        const _charaTags = (image.tags || []).filter((tag) =>
+          charaList.some((chara) => tag === chara.id)
+        );
+        reset(defaultValues);
+        setCharaTags(_charaTags);
+        setOtherTags(
+          (image.tags || []).filter((tag) =>
+            _charaTags.every((_tag) => tag !== _tag)
+          )
+        );
+      }
+    }
+    checkURL();
+  }, [
+    image,
+    charaList,
+    reset,
+    defaultValues,
+    onSubmit,
+    editMode,
+    imageItemList,
+  ]);
 
   return (
     <>
@@ -173,7 +266,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
               className="plain ml-2 bg-red-400 hover:bg-red-500 w-12 h-12 text-2xl rounded-full p-2"
               onClick={async () => {
                 if (confirm("本当に削除しますか？")) {
-                  if (await sendUpdate(image, true)) {
+                  if (image && (await sendUpdate(image, true))) {
                     router.back();
                     const href = location.href;
                     setTimeout(() => {
@@ -193,38 +286,36 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
         <form
           {...args}
           ref={refForm}
-          onSubmit={(e) => {
+          onSubmit={handleSubmit((e) => {
             toggleEditMode();
             e.preventDefault();
-          }}
-          className={"[&>*]:block [&>*]:my-6 " + className}
+          })}
+          className={"edit text-left" + (className ? ` ${className}` : "")}
         >
           <label>
             <p>タイトル</p>
-            <div className="mx-1">
+            <div className="px-1 w-[100%]">
               <input
-                className="w-[100%] rounded-none px-1 text-xl md:text-2xl text-main-dark"
+                className="block w-[100%] rounded-none px-1 text-xl md:text-2xl text-main-dark"
                 title="タイトル"
                 type="text"
-                name="name"
-                defaultValue={image.name}
+                {...register("name")}
               />
             </div>
           </label>
           <label>
             <p>説明文</p>
-            <div className="mx-1">
+            <div className="px-1 w-[100%]">
               <textarea
                 className="rounded-none w-[100%] px-1 min-h-[8rem] text-lg md:text-xl"
                 title="説明文"
-                name="description"
-                defaultValue={image.description}
+                {...register("description")}
               />
             </div>
           </label>
           <div>
             <p>キャラクタータグ</p>
-            <div>
+            <div className="px-1 w-[100%]">
               {charaTags.map((tag, i) => {
                 const chara = charaList.find((chara) => chara.id === tag);
                 return (
@@ -288,7 +379,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
           </div>
           <label>
             <p>その他のタグ</p>
-            <div>
+            <div className="px-1 w-[100%]">
               {(() => {
                 const otherTagCandidates = autoFixTagsOptions(
                   getTagsOptions(defaultTags)
@@ -348,52 +439,56 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
               })()}
             </div>
           </label>
-          <div className="[&_label]:mx-2">
+          <div>
             <p>固定設定</p>
-            <label>
-              トップ画像
-              <select
-                name="topImage"
-                className="ml-1"
-                title="トップ画像"
-                defaultValue={String(image.topImage)}
-              >
-                <option value="undefined">自動</option>
-                <option value="true">固定する</option>
-                <option value="false">固定しない</option>
-              </select>
-            </label>
-            <label>
-              ピックアップ
-              <select
-                name="pickup"
-                className="ml-1"
-                title="ピックアップ画像"
-                defaultValue={String(image.pickup)}
-              >
-                <option value="undefined">自動</option>
-                <option value="true">固定する</option>
-                <option value="false">固定しない</option>
-              </select>
-            </label>
+            <div className="px-1 w-[100%] flex justify-around">
+              <label>
+                トップ画像
+                <select
+                  className="ml-1"
+                  title="トップ画像"
+                  {...register("topImage")}
+                >
+                  <option value="undefined">自動</option>
+                  <option value="true">固定する</option>
+                  <option value="false">固定しない</option>
+                </select>
+              </label>
+              <label>
+                ピックアップ
+                <select
+                  className="ml-1"
+                  title="ピックアップ画像"
+                  {...register("pickup")}
+                >
+                  <option value="undefined">自動</option>
+                  <option value="true">固定する</option>
+                  <option value="false">固定しない</option>
+                </select>
+              </label>
+            </div>
           </div>
           <label>
             <p>リンク</p>
-            <div className="mx-1">
+            <div className="mx-1 flex-1">
               <input
                 className="rounded-none w-[100%] px-1 text-lg md:text-xl"
                 title="リンク"
                 type="text"
-                name="link"
-                defaultValue={image.link}
+                {...register("link")}
               />
             </div>
           </label>
           <label>
             <div className="inline-block mr-4">埋め込み</div>
-            <select title="埋め込み" name="embed" defaultValue={image.embed}>
-              <option value="" />
-              {/* <option value="_new">新規</option> */}
+            <input
+              className="py-1 px-2 text-lg md:text-xl rounded-md"
+              title="埋め込み"
+              type="text"
+              list="galleryEditEmbedList"
+              {...register("embed")}
+            />
+            <datalist id="galleryEditEmbedList">
               {embedData
                 ? Object.keys(embedData).map((embed, i) => (
                     <option key={i} value={embed}>
@@ -401,7 +496,7 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
                     </option>
                   ))
                 : null}
-            </select>
+            </datalist>
           </label>
           <label>
             <div className="inline-block mr-4">時間</div>
@@ -409,21 +504,17 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
               className="rounded-none px-1 text-lg md:text-xl"
               title="時間"
               type="datetime-local"
-              name="time"
-              defaultValue={image.time
-                ?.toLocaleString("sv-SE", { timeZone: "JST" })
-                .replace(" ", "T")}
+              {...register("time")}
             />
           </label>
           <label>
             <div className="inline-block mr-4">コピーライト</div>
             <input
-              className="py-1 px-2 text-lg md:text-xl"
+              className="py-1 px-2 text-lg md:text-xl rounded-md"
               title="コピーライト"
               type="text"
-              name="copyright"
-              defaultValue={image.copyright}
               list="galleryEditCopyrightList"
+              {...register("copyright")}
             />
             <datalist id="galleryEditCopyrightList">
               {copyrightList.map(({ value }, i) => (
@@ -433,7 +524,11 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
           </label>
           <label>
             <div className="inline-block mr-4">アルバム移動</div>
-            <select title="移動" name="move" defaultValue={image.album?.dir}>
+            <select
+              className="py-1 px-2 text-lg md:text-xl rounded-md"
+              title="移動"
+              {...register("move")}
+            >
               {imageAlbumList
                 .filter((album) => album.listup && !album.name.startsWith("/"))
                 .sort((a, b) => ((a.name || "") > (b.name || "") ? 1 : -1))
@@ -443,6 +538,14 @@ export default function ImageEditForm({ image, className, ...args }: Props) {
                   </option>
                 ))}
             </select>
+          </label>
+          <label className="flex">
+            <div className="inline-block mr-4">ファイル名変更</div>
+            <input
+              title="ファイル名変更"
+              className="flex-1 py-1 px-2 rounded-md"
+              {...register("rename")}
+            />
           </label>
         </form>
       ) : null}

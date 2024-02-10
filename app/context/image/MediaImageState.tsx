@@ -35,6 +35,7 @@ type ImageDataType = {
   imageAlbumList: Array<MediaImageAlbumType>;
   tagList: ValueCountType[];
   copyrightList: ValueCountType[];
+  isSet: boolean;
   setImageAlbum: (albumList: Array<MediaImageAlbumType>) => void;
   setImageFromUrl: (url?: string) => void;
 };
@@ -44,6 +45,7 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
   imageAlbumList: [],
   tagList: [],
   copyrightList: [],
+  isSet: false,
   setImageAlbum: (data) => {
     const imageItemList = parseImageItems(data);
     const tagList = imageItemList
@@ -71,6 +73,7 @@ export const useMediaImageState = create<ImageDataType>((set) => ({
       imageItemList,
       tagList,
       copyrightList,
+      isSet: true,
     }));
   },
   setImageFromUrl: (url = defaultUrl) => {

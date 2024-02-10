@@ -3,6 +3,7 @@ import {
   Zen_Maru_Gothic,
   Kosugi_Maru,
   Mandali,
+  M_PLUS_1p
 } from "next/font/google";
 
 import localFont from "next/font/local"
@@ -29,6 +30,11 @@ export const MandaliFont = Mandali({
   weight: "400",
   subsets: ["latin"],
   variable: "--font-Mandali",
+});
+export const MPLUS1pFont = M_PLUS_1p({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-MPlus1p",
 });
 export const LuloCleanFont = localFont({
   src: "LuloCleanOneBold.woff2",

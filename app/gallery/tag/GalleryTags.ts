@@ -6,7 +6,7 @@ export interface GalleryTagsOption {
   index?: number;
   group?: string;
   editable?: boolean;
-  query?: string;
+  query?: { [k: string]: string };
   options?: GalleryTagsOption[];
 }
 
@@ -116,7 +116,7 @@ export function autoFixTagsOptions(tagsOptions: GalleryTagsOption[]) {
       case "month":
         const monthTag = filterMonthList.find(({ month }) => String(month) === values[1])?.tags[0];
         if (monthTag) {
-          return { ...item, value: monthTag, query: `?month=${values[1]}` };
+          return { ...item, value: monthTag, query: { month: values[1] } };
         } else return item;
       default:
         return item;

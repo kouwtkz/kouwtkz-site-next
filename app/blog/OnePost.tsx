@@ -1,5 +1,5 @@
 import { Post } from "@/app/blog/Post.d";
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import Link from "next/link";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 type Props = { post: Post };
@@ -19,7 +19,12 @@ export default function OnePost({ post }: Props) {
       )}
       {post.title ? (
         <h3 className="text-2xl text-main-dark font-bold inline-block m-2">
-          <Link href={`/blog/?postId=${post.postId}`}>{post.title}</Link>
+          <Link
+            href={{ pathname: "/blog", query: { postId: post.postId } }}
+            prefetch={false}
+          >
+            {post.title}
+          </Link>
         </h3>
       ) : (
         <></>
@@ -31,14 +36,19 @@ export default function OnePost({ post }: Props) {
             : post.category
           ).map((category, i) => (
             <div key={i} className="mx-1 underline inline-block">
-              <Link href={`/blog/?q=%23${category}`}>{category}</Link>
+              <Link
+                href={{ pathname: "/blog", query: { q: `#${category}` } }}
+                prefetch={false}
+              >
+                {category}
+              </Link>
             </div>
           ))}
         </div>
       ) : (
         <></>
       )}
-      <MultiParser>{post.body}</MultiParser>
+      <MultiParser className="blog">{post.body}</MultiParser>
       <div className="text-right [&>*]:ml-4">
         {post.draft ? (
           <span className="text-main-grayish">(下書き)</span>
@@ -50,7 +60,8 @@ export default function OnePost({ post }: Props) {
         {formattedDate ? (
           <Link
             className="text-main-grayish hover:text-main-grayish hover:opacity-70"
-            href={`/blog?postId=${post.postId}`}
+            href={{ pathname: "/blog", query: { postId: post.postId } }}
+            prefetch={false}
           >
             {formattedDate}
           </Link>

@@ -16,13 +16,13 @@ body {
     height: 100vh;
     background-size: cover;
     background-attachment: fixed;
-    background: var(--background);
+    background: var(--background-top);
     z-index: -9999;
   }
 }
 
 body::-webkit-scrollbar-track {
-  background: var(--background);
+  background: var(--background-top);
 }
 
 body,
@@ -37,6 +37,13 @@ body,
     background: var(--main-color-soft);
     border-radius: round;
   }
+  &.loading {
+    min-height: 5000rem;
+    padding-right: var(--scroll-margin) !important;
+    overflow-y: hidden;
+  }
+
+  &.loading,
   &.overflow-y-hidden {
     &,
     .fixed {
@@ -132,6 +139,40 @@ a {
   color: var(--main-color-strong);
   &:hover {
     color: var(--main-color);
+    &.external::after {
+      background-color: var(--main-color);
+    }
+  }
+  &.roundLink {
+    color: white;
+    display: inline-block;
+    padding: 0.4rem 1rem;
+    border-radius: 1rem;
+    &.external::after {
+      background-color: white;
+    }
+    background-color: var(--main-color);
+    &:hover {
+      background-color: var(--main-color-soft);
+    }
+  }
+  &.external::after {
+    $externalUrl: url("/images/svg/external.svg");
+    display: inline-block;
+    margin-left: 0.2em;
+    content: "";
+    width: 1em;
+    height: 1em;
+    -webkit-mask-image: $externalUrl;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-image: $externalUrl;
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    background-color: var(--main-color-strong);
+    font-size: 90%;
   }
 }
 
@@ -272,9 +313,16 @@ form select {
   outline: solid 1px var(--main-color-dark);
 }
 
-.parsed p {
-  margin: 1.5rem auto;
-  white-space: pre-line;
+.parsed {
+  &.blog > * {
+    margin: 1.5rem auto;
+  }
+  p {
+    white-space: pre-line;
+  }
+  h4 {
+    color: var(--main-color-dark);
+  }
 }
 
 .preview-area .parsed p:first-child {
@@ -357,6 +405,7 @@ iframe {
 }
 
 #image_viewer {
+  $mobileWidth: 768px;
   .viewer {
     background-color: var(--lightbox-background);
     position: fixed;
@@ -382,6 +431,11 @@ iframe {
     path {
       opacity: 0.7;
     }
+    @media (min-width: $mobileWidth) {
+      width: 3.5rem;
+      height: 3.5rem;
+      margin: 0.5rem;
+    }
   }
   .modal {
     margin-top: 3.6rem;
@@ -399,6 +453,12 @@ iframe {
     > * {
       pointer-events: all;
     }
+    @media (min-width: $mobileWidth) {
+      margin-top: 4rem;
+      min-height: 88%;
+      flex-direction: row;
+      overflow-y: auto;
+    }
   }
   .preview {
     width: 100%;
@@ -414,42 +474,37 @@ iframe {
       width: 100%;
       height: 100%;
     }
-  }
-  .info {
-    background-color: var(--lightbox-background-text);
-    height: 100%;
-    > *:first-child {
-      min-height: 8rem;
-      margin: 1rem 1rem;
-    }
-    > *:last-child {
-      margin-bottom: 3rem;
-    }
-  }
-  @media (min-width: 768px) {
-    .preview {
+    @media (min-width: $mobileWidth) {
       max-height: 100%;
       img,
       iframe {
         max-height: max-content;
       }
     }
-    .close {
-      width: 3.5rem;
-      height: 3.5rem;
-      margin: 0.5rem;
+  }
+  .info {
+    background-color: var(--lightbox-background-text);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    > *:first-child {
+      min-height: 8rem;
+      margin: 1rem 1rem;
     }
-    .modal {
-      margin-top: 4rem;
-      min-height: 88%;
-      flex-direction: row;
-      overflow-y: auto;
-    }
-    .info {
+    @media (min-width: $mobileWidth) {
       overflow-y: auto;
       min-width: 30em;
       width: 40vw;
-      padding-bottom: 2em;
+      padding-bottom: 1rem;
+    }
+    form.edit {
+      > * {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-top: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
     }
   }
 }

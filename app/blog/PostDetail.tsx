@@ -3,7 +3,7 @@
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { Post } from "@/app/blog/Post.d";
-import MultiParser from "@/app/components/functions/MultiParser";
+import MultiParser from "@/app/components/tag/MultiParser";
 import { useRouter } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
@@ -31,12 +31,17 @@ export default function PostDetail({ post }: PostDetailProps) {
               : post.category
             ).map((category, i) => (
               <div key={i} className="mx-1 underline inline-block">
-                <Link href={`/blog/?q=%23${category}`}>{category}</Link>
+                <Link
+                  href={{ pathname: "/blog", query: { q: `#${category}` } }}
+                  prefetch={false}
+                >
+                  {category}
+                </Link>
               </div>
             ))}
           </div>
         </div>
-        <MultiParser className="mx-2" detailsOpen={true}>
+        <MultiParser className="blog mx-2" detailsOpen={true}>
           {post.body}
         </MultiParser>
         <div className="text-right [&>*]:ml-4">

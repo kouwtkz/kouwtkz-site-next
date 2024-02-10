@@ -19,6 +19,7 @@ type SoundDataType = {
   SoundAlbum: SoundAlbumType | null;
   SoundItemList: Array<SoundItemType>;
   defaultPlaylist: PlaylistType | null;
+  isSet: boolean;
   SetSoundAlbum: (album: SoundAlbumType) => void;
   SetDefaultPlaylist: (playlist: PlaylistType) => void;
 };
@@ -27,10 +28,12 @@ export const useSoundState = create<SoundDataType>((set) => ({
   SoundAlbum: null,
   SoundItemList: [],
   defaultPlaylist: null,
+  isSet: false,
   SetSoundAlbum: (data) => {
     set(() => ({
       SoundAlbum: data,
       SoundItemList: parseImageItems(data),
+      isSet: true,
     }));
   },
   SetDefaultPlaylist: (playlist) => {

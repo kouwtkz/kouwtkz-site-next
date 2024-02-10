@@ -1,19 +1,29 @@
 "use client";
 
-import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
+import {
+  MediaImageAlbumType,
+  MediaImageItemType,
+} from "@/mediaScripts/MediaImageDataType";
 
-import React, { Suspense, useCallback, useRef, useState } from "react";
+import React, {
+  Suspense,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ImageMeeThumbnail } from "../components/image/ImageMee";
+import { ImageMeeThumbnail } from "../components/tag/ImageMee";
 import MoreButton from "../components/svg/button/MoreButton";
 import Link from "next/link";
 import { useDropzone } from "react-dropzone";
 import { useServerState } from "../components/System/ServerState";
-import { useMediaImageState } from "../context/MediaImageState";
+import { useMediaImageState } from "../context/image/MediaImageState";
 import { upload } from "./send/uploadFunction";
-import { queryPush } from "@/app/components/functions/queryPush";
+import { MakeURL } from "@/app/components/functions/MakeURL";
 import { filterImagesTags } from "./FilterImages";
 import { filterMonthList } from "./tag/GalleryTags";
+import { useImageViewer } from "./ImageViewer";
 
 export interface GalleryListPropsBase {
   size?: number;
@@ -75,6 +85,19 @@ function Main({
 }: GalleryListProps) {
   const { setImageFromUrl } = useMediaImageState();
   const { isServerMode } = useServerState();
+  const { groupImages: albumImages, setGroupImages: setAlbumImages } = useImageViewer();
+  const refImages = useRef<MediaImageItemType[]>([]);
+
+  useEffect(() => {
+    const groupName = search.get("group") || search.get("album");
+    if (album?.name === groupName && albumImages.length === 0) {
+      const URLList = refImages.current
+        .map(({ URL }) => URL || "")
+        .filter((URL) => URL);
+      if (URLList.length > 0) setAlbumImages(URLList);
+    }
+  });
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       if (album)
@@ -255,6 +278,8 @@ function Main({
     }
   });
 
+  refImages.current = albumList;
+
   const showMoreButton = curMax < (albumList.length || 0);
   const visibleMax = showMoreButton ? curMax - 1 : curMax;
   const heading = label || album.name;
@@ -296,15 +321,10 @@ function Main({
                 onChange={() => {
                   if (yearSelectRef.current) {
                     const yearSelect = yearSelectRef.current;
-                    queryPush({
-                      process: (params) => {
-                        if (yearSelect.value) params.year = yearSelect.value;
-                        else delete params.year;
-                      },
-                      scroll: false,
-                      push: router.push,
-                      search,
-                    });
+                    const query = Object.fromEntries(search);
+                    if (yearSelect.value) query.year = yearSelect.value;
+                    else delete query.year;
+                    router.push(MakeURL({ query }).href, { scroll: false });
                   }
                 }}
               >
@@ -335,41 +355,41 @@ function Main({
           ) : (
             <>
               {albumList
-                .map((image, key) => {
-                  return (
-                    <div
-                      key={key}
-                      className={
-                        `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` +
-                        ` hover:brightness-90 transition cursor-pointer`
-                      }
-                    >
-                      <ImageMeeThumbnail
-                        imageItem={image}
-                        style={{ objectFit: "cover" }}
-                        className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
-                        onClick={() => {
-                          if (image.direct) router.push(image.direct);
-                          else {
-                            if (image.URL !== undefined) {
-                              const URL = image.URL;
-                              queryPush({
-                                process: (params) => ({
-                                  image: URL,
-                                  ...params,
-                                }),
-                                scroll: false,
-                                push: router.push,
-                                search,
-                              });
-                            }
-                          }
-                        }}
-                      />
-                    </div>
-                  );
-                })
-                .filter((v, i) => i < visibleMax)}
+                .filter((_, i) => i < visibleMax)
+                .map((image, i) => (
+                  <Link
+                    key={i}
+                    className={
+                      `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` +
+                      ` hover:brightness-90 transition cursor-pointer`
+                    }
+                    prefetch={false}
+                    {...(image.direct
+                      ? { href: image.direct }
+                      : {
+                          href: {
+                            query: {
+                              ...Object.fromEntries(search),
+                              image: image.originName,
+                              ...(image.album?.name
+                                ? { album: image.album.name }
+                                : {}),
+                              ...(image.album?.name !== album.name
+                                ? { group: album.name }
+                                : {}),
+                            },
+                          },
+                          scroll: false,
+                        })}
+                  >
+                    <ImageMeeThumbnail
+                      imageItem={image}
+                      style={{ objectFit: "cover" }}
+                      className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
+                      loadingScreen={true}
+                    />
+                  </Link>
+                ))}
               {showMoreButton ? (
                 <MoreButton
                   className="w-[24.532%] h-auto cursor-pointer m-[0.234%] p-0 fill-main-soft hover:fill-main-pale"

@@ -22,6 +22,7 @@ type MultiParserProps = MultiParserOptions & {
   twemojiTag?: string;
   tag?: string;
   children?: React.ReactNode | string;
+  parsedClassName?: string;
 };
 
 function MultiParser({
@@ -36,6 +37,7 @@ function MultiParser({
   className,
   twemojiTag,
   tag = "div",
+  parsedClassName = "parsed",
   children,
 }: MultiParserProps) {
   const router = useRouter();
@@ -51,21 +53,6 @@ function MultiParser({
   }
   useLayoutEffect(() => {
     if (window) {
-      if (linkPush) {
-        const aList = parsedRef.current.querySelectorAll(
-          "a:not([data-a-push])"
-        ) as NodeListOf<HTMLAnchorElement>;
-        aList.forEach((a) => {
-          const url = new URL(a.href);
-          if (url.origin === location.origin && !a.target) {
-            a.dataset.aPush = "";
-            a.addEventListener("click", (e) => {
-              router.push(url.href.replace(/\/+$/, ""));
-              e.preventDefault();
-            });
-          }
-        });
-      }
       if (detailsOpen) {
         parsedRef.current
           .querySelectorAll("details:not([manual]):not([open])")
@@ -105,7 +92,24 @@ function MultiParser({
     }
     if (toTwemoji) childString = twemoji.parse(childString);
     if (toDom) {
-      children = HTMLReactParser(childString);
+      children = HTMLReactParser(childString, {
+        replace: (v) => {
+          if ("attribs" in v && v.name === "a") {
+            const url = v.attribs.href;
+            if (/^http/.test(url)) {
+              v.attribs.target = "_blank";
+              v.attribs.class =
+                (v.attribs.class ? `${v.attribs.class} ` : "") + "external";
+            } else {
+              v.attribs.onClick = ((e: any) => {
+                router.push(url.replace(/\/+$/, ""));
+                e.preventDefault();
+              }) as any;
+            }
+          }
+          return v;
+        },
+      });
     } else children = childString;
   } else {
     children = (
@@ -114,7 +118,7 @@ function MultiParser({
       </Twemoji>
     );
   }
-  className = (className ? `${className} ` : "") + "parsed";
+  className = (className ? `${className} ` : "") + parsedClassName;
   return React.createElement(tag, { className, ref: parsedRef }, children);
 }
 

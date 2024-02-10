@@ -8,13 +8,15 @@ type dataType = { [k: string]: string };
 type MarkdownDataStateType = {
   data: dataType | null;
   setData: (value: dataType) => void;
+  isSet: boolean;
 };
 
 export const useMarkdownDataState = create<MarkdownDataStateType>((set) => ({
   data: null,
   setData: (value) => {
-    set({ data: value });
+    set({ data: value, isSet: true });
   },
+  isSet: false,
 }));
 
 export default function MarkdownDataState({ url }: { url: string }) {

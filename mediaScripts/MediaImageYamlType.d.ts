@@ -70,6 +70,8 @@ export type GetYamlImageListProps = {
   readImage?: boolean;
   makeImage?: boolean;
   deleteImage?: boolean;
+  /** @default false */
+  readSize?: boolean;
 }
 
 export interface UpdateImageYamlProps extends GetYamlImageListProps {

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { SiteDataType, SiteSnsItemType } from "@/app/context/site/SiteData.mjs";
+import { SiteDataType, SiteSnsItemType } from "@/app/context/site/SiteDataType";
 
 const SnsList = React.memo(function SnsList({
   snsList,
@@ -43,22 +43,29 @@ const SnsList = React.memo(function SnsList({
 });
 
 type FooterProps = {
-  site: SiteDataType;
+  since: number;
+  authorEName: string;
+  sns?: SiteSnsItemType[];
   currentDate: Date;
 };
-export default function Footer({ site, currentDate }: FooterProps) {
+export default function Footer({
+  since,
+  authorEName,
+  sns,
+  currentDate,
+}: FooterProps) {
   return (
     <footer className="pt-8 pb-12">
       <div className="font-Mandali">
-        © {site.author.since}-
+        © {since}-
         {
           currentDate
             .toLocaleDateString("ja", { timeZone: "JST" })
             .split("/", 1)[0]
         }{" "}
-        {site.author.ename}
+        {authorEName}
       </div>
-      <SnsList snsList={site.menu?.sns || []} />
+      <SnsList snsList={sns || []} />
     </footer>
   );
 }

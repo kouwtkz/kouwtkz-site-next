@@ -3,7 +3,7 @@
 import { CharaType } from "@/app/character/CharaType";
 import Link from "next/link";
 import { useCharaState } from "./CharaState";
-import { ImageMeeIcon } from "@/app/components/image/ImageMee";
+import { ImageMeeIcon } from "@/app/components/tag/ImageMee";
 
 type CharaListItemProps = {
   chara: CharaType;
@@ -13,7 +13,11 @@ export default function CharaListItem({ chara }: CharaListItemProps) {
   const { charaObject } = useCharaState();
   const currentChara = charaObject && chara.id ? charaObject[chara.id] : null;
   return (
-    <Link className="text-3xl m-2" href={`character?name=${chara.id}`}>
+    <Link
+      className="text-3xl m-2"
+      href={{ pathname: "/character", query: { name: chara.id } }}
+      prefetch={false}
+    >
       {currentChara?.media?.icon ? (
         <ImageMeeIcon
           imageItem={currentChara.media.icon}

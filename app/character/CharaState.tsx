@@ -4,23 +4,25 @@ import React, { HTMLAttributes, memo, useEffect, useRef } from "react";
 import { CharaType, CharaObjectType } from "./CharaType";
 import { create } from "zustand";
 import axios from "axios";
-import { useMediaImageState } from "../context/MediaImageState";
+import { useMediaImageState } from "../context/image/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
 import GalleryList from "../gallery/GalleryList";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
+  isSet: boolean;
   setCharaObject: (list: CharaObjectType) => void;
 };
 
 export const useCharaState = create<CharaStateType>((set) => ({
   charaObject: null,
   charaList: [],
-  set: false,
+  isSet: false,
   setCharaObject: (data) => {
     set(() => ({
       charaList: Object.values(data),
       charaObject: data,
+      isSet: true,
     }));
   },
 }));

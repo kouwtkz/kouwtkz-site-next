@@ -1,9 +1,9 @@
 "use client";
 
-import React, { HTMLAttributes, Suspense, useEffect, useRef } from "react";
+import React, { HTMLAttributes, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import { queryPush } from "@/app/components/functions/queryPush";
+import { MakeURL } from "@/app/components/functions/MakeURL";
 
 interface PagingAreaProps extends HTMLAttributes<HTMLFormElement> {
   max?: number;
@@ -46,18 +46,11 @@ export default function PagingArea({
   const submit = (e?: React.FormEvent<HTMLFormElement>) => {
     if (pagingInputRef.current) {
       const p = pagingInputRef.current;
-      queryPush({
-        process: (params) => {
-          const newP = Number(p.value);
-          if (newP > 1) params.p = String(newP);
-          else delete params.p;
-          if (params.q)
-            params.q = params.q.replaceAll("%23", "#").replaceAll("%2B", "+");
-          else delete params.q;
-        },
-        search,
-        push: router.push,
-      });
+      const newP = Number(p.value);
+      const query = Object.fromEntries(search);
+      if (newP > 1) query.p = String(newP);
+      else delete query.p;
+      router.push(MakeURL({ query }).href);
       (document.activeElement as HTMLElement).blur();
       e?.preventDefault();
     }

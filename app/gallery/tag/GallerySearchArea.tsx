@@ -1,15 +1,9 @@
 "use client";
 
-import React, {
-  HTMLAttributes,
-  Suspense,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-} from "react";
+import React, { HTMLAttributes, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import { queryPush } from "@/app/components/functions/queryPush";
+import { MakeURL } from "@/app/components/functions/MakeURL";
 
 interface SearchAreaProps extends HTMLAttributes<HTMLFormElement> {}
 
@@ -53,16 +47,12 @@ export default function GallerySearchArea({
       onSubmit={(e) => {
         if (searchRef.current) {
           const q = searchRef.current.value;
-          queryPush({
-            process: (params) => {
-              if (q) params.q = q;
-              else delete params.q;
-              delete params.p;
-            },
-            push: router.push,
-            search,
-            scroll: false,
-          });
+          const query = Object.fromEntries(search);
+          if (q) query.q = q;
+          else delete query.q;
+          delete query.p;
+          delete query.postId;
+          router.push(MakeURL({ query }).href, { scroll: false });
           (document.activeElement as HTMLElement).blur();
           e.preventDefault();
         }
