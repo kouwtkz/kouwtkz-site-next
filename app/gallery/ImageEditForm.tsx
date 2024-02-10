@@ -26,6 +26,7 @@ import {
   SubmitHandler,
   useForm,
 } from "react-hook-form";
+import { MakeURL } from "../components/functions/MakeURL";
 
 interface Props extends HTMLAttributes<HTMLFormElement> {}
 
@@ -86,6 +87,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
         ..._image,
         albumDir: album?.dir,
         move,
+        rename,
         deleteMode,
       });
       if (res.status === 200) {
@@ -93,12 +95,25 @@ export default function ImageEditForm({ className, ...args }: Props) {
           duration: 2000,
         });
         setImageFromUrl();
-        if (move) {
-          const search = new URLSearchParams(location.search);
-          const queryImage = search.get("image");
-          if (queryImage && album?.dir) {
-            search.set("image", queryImage.replace(album.dir, move));
-            router.replace(`?${search.toString()}`, { scroll: false });
+        if (move || rename) {
+          const query = Object.fromEntries(
+            new URLSearchParams(location.search)
+          );
+          if (query.image) {
+            const movedAlbum = move
+              ? imageAlbumList.find((a) => a.dir === move)
+              : null;
+            if (album?.dir && movedAlbum?.dir) {
+              if (query.album === album.name) query.album = movedAlbum.name;
+              query.image = query.image.replace(album.dir, movedAlbum.dir);
+            }
+            if (rename && image.originName) {
+              query.image = query.image.replace(
+                image.originName.replace(/\.[^.]+$/, ""),
+                rename.replace(/\.[^.]+$/, "")
+              );
+            }
+            router.replace(MakeURL({ query }).href, { scroll: false });
           }
         }
         return true;
@@ -106,7 +121,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
         return false;
       }
     },
-    [router, setImageFromUrl]
+    [imageAlbumList, router, setImageFromUrl]
   );
   const onSubmit = useCallback(
     async (image?: MediaImageItemType) => {
