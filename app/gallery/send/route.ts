@@ -5,7 +5,7 @@ import { uploadAttached } from "./uploadAttached";
 import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
 import { fromto } from "@/mediaScripts/UpdateOption.mjs";
 import { resolve } from "path";
-import { renameSync, unlinkSync } from "fs";
+import { mkdirSync, renameSync, unlinkSync } from "fs";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
 export async function GET() {
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   const data = await req.json();
-  const { albumDir, src, origin, dir, time, deleteMode, move, ...image } = data;
+  const { albumDir, src, origin, dir, time, deleteMode, move, rename, ...image } = data;
   const group = [albumDir];
   if (move) group.push(move);
   const yamls = await GetYamlImageList({ ...fromto, readImage: false, filter: { group, endsWith: true } });
@@ -50,15 +50,17 @@ export async function PATCH(req: NextRequest) {
         });
         if (imageItem.topImage === null) delete imageItem.topImage;
         if (imageItem.pickup === null) delete imageItem.pickup;
-        if (move) {
-          const moveYaml = yamls.find(album => album.dir === move);
-          if (moveYaml) {
-            const imageFullpath = resolve(`${cwd}/${editYaml.from}/${origin}`);
-            const moveImageFullpath = resolve(`${cwd}/${moveYaml.from}/${origin.replace(editYaml.dir, moveYaml.dir)}`);
-            renameSync(imageFullpath, moveImageFullpath);
-            editYaml.list = editYaml.list.filter(({ src }) => imageItem.src !== src)
-            moveYaml.list.push(imageItem);
-          }
+        if (move || rename) {
+          const imageFullpath = resolve(`${cwd}/${editYaml.from}/${origin}`);
+          const moveYaml = (move ? yamls.find(album => album.dir === move) : null) || editYaml;
+          if (move && editYaml.data.auto && !moveYaml.data.auto) imageItem.dir = "";
+          const moveDir = `${cwd}/${moveYaml.from}/${moveYaml.dir}/${imageItem.dir}`;
+          if (move) try { mkdirSync(resolve(moveDir)) } catch { }
+          if (rename) imageItem.src = rename;
+          const moveImageFullpath = resolve(`${moveDir}/${imageItem.src}`);
+          renameSync(imageFullpath, moveImageFullpath);
+          editYaml.list = editYaml.list.filter(({ src }) => imageItem.src !== src)
+          moveYaml.list.push(imageItem);
         }
       }
     }
