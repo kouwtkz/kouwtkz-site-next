@@ -85,12 +85,12 @@ function Main({
 }: GalleryListProps) {
   const { setImageFromUrl } = useMediaImageState();
   const { isServerMode } = useServerState();
-  const { albumImages, setAlbumImages } = useImageViewer();
+  const { groupImages: albumImages, setGroupImages: setAlbumImages } = useImageViewer();
   const refImages = useRef<MediaImageItemType[]>([]);
 
   useEffect(() => {
-    const albumName = search.get("album");
-    if (album?.name === albumName && albumImages.length === 0) {
+    const groupName = search.get("group") || search.get("album");
+    if (album?.name === groupName && albumImages.length === 0) {
       const URLList = refImages.current
         .map(({ URL }) => URL || "")
         .filter((URL) => URL);
@@ -370,8 +370,13 @@ function Main({
                           href: {
                             query: {
                               ...Object.fromEntries(search),
-                              image: image.URL,
-                              album: album.name,
+                              image: image.originName,
+                              ...(image.album?.name
+                                ? { album: image.album.name }
+                                : {}),
+                              ...(image.album?.name !== album.name
+                                ? { group: album.name }
+                                : {}),
                             },
                           },
                           scroll: false,

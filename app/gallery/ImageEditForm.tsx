@@ -44,8 +44,15 @@ export default function ImageEditForm({ className, ...args }: Props) {
   const charaTagsSelect = useRef<HTMLSelectElement>(null);
   const otherTagsSelect = useRef<HTMLSelectElement>(null);
   const { imageItemList } = useMediaImageState();
-  const { imagePath } = useImageViewer();
-  const image = imageItemList.find(({ URL }) => URL === imagePath);
+  const { imageSrc, albumName } = useImageViewer();
+  const image = useMemo(() => {
+    const albumItemList = albumName
+      ? imageItemList.filter(({ album }) => album?.name === albumName)
+      : imageItemList;
+    return imageSrc
+      ? albumItemList.find((image) => image.originName === imageSrc) || null
+      : null;
+  }, [imageItemList, albumName, imageSrc]);
 
   const defaultValues = useMemo(
     () => ({
@@ -99,22 +106,12 @@ export default function ImageEditForm({ className, ...args }: Props) {
           const query = Object.fromEntries(
             new URLSearchParams(location.search)
           );
-          if (query.image) {
-            const movedAlbum = move
-              ? imageAlbumList.find((a) => a.dir === move)
-              : null;
-            if (album?.dir && movedAlbum?.dir) {
-              if (query.album === album.name) query.album = movedAlbum.name;
-              query.image = query.image.replace(album.dir, movedAlbum.dir);
-            }
-            if (rename && image.originName) {
-              query.image = query.image.replace(
-                image.originName.replace(/\.[^.]+$/, ""),
-                rename.replace(/\.[^.]+$/, "")
-              );
-            }
-            router.replace(MakeURL({ query }).href, { scroll: false });
-          }
+          const movedAlbum = move
+            ? imageAlbumList.find((a) => a.dir === move)
+            : null;
+          if (movedAlbum) query.album = movedAlbum.name;
+          if (rename) query.image = rename;
+          router.replace(MakeURL({ query }).href, { scroll: false });
         }
         return true;
       } else {
@@ -204,7 +201,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
   );
 
   const onToggleEdit = async () => {
-    await onSubmit(image);
+    if (image) await onSubmit(image);
     wasEdit.current = false;
   };
   if (editMode) {

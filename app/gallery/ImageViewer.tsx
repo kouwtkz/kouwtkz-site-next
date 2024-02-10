@@ -32,38 +32,50 @@ const bodyLock = (m: boolean) => {
 };
 
 type ImageViewerType = {
-  imagePath: string;
-  albumImages: string[];
+  imageSrc: string;
+  albumName: string;
+  groupImages: string[];
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;
   editMode: boolean;
   toggleEditMode: () => void;
-  setImagePath: (path: string) => void;
-  setAlbumImages: (list: string[]) => void;
+  setImageName: (src: string, album?: string | null) => void;
+  setAlbumName: (name: string) => void;
+  setGroupImages: (list: string[]) => void;
 };
 export const useImageViewer = create<ImageViewerType>((set) => ({
-  imagePath: "",
-  albumImages: [],
+  imageSrc: "",
+  albumName: "",
+  groupImages: [],
   isOpen: false,
   onOpen: () => {
     set(() => ({ isOpen: true }));
     bodyLock(true);
   },
   onClose: () => {
-    set(() => ({ isOpen: false, editMode: false, imagePath: "" }));
+    set(() => ({ isOpen: false, editMode: false, imageSrc: "" }));
     bodyLock(false);
   },
   editMode: false,
   toggleEditMode() {
     set((state) => ({ editMode: !state.editMode }));
   },
-  setImagePath: (path) => {
-    set(() => ({ imagePath: path, albumImages: [], isOpen: true }));
+  setImageName: (src, album) => {
+    const option: { imageSrc?: string; albumName?: string } = { imageSrc: src };
+    if (typeof album !== "undefined") option.albumName = album || "";
+    set(() => ({
+      ...option,
+      groupImages: [],
+      isOpen: true,
+    }));
     bodyLock(true);
   },
-  setAlbumImages(list) {
-    set(() => ({ albumImages: list }));
+  setAlbumName(name) {
+    set(() => ({ albumName: name }));
+  },
+  setGroupImages(list) {
+    set(() => ({ groupImages: list }));
   },
 }));
 
@@ -72,17 +84,19 @@ export default function ImageViewer() {
   const {
     isOpen,
     onClose,
-    imagePath,
-    setImagePath,
+    imageSrc,
+    albumName,
+    setImageName: setImagePath,
     editMode,
     toggleEditMode,
-    albumImages,
+    groupImages: albumImages,
   } = useImageViewer();
   const { imageItemList } = useMediaImageState();
   const { charaList } = useCharaState();
   const search = useSearchParams();
   const pathname = usePathname();
   const imageParam = search.get("image");
+  const albumParam = search.get("album");
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
 
@@ -101,20 +115,23 @@ export default function ImageViewer() {
   useEffect(() => {
     if (!imageParam) {
       if (isOpen) onClose();
-    } else if (imageParam !== imagePath) {
-      setImagePath(imageParam);
+    } else if (
+      imageParam !== imageSrc ||
+      (albumParam && albumParam !== albumName)
+    ) {
+      setImagePath(imageParam, albumParam);
       updateFlag.current = true;
-    } else {
     }
   });
 
-  const image = useMemo(
-    () =>
-      imagePath
-        ? imageItemList.find((image) => image.URL === imageParam) || null
-        : null,
-    [imageItemList, imageParam, imagePath]
-  );
+  const image = useMemo(() => {
+    const albumItemList = albumParam
+      ? imageItemList.filter(({ album }) => album?.name === albumParam)
+      : imageItemList;
+    return imageSrc
+      ? albumItemList.find((image) => image.originName === imageParam) || null
+      : null;
+  }, [imageItemList, albumParam, imageParam, imageSrc]);
   const albumImageItems = useMemo(
     () =>
       albumImages
@@ -258,7 +275,10 @@ export default function ImageViewer() {
               href={{
                 query: {
                   ...Object.fromEntries(search),
-                  image: beforeAfterImage.before.URL,
+                  image: beforeAfterImage.before.originName,
+                  ...(beforeAfterImage.before.album?.name
+                    ? { album: beforeAfterImage.before.album.name }
+                    : {}),
                 },
               }}
               scroll={false}
@@ -277,7 +297,10 @@ export default function ImageViewer() {
               href={{
                 query: {
                   ...Object.fromEntries(search),
-                  image: beforeAfterImage.after.URL,
+                  image: beforeAfterImage.after.originName,
+                  ...(beforeAfterImage.after.album?.name
+                    ? { album: beforeAfterImage.after.album.name }
+                    : {}),
                 },
               }}
               scroll={false}
