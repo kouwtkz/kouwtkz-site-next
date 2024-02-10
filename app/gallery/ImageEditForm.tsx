@@ -278,7 +278,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
             toggleEditMode();
             e.preventDefault();
           })}
-          className={"edit " + className}
+          className={"edit text-left" + (className ? ` ${className}` : "")}
         >
           <label>
             <p>タイトル</p>
@@ -469,9 +469,14 @@ export default function ImageEditForm({ className, ...args }: Props) {
           </label>
           <label>
             <div className="inline-block mr-4">埋め込み</div>
-            <select title="埋め込み" {...register("embed")}>
-              <option value="" />
-              {/* <option value="_new">新規</option> */}
+            <input
+              className="py-1 px-2 text-lg md:text-xl rounded-md"
+              title="埋め込み"
+              type="text"
+              list="galleryEditEmbedList"
+              {...register("embed")}
+            />
+            <datalist id="galleryEditEmbedList">
               {embedData
                 ? Object.keys(embedData).map((embed, i) => (
                     <option key={i} value={embed}>
@@ -479,7 +484,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
                     </option>
                   ))
                 : null}
-            </select>
+            </datalist>
           </label>
           <label>
             <div className="inline-block mr-4">時間</div>
@@ -507,7 +512,11 @@ export default function ImageEditForm({ className, ...args }: Props) {
           </label>
           <label>
             <div className="inline-block mr-4">アルバム移動</div>
-            <select title="移動" {...register("move")}>
+            <select
+              className="py-1 px-2 text-lg md:text-xl rounded-md"
+              title="移動"
+              {...register("move")}
+            >
               {imageAlbumList
                 .filter((album) => album.listup && !album.name.startsWith("/"))
                 .sort((a, b) => ((a.name || "") > (b.name || "") ? 1 : -1))
