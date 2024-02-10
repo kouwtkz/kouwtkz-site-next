@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 const blankImage =
@@ -33,6 +33,7 @@ export default function ImageMee({
   height,
   loadingScreen = false,
   style,
+  onLoad,
   ...attributes
 }: ImageMeeProps) {
   const [showIndex, setShowIndex] = useState<{ index: number; max: number }>({
@@ -107,9 +108,10 @@ export default function ImageMee({
             : {}),
         },
       }}
-      onLoad={() => {
+      onLoad={(e) => {
         if (showIndex.index < showIndex.max)
           setShowIndex({ ...showIndex, index: showIndex.index + 1 });
+        else if (onLoad) onLoad(e);
       }}
       {...(hoverSrc
         ? {
