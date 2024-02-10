@@ -249,7 +249,7 @@ export default function ImageViewer() {
               )}
             </>
           )}
-          {isServerMode ? <ImageEditForm image={image} /> : null}
+          {isServerMode ? <ImageEditForm /> : null}
         </div>
         <div className="flex w-[100%] px-2 pb-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
           {beforeAfterImage?.before ? (

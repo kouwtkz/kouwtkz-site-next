@@ -93,7 +93,8 @@ export async function GetYamlImageList({ from, to: _to, filter, readImage = true
   });
   yamls.forEach((y) => {
     y.list.forEach(item => {
-      item.origin = y.dir + item.dir + '/' + item.src;
+      item.originName = item.src;
+      item.origin = y.dir + item.dir + '/' + item.originName;
     })
   })
   if (filter && Object.keys(filter).length > 0) {
@@ -450,6 +451,7 @@ export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeIma
       }
       if (item.title) { item.name = item.title; delete item.title; }
       delete item.origin;
+      delete item.originName;
     })
     // ソート
     if (y.data.list) {
