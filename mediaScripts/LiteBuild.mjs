@@ -46,7 +46,7 @@ console.log("簡易ビルド中…");
 writeJsonOut("character", charaObject);
 writeJsonOut("embed", GetEmbed());
 writeJsonOut("md", MarkdownDataObject("client"));
-writeJsonOut("image", await GetMediaImageAlbums({ ...fromto, filter: { archive: false } }));
+writeJsonOut("image", await GetMediaImageAlbums({ ...fromto, readSize: true, filter: { archive: false } }));
 writeJsonOut("site", getSiteData());
 writeJsonOut("sound", soundAlbum);
 
