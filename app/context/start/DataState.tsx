@@ -15,10 +15,10 @@ import MarkdownDataState, {
 } from "../md/MarkdownDataState";
 import { create } from "zustand";
 import { useLayoutEffect, useRef } from "react";
-const loadingElementID = "Element_DateState_Loading";
+const loadingCheckID = "Element_DateState_Loading_NotEnd";
 const reloadFunction =
   process.env.NODE_ENV === "development"
-    ? `setTimeout(() => {if (document.getElementById("${loadingElementID}")) location.reload()}, 8000)`
+    ? `setTimeout(() => {if (document.getElementById("${loadingCheckID}")) location.reload()}, 3000)`
     : "";
 
 function addMdate(url: string, values: { [k: string]: any }) {
@@ -71,13 +71,13 @@ export default function DataState() {
   const { complete, setComplete } = useDataState();
   const first = useRef(true);
   const loading = useRef(true);
+  const doSetComplete = () => {
+    if (!complete) {
+      const comp = stateList.every((v) => v.isSet);
+      if (comp) setComplete(true);
+    }
+  };
   useLayoutEffect(() => {
-    const doSetComplete = () => {
-      if (!complete) {
-        const comp = stateList.every((v) => v.isSet);
-        if (comp) setComplete(true);
-      }
-    };
     doSetComplete();
     if (first.current) {
       setTimeout(() => {
@@ -97,7 +97,6 @@ export default function DataState() {
       {complete ? null : (
         <>
           <div
-            id={loadingElementID}
             className={
               "fixed top-0 w-[100vw] h-[100vh] bg-background-top z-[100] " +
               "flex flex-col items-center justify-center"
@@ -106,9 +105,6 @@ export default function DataState() {
             <span className="text-main text-2xl font-mono">
               よみこみちゅう…
             </span>
-            {first.current && reloadFunction ? (
-              <script dangerouslySetInnerHTML={{ __html: reloadFunction }} />
-            ) : null}
             <img
               className="my-4"
               src="/images/gif/watakaze_icon_background.gif"
@@ -118,6 +114,12 @@ export default function DataState() {
               <p>Javascriptが無効のようです</p>
               <p>有効にすることで見れるようになります🐏</p>
             </noscript>
+            {first.current && reloadFunction ? (
+              <>
+                <script dangerouslySetInnerHTML={{ __html: reloadFunction }} />
+                <div id={loadingCheckID} />
+              </>
+            ) : null}
           </div>
         </>
       )}
