@@ -96,13 +96,13 @@ export default function TopPage() {
             </ul>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-start items-center flex-wrap">
+        <div className="max-w-[90rem] mx-auto flex flex-col lg:flex-row justify-start items-center flex-wrap">
           <Link href="blog" className="mx-2">
             <h3 className="text-3xl">ブログ</h3>
           </Link>
           <PostListWindow
             options={{ where: { title: { not: "" } } }}
-            className="flex-1 text-lg my-4 lg:my-0 flex lg:flex-row flex-col justify-left max-w-md h-32 lg:max-w-max lg:h-auto"
+            className="flex-1 text-lg my-4 lg:my-0 flex lg:flex-row flex-col justify-left max-w-lg h-32 lg:max-w-max lg:h-auto"
           />
         </div>
       </main>
