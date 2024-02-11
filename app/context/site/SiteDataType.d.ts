@@ -5,6 +5,7 @@ type SiteDataType = {
   description: string
   short: { description: string }
   url: string
+  pagesUrl?: string
   image: string
   author: SiteAuthorType
   manifest: any
