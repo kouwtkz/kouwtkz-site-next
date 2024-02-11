@@ -3,6 +3,7 @@
 import React, { HTMLAttributes, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Post } from "../Post";
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 
 interface BackForwardPostProps extends HTMLAttributes<HTMLDivElement> {
   postId: string;
@@ -39,7 +40,7 @@ export default function BackForwardPost({
           router.push(`?postId=${beforePost.postId}`);
         }}
       >
-        ＜
+        <AiFillCaretLeft className="fill-white w-8 h-8 my-1 mx-[0.15rem]" />
       </button>
       <button
         type="button"
@@ -53,7 +54,7 @@ export default function BackForwardPost({
           router.push(`?postId=${afterPost.postId}`);
         }}
       >
-        ＞
+        <AiFillCaretRight className="fill-white w-8 h-8 my-1 mx-[0.35rem]" />
       </button>
     </div>
   );

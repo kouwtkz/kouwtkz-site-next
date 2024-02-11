@@ -6,6 +6,7 @@ import { useServerState } from "@/app/components/System/ServerState";
 import SearchArea from "./SearchArea";
 import { Post } from "../Post";
 import BackForwardPost from "./BackForwardPost";
+import HandsClapButton from "./HandsClapButton";
 
 type props = { postId: string; posts: Post[] };
 
@@ -18,7 +19,11 @@ export default function Main(args: props) {
           <div className="flex flex-row [&>*]:pointer-events-auto">
             <BackForwardPost {...args} />
             <SearchArea />
-            {isServerMode ? <PostButton postId={args.postId} /> : <></>}
+            {isServerMode ? (
+              <PostButton postId={args.postId} />
+            ) : (
+              <HandsClapButton />
+            )}
           </div>
         </div>
       </div>
