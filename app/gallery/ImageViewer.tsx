@@ -21,6 +21,7 @@ import {
   autoFixTagsOptions,
 } from "./tag/GalleryTags";
 import { MakeURL } from "@/app/components/functions/MakeURL";
+import { RiFullscreenFill } from "react-icons/ri";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -341,21 +342,26 @@ export default function ImageViewer() {
             }}
           />
           <div className="window modal z-30 font-KosugiMaru">
-            <div className="preview">
+            <div className="preview relative">
               {image.embed ? (
-                <EmbedNode embed={image.embed} />
+                <EmbedNode className="wh-all-fill" embed={image.embed} />
               ) : (
-                <a
-                  title={image.name || image.src}
-                  href={`${image.URL || image.src}`}
-                  target="_blank"
-                  className="flex items-center flex-auto"
-                >
-                  <ImageMee
-                    imageItem={image}
-                    style={{ objectFit: "contain" }}
-                  />
-                </a>
+                <div className="wh-fill">
+                  <Link
+                    href={`${image.URL || image.src}`}
+                    target="_blank"
+                    className="fullscreen-button"
+                  >
+                    <RiFullscreenFill className="" />
+                  </Link>
+                  <div className="wh-all-fill flex items-center flex-auto">
+                    <ImageMee
+                      imageItem={image}
+                      title={image.name || image.src}
+                      style={{ objectFit: "contain" }}
+                    />
+                  </div>
+                </div>
               )}
             </div>
             {infoCmp(image)}
