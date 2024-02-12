@@ -2,7 +2,11 @@
 
 import React, { MutableRefObject, useLayoutEffect, useRef } from "react";
 import HTMLReactParser, { htmlToDOM } from "html-react-parser";
-import { ChildNode } from "domhandler";
+import {
+  ChildNode,
+  Element as NodeElement,
+  Text as NodeText,
+} from "domhandler";
 import { parse } from "marked";
 import { useRouter } from "next/navigation";
 import twemoji from "twemoji";
@@ -44,7 +48,6 @@ function MultiParser({
   children,
 }: MultiParserProps) {
   const router = useRouter();
-  const parsedRef = useRef() as MutableRefObject<HTMLDivElement>;
   const { imageItemList, isSet: imagesIsSet } = useMediaImageState();
   if (only) {
     markdown = only.markdown === undefined ? false : only.markdown;
@@ -55,28 +58,6 @@ function MultiParser({
     detailsClosable =
       only.detailsClosable === undefined ? false : only.detailsClosable;
   }
-  useLayoutEffect(() => {
-    if (window) {
-      if (detailsOpen) {
-        parsedRef.current
-          .querySelectorAll("details:not([manual]):not([open])")
-          .forEach((details) => details.setAttribute("open", ""));
-      }
-      if (detailsClosable) {
-        parsedRef.current
-          .querySelectorAll("details:not([added-close])")
-          .forEach((details) => {
-            const closeButton = document.createElement("button");
-            closeButton.classList.add("close");
-            closeButton.innerText = "たたむ";
-            closeButton.title = "折りたたむ";
-            closeButton.onclick = () => details.removeAttribute("open");
-            details.appendChild(closeButton);
-            details.setAttribute("added-close", "");
-          });
-      }
-    }
-  });
   if (typeof children === "string") {
     let childString = children;
     if (markdown) childString = parse(childString);
@@ -123,6 +104,24 @@ function MultiParser({
                       e.preventDefault();
                     }) as any;
                   }
+                  break;
+                case "details":
+                  if (detailsOpen && !("manual" in v.attribs))
+                    v.attribs.open = "";
+                  if (detailsClosable)
+                    v.children.push(
+                      new NodeElement(
+                        "button",
+                        {
+                          className: "close",
+                          onClick: ((e: any) => {
+                            e.target.parentElement.removeAttribute("open");
+                          }) as any,
+                          title: "折りたたむ",
+                        },
+                        [new NodeText("たたむ")]
+                      )
+                    );
                   break;
                 case "img":
                   let src = v.attribs.src;
@@ -208,7 +207,7 @@ function MultiParser({
     );
   }
   className = (className ? `${className} ` : "") + parsedClassName;
-  return React.createElement(tag, { className, ref: parsedRef }, children);
+  return React.createElement(tag, { className }, children);
 }
 
 export default MultiParser;
