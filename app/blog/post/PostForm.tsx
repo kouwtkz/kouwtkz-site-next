@@ -3,6 +3,7 @@
 import { Post } from "@/app/blog/Post.d";
 import React, {
   RefCallback,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -51,13 +52,21 @@ const schema = z.object({
 });
 
 export default function PostForm() {
-  const router = useRouter();
   const search = useSearchParams();
-  const duplicationMode = Boolean(search.get("base"));
-  const targetPostId = search.get("target") || search.get("base");
+  const { base, target } = Object.fromEntries(search);
+  const Content = useCallback(
+    () => <Main params={{ base, target }} />,
+    [base, target]
+  );
+  return <Content />;
+}
+
+function Main({ params }: { params: { [k: string]: string | undefined } }) {
+  const router = useRouter();
+  const duplicationMode = Boolean(params.base);
+  const targetPostId = params.target || params.base;
   const { posts, setPostsFromUrl } = usePostState();
   const postsUpdate = useRef(false);
-  const doReset = useRef(postsUpdate.current);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId
     ? findMany({ list: posts, where: { postId: targetPostId }, take: 1 })[0]
@@ -108,13 +117,14 @@ export default function PostForm() {
   const operationRef = useRef<HTMLSelectElement>(null);
 
   const defaultValues: { [k: string]: any } = {
-    update: duplicationMode ? "" : postTarget?.postId,
-    postId: duplicationMode ? undefined : postTarget?.postId,
-    title: postTarget?.title,
-    body: postTarget?.body,
-    date: postTarget?.date
-      .toLocaleString("sv-SE", { timeZone: "JST" })
-      .replace(" ", "T"),
+    update: duplicationMode ? "" : postTarget?.postId || "",
+    postId: duplicationMode ? undefined : postTarget?.postId || "",
+    title: postTarget?.title || "",
+    body: postTarget?.body || "",
+    date:
+      postTarget?.date
+        .toLocaleString("sv-SE", { timeZone: "JST" })
+        .replace(" ", "T") || "",
     pin: Number(postTarget?.pin || 0),
     draft: Boolean(postTarget?.draft),
   };
@@ -123,7 +133,6 @@ export default function PostForm() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
     getValues,
     setValue,
   } = useForm<FieldValues>({
@@ -160,10 +169,6 @@ export default function PostForm() {
   };
 
   useEffect(() => {
-    if (postsUpdate.current && !doReset.current) {
-      doReset.current = true;
-      reset(defaultValues);
-    }
     if (Object.keys(errors).length > 0) {
       toast.error(
         Object.entries(errors)
