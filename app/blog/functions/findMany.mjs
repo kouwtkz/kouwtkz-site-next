@@ -77,6 +77,7 @@ function whereLoop(value, where) {
                   return cval != v;
                 case "contains":
                   if (Array.isArray(cval)) return cval.some(x => x === v);
+                  else if (typeof v === "object" && "test" in v) return v.test(cval);
                   else return String(cval).match(v);
                 case "startsWith":
                   return String(cval).startsWith(v);

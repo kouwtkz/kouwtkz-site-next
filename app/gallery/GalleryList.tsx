@@ -85,7 +85,8 @@ function Main({
 }: GalleryListProps) {
   const { setImageFromUrl } = useMediaImageState();
   const { isServerMode } = useServerState();
-  const { groupImages: albumImages, setGroupImages: setAlbumImages } = useImageViewer();
+  const { groupImages: albumImages, setGroupImages: setAlbumImages } =
+    useImageViewer();
   const refImages = useRef<MediaImageItemType[]>([]);
 
   useEffect(() => {
@@ -185,10 +186,18 @@ function Main({
     ?.split(" ", 3)
     .map((q) => {
       const qs = q.split(":");
-      const key = qs.length > 1 ? qs[0] : "keyword";
-      const value = qs.length > 1 ? qs[1] : qs[0];
-      const option = qs.length > 2 ? qs[2] : undefined;
-      return { key, value, option };
+      if (qs.length === 1 && qs[0].startsWith("#"))
+        return {
+          key: "hashtag",
+          value: qs[0].slice(1),
+          reg: new RegExp(`${qs[0]}(\\s|$)`, "i"),
+        };
+      else {
+        const key = qs.length > 1 ? qs[0] : "keyword";
+        const value = qs.length > 1 ? qs[1] : qs[0];
+        const option = qs.length > 2 ? qs[2] : undefined;
+        return { key, value, option };
+      }
     });
   if (searches) {
     if (hideWhenFilter) return <></>;
@@ -203,17 +212,24 @@ function Main({
         ]
           .concat(image.tags)
           .join(" ");
-        return searches.every(({ key, value, option }) => {
+        return searches.every(({ key, value, option, reg }) => {
           switch (key) {
             case "tag":
-              return image.tags?.some((tag) => {
-                switch (option) {
-                  case "match":
-                    return tag.match(value);
-                  default:
-                    return tag === value;
-                }
-              });
+            case "hashtag":
+              let result = false;
+              if (key === "hashtag" && image.description)
+                result = Boolean(reg?.test(image.description));
+              return (
+                result ||
+                image.tags?.some((tag) => {
+                  switch (option) {
+                    case "match":
+                      return tag.match(value);
+                    default:
+                      return tag === value;
+                  }
+                })
+              );
             case "name":
             case "description":
             case "URL":
