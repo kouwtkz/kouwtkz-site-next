@@ -92,7 +92,7 @@ export default function ImageViewer() {
     toggleEditMode,
     groupImages: albumImages,
   } = useImageViewer();
-  const { imageItemList } = useMediaImageState();
+  const { imageItemList, isSet } = useMediaImageState();
   const { charaList } = useCharaState();
   const search = useSearchParams();
   const pathname = usePathname();
@@ -126,6 +126,7 @@ export default function ImageViewer() {
   });
 
   const image = useMemo(() => {
+    if (!imageParam) return null;
     const albumItemList = albumParam
       ? imageItemList.filter(({ album }) => album?.name === albumParam)
       : imageItemList;
@@ -343,26 +344,31 @@ export default function ImageViewer() {
           />
           <div className="window modal z-30 font-KosugiMaru">
             <div className="preview relative">
-              {image.embed ? (
-                <EmbedNode className="wh-all-fill" embed={image.embed} />
-              ) : (
-                <div className="wh-fill">
-                  <Link
-                    href={`${image.URL || image.src}`}
-                    target="_blank"
-                    className="fullscreen-button"
-                  >
-                    <RiFullscreenFill className="" />
-                  </Link>
-                  <div className="wh-all-fill flex items-center flex-auto">
-                    <ImageMee
-                      imageItem={image}
-                      title={image.name || image.src}
-                      style={{ objectFit: "contain" }}
-                    />
-                  </div>
-                </div>
-              )}
+              {isSet ? (
+                <>
+                  {image.embed ? (
+                    <EmbedNode className="wh-all-fill" embed={image.embed} />
+                  ) : (
+                    <div className="wh-fill">
+                      <Link
+                        title="別タブで画像を開く"
+                        href={`${image.URL || image.src}`}
+                        target="_blank"
+                        className="fullscreen-button"
+                      >
+                        <RiFullscreenFill className="" />
+                      </Link>
+                      <div className="wh-all-fill flex items-center flex-auto">
+                        <ImageMee
+                          imageItem={image}
+                          title={image.name || image.src}
+                          style={{ objectFit: "contain" }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : null}
             </div>
             {infoCmp(image)}
           </div>

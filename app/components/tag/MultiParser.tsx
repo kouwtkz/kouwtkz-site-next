@@ -98,13 +98,32 @@ function MultiParser({
           if ("attribs" in v) {
             if (v.name === "a") {
               const url = v.attribs.href;
-              if (/^http/.test(url)) {
+              if (/^.+:\/\//.test(url)) {
                 v.attribs.target = "_blank";
                 v.attribs.class =
                   (v.attribs.class ? `${v.attribs.class} ` : "") + "external";
               } else {
                 v.attribs.onClick = ((e: any) => {
-                  router.push(url.replace(/\/+$/, ""));
+                  if (url.startsWith("?")) {
+                    const toSearch = Object.fromEntries(
+                      new URLSearchParams(url)
+                    );
+                    const scroll = toSearch.scroll === "true";
+                    if (toSearch.scroll) delete toSearch.scroll;
+                    router.push(
+                      MakeURL({
+                        query: {
+                          ...Object.fromEntries(
+                            new URLSearchParams(location.search)
+                          ),
+                          ...toSearch,
+                        },
+                      }).href,
+                      { scroll }
+                    );
+                  } else {
+                    router.push(MakeURL(url).href);
+                  }
                   e.preventDefault();
                 }) as any;
               }
