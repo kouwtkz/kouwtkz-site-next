@@ -357,6 +357,7 @@ export default function ImageViewer() {
                         href={`${image.URL || image.src}`}
                         target="_blank"
                         className="fullscreen-button"
+                        prefetch={false}
                       >
                         <RiFullscreenFill className="" />
                       </Link>
