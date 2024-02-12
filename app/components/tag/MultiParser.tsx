@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import twemoji from "twemoji";
 import Twemoji from "react-twemoji";
 import { MakeURL } from "../functions/MakeURL";
+import { useMediaImageState } from "@/app/context/image/MediaImageState";
 
 type MultiParserOptions = {
   markdown?: boolean;
@@ -43,6 +44,7 @@ function MultiParser({
 }: MultiParserProps) {
   const router = useRouter();
   const parsedRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const { imageItemList, isSet: imagesIsSet } = useMediaImageState();
   if (only) {
     markdown = only.markdown === undefined ? false : only.markdown;
     toTwemoji = only.toTwemoji === undefined ? false : only.toTwemoji;
@@ -128,9 +130,29 @@ function MultiParser({
                 }) as any;
               }
             } else if (v.name === "img") {
-              const src = v.attribs.src;
+              let src = v.attribs.src;
               if (!/^.+:\/\//.test(src)) {
                 v.attribs.style = "cursor: pointer";
+                if (src.startsWith("?")) {
+                  if (!imagesIsSet) v.attribs.src = "";
+                  else {
+                    const toSearch = Object.fromEntries(
+                      new URLSearchParams(src)
+                    );
+                    if (toSearch.image) {
+                      const imageItem = imageItemList.find(
+                        ({ originName }) => originName === toSearch.image
+                      );
+                      if (imageItem?.URL) {
+                        v.attribs.src = imageItem.URL;
+                        v.attribs.title = imageItem.name;
+                        v.attribs.alt = imageItem.name;
+                        if ("keep" in toSearch) src = v.attribs.src;
+                        else src = toSearch.image;
+                      }
+                    }
+                  }
+                }
                 v.attribs.onClick = ((e: any) => {
                   router.push(
                     MakeURL({

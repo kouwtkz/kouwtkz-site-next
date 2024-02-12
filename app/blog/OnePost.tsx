@@ -2,9 +2,11 @@ import { Post } from "@/app/blog/Post.d";
 import MultiParser from "@/app/components/tag/MultiParser";
 import Link from "next/link";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
+import { useServerState } from "../components/System/ServerState";
 type Props = { post: Post };
 
 export default function OnePost({ post }: Props) {
+  const { isServerMode } = useServerState();
   const formattedDate = post.date ? post.date.toLocaleString("ja", opt) : "";
   return (
     <div className="mx-4 my-6">
@@ -54,9 +56,10 @@ export default function OnePost({ post }: Props) {
           <span className="text-main-grayish">(下書き)</span>
         ) : post.date.getTime() > Date.now() ? (
           <span className="text-main-grayish">(予約)</span>
-        ) : (
-          <></>
-        )}
+        ) : null}
+        {isServerMode ? (
+          <Link href={`/blog/post?target=${post.postId}`}>編集</Link>
+        ) : null}
         {formattedDate ? (
           <Link
             className="text-main-grayish hover:text-main-grayish hover:opacity-70"

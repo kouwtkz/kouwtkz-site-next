@@ -35,6 +35,7 @@ import axios from "axios";
 import { usePostState } from "../PostState";
 import { findMany } from "../functions/findMany.mjs";
 import ReactSelect from "react-select";
+import { useMediaImageState } from "@/app/context/image/MediaImageState";
 
 type labelValues = { label: string; value: string }[];
 
@@ -172,11 +173,13 @@ export default function PostForm() {
       );
     }
   });
+  const { setImageFromUrl } = useMediaImageState();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
     const formData = new FormData();
     let sendEnable = false;
+    let attached = false;
     const append = (name: string, value: string | Blob, sendCheck = true) => {
       formData.append(name, value);
       if (sendCheck && !sendEnable) sendEnable = true;
@@ -199,6 +202,7 @@ export default function PostForm() {
           case "attached":
             for (const _item of Array.from(item) as any[]) {
               append(`${key}[]`, _item);
+              if (!attached) attached = true;
               if (_item.lastModified)
                 append(`${key}_mtime[]`, _item.lastModified);
             }
@@ -222,6 +226,7 @@ export default function PostForm() {
             duration: 2000,
           });
           setPostsFromUrl();
+          if (attached) setImageFromUrl();
           setTimeout(() => {
             if (res.data.postId) {
               router.push(`/blog?postId=${res.data.postId}`);

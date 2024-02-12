@@ -129,9 +129,9 @@ export function setAttached({ inputAttached, textarea }: textareaType & { inputA
   const files = inputAttached.files || [];
   Array.from(files).forEach((file) => {
     const filename = file.name;
-    const uploadname = filename.replaceAll(' ', '_').replace(/[^.]+$/, "webp");
+    const uploadname = filename.replaceAll(' ', '_');
     if (!textarea.value.match(uploadname)) {
-      const value = `\n![${filename.replace(/\.[^.]+$/, '')}](/_media/images/blog/uploads/${uploadname})`;
+      const value = `\n![](?image=${uploadname}&keep)`;
       textarea.setRangeText(value);
       textarea.focus();
     }
