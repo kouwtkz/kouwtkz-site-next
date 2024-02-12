@@ -140,8 +140,8 @@ function MultiParser({
                       new URLSearchParams(src)
                     );
                     if (toSearch.image) {
-                      const imageItem = imageItemList.find(
-                        ({ originName }) => originName === toSearch.image
+                      const imageItem = imageItemList.find(({ originName }) =>
+                        originName?.startsWith(toSearch.image)
                       );
                       if (imageItem?.URL) {
                         v.attribs.src = imageItem.URL;

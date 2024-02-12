@@ -131,7 +131,9 @@ export default function ImageViewer() {
       ? imageItemList.filter(({ album }) => album?.name === albumParam)
       : imageItemList;
     return imageSrc
-      ? albumItemList.find((image) => image.originName === imageParam) || {
+      ? albumItemList.find((image) =>
+          image.originName?.startsWith(imageParam)
+        ) || {
           URL: imageSrc,
           src: imageSrc,
           name: imageSrc,
