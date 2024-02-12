@@ -49,6 +49,9 @@ body,
     .fixed {
       padding-right: var(--scroll-margin) !important;
     }
+    .toast {
+      margin-right: var(--scroll-margin) !important;
+    }
     .fixed .absolute.right-0 {
       right: var(--scroll-margin) !important;
     }

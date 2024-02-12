@@ -3,6 +3,7 @@
 import { Post } from "@/app/blog/Post.d";
 import React, {
   RefCallback,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -35,6 +36,7 @@ import axios from "axios";
 import { usePostState } from "../PostState";
 import { findMany } from "../functions/findMany.mjs";
 import ReactSelect from "react-select";
+import { useMediaImageState } from "@/app/context/image/MediaImageState";
 
 type labelValues = { label: string; value: string }[];
 
@@ -50,13 +52,21 @@ const schema = z.object({
 });
 
 export default function PostForm() {
-  const router = useRouter();
   const search = useSearchParams();
-  const duplicationMode = Boolean(search.get("base"));
-  const targetPostId = search.get("target") || search.get("base");
+  const { base, target } = Object.fromEntries(search);
+  const Content = useCallback(
+    () => <Main params={{ base, target }} />,
+    [base, target]
+  );
+  return <Content />;
+}
+
+function Main({ params }: { params: { [k: string]: string | undefined } }) {
+  const router = useRouter();
+  const duplicationMode = Boolean(params.base);
+  const targetPostId = params.target || params.base;
   const { posts, setPostsFromUrl } = usePostState();
   const postsUpdate = useRef(false);
-  const doReset = useRef(postsUpdate.current);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId
     ? findMany({ list: posts, where: { postId: targetPostId }, take: 1 })[0]
@@ -107,13 +117,14 @@ export default function PostForm() {
   const operationRef = useRef<HTMLSelectElement>(null);
 
   const defaultValues: { [k: string]: any } = {
-    update: duplicationMode ? "" : postTarget?.postId,
-    postId: duplicationMode ? undefined : postTarget?.postId,
-    title: postTarget?.title,
-    body: postTarget?.body,
-    date: postTarget?.date
-      .toLocaleString("sv-SE", { timeZone: "JST" })
-      .replace(" ", "T"),
+    update: duplicationMode ? "" : postTarget?.postId || "",
+    postId: duplicationMode ? undefined : postTarget?.postId || "",
+    title: postTarget?.title || "",
+    body: postTarget?.body || "",
+    date:
+      postTarget?.date
+        .toLocaleString("sv-SE", { timeZone: "JST" })
+        .replace(" ", "T") || "",
     pin: Number(postTarget?.pin || 0),
     draft: Boolean(postTarget?.draft),
   };
@@ -122,7 +133,6 @@ export default function PostForm() {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
     getValues,
     setValue,
   } = useForm<FieldValues>({
@@ -159,10 +169,6 @@ export default function PostForm() {
   };
 
   useEffect(() => {
-    if (postsUpdate.current && !doReset.current) {
-      doReset.current = true;
-      reset(defaultValues);
-    }
     if (Object.keys(errors).length > 0) {
       toast.error(
         Object.entries(errors)
@@ -172,11 +178,13 @@ export default function PostForm() {
       );
     }
   });
+  const { setImageFromUrl } = useMediaImageState();
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
     const formData = new FormData();
     let sendEnable = false;
+    let attached = false;
     const append = (name: string, value: string | Blob, sendCheck = true) => {
       formData.append(name, value);
       if (sendCheck && !sendEnable) sendEnable = true;
@@ -199,6 +207,7 @@ export default function PostForm() {
           case "attached":
             for (const _item of Array.from(item) as any[]) {
               append(`${key}[]`, _item);
+              if (!attached) attached = true;
               if (_item.lastModified)
                 append(`${key}_mtime[]`, _item.lastModified);
             }
@@ -222,6 +231,7 @@ export default function PostForm() {
             duration: 2000,
           });
           setPostsFromUrl();
+          if (attached) setImageFromUrl();
           setTimeout(() => {
             if (res.data.postId) {
               router.push(`/blog?postId=${res.data.postId}`);

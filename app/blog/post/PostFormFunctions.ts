@@ -129,9 +129,9 @@ export function setAttached({ inputAttached, textarea }: textareaType & { inputA
   const files = inputAttached.files || [];
   Array.from(files).forEach((file) => {
     const filename = file.name;
-    const uploadname = filename.replaceAll(' ', '_').replace(/[^.]+$/, "webp");
+    const uploadname = filename.replaceAll(' ', '_');
     if (!textarea.value.match(uploadname)) {
-      const value = `\n![${filename.replace(/\.[^.]+$/, '')}](/_media/images/blog/uploads/${uploadname})`;
+      const value = `\n![](?image=${uploadname}&keep)`;
       textarea.setRangeText(value);
       textarea.focus();
     }
@@ -158,8 +158,7 @@ export function setMedia(
       }
       break;
     case 'gallery':
-      // ここはモーダルモードでもよきかも
-      window.open('/gallery/', 'gallery');
+      window.open('/gallery/', 'gallery', "width=620px,height=720px");
       break;
     case 'link':
       replacePostTextarea({ textarea, before: '[', after: ']()' })
