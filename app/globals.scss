@@ -246,11 +246,15 @@ details {
   }
   > button.close {
     font-size: 0.7em;
-    width: 30em;
+    width: 28em;
+    line-height: 2em;
     min-width: 50%;
     border-radius: 0.5em;
     margin: 0.5em auto 0.5em 0.5em;
-    background-color: var(--main-color-light-grayish);
+    background-color: var(--main-color-grayish);
+    &:hover {
+      background-color: var(--main-color-light-grayish);
+    }
   }
   details {
     margin-left: 1em;
