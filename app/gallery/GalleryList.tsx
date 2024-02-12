@@ -85,7 +85,8 @@ function Main({
 }: GalleryListProps) {
   const { setImageFromUrl } = useMediaImageState();
   const { isServerMode } = useServerState();
-  const { groupImages: albumImages, setGroupImages: setAlbumImages } = useImageViewer();
+  const { groupImages: albumImages, setGroupImages: setAlbumImages } =
+    useImageViewer();
   const refImages = useRef<MediaImageItemType[]>([]);
 
   useEffect(() => {
@@ -185,10 +186,14 @@ function Main({
     ?.split(" ", 3)
     .map((q) => {
       const qs = q.split(":");
-      const key = qs.length > 1 ? qs[0] : "keyword";
-      const value = qs.length > 1 ? qs[1] : qs[0];
-      const option = qs.length > 2 ? qs[2] : undefined;
-      return { key, value, option };
+      if (qs.length === 1 && qs[0].startsWith("#"))
+        return { key: "tag", value: qs[0].slice(1) };
+      else {
+        const key = qs.length > 1 ? qs[0] : "keyword";
+        const value = qs.length > 1 ? qs[1] : qs[0];
+        const option = qs.length > 2 ? qs[2] : undefined;
+        return { key, value, option };
+      }
     });
   if (searches) {
     if (hideWhenFilter) return <></>;
