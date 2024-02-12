@@ -187,7 +187,11 @@ function Main({
     .map((q) => {
       const qs = q.split(":");
       if (qs.length === 1 && qs[0].startsWith("#"))
-        return { key: "tag", value: qs[0].slice(1) };
+        return {
+          key: "hashtag",
+          value: qs[0].slice(1),
+          reg: new RegExp(`${qs[0]}(\\s|$)`, "i"),
+        };
       else {
         const key = qs.length > 1 ? qs[0] : "keyword";
         const value = qs.length > 1 ? qs[1] : qs[0];
@@ -208,17 +212,24 @@ function Main({
         ]
           .concat(image.tags)
           .join(" ");
-        return searches.every(({ key, value, option }) => {
+        return searches.every(({ key, value, option, reg }) => {
           switch (key) {
             case "tag":
-              return image.tags?.some((tag) => {
-                switch (option) {
-                  case "match":
-                    return tag.match(value);
-                  default:
-                    return tag === value;
-                }
-              });
+            case "hashtag":
+              let result = false;
+              if (key === "hashtag" && image.description)
+                result = Boolean(reg?.test(image.description));
+              return (
+                result ||
+                image.tags?.some((tag) => {
+                  switch (option) {
+                    case "match":
+                      return tag.match(value);
+                    default:
+                      return tag === value;
+                  }
+                })
+              );
             case "name":
             case "description":
             case "URL":

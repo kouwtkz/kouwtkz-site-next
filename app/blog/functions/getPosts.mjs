@@ -69,7 +69,7 @@ export default function getPosts({ posts, take, page, common, q = "", pinned = f
  */
 function setWhere(q, options) {
   const hiddenOption = options.hidden || { draft: false }
-    /** @type any[] */
+  /** @type any[] */
   const where = [];
   let OR = false, OR_skip = false;
   const searchArray = q.replace(/^\s+|\s+$/, "").split(/\s+/);
@@ -87,7 +87,7 @@ function setWhere(q, options) {
           }
         }, {
           body: {
-            contains: `#${filterValue}`
+            contains: new RegExp(`#${filterValue}(\\s|$)`, "i")
           }
         }]
       })
