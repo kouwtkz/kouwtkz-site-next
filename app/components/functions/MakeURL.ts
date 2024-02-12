@@ -4,7 +4,8 @@ type TypeUrl = string | UrlObject;
 export function MakeURL(href: TypeUrl) {
   let url = new URL(location.href);
   let { href: _href, query, search: _search, protocol, hostname, port, host, pathname, hash } =
-    typeof href === "string" ? { href } as UrlObject : href;
+    typeof href === "string" ?
+      (href.startsWith("?") ? { query: href } : { href }) as UrlObject : href;
   if (_href && !(query || _search || protocol || hostname || port || host || pathname || hash)) {
     try { url.href = _href; } catch { url.href = url.origin + "/" + _href; }
   } else {

@@ -21,6 +21,7 @@ import {
   autoFixTagsOptions,
 } from "./tag/GalleryTags";
 import { MakeURL } from "@/app/components/functions/MakeURL";
+import { RiFullscreenFill } from "react-icons/ri";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -91,7 +92,7 @@ export default function ImageViewer() {
     toggleEditMode,
     groupImages: albumImages,
   } = useImageViewer();
-  const { imageItemList } = useMediaImageState();
+  const { imageItemList, isSet } = useMediaImageState();
   const { charaList } = useCharaState();
   const search = useSearchParams();
   const pathname = usePathname();
@@ -125,11 +126,16 @@ export default function ImageViewer() {
   });
 
   const image = useMemo(() => {
+    if (!imageParam) return null;
     const albumItemList = albumParam
       ? imageItemList.filter(({ album }) => album?.name === albumParam)
       : imageItemList;
     return imageSrc
-      ? albumItemList.find((image) => image.originName === imageParam) || null
+      ? albumItemList.find((image) => image.originName === imageParam) || {
+          URL: imageSrc,
+          src: imageSrc,
+          name: imageSrc,
+        }
       : null;
   }, [imageItemList, albumParam, imageParam, imageSrc]);
   const albumImageItems = useMemo(
@@ -337,22 +343,32 @@ export default function ImageViewer() {
             }}
           />
           <div className="window modal z-30 font-KosugiMaru">
-            <div className="preview">
-              {image.embed ? (
-                <EmbedNode embed={image.embed} />
-              ) : (
-                <a
-                  title={image.name || image.src}
-                  href={`${image.URL || image.src}`}
-                  target="_blank"
-                  className="flex items-center flex-auto"
-                >
-                  <ImageMee
-                    imageItem={image}
-                    style={{ objectFit: "contain" }}
-                  />
-                </a>
-              )}
+            <div className="preview relative">
+              {isSet ? (
+                <>
+                  {image.embed ? (
+                    <EmbedNode className="wh-all-fill" embed={image.embed} />
+                  ) : (
+                    <div className="wh-fill">
+                      <Link
+                        title="別タブで画像を開く"
+                        href={`${image.URL || image.src}`}
+                        target="_blank"
+                        className="fullscreen-button"
+                      >
+                        <RiFullscreenFill className="" />
+                      </Link>
+                      <div className="wh-all-fill flex items-center flex-auto">
+                        <ImageMee
+                          imageItem={image}
+                          title={image.name || image.src}
+                          style={{ objectFit: "contain" }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : null}
             </div>
             {infoCmp(image)}
           </div>

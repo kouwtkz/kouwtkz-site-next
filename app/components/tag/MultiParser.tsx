@@ -6,6 +6,7 @@ import { parse } from "marked";
 import { useRouter } from "next/navigation";
 import twemoji from "twemoji";
 import Twemoji from "react-twemoji";
+import { MakeURL } from "../functions/MakeURL";
 
 type MultiParserOptions = {
   markdown?: boolean;
@@ -94,17 +95,59 @@ function MultiParser({
     if (toDom) {
       children = HTMLReactParser(childString, {
         replace: (v) => {
-          if ("attribs" in v && v.name === "a") {
-            const url = v.attribs.href;
-            if (/^http/.test(url)) {
-              v.attribs.target = "_blank";
-              v.attribs.class =
-                (v.attribs.class ? `${v.attribs.class} ` : "") + "external";
-            } else {
-              v.attribs.onClick = ((e: any) => {
-                router.push(url.replace(/\/+$/, ""));
-                e.preventDefault();
-              }) as any;
+          if ("attribs" in v) {
+            if (v.name === "a") {
+              const url = v.attribs.href;
+              if (/^.+:\/\//.test(url)) {
+                v.attribs.target = "_blank";
+                v.attribs.class =
+                  (v.attribs.class ? `${v.attribs.class} ` : "") + "external";
+              } else {
+                v.attribs.onClick = ((e: any) => {
+                  if (url.startsWith("?")) {
+                    const toSearch = Object.fromEntries(
+                      new URLSearchParams(url)
+                    );
+                    const scroll = toSearch.scroll === "true";
+                    if (toSearch.scroll) delete toSearch.scroll;
+                    router.push(
+                      MakeURL({
+                        query: {
+                          ...Object.fromEntries(
+                            new URLSearchParams(location.search)
+                          ),
+                          ...toSearch,
+                        },
+                      }).href,
+                      { scroll }
+                    );
+                  } else {
+                    router.push(MakeURL(url).href);
+                  }
+                  e.preventDefault();
+                }) as any;
+              }
+            } else if (v.name === "img") {
+              const src = v.attribs.src;
+              if (!/^.+:\/\//.test(src)) {
+                v.attribs.style = "cursor: pointer";
+                v.attribs.onClick = ((e: any) => {
+                  router.push(
+                    MakeURL({
+                      query: {
+                        ...Object.fromEntries(
+                          new URLSearchParams(location.search)
+                        ),
+                        image: src,
+                      },
+                    }).href,
+                    {
+                      scroll: false,
+                    }
+                  );
+                  e.preventDefault();
+                }) as any;
+              }
             }
           }
           return v;

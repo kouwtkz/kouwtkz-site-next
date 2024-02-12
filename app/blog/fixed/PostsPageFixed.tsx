@@ -5,6 +5,7 @@ import PagingArea from "./PagingArea";
 import SearchArea from "./SearchArea";
 import PostButton from "./PostButton";
 import { useServerState } from "@/app/components/System/ServerState";
+import HandsClapButton from "./HandsClapButton";
 
 type props = { max?: number };
 
@@ -18,7 +19,7 @@ export default function Fixed({ max }: props) {
           <PagingArea max={max} className="pointer-events-auto" />
           <div className="flex flex-row [&>*]:pointer-events-auto">
             <SearchArea />
-            {isServerMode ? <PostButton /> : <></>}
+            {isServerMode ? <PostButton /> : <HandsClapButton />}
           </div>
         </div>
       </div>

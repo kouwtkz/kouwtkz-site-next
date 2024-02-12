@@ -4,6 +4,7 @@ import React, { HTMLAttributes, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
 import { MakeURL } from "@/app/components/functions/MakeURL";
+import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 
 interface PagingAreaProps extends HTMLAttributes<HTMLFormElement> {
   max?: number;
@@ -65,8 +66,9 @@ export default function PagingArea({
     >
       <button
         type="button"
+        title="前のページ"
         className={
-          "mx-2 my-3 w-10 h-10 p-0 text-xl rounded-full bg-main-soft hover:bg-main-pale" +
+          "mx-2 my-3 w-10 h-10 p-0 rounded-full bg-main-soft hover:bg-main-pale" +
           (_min >= p ? " opacity-40" : "")
         }
         disabled={_min >= p}
@@ -79,7 +81,7 @@ export default function PagingArea({
           }
         }}
       >
-        ＜
+        <AiFillCaretLeft className="fill-white w-8 h-8 my-1 mx-[0.15rem]" />
       </button>
       <input
         title="ブログページ"
@@ -93,8 +95,9 @@ export default function PagingArea({
       />
       <button
         type="button"
+        title="次のページ"
         className={
-          "mx-2 my-3 w-10 h-10 text-xl rounded-full p-0 bg-main-soft hover:bg-main-pale" +
+          "mx-2 my-3 w-10 h-10 rounded-full p-0 bg-main-soft hover:bg-main-pale" +
           (_max <= p ? " opacity-40" : "")
         }
         disabled={_max <= p}
@@ -107,7 +110,7 @@ export default function PagingArea({
           }
         }}
       >
-        ＞
+        <AiFillCaretRight className="fill-white w-8 h-8 my-1 mx-[0.35rem]" />
       </button>
     </form>
   );
