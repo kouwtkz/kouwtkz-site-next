@@ -27,6 +27,8 @@ import {
   useForm,
 } from "react-hook-form";
 import { MakeURL } from "../components/functions/MakeURL";
+import { AiFillEdit } from "react-icons/ai";
+import { MdSaveAlt, MdDeleteForever } from "react-icons/md";
 
 interface Props extends HTMLAttributes<HTMLFormElement> {}
 
@@ -253,17 +255,21 @@ export default function ImageEditForm({ className, ...args }: Props) {
         <button
           title="編集"
           type="button"
-          className="ml-2 w-12 h-12 text-2xl rounded-full p-2"
+          className={"mr-2 mb-2 w-12 h-12 text-2xl rounded-full p-0"}
           onClick={toggleEditMode}
         >
-          {editMode ? "✓" : "🖊"}
+          {editMode ? (
+            <MdSaveAlt className="w-7 h-7 mx-[0.6rem]" />
+          ) : (
+            <AiFillEdit className="w-7 h-7 m-[0.55rem]" />
+          )}
         </button>
         {editMode ? (
           <>
             <button
               title="削除"
               type="button"
-              className="plain ml-2 bg-red-400 hover:bg-red-500 w-12 h-12 text-2xl rounded-full p-2"
+              className="plain mr-2 mb-2 bg-red-400 hover:bg-red-500 text-white w-12 h-12 text-2xl rounded-full p-0"
               onClick={async () => {
                 if (confirm("本当に削除しますか？")) {
                   if (image && (await sendUpdate(image, true))) {
@@ -277,7 +283,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
                 }
               }}
             >
-              🗑️
+              <MdDeleteForever className="w-7 h-7 mx-[0.65rem]" />
             </button>
           </>
         ) : null}
