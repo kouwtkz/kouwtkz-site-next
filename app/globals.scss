@@ -186,8 +186,9 @@ a {
 }
 
 .emoji {
-  // width: 1.4em;
-  height: 1.25em;
+  $emoji-size: 1.25em;
+  min-width: $emoji-size;
+  height: $emoji-size;
   display: inline-block;
   vertical-align: -0.12em;
   margin: 0;
