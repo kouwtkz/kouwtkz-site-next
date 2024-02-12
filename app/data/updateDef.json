@@ -19,7 +19,7 @@
   },
   "posts": {
     "json": "/blog/posts.json",
-    "data": "_data/post.json"
+    "data": "_data/post.yaml"
   },
   "embed": {
     "json": "/data/embed.json",

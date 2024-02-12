@@ -5,7 +5,7 @@ import Rss from "rss";
 import getPosts from "./getPosts.mjs";
 import { site } from "../../../app/context/site/SiteData.mjs";
 import { parse } from "marked";
-import { getPostsFromJson } from "../posts.json/fromJson.mjs";
+import { getPostsFromYaml } from "../posts.json/postDataFunction.mjs";
 import twemoji from "twemoji";
 
 const SITE_URL = site.url || "http://localhost";
@@ -17,7 +17,7 @@ export function GetPostsRssOption(rawPosts) {
 }
 
 export function MakeRss() {
-  return GenerateRss(GetPostsRssOption(getPostsFromJson()))
+  return GenerateRss(GetPostsRssOption(getPostsFromYaml()))
 }
 
 /** @param {Post[]} posts  */

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import isStatic from "@/app/components/System/isStatic.mjs";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
-import { getPostsFromJson, setPostsToJson } from "../../posts.json/fromJson.mjs";
+import { getPostsFromYaml, setPostsToYaml } from "../../posts.json/postDataFunction.mjs";
 import { site } from "@/app/context/site/SiteData.mjs";
 import { Post } from "../../Post";
 import { uploadAttached } from "@/app/gallery/send/uploadAttached";
@@ -70,10 +70,10 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // あとでJSON形式の書き出しにする
+  // あとで保存用の書き出しにする
   if (!success) success = Object.keys(data).length > 0;
   if (success) {
-    const posts = getPostsFromJson();
+    const posts = getPostsFromYaml();
     if (update) {
       const updateData = posts.find((post) => post.postId === update);
       if (updateData) {
@@ -81,7 +81,6 @@ export async function POST(req: NextRequest) {
           (updateData as any)[k] = v;
         })
         updateData.updatedAt = new Date();
-        setPostsToJson(posts);
       }
     } else {
       postId = postId || autoPostId();
@@ -92,8 +91,8 @@ export async function POST(req: NextRequest) {
           id: maxId + 1, postId, userId, title: "", body: "", category: [], pin: 0, noindex: false, draft: false, date: now, updatedAt: now, flags: null, memo: null
         } as Post, ...data
       })
-      setPostsToJson(posts);
     }
+    setPostsToYaml(posts);
 
     return NextResponse.json({ postId });
   } else {
@@ -107,10 +106,10 @@ export async function DELETE(req: NextRequest) {
   const data = await req.json();
   const postId = String(data.postId || "");
   if (postId) {
-    const posts = getPostsFromJson();
+    const posts = getPostsFromYaml();
     const deletedPosts = posts.filter(post => post.postId !== postId)
     if (posts.length !== deletedPosts.length) {
-      setPostsToJson(deletedPosts);
+      setPostsToYaml(deletedPosts);
     } else {
       return NextResponse.json({ result: "error", error: "削除済みです" }, { status: 500 });
     }
