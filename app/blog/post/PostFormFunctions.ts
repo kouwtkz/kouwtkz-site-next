@@ -158,8 +158,7 @@ export function setMedia(
       }
       break;
     case 'gallery':
-      // ここはモーダルモードでもよきかも
-      window.open('/gallery/', 'gallery');
+      window.open('/gallery/', 'gallery', "width=620px,height=720px");
       break;
     case 'link':
       replacePostTextarea({ textarea, before: '[', after: ']()' })
