@@ -21,7 +21,7 @@ const SnsList = React.memo(function SnsList({
                 <Link
                   title={sns.title || sns.name}
                   href={sns.url}
-                  target={/^https?:\/\//.test(sns.url) ? "_blank" : ""}
+                  target={/^\w+:\/\//.test(sns.url) ? "_blank" : ""}
                   rel={sns.rel}
                 >
                   <div

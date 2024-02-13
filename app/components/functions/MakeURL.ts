@@ -2,25 +2,27 @@ import type { UrlObject } from 'url';
 type TypeUrl = string | UrlObject;
 
 export function MakeURL(href: TypeUrl) {
-  let url = new URL(location.href);
   let { href: _href, query, search: _search, protocol, hostname, port, host, pathname, hash } =
     typeof href === "string" ?
       (href.startsWith("?") ? { query: href } : { href }) as UrlObject : href;
   if (_href && !(query || _search || protocol || hostname || port || host || pathname || hash)) {
-    try { url.href = _href; } catch { url.href = url.origin + "/" + _href; }
+    const Url = new URL(_href, location.origin + location.pathname);
+    return Url;
   } else {
-    if (protocol) url.protocol = protocol;
-    if (hostname) url.hostname = hostname;
-    if (port) url.port = String(port);
-    if (host) url.host = host;
-    if (hash) url.hash = hash;
+    const Url = new URL(location.href);
+    if (protocol) Url.protocol = protocol;
+    if (hostname) Url.hostname = hostname;
+    if (port) Url.port = String(port);
+    if (host) Url.host = host;
+    if (hash) Url.hash = hash;
     query = query || _search;
     if (query) {
       const search = new URLSearchParams(typeof query === "string" ? query :
         Object.fromEntries(Object.entries(query)
           .map(([k, v]) => [k, String((v !== undefined && v !== null) ? v : "")])));
-      url.search = search.size ? search.toString() : "";
+      Url.search = search.size ? ("?" + Object.entries(Object.fromEntries(search))
+        .map(([a, b]) => b ? `${a}=${b}` : a).join("&")) : "";
     }
+    return Url;
   }
-  return url;
 }
