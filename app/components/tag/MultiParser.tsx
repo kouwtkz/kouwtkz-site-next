@@ -11,8 +11,9 @@ import { parse } from "marked";
 import { useRouter } from "next/navigation";
 import twemoji from "twemoji";
 import Twemoji from "react-twemoji";
-import { MakeURL } from "../functions/MakeURL";
+import { GetUrlFlag, MakeURL, ToURL } from "../functions/MakeURL";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
+import { GetImageItemFromSrc } from "./ImageMee";
 
 type MultiParserOptions = {
   markdown?: boolean;
@@ -122,24 +123,21 @@ function MultiParser({
                   let src = v.attribs.src;
                   if (!/^\w+:\/\//.test(src)) {
                     v.attribs.style = "cursor: pointer";
-                    if (src.startsWith("?")) {
+                    let Url = ToURL(src);
+                    let { pathname: pagenameFlag } = GetUrlFlag(Url);
+                    if (pagenameFlag) {
                       if (!imagesIsSet) v.attribs.src = "";
                       else {
-                        const toSearch = Object.fromEntries(
-                          new URLSearchParams(src)
-                        );
-                        if (toSearch.image) {
-                          const imageItem = imageItemList.find(
-                            ({ originName }) =>
-                              originName?.startsWith(toSearch.image)
-                          );
-                          if (imageItem?.URL) {
-                            v.attribs.src = imageItem.URL;
-                            v.attribs.title = imageItem.name;
-                            v.attribs.alt = imageItem.name;
-                            if ("keep" in toSearch) src = v.attribs.src;
-                            else src = toSearch.image;
-                          }
+                        const toSearch = Object.fromEntries(Url.searchParams);
+                        const imageItem = GetImageItemFromSrc({
+                          query: toSearch,
+                        });
+                        if (imageItem?.URL) {
+                          v.attribs.src = imageItem.URL;
+                          v.attribs.title = imageItem.name;
+                          v.attribs.alt = imageItem.name;
+                          if ("keep" in toSearch) src = v.attribs.src;
+                          else src = toSearch.image;
                         }
                       }
                     }
