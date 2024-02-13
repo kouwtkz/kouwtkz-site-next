@@ -131,7 +131,7 @@ export function setAttached({ inputAttached, textarea }: textareaType & { inputA
     const filename = file.name;
     const uploadname = filename.replaceAll(' ', '_');
     if (!textarea.value.match(uploadname)) {
-      const value = `\n![](?image=${uploadname}&keep)`;
+      const value = `\n![](?image=${uploadname}&pic)`;
       textarea.setRangeText(value);
       textarea.focus();
     }

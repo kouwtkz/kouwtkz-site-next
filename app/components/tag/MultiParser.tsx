@@ -149,6 +149,7 @@ function MultiParser({
                     ) {
                       let src = n.attribs.src;
                       let Url = ToURL(src);
+                      let params: { [k: string]: any } = {};
                       let { pathname: pagenameFlag } = GetUrlFlag(Url);
                       if (pagenameFlag && !/^\w+:\/\//.test(src)) {
                         if (!imagesIsSet) n.attribs.src = "";
@@ -164,8 +165,8 @@ function MultiParser({
                             n.attribs.src = imageItem.URL || "";
                             n.attribs.title = n.attribs.alt || imageItem.name;
                             n.attribs.alt = n.attribs.title;
-                            if ("keep" in toSearch) src = n.attribs.src;
-                            else src = toSearch.image;
+                            if ("pic" in toSearch) params.pic = "";
+                            params.image = toSearch.image;
                           }
                         }
                         a.push(
@@ -177,7 +178,7 @@ function MultiParser({
                                   ...Object.fromEntries(
                                     new URLSearchParams(location.search)
                                   ),
-                                  image: src,
+                                  ...params,
                                 },
                               }).search,
                             },
