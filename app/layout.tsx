@@ -20,6 +20,7 @@ import SoundPlayer from "./sound/SoundPlayer";
 import DataState from "./context/start/DataState";
 import { WithContext, WebSite } from "schema-dts";
 import { Suspense } from "react";
+import { ThemeState } from "./context/ThemeSetter";
 const currentDate = new Date();
 
 export const metadata: Metadata = {
@@ -68,6 +69,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <ThemeState />
         <ToasterContext />
         <ClientSetup />
         <EmbedSync />

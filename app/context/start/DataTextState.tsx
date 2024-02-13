@@ -34,13 +34,11 @@ export const useDataTextState = create<DataTextStateType>((set) => ({
 export default function DataTextState({ url }: { url: string }) {
   const { dataSet } = useDataTextState();
   const isSet = useRef(false);
-  const [cookies] = useCookies(["theme"]);
   useEffect(() => {
     if (!isSet.current) {
       axios(url).then((r) => {
         dataSet(r.data);
       });
-      if (cookies.theme) document?.documentElement.classList.add(cookies.theme);
       isSet.current = true;
     }
   });

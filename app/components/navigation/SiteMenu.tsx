@@ -9,8 +9,7 @@ import {
 import MenuButton from "@/app/components/svg/button/MenuButton";
 import { create } from "zustand";
 import { useSiteState } from "@/app/context/site/SiteState";
-import { useCookies } from "react-cookie";
-import ThemeSetter from "./ThemeSetter";
+import { ThemeChangeButton } from "@/app/context/ThemeSetter";
 
 type SiteMenuStateType = {
   isOpen: boolean;
@@ -60,9 +59,9 @@ const SetSiteMenu = React.memo(function SiteMenu({
           switch (item.switch) {
             case "theme":
               return (
-                <ThemeSetter key={i} className={className}>
+                <ThemeChangeButton key={i} className={className}>
                   {item.name}
-                </ThemeSetter>
+                </ThemeChangeButton>
               );
           }
         }

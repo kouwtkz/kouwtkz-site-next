@@ -33,6 +33,20 @@
   --background-bottom: #fff1e4;
 }
 
+:root.theme-aqua {
+  --main-color: #53c3dd;
+  --main-color-soft: #6ed5ed;
+  --main-color-pale: #a9e9f7;
+  --main-color-fluo: #47b7d040;
+  --main-color-pale-fluo: #a9e9f740;
+  --main-color-strong: #43beda;
+  --main-color-deep: #32b2ce;
+  --main-color-dark: #2ea3be;
+  --text-color: #1d2227;
+  --background-top: #e3fff8;
+  --background-bottom: #d2f5f3;
+}
+
 :root {
   --play-background-color-top: #ecfffe;
   --play-background-color-bottom: #f4ffd1;
