@@ -72,32 +72,27 @@ function MultiParser({
                 case "a":
                   currentTag = v.name;
                   const url = v.attribs.href;
-                  if (/^.+:\/\//.test(url)) {
+                  if (/^\w+:\/\//.test(url)) {
                     v.attribs.target = "_blank";
                     v.attribs.class =
                       (v.attribs.class ? `${v.attribs.class} ` : "") +
                       "external";
                   } else {
                     v.attribs.onClick = ((e: any) => {
-                      if (url.startsWith("?")) {
-                        const { searchParams, hash } = new URL(
-                          location.origin + location.pathname + url
-                        );
-                        const toSearch = Object.fromEntries(searchParams);
-                        const scroll = toSearch.scroll === "true";
-                        if (toSearch.scroll) delete toSearch.scroll;
-                        router.push(
-                          MakeURL({
-                            query: {
-                              ...Object.fromEntries(
-                                new URLSearchParams(location.search)
-                              ),
-                              ...toSearch,
-                            },
-                            hash,
-                          }).href,
-                          { scroll }
-                        );
+                      const queryFlag = url.startsWith("?");
+                      let query = queryFlag
+                        ? Object.fromEntries(new URLSearchParams(url))
+                        : {};
+                      if (queryFlag) {
+                        const scroll = query.scroll === "true";
+                        if (query.scroll) delete query.scroll;
+                        query = {
+                          ...query,
+                          ...Object.fromEntries(
+                            new URLSearchParams(location.search)
+                          ),
+                        };
+                        router.push(MakeURL({ query }).href, { scroll });
                       } else {
                         router.push(MakeURL(url).href);
                       }
@@ -125,7 +120,7 @@ function MultiParser({
                   break;
                 case "img":
                   let src = v.attribs.src;
-                  if (!/^.+:\/\//.test(src)) {
+                  if (!/^\w+:\/\//.test(src)) {
                     v.attribs.style = "cursor: pointer";
                     if (src.startsWith("?")) {
                       if (!imagesIsSet) v.attribs.src = "";
