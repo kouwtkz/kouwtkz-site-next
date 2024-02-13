@@ -65,7 +65,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const router = useRouter();
   const duplicationMode = Boolean(params.base);
   const targetPostId = params.target || params.base;
-  const { posts, setPostsFromUrl } = usePostState();
+  const { posts, setPostsFromUrl, isSet } = usePostState();
   const postsUpdate = useRef(false);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId
@@ -135,10 +135,22 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     formState: { errors },
     getValues,
     setValue,
+    reset,
   } = useForm<FieldValues>({
     defaultValues,
     resolver: zodResolver(schema),
   });
+
+  const firstCheck = useRef({ start: true, fix: false });
+  if (firstCheck.current.start) {
+    firstCheck.current.start = false;
+    if (!isSet) firstCheck.current.fix = true;
+  } else if (firstCheck.current.fix) {
+    if (isSet) {
+      reset(defaultValues);
+      firstCheck.current.fix = false;
+    }
+  }
 
   const onChangePostId = () => {
     const answer = prompt("記事のID名の変更", getValues("postId"));

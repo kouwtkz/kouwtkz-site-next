@@ -45,7 +45,7 @@ export default function PostTextarea({
       firstCheckMode.current = false;
     }
   });
-  const bodyClass = "mx-auto w-[85%] max-w-2xl min-h-[12rem] p-2 text-start";
+  const bodyClass = "mx-auto w-[85%] max-w-2xl min-h-[24em] p-2 text-start";
   return (
     <>
       <textarea
