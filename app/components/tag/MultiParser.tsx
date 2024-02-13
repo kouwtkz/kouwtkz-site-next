@@ -87,10 +87,10 @@ function MultiParser({
                         const scroll = query.scroll === "true";
                         if (query.scroll) delete query.scroll;
                         query = {
-                          ...query,
                           ...Object.fromEntries(
                             new URLSearchParams(location.search)
                           ),
+                          ...query,
                         };
                         router.push(MakeURL({ query }).href, { scroll });
                       } else {
