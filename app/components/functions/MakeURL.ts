@@ -6,7 +6,7 @@ export function MakeURL(href: TypeUrl) {
     typeof href === "string" ?
       (href.startsWith("?") ? { query: href } : { href }) as UrlObject : href;
   if (_href && !(query || _search || protocol || hostname || port || host || pathname || hash)) {
-    const Url = new URL(_href, location.origin + location.pathname);
+    const Url = new URL(_href, location.href);
     return Url;
   } else {
     const Url = new URL(location.href);
@@ -25,4 +25,18 @@ export function MakeURL(href: TypeUrl) {
     }
     return Url;
   }
+}
+
+export function ToURL(src: string | UrlObject | URL) {
+  return typeof src === "string"
+    ? new URL(src, location.href)
+    : "searchParams" in src
+      ? src
+      : MakeURL(src)
+}
+
+export function GetUrlFlag(Url: URL) {
+  const host = location.origin === Url.origin;
+  const pathname = host && location.pathname === Url.pathname;
+  return { host, pathname };
 }

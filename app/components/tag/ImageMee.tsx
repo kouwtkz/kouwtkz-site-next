@@ -4,6 +4,9 @@
 import React, { useMemo, useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
+import { useMediaImageState } from "@/app/context/image/MediaImageState";
+import { UrlObject } from "url";
+import { GetUrlFlag, ToURL } from "../functions/MakeURL";
 const blankImage =
   "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
@@ -146,4 +149,40 @@ export function ImageMeeIcon({ size, ...args }: ImageMeeSimpleProps) {
 }
 export function ImageMeeThumbnail({ size, ...args }: ImageMeeSimpleProps) {
   return ImageMee({ ...args, mode: "thumbnail" });
+}
+
+export function GetImageItemFromSrc(src: string | UrlObject | URL) {
+  let { isSet, imageItemList } = useMediaImageState();
+  if (!isSet) return null;
+  const Url = ToURL(src);
+  const { host: hostFlag, pathname: pagenameFlag } = GetUrlFlag(Url);
+  if (pagenameFlag) {
+    const toSearch = Object.fromEntries(Url.searchParams);
+    if ("image" in toSearch) {
+      if (toSearch.dir)
+        imageItemList = imageItemList.filter(
+          (item) => item.dir === toSearch.dir
+        );
+      if (toSearch.album)
+        imageItemList = imageItemList.filter(
+          (item) => item.album?.name === toSearch.album
+        );
+      return imageItemList.find(({ originName }) =>
+        originName?.startsWith(toSearch.image)
+      );
+    } else return null;
+  } else if (hostFlag) {
+    const _pathname = decodeURI(Url.pathname);
+    return imageItemList.find((image) => image.URL?.match(_pathname));
+  } else return null;
+}
+
+export function GetImageURLFromSrc(src: string | UrlObject) {
+  const Url = ToURL(src);
+  const { pathname: pagenameFlag } = GetUrlFlag(Url);
+  const url = Url.href;
+  const imageItem = GetImageItemFromSrc(url);
+  if (imageItem) return imageItem.URL;
+  if (pagenameFlag) return "";
+  else return url;
 }
