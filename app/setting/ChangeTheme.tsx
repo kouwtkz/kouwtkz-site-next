@@ -1,13 +1,18 @@
 "use client";
 import React from "react";
-import ThemeSetter from "../components/navigation/ThemeSetter";
+import { useThemeState } from "@/app/context/ThemeSetter";
 
 export function ChangeThemeButton() {
+  const { next } = useThemeState();
   return (
     <>
-      <ThemeSetter className="button cursor-pointer text-2xl bg-main rounded-lg px-4 py-2">
+      <button
+        type="button"
+        onClick={next}
+        className="cursor-pointer text-2xl bg-main rounded-lg px-4 py-2"
+      >
         テーマきりかえ
-      </ThemeSetter>
+      </button>
     </>
   );
 }
