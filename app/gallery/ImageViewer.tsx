@@ -95,9 +95,10 @@ export default function ImageViewer() {
   const { imageItemList, isSet } = useMediaImageState();
   const { charaList } = useCharaState();
   const search = useSearchParams();
+  const query = Object.fromEntries(search);
   const pathname = usePathname();
-  const imageParam = search.get("image");
-  const albumParam = search.get("album");
+  const imageParam = query.image;
+  const albumParam = query.album;
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
 
@@ -106,9 +107,9 @@ export default function ImageViewer() {
     const href = location.href;
     setTimeout(() => {
       if (href === location.href) {
-        const query = Object.fromEntries(search);
         delete query.image;
-        router.push(MakeURL(query).href, { scroll: false });
+        delete query.pic;
+        router.push(MakeURL({ query }).href, { scroll: false });
       }
     }, 10);
   };
@@ -335,45 +336,47 @@ export default function ImageViewer() {
           }}
           className="viewer"
         >
-          <CloseButton
-            className="close"
-            width={60}
-            height={60}
-            onClick={(e) => {
-              backAction();
-              e.stopPropagation();
-            }}
-          />
-          <div className="window modal z-30 font-KosugiMaru">
-            <div className="preview relative">
-              {isSet ? (
-                <>
-                  {image.embed ? (
-                    <EmbedNode className="wh-all-fill" embed={image.embed} />
-                  ) : (
-                    <div className="wh-fill">
-                      <Link
-                        title="別タブで画像を開く"
-                        href={`${image.URL || image.src}`}
-                        target="_blank"
-                        className="fullscreen-button"
-                        prefetch={false}
-                      >
-                        <RiFullscreenFill className="" />
-                      </Link>
-                      <div className="wh-all-fill flex items-center flex-auto">
-                        <ImageMee
-                          imageItem={image}
-                          title={image.name || image.src}
-                          style={{ objectFit: "contain" }}
-                        />
+          <div>
+            <CloseButton
+              className="close"
+              width={60}
+              height={60}
+              onClick={(e) => {
+                backAction();
+                e.stopPropagation();
+              }}
+            />
+            <div className="window modal font-KosugiMaru">
+              <div className="preview relative">
+                {isSet ? (
+                  <>
+                    {image.embed ? (
+                      <EmbedNode className="wh-all-fill" embed={image.embed} />
+                    ) : (
+                      <div className="wh-fill">
+                        <Link
+                          title="別タブで画像を開く"
+                          href={`${image.URL || image.src}`}
+                          target="_blank"
+                          className="fullscreen-button"
+                          prefetch={false}
+                        >
+                          <RiFullscreenFill className="" />
+                        </Link>
+                        <div className="wh-all-fill flex items-center flex-auto">
+                          <ImageMee
+                            imageItem={image}
+                            title={image.name || image.src}
+                            style={{ objectFit: "contain" }}
+                          />
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </>
-              ) : null}
+                    )}
+                  </>
+                ) : null}
+              </div>
+              {"pic" in query ? null : infoCmp(image)}
             </div>
-            {infoCmp(image)}
           </div>
         </div>
       ) : (
