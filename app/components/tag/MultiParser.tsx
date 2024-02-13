@@ -71,34 +71,36 @@ function MultiParser({
             case "tag":
               switch (v.name) {
                 case "a":
-                  currentTag = v.name;
-                  const url = v.attribs.href;
-                  if (/^\w+:\/\//.test(url)) {
-                    v.attribs.target = "_blank";
-                    v.attribs.class =
-                      (v.attribs.class ? `${v.attribs.class} ` : "") +
-                      "external";
-                  } else {
-                    v.attribs.onClick = ((e: any) => {
-                      const queryFlag = url.startsWith("?");
-                      let query = queryFlag
-                        ? Object.fromEntries(new URLSearchParams(url))
-                        : {};
-                      if (queryFlag) {
-                        const scroll = query.scroll === "true";
-                        if (query.scroll) delete query.scroll;
-                        query = {
-                          ...Object.fromEntries(
-                            new URLSearchParams(location.search)
-                          ),
-                          ...query,
-                        };
-                        router.push(MakeURL({ query }).href, { scroll });
-                      } else {
-                        router.push(MakeURL(url).href);
-                      }
-                      e.preventDefault();
-                    }) as any;
+                  if (linkPush) {
+                    currentTag = v.name;
+                    const url = v.attribs.href;
+                    if (/^\w+:\/\//.test(url)) {
+                      v.attribs.target = "_blank";
+                      v.attribs.class =
+                        (v.attribs.class ? `${v.attribs.class} ` : "") +
+                        "external";
+                    } else {
+                      v.attribs.onClick = ((e: any) => {
+                        const queryFlag = url.startsWith("?");
+                        let query = queryFlag
+                          ? Object.fromEntries(new URLSearchParams(url))
+                          : {};
+                        if (queryFlag) {
+                          const scroll = query.scroll === "true";
+                          if (query.scroll) delete query.scroll;
+                          query = {
+                            ...Object.fromEntries(
+                              new URLSearchParams(location.search)
+                            ),
+                            ...query,
+                          };
+                          router.push(MakeURL({ query }).href, { scroll });
+                        } else {
+                          router.push(MakeURL(url).href);
+                        }
+                        e.preventDefault();
+                      }) as any;
+                    }
                   }
                   break;
                 case "details":
@@ -119,76 +121,76 @@ function MultiParser({
                       )
                     );
                   break;
-                case "img":
-                  let src = v.attribs.src;
-                  if (!/^\w+:\/\//.test(src)) {
-                    v.attribs.style = "cursor: pointer";
-                    let Url = ToURL(src);
-                    let { pathname: pagenameFlag } = GetUrlFlag(Url);
-                    if (pagenameFlag) {
-                      if (!imagesIsSet) v.attribs.src = "";
-                      else {
-                        const toSearch = Object.fromEntries(Url.searchParams);
-                        const imageItem = imagesIsSet
-                          ? GetImageItemFromSrc({
-                              src: { query: toSearch },
-                              list: imageItemList,
-                            })
-                          : null;
-                        if (imageItem) {
-                          v.attribs.src = imageItem.URL || "";
-                          v.attribs.title = imageItem.name;
-                          v.attribs.alt = imageItem.name;
-                          if ("keep" in toSearch) src = v.attribs.src;
-                          else src = toSearch.image;
+                default:
+                  if (!(hashtag || linkPush)) return;
+                  const newChildren = v.children.reduce((a, n) => {
+                    if (hashtag && n.type === "text") {
+                      if (!/^a$/.test(currentTag) && !/^\s*$/.test(n.data)) {
+                        const replaced = n.data.replace(
+                          /(^|\s?)(#[^\s#]+)/g,
+                          (m, m1, m2) => {
+                            const Url = MakeURL({
+                              query: { q: m2 },
+                            });
+                            return `${m1}<a href="${
+                              Url.pathname + Url.search
+                            }">${m2}</a>`;
+                          }
+                        );
+                        if (n.data !== replaced) {
+                          htmlToDOM(replaced).forEach((n) => a.push(n));
+                          return a;
                         }
                       }
-                    }
-                    v.attribs.onClick = ((e: any) => {
-                      router.push(
-                        MakeURL({
-                          query: {
-                            ...Object.fromEntries(
-                              new URLSearchParams(location.search)
-                            ),
-                            image: src,
-                          },
-                        }).href,
-                        {
-                          scroll: false,
-                        }
-                      );
-                      e.preventDefault();
-                    }) as any;
-                  }
-                  break;
-                default:
-                  if (hashtag) {
-                    const newChildren = v.children.reduce((a, n) => {
-                      if (n.type === "text") {
-                        if (!/^a$/.test(currentTag) && !/^\s*$/.test(n.data)) {
-                          const replaced = n.data.replace(
-                            /(^|\s?)(#[^\s#]+)/g,
-                            (m, m1, m2) => {
-                              const Url = MakeURL({
-                                query: { q: m2 },
-                              });
-                              return `${m1}<a href="${
-                                Url.pathname + Url.search
-                              }">${m2}</a>`;
-                            }
-                          );
-                          if (n.data !== replaced) {
-                            htmlToDOM(replaced).forEach((n) => a.push(n));
-                            return a;
+                    } else if (
+                      linkPush &&
+                      n.type === "tag" &&
+                      n.name === "img"
+                    ) {
+                      let src = n.attribs.src;
+                      let Url = ToURL(src);
+                      let { pathname: pagenameFlag } = GetUrlFlag(Url);
+                      if (pagenameFlag && !/^\w+:\/\//.test(src)) {
+                        if (!imagesIsSet) n.attribs.src = "";
+                        else {
+                          const toSearch = Object.fromEntries(Url.searchParams);
+                          const imageItem = imagesIsSet
+                            ? GetImageItemFromSrc({
+                                src: { query: toSearch },
+                                list: imageItemList,
+                              })
+                            : null;
+                          if (imageItem) {
+                            n.attribs.src = imageItem.URL || "";
+                            n.attribs.title = n.attribs.alt || imageItem.name;
+                            n.attribs.alt = n.attribs.title;
+                            if ("keep" in toSearch) src = n.attribs.src;
+                            else src = toSearch.image;
                           }
                         }
+                        a.push(
+                          new NodeElement(
+                            "a",
+                            {
+                              href: MakeURL({
+                                query: {
+                                  ...Object.fromEntries(
+                                    new URLSearchParams(location.search)
+                                  ),
+                                  image: src,
+                                },
+                              }).search,
+                            },
+                            [n]
+                          )
+                        );
+                        return a;
                       }
-                      a.push(n);
-                      return a;
-                    }, [] as ChildNode[]);
-                    v.children = newChildren;
-                  }
+                    }
+                    a.push(n);
+                    return a;
+                  }, [] as ChildNode[]);
+                  v.children = newChildren;
                   break;
               }
           }
