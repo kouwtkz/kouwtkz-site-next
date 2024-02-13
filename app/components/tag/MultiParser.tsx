@@ -129,11 +129,14 @@ function MultiParser({
                       if (!imagesIsSet) v.attribs.src = "";
                       else {
                         const toSearch = Object.fromEntries(Url.searchParams);
-                        const imageItem = GetImageItemFromSrc({
-                          query: toSearch,
-                        });
-                        if (imageItem?.URL) {
-                          v.attribs.src = imageItem.URL;
+                        const imageItem = imagesIsSet
+                          ? GetImageItemFromSrc({
+                              src: { query: toSearch },
+                              list: imageItemList,
+                            })
+                          : null;
+                        if (imageItem) {
+                          v.attribs.src = imageItem.URL || "";
                           v.attribs.title = imageItem.name;
                           v.attribs.alt = imageItem.name;
                           if ("keep" in toSearch) src = v.attribs.src;

@@ -4,7 +4,6 @@
 import React, { useMemo, useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
-import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { UrlObject } from "url";
 import { GetUrlFlag, ToURL } from "../functions/MakeURL";
 const blankImage =
@@ -151,37 +150,34 @@ export function ImageMeeThumbnail({ size, ...args }: ImageMeeSimpleProps) {
   return ImageMee({ ...args, mode: "thumbnail" });
 }
 
-export function GetImageItemFromSrc(src: string | UrlObject | URL) {
-  let { isSet, imageItemList } = useMediaImageState();
-  if (!isSet) return null;
+interface GetImageItemFromSrcProps {
+  src: string | UrlObject | URL;
+  list: MediaImageItemType[];
+}
+export function GetImageItemFromSrc({ src, list }: GetImageItemFromSrcProps) {
   const Url = ToURL(src);
   const { host: hostFlag, pathname: pagenameFlag } = GetUrlFlag(Url);
   if (pagenameFlag) {
     const toSearch = Object.fromEntries(Url.searchParams);
     if ("image" in toSearch) {
-      if (toSearch.dir)
-        imageItemList = imageItemList.filter(
-          (item) => item.dir === toSearch.dir
-        );
+      if (toSearch.dir) list = list.filter((item) => item.dir === toSearch.dir);
       if (toSearch.album)
-        imageItemList = imageItemList.filter(
-          (item) => item.album?.name === toSearch.album
-        );
-      return imageItemList.find(({ originName }) =>
+        list = list.filter((item) => item.album?.name === toSearch.album);
+      return list.find(({ originName }) =>
         originName?.startsWith(toSearch.image)
       );
     } else return null;
   } else if (hostFlag) {
     const _pathname = decodeURI(Url.pathname);
-    return imageItemList.find((image) => image.URL?.match(_pathname));
+    return list.find((image) => image.URL?.match(_pathname));
   } else return null;
 }
 
-export function GetImageURLFromSrc(src: string | UrlObject) {
+export function GetImageURLFromSrc({ src, list }: GetImageItemFromSrcProps) {
   const Url = ToURL(src);
   const { pathname: pagenameFlag } = GetUrlFlag(Url);
   const url = Url.href;
-  const imageItem = GetImageItemFromSrc(url);
+  const imageItem = GetImageItemFromSrc({ src: url, list });
   if (imageItem) return imageItem.URL;
   if (pagenameFlag) return "";
   else return url;
