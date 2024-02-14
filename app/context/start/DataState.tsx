@@ -18,7 +18,7 @@ import { useLayoutEffect, useRef } from "react";
 const loadingCheckID = "Element_DateState_Loading_NotEnd";
 const reloadFunction =
   process.env.NODE_ENV === "development"
-    ? `setTimeout(() => {if (document.getElementById("${loadingCheckID}")) location.reload()}, 3000)`
+    ? `setTimeout(() => {if (document.getElementById("${loadingCheckID}")) location.reload()}, 5000)`
     : "";
 
 function addMdate(url: string, values: { [k: string]: any }) {

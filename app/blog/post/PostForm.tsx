@@ -1,6 +1,5 @@
 "use client";
 
-import { Post } from "@/app/blog/Post.d";
 import React, {
   RefCallback,
   useCallback,
@@ -36,6 +35,11 @@ import { usePostState } from "../PostState";
 import { findMany } from "../functions/findMany.mjs";
 import ReactSelect from "react-select";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
+import {
+  backupStorageKey,
+  getLocalDraft,
+  useLocalDraftPost,
+} from "./postLocalDraft";
 
 type labelValues = { label: string; value: string }[];
 
@@ -52,12 +56,18 @@ const schema = z.object({
 
 export default function PostForm() {
   const search = useSearchParams();
-  const { base, target } = Object.fromEntries(search);
-  const Content = useCallback(
-    () => <Main params={{ base, target }} />,
-    [base, target]
-  );
+  const params = Object.fromEntries(search);
+  const Content = useCallback(() => <Main params={{ ...params }} />, [params]);
   return <Content />;
+}
+
+function dateJISOfromLocaltime(item?: string) {
+  return item ? new Date(`${item}+09:00`).toISOString() : "";
+}
+function dateJISOfromDate(date?: Date) {
+  return (
+    date?.toLocaleString("sv-SE", { timeZone: "JST" }).replace(" ", "T") || ""
+  );
 }
 
 function Main({ params }: { params: { [k: string]: string | undefined } }) {
@@ -65,6 +75,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const duplicationMode = Boolean(params.base);
   const targetPostId = params.target || params.base;
   const { posts, setPostsFromUrl, isSet } = usePostState();
+  const { removeLocalDraft } = useLocalDraftPost();
   const postsUpdate = useRef(false);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId
@@ -72,19 +83,27 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     : null;
   const updateMode = postTarget && !duplicationMode;
 
-  const categoryCount = posts.reduce((prev, cur) => {
-    const categories = cur.category;
-    categories.forEach((category) => {
-      if (category) prev[category] = (prev[category] || 0) + 1;
-    });
-    return prev;
-  }, {} as { [K: string]: number });
-  const [categoryList, setCategoryList] = useState<labelValues>(
-    Object.entries(categoryCount).map(([name, count]) => ({
+  const categoryCount = useMemo(
+    () =>
+      posts.reduce((prev, cur) => {
+        const categories = cur.category;
+        categories?.forEach((category) => {
+          if (category) prev[category] = (prev[category] || 0) + 1;
+        });
+        return prev;
+      }, {} as { [K: string]: number }),
+    [posts]
+  );
+  const getCategoryLabelValues = useCallback(() => {
+    return Object.entries(categoryCount).map(([name, count]) => ({
       label: `${name} (${count})`,
       value: name,
-    }))
+    }));
+  }, [categoryCount]);
+  const [categoryList, setCategoryList] = useState<labelValues>(
+    getCategoryLabelValues()
   );
+
   const postCategories = useMemo(
     () =>
       postTarget
@@ -115,10 +134,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
       title: postTarget?.title || "",
       body: postTarget?.body || "",
       category: postCategories,
-      date:
-        postTarget?.date
-          .toLocaleString("sv-SE", { timeZone: "JST" })
-          .replace(" ", "T") || "",
+      date: dateJISOfromDate(postTarget?.date),
       pin: Number(postTarget?.pin || 0),
       draft: Boolean(postTarget?.draft),
     }),
@@ -128,7 +144,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitted, isSubmitting },
     getValues,
     setValue,
     reset,
@@ -138,18 +154,27 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     resolver: zodResolver(schema),
   });
 
-  const firstCheck = useRef({ start: true, fix: false });
   useEffect(() => {
-    if (firstCheck.current.start) {
-      firstCheck.current.start = false;
-      if (!isSet) firstCheck.current.fix = true;
-    } else if (firstCheck.current.fix) {
-      if (isSet) {
-        reset(defaultValues);
-        firstCheck.current.fix = false;
-      }
+    if ("draft" in params) {
+      const draft = getLocalDraft() || {};
+      reset({ ...defaultValues, ...draft, date: dateJISOfromDate(draft.date) });
+    } else {
+      reset(defaultValues);
     }
-  }, [defaultValues, isSet, reset]);
+  }, [reset, defaultValues, params]);
+
+  const refIsSubmitted = useRef(false);
+  useEffect(() => {
+    return () => {
+      if (isDirty && !isSubmitted && !refIsSubmitted.current) {
+        const values = getValues();
+        values.date = dateJISOfromLocaltime(values.date);
+        localStorage.setItem(backupStorageKey, JSON.stringify(values));
+      } else if (isSubmitted && refIsSubmitted.current) {
+        removeLocalDraft();
+      }
+    };
+  }, [isDirty, isSubmitted, getValues, removeLocalDraft]);
 
   const onChangePostId = () => {
     const answer = prompt("記事のID名の変更", getValues("postId"));
@@ -174,7 +199,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         .then((r) => {
           toast("削除しました", { duration: 2000 });
           setPostsFromUrl();
-          router.push("/blog");
+          router.replace("/blog");
         });
     }
   };
@@ -190,73 +215,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     }
   });
   const { setImageFromUrl } = useMediaImageState();
-
-  const onSubmit: SubmitHandler<FieldValues> = async () => {
-    const formData = new FormData();
-    let sendEnable = false;
-    let attached = false;
-    let data = getValues();
-    const append = (name: string, value: string | Blob, sendCheck = true) => {
-      formData.append(name, value);
-      if (sendCheck && !sendEnable) sendEnable = true;
-    };
-
-    try {
-      Object.entries(data).forEach(([key, item]) => {
-        const defaultItem = (defaultValues as { [k: string]: any })[key];
-        switch (key) {
-          case "postId":
-            append(key, item, item !== defaultItem);
-            break;
-          case "update":
-            append(key, item, false);
-            break;
-          case "date":
-            if (item !== defaultItem)
-              append(key, item ? new Date(`${item}+09:00`).toISOString() : "");
-            break;
-          case "category":
-            const value = item.join(",");
-            if (postCategories.join(",") !== value) append(key, value);
-            break;
-          case "attached":
-            for (const _item of Array.from(item) as any[]) {
-              append(`${key}[]`, _item);
-              if (!attached) attached = true;
-              if (_item.lastModified)
-                append(`${key}_mtime[]`, _item.lastModified);
-            }
-            break;
-          default:
-            if (item !== defaultItem && !(item === "" && !defaultItem))
-              append(key, item);
-            break;
-        }
-      });
-      if (sendEnable) {
-        const res = await axios.post("post/send", formData);
-        if (res.status === 200) {
-          toast(updateMode ? "更新しました" : "投稿しました", {
-            duration: 2000,
-          });
-          setPostsFromUrl();
-          if (attached) setImageFromUrl();
-          setTimeout(() => {
-            if (res.data.postId) {
-              router.push(`/blog?postId=${res.data.postId}`);
-            } else {
-              router.push(`/blog`);
-            }
-          }, 50);
-        }
-      } else {
-        toast.error("更新するデータがありませんでした", { duration: 2000 });
-      }
-    } catch (error) {
-      toast.error("エラーが発生しました", { duration: 2000 });
-      console.error(error);
-    }
-  };
 
   useHotkeys("b", () => router.back());
 
@@ -332,6 +290,81 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     ),
     [categoryList, control]
   );
+
+  const onSubmit: SubmitHandler<FieldValues> = useCallback(async () => {
+    const formData = new FormData();
+    let sendEnable = false;
+    let attached = false;
+    let data = getValues();
+    const append = (name: string, value: string | Blob, sendCheck = true) => {
+      formData.append(name, value);
+      if (sendCheck && !sendEnable) sendEnable = true;
+    };
+
+    try {
+      Object.entries(data).forEach(([key, item]) => {
+        const defaultItem = (defaultValues as { [k: string]: any })[key];
+        switch (key) {
+          case "postId":
+            append(key, item, item !== defaultItem);
+            break;
+          case "update":
+            append(key, item, false);
+            break;
+          case "date":
+            if (item !== defaultItem) append(key, dateJISOfromLocaltime(item));
+            break;
+          case "category":
+            const value = item.join(",");
+            if (postCategories?.join(",") !== value) append(key, value);
+            break;
+          case "attached":
+            for (const _item of Array.from(item) as any[]) {
+              append(`${key}[]`, _item);
+              if (!attached) attached = true;
+              if (_item.lastModified)
+                append(`${key}_mtime[]`, _item.lastModified);
+            }
+            break;
+          default:
+            if (item !== defaultItem && !(item === "" && !defaultItem))
+              append(key, item);
+            break;
+        }
+      });
+      if (sendEnable) {
+        const res = await axios.post("post/send", formData);
+        if (res.status === 200) {
+          toast(updateMode ? "更新しました" : "投稿しました", {
+            duration: 2000,
+          });
+          setPostsFromUrl();
+          if (attached) setImageFromUrl();
+          refIsSubmitted.current = true;
+          setTimeout(() => {
+            if (res.data.postId) {
+              router.replace(`/blog?postId=${res.data.postId}`);
+            } else {
+              router.replace(`/blog`);
+            }
+          }, 200);
+        }
+      } else {
+        toast.error("更新するデータがありませんでした", { duration: 2000 });
+      }
+    } catch (error) {
+      toast.error("エラーが発生しました", { duration: 2000 });
+      console.error(error);
+    }
+  }, [
+    defaultValues,
+    getValues,
+    postCategories,
+    router,
+    setImageFromUrl,
+    setPostsFromUrl,
+    updateMode,
+  ]);
 
   return (
     <form

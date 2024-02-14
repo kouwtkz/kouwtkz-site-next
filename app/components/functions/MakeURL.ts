@@ -14,6 +14,7 @@ export function MakeURL(href: TypeUrl) {
     if (hostname) Url.hostname = hostname;
     if (port) Url.port = String(port);
     if (host) Url.host = host;
+    if (pathname) Url.pathname = pathname;
     if (hash) Url.hash = hash;
     query = query || _search;
     if (query) {
