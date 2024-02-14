@@ -9,7 +9,7 @@ export type Post = {
   noindex?: boolean;
   draft?: boolean;
   localDraft?: boolean;
-  date?: Date;
+  date?: Date | null;
   updatedAt?: Date | null;
   flags?: number | null;
   memo?: string | null;

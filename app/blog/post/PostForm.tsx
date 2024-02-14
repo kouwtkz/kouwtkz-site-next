@@ -64,7 +64,7 @@ export default function PostForm() {
 function dateJISOfromLocaltime(item?: string) {
   return item ? new Date(`${item}+09:00`).toISOString() : "";
 }
-function dateJISOfromDate(date?: Date) {
+function dateJISOfromDate(date?: Date | null) {
   return (
     date?.toLocaleString("sv-SE", { timeZone: "JST" }).replace(" ", "T") || ""
   );

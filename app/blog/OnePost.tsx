@@ -65,7 +65,7 @@ export default function OnePost({ post, fixedLabel }: Props) {
         {typeof post.date !== "undefined" ? (
           post.draft ? (
             <span className="text-main-grayish">(下書き)</span>
-          ) : post.date.getTime() > Date.now() ? (
+          ) : post.date && post.date.getTime() > Date.now() ? (
             <span className="text-main-grayish">(予約)</span>
           ) : null
         ) : null}

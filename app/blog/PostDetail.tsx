@@ -26,9 +26,11 @@ export default function PostDetail({ post }: PostDetailProps) {
             </h1>
           </MultiParser>
           <div className="inline-block mx-3">
-            {(typeof post.category === "string"
-              ? [post.category]
-              : post.category
+            {(post.category
+              ? typeof post.category === "string"
+                ? [post.category]
+                : post.category
+              : []
             ).map((category, i) => (
               <div key={i} className="mx-1 underline inline-block">
                 <Link
@@ -47,7 +49,7 @@ export default function PostDetail({ post }: PostDetailProps) {
         <div className="text-right [&>*]:ml-4">
           {post.draft ? (
             <span className="text-main-grayish">(下書き)</span>
-          ) : post.date.getTime() > Date.now() ? (
+          ) : post.date && post.date.getTime() > Date.now() ? (
             <span className="text-main-grayish">(予約)</span>
           ) : (
             <></>

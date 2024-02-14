@@ -23,21 +23,23 @@ export default function PostListWindow({
     <>
       {heading}
       <div {...attributes}>
-        {topPosts.map((post, i) => (
-          <Link
-            className="mx-2 my-1 flex flex-row justify-left items-center"
-            href={{ pathname: "/blog", query: { postId: post.postId } }}
-            prefetch={false}
-            key={i}
-          >
-            <div className="text-right mr-2 min-w-[5em]">
-              {post.date.toLocaleDateString("ja")}
-            </div>
-            <MultiParser className="text-left" only={{ toTwemoji: true }}>
-              {post.title}
-            </MultiParser>
-          </Link>
-        ))}
+        {topPosts.map((post, i) =>
+          post.date ? (
+            <Link
+              className="mx-2 my-1 flex flex-row justify-left items-center"
+              href={{ pathname: "/blog", query: { postId: post.postId } }}
+              prefetch={false}
+              key={i}
+            >
+              <div className="text-right mr-2 min-w-[5em]">
+                {post.date.toLocaleDateString("ja")}
+              </div>
+              <MultiParser className="text-left" only={{ toTwemoji: true }}>
+                {post.title}
+              </MultiParser>
+            </Link>
+          ) : null
+        )}
       </div>
     </>
   );

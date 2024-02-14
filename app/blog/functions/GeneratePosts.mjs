@@ -33,11 +33,11 @@ export function GenerateRss(posts) {
 
   posts.forEach((post) => {
     feed.item({
-      title: post.title,
-      description: twemoji.parse(parse(post.body.replace(/(\[[^\]]*\]\()(\/[^)]+\))/g, `$1${SITE_URL}$2`))),
+      title: post.title || "",
+      description: twemoji.parse(parse((post.body || "").replace(/(\[[^\]]*\]\()(\/[^)]+\))/g, `$1${SITE_URL}$2`))),
       url: `${SITE_URL}/blog?postId=${post.postId}`,
       guid: `${SITE_URL}/blog?postId=${post.postId}`,
-      date: post.date,
+      date: post.date || new Date(0),
     });
   });
   return feed.xml()
