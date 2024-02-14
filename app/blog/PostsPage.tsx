@@ -4,18 +4,13 @@ import OnePost from "./OnePost";
 import { usePostState } from "./PostState";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
-import PostDetail from "./PostDetail";
 import { findMany } from "./functions/findMany.mjs";
 import getPosts from "./functions/getPosts.mjs";
 import PostsPageFixed from "./fixed/PostsPageFixed";
 import PostDetailFixed from "./fixed/PostDetailFixed";
 import { useServerState } from "../components/System/ServerState";
-import {
-  backupStorageKey,
-  getLocalDraft,
-  useLocalDraftPost,
-} from "./post/postLocalDraft";
-import { useEffect, useMemo, useState } from "react";
+import { getLocalDraft, useLocalDraftPost } from "./post/postLocalDraft";
+import { useEffect, useMemo } from "react";
 
 export default function PostsPage() {
   const { posts } = usePostState();
@@ -37,21 +32,27 @@ export default function PostsPage() {
     posts: postsResult,
     max,
     count,
-  } = getPosts({
-    posts,
-    page,
-    q,
-    take,
-    common: !isServerMode,
-  });
+  } = useMemo(() => {
+    const result = getPosts({
+      posts,
+      page,
+      q,
+      take,
+      common: !isServerMode,
+    });
+    result.posts.sort((a, b) => (b.pin || 0) - (a.pin || 0));
+    return result;
+  }, [isServerMode, page, posts, q, take]);
+
   if (postId) {
     return (
-      <>
+      <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
         <PostDetailFixed postId={postId} posts={postsResult} />
-        <PostDetail
+        <OnePost
           post={findMany({ list: posts, where: { postId }, take: 1 })[0]}
+          detail={true}
         />
-      </>
+      </div>
     );
   } else {
     if (posts.length === 0) return <></>;
