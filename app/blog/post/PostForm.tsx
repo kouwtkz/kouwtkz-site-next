@@ -74,8 +74,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const router = useRouter();
   const duplicationMode = Boolean(params.base);
   const targetPostId = params.target || params.base;
-  const { posts, setPostsFromUrl, isSet } = usePostState();
-  const { removeLocalDraft } = useLocalDraftPost();
+  const { posts, setPostsFromUrl } = usePostState();
   const postsUpdate = useRef(false);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId
@@ -158,6 +157,17 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     if ("draft" in params) {
       const draft = getLocalDraft() || {};
       reset({ ...defaultValues, ...draft, date: dateJISOfromDate(draft.date) });
+      setCategoryList((c) => {
+        const draftOnlyCategory =
+          draft.category?.filter((item) =>
+            c.every(({ value }) => value !== item)
+          ) || [];
+        if (draftOnlyCategory.length > 0)
+          return c.concat(
+            draftOnlyCategory.map((d) => ({ value: d, label: d }))
+          );
+        else return c;
+      });
     } else {
       reset(defaultValues);
     }
@@ -168,7 +178,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     values.date = dateJISOfromLocaltime(values.date);
     localStorage.setItem(backupStorageKey, JSON.stringify(values));
   }, [getValues]);
-  
+
   const refIsSubmitted = useRef(false);
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -407,7 +417,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             const answer = prompt("新規カテゴリーを入力してください");
             if (answer !== null) {
               const newCategory = { label: answer, value: answer };
-              setCategoryList(categoryList.concat(newCategory));
+              setCategoryList((c) => c.concat(newCategory));
               setValue("category", getValues("category").concat(answer));
             }
           }}
