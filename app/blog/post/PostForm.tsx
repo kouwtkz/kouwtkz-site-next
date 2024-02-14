@@ -1,6 +1,5 @@
 "use client";
 
-import { Post } from "@/app/blog/Post.d";
 import React, {
   RefCallback,
   useCallback,
@@ -14,7 +13,6 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   setAttached,
-  setCategory,
   setColorChange,
   setDecoration,
   setMedia,
@@ -25,8 +23,8 @@ import toast from "react-hot-toast";
 import { HotkeyRunEvent } from "@/app/components/form/event/EventSet";
 import * as z from "zod";
 import {
+  Controller,
   FieldValues,
-  RefCallBack,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
@@ -37,6 +35,11 @@ import { usePostState } from "../PostState";
 import { findMany } from "../functions/findMany.mjs";
 import ReactSelect from "react-select";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
+import {
+  backupStorageKey,
+  getLocalDraft,
+  useLocalDraftPost,
+} from "./postLocalDraft";
 
 type labelValues = { label: string; value: string }[];
 
@@ -53,12 +56,18 @@ const schema = z.object({
 
 export default function PostForm() {
   const search = useSearchParams();
-  const { base, target } = Object.fromEntries(search);
-  const Content = useCallback(
-    () => <Main params={{ base, target }} />,
-    [base, target]
-  );
+  const params = Object.fromEntries(search);
+  const Content = useCallback(() => <Main params={{ ...params }} />, [params]);
   return <Content />;
+}
+
+function dateJISOfromLocaltime(item?: string) {
+  return item ? new Date(`${item}+09:00`).toISOString() : "";
+}
+function dateJISOfromDate(date?: Date) {
+  return (
+    date?.toLocaleString("sv-SE", { timeZone: "JST" }).replace(" ", "T") || ""
+  );
 }
 
 function Main({ params }: { params: { [k: string]: string | undefined } }) {
@@ -66,6 +75,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const duplicationMode = Boolean(params.base);
   const targetPostId = params.target || params.base;
   const { posts, setPostsFromUrl, isSet } = usePostState();
+  const { removeLocalDraft } = useLocalDraftPost();
   const postsUpdate = useRef(false);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId
@@ -73,36 +83,37 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     : null;
   const updateMode = postTarget && !duplicationMode;
 
-  const categoryCount = posts.reduce((prev, cur) => {
-    const categories = cur.category;
-    categories.forEach((category) => {
-      if (category) prev[category] = (prev[category] || 0) + 1;
-    });
-    return prev;
-  }, {} as { [K: string]: number });
-  const categoryList = Object.entries(categoryCount).map(([name, count]) => ({
-    label: `${name} (${count})`,
-    value: name,
-  }));
-  const refFirstCategory = useRef(true);
-  const postCategories = postTarget
-    ? typeof postTarget.category === "string"
-      ? [postTarget.category]
-      : postTarget.category
-    : [];
-  const [categoryValues, setCategoryValues] = useState<labelValues>([]);
-  if (refFirstCategory.current && categoryList.length > 0) {
-    setCategoryValues(
-      (postTarget?.category
-        ? postCategories.map(
-            (category) => categoryList.find((_) => category === _.value) || []
-          )
-        : []) as labelValues
-    );
-    refFirstCategory.current = false;
-  }
+  const categoryCount = useMemo(
+    () =>
+      posts.reduce((prev, cur) => {
+        const categories = cur.category;
+        categories?.forEach((category) => {
+          if (category) prev[category] = (prev[category] || 0) + 1;
+        });
+        return prev;
+      }, {} as { [K: string]: number }),
+    [posts]
+  );
+  const getCategoryLabelValues = useCallback(() => {
+    return Object.entries(categoryCount).map(([name, count]) => ({
+      label: `${name} (${count})`,
+      value: name,
+    }));
+  }, [categoryCount]);
+  const [categoryList, setCategoryList] = useState<labelValues>(
+    getCategoryLabelValues()
+  );
 
-  const [loading, setLoading] = useState(false);
+  const postCategories = useMemo(
+    () =>
+      postTarget
+        ? typeof postTarget.category === "string"
+          ? [postTarget.category]
+          : postTarget.category
+        : [],
+    [postTarget]
+  );
+
   const { togglePreviewMode } = usePreviewMode();
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -116,41 +127,54 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const postIdRef = useRef<HTMLInputElement | null>(null);
   const operationRef = useRef<HTMLSelectElement>(null);
 
-  const defaultValues: { [k: string]: any } = {
-    update: duplicationMode ? "" : postTarget?.postId || "",
-    postId: duplicationMode ? undefined : postTarget?.postId || "",
-    title: postTarget?.title || "",
-    body: postTarget?.body || "",
-    date:
-      postTarget?.date
-        .toLocaleString("sv-SE", { timeZone: "JST" })
-        .replace(" ", "T") || "",
-    pin: Number(postTarget?.pin || 0),
-    draft: Boolean(postTarget?.draft),
-  };
+  const defaultValues = useMemo(
+    () => ({
+      update: duplicationMode ? "" : postTarget?.postId || "",
+      postId: duplicationMode ? undefined : postTarget?.postId || "",
+      title: postTarget?.title || "",
+      body: postTarget?.body || "",
+      category: postCategories,
+      date: dateJISOfromDate(postTarget?.date),
+      pin: Number(postTarget?.pin || 0),
+      draft: Boolean(postTarget?.draft),
+    }),
+    [duplicationMode, postCategories, postTarget]
+  );
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty, isSubmitted, isSubmitting },
     getValues,
     setValue,
     reset,
+    control,
   } = useForm<FieldValues>({
     defaultValues,
     resolver: zodResolver(schema),
   });
 
-  const firstCheck = useRef({ start: true, fix: false });
-  if (firstCheck.current.start) {
-    firstCheck.current.start = false;
-    if (!isSet) firstCheck.current.fix = true;
-  } else if (firstCheck.current.fix) {
-    if (isSet) {
+  useEffect(() => {
+    if ("draft" in params) {
+      const draft = getLocalDraft() || {};
+      reset({ ...defaultValues, ...draft, date: dateJISOfromDate(draft.date) });
+    } else {
       reset(defaultValues);
-      firstCheck.current.fix = false;
     }
-  }
+  }, [reset, defaultValues, params]);
+
+  const refIsSubmitted = useRef(false);
+  useEffect(() => {
+    return () => {
+      if (isDirty && !isSubmitted && !refIsSubmitted.current) {
+        const values = getValues();
+        values.date = dateJISOfromLocaltime(values.date);
+        localStorage.setItem(backupStorageKey, JSON.stringify(values));
+      } else if (isSubmitted && refIsSubmitted.current) {
+        removeLocalDraft();
+      }
+    };
+  }, [isDirty, isSubmitted, getValues, removeLocalDraft]);
 
   const onChangePostId = () => {
     const answer = prompt("記事のID名の変更", getValues("postId"));
@@ -175,7 +199,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         .then((r) => {
           toast("削除しました", { duration: 2000 });
           setPostsFromUrl();
-          router.push("/blog");
+          router.replace("/blog");
         });
     }
   };
@@ -191,77 +215,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     }
   });
   const { setImageFromUrl } = useMediaImageState();
-
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    setLoading(true);
-    const formData = new FormData();
-    let sendEnable = false;
-    let attached = false;
-    const append = (name: string, value: string | Blob, sendCheck = true) => {
-      formData.append(name, value);
-      if (sendCheck && !sendEnable) sendEnable = true;
-    };
-
-    try {
-      Object.entries(data).forEach(([key, item]) => {
-        const defaultItem = defaultValues[key];
-        switch (key) {
-          case "postId":
-            append(key, item, item !== defaultItem);
-            break;
-          case "update":
-            append(key, item, false);
-            break;
-          case "date":
-            if (item !== defaultItem)
-              append(key, item ? new Date(`${item}+09:00`).toISOString() : "");
-            break;
-          case "attached":
-            for (const _item of Array.from(item) as any[]) {
-              append(`${key}[]`, _item);
-              if (!attached) attached = true;
-              if (_item.lastModified)
-                append(`${key}_mtime[]`, _item.lastModified);
-            }
-            break;
-          default:
-            if (item !== defaultItem && !(item === "" && !defaultItem))
-              append(key, item);
-            break;
-        }
-      });
-
-      const categoryValuesValue = categoryValues
-        .map((item) => item.value)
-        .join(",");
-      if (postCategories.join(",") !== categoryValuesValue)
-        append("category", categoryValuesValue);
-      if (sendEnable) {
-        const res = await axios.post("post/send", formData);
-        if (res.status === 200) {
-          toast(updateMode ? "更新しました" : "投稿しました", {
-            duration: 2000,
-          });
-          setPostsFromUrl();
-          if (attached) setImageFromUrl();
-          setTimeout(() => {
-            if (res.data.postId) {
-              router.push(`/blog?postId=${res.data.postId}`);
-            } else {
-              router.push(`/blog`);
-            }
-          }, 50);
-        }
-      } else {
-        toast.error("更新するデータがありませんでした", { duration: 2000 });
-      }
-    } catch (error) {
-      toast.error("エラーが発生しました", { duration: 2000 });
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useHotkeys("b", () => router.back());
 
@@ -294,6 +247,125 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     e.preventDefault();
   });
 
+  const CategorySelect = useCallback(
+    () => (
+      <Controller
+        name="category"
+        control={control}
+        rules={{ required: true }}
+        render={({ field }) => (
+          <ReactSelect
+            placeholder="カテゴリ"
+            instanceId="blogTagSelect"
+            className="flex-1"
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                textAlign: "left",
+              }),
+            }}
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 10,
+              colors: {
+                ...theme.colors,
+                primary: "var(--main-color-deep)",
+                primary25: "var(--main-color-pale)",
+                primary50: "var(--main-color-soft)",
+                primary75: "var(--main-color)",
+              },
+            })}
+            isMulti
+            options={categoryList}
+            value={(field.value as string[]).map((fv) =>
+              categoryList.find((ci) => ci.value === fv)
+            )}
+            onChange={(newValues) => {
+              field.onChange(newValues.map((v) => v?.value));
+            }}
+            onBlur={field.onBlur}
+          />
+        )}
+      />
+    ),
+    [categoryList, control]
+  );
+
+  const onSubmit: SubmitHandler<FieldValues> = useCallback(async () => {
+    const formData = new FormData();
+    let sendEnable = false;
+    let attached = false;
+    let data = getValues();
+    const append = (name: string, value: string | Blob, sendCheck = true) => {
+      formData.append(name, value);
+      if (sendCheck && !sendEnable) sendEnable = true;
+    };
+
+    try {
+      Object.entries(data).forEach(([key, item]) => {
+        const defaultItem = (defaultValues as { [k: string]: any })[key];
+        switch (key) {
+          case "postId":
+            append(key, item, item !== defaultItem);
+            break;
+          case "update":
+            append(key, item, false);
+            break;
+          case "date":
+            if (item !== defaultItem) append(key, dateJISOfromLocaltime(item));
+            break;
+          case "category":
+            const value = item.join(",");
+            if (postCategories?.join(",") !== value) append(key, value);
+            break;
+          case "attached":
+            for (const _item of Array.from(item) as any[]) {
+              append(`${key}[]`, _item);
+              if (!attached) attached = true;
+              if (_item.lastModified)
+                append(`${key}_mtime[]`, _item.lastModified);
+            }
+            break;
+          default:
+            if (item !== defaultItem && !(item === "" && !defaultItem))
+              append(key, item);
+            break;
+        }
+      });
+      if (sendEnable) {
+        const res = await axios.post("post/send", formData);
+        if (res.status === 200) {
+          toast(updateMode ? "更新しました" : "投稿しました", {
+            duration: 2000,
+          });
+          setPostsFromUrl();
+          if (attached) setImageFromUrl();
+          refIsSubmitted.current = true;
+          setTimeout(() => {
+            if (res.data.postId) {
+              router.replace(`/blog?postId=${res.data.postId}`);
+            } else {
+              router.replace(`/blog`);
+            }
+          }, 200);
+        }
+      } else {
+        toast.error("更新するデータがありませんでした", { duration: 2000 });
+      }
+    } catch (error) {
+      toast.error("エラーが発生しました", { duration: 2000 });
+      console.error(error);
+    }
+  }, [
+    defaultValues,
+    getValues,
+    postCategories,
+    router,
+    setImageFromUrl,
+    setPostsFromUrl,
+    updateMode,
+  ]);
+
   return (
     <form
       method={"POST"}
@@ -316,50 +388,10 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         {...register("title")}
         type="text"
         placeholder="タイトル"
-        disabled={loading}
         className="block mx-auto text-lg h-9 px-3 py-2 w-[25rem] max-w-[80%]"
       />
       <div className="flex flex-row items-center min-w-[25rem] w-fit max-w-[80%] mx-auto">
-        <ReactSelect
-          placeholder="カテゴリ"
-          instanceId="blogTagSelect"
-          className="flex-1"
-          styles={{
-            control: (provided) => ({
-              ...provided,
-              textAlign: "left",
-            }),
-          }}
-          theme={(theme) => ({
-            ...theme,
-            borderRadius: 10,
-            colors: {
-              ...theme.colors,
-              primary: "var(--main-color-deep)",
-              primary25: "var(--main-color-pale)",
-              primary50: "var(--main-color-soft)",
-              primary75: "var(--main-color)",
-            },
-          })}
-          isMulti
-          options={categoryList}
-          onChange={(v, a) => {
-            if (a.option) setCategoryValues(categoryValues.concat(a.option));
-            else if (a.removedValue)
-              setCategoryValues(
-                categoryValues.filter(
-                  (item) => item.value !== a.removedValue?.value
-                )
-              );
-            else if (a.removedValues)
-              setCategoryValues(
-                categoryValues.filter((item) =>
-                  a.removedValues?.every((_item) => item.value !== _item.value)
-                )
-              );
-          }}
-          value={categoryValues}
-        />
+        <CategorySelect />
         <button
           title="新規カテゴリ"
           type="button"
@@ -368,8 +400,8 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             const answer = prompt("新規カテゴリーを入力してください");
             if (answer !== null) {
               const newCategory = { label: answer, value: answer };
-              setCategoryValues(categoryValues.concat(newCategory));
-              categoryList.push(newCategory);
+              setCategoryList(categoryList.concat(newCategory));
+              setValue("category", getValues("category").concat(answer));
             }
           }}
         >
@@ -386,13 +418,12 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             min="-128"
             max="127"
             placeholder="pin"
-            disabled={loading}
             className="w-12 text-center"
           />
           ピン
         </label>
         <label>
-          <input {...register("draft")} type="checkbox" disabled={loading} />
+          <input {...register("draft")} type="checkbox" />
           下書き
         </label>
         <input
@@ -402,12 +433,10 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
           title="日付"
           step={1}
           className="px-1"
-          disabled={loading}
         />
         <select
           title="操作"
           ref={operationRef}
-          disabled={loading}
           onChange={() =>
             setOperation({
               selectOperation: operationRef.current,
@@ -427,7 +456,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <select
           title="メディア"
           ref={selectMediaRef}
-          disabled={loading}
           onChange={() =>
             setMedia({
               selectMedia: selectMediaRef.current,
@@ -448,7 +476,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
           placeholder="色"
           title="色"
           ref={colorChangerRef}
-          disabled={loading}
           onChange={() => {
             colorChangeValueRef.current = colorChangerRef.current?.value || "";
           }}
@@ -456,7 +483,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <select
           title="装飾"
           ref={decorationRef}
-          disabled={loading}
           onChange={() =>
             setDecoration({
               selectDecoration: decorationRef.current,
@@ -483,7 +509,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <select
           title="追加"
           ref={InsertTextRef}
-          disabled={loading}
           onChange={() =>
             setPostInsert({
               selectInsert: InsertTextRef.current,
@@ -504,7 +529,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
       </div>
       <PostTextarea
         registed={SetRegister({ name: "body", ref: textareaRef, register })}
-        disabled={loading}
       />
       <input
         {...SetRegister({
@@ -522,7 +546,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         placeholder="画像選択"
         multiple
         style={{ display: "none" }}
-        disabled={loading}
       />
       <div className="pt-2">
         <button

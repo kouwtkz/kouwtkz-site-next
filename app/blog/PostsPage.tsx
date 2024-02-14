@@ -10,6 +10,12 @@ import getPosts from "./functions/getPosts.mjs";
 import PostsPageFixed from "./fixed/PostsPageFixed";
 import PostDetailFixed from "./fixed/PostDetailFixed";
 import { useServerState } from "../components/System/ServerState";
+import {
+  backupStorageKey,
+  getLocalDraft,
+  useLocalDraftPost,
+} from "./post/postLocalDraft";
+import { useEffect, useMemo, useState } from "react";
 
 export default function PostsPage() {
   const { posts } = usePostState();
@@ -19,6 +25,14 @@ export default function PostsPage() {
   const q = search.get("q") || undefined;
   const postId = search.get("postId") || undefined;
   const take = postId ? undefined : 10;
+  const { localDraft, setLocalDraft } = useLocalDraftPost();
+
+  useEffect(() => {
+    if (!isServerMode) return;
+    const item = getLocalDraft();
+    if (item) setLocalDraft(item);
+  }, [isServerMode, setLocalDraft]);
+
   const {
     posts: postsResult,
     max,
@@ -45,6 +59,9 @@ export default function PostsPage() {
       <>
         <PostsPageFixed max={max} />
         <div className="w-[98%] md:w-[80%] max-w-3xl text-left mx-auto">
+          {localDraft ? (
+            <OnePost post={{ ...localDraft, pin: 0xffff }} />
+          ) : null}
           {postsResult.length > 0 ? (
             <>
               {postsResult.map((post, index) => (

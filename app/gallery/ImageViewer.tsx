@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
@@ -102,7 +102,7 @@ export default function ImageViewer() {
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
 
-  const backAction = () => {
+  const backAction = useCallback(() => {
     router.back();
     const href = location.href;
     setTimeout(() => {
@@ -112,7 +112,8 @@ export default function ImageViewer() {
         router.push(MakeURL({ query }).href, { scroll: false });
       }
     }, 10);
-  };
+  }, [query, router]);
+
   const updateFlag = useRef(false);
   useEffect(() => {
     if (!imageParam) {
@@ -154,10 +155,14 @@ export default function ImageViewer() {
     [albumImages, imageItemList]
   );
   const imageIndex = albumImageItems.findIndex(({ URL }) => image?.URL === URL);
-  const beforeAfterImage = {
-    before: albumImageItems[imageIndex - 1],
-    after: albumImageItems[imageIndex + 1],
-  };
+
+  const beforeAfterImage = useMemo(
+    () => ({
+      before: albumImageItems[imageIndex - 1],
+      after: albumImageItems[imageIndex + 1],
+    }),
+    [albumImageItems, imageIndex]
+  );
 
   const titleEqFilename = useMemo(
     () =>
@@ -169,8 +174,8 @@ export default function ImageViewer() {
     [image]
   );
 
-  const infoCmp = (image: MediaImageItemType) => {
-    if (!image.album?.visible?.info) return <></>;
+  const InfoCmp = useCallback(() => {
+    if ("pic" in query || !image?.album?.visible?.info) return <></>;
     return (
       <div className="window info">
         <div className="text-center md:text-left flex-shrink-0">
@@ -325,7 +330,19 @@ export default function ImageViewer() {
         </div>
       </div>
     );
-  };
+  }, [
+    beforeAfterImage,
+    charaList,
+    editMode,
+    image,
+    isServerMode,
+    onClose,
+    pathname,
+    search,
+    tagsOptions,
+    titleEqFilename,
+    query,
+  ]);
 
   return (
     <div className="fixed z-40" id="image_viewer">
@@ -375,7 +392,7 @@ export default function ImageViewer() {
                   </>
                 ) : null}
               </div>
-              {"pic" in query ? null : infoCmp(image)}
+              <InfoCmp />
             </div>
           </div>
         </div>

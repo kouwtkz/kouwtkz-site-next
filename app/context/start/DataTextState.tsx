@@ -3,7 +3,6 @@
 import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 
 type DataTextStateType = {
   values: { [key: string]: string | boolean | number | object } | null;
