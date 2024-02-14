@@ -3,41 +3,77 @@ import MultiParser from "@/app/components/tag/MultiParser";
 import Link from "next/link";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 import { useServerState } from "../components/System/ServerState";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { MakeURL } from "../components/functions/MakeURL";
 import { backupStorageKey, useLocalDraftPost } from "./post/postLocalDraft";
-type Props = { post: Post; fixedLabel?: string };
+import { HTMLAttributes } from "preact/compat";
+import { useHotkeys } from "react-hotkeys-hook";
+import { useRouter } from "next/navigation";
+type Props = { post?: Post; detail?: boolean };
 
-export default function OnePost({ post, fixedLabel }: Props) {
+export default function OnePost({ post, detail = false }: Props) {
   const { isServerMode } = useServerState();
   const { removeLocalDraft } = useLocalDraftPost();
-  const formattedDate = post.date ? post.date.toLocaleString("ja", opt) : "";
-  const EditLink = useCallback(() => {
-    if (!isServerMode) return <></>;
-    const query: { [k: string]: string } = {};
-    if (post.postId) query.target = post.postId;
-    if (post.localDraft) query.draft = "";
-    return <Link href={MakeURL({ pathname: "/blog/post", query })}>編集</Link>;
-  }, [isServerMode, post.localDraft, post.postId]);
+  const router = useRouter();
+  useHotkeys("b", () => {
+    if (detail) router.back();
+  });
+
+  const EditLink = useCallback(
+    ({ children = "編集", className }: HTMLAttributes<HTMLElement>) => {
+      if (!isServerMode) return <></>;
+      const query: { [k: string]: string } = {};
+      if (post?.postId) query.target = post.postId;
+      if (post?.localDraft) query.draft = "";
+      return (
+        <Link
+          className={className ? String(className) : undefined}
+          href={MakeURL({ pathname: "/blog/post", query })}
+        >
+          <>{children}</>
+        </Link>
+      );
+    },
+    [isServerMode, post]
+  );
+  const formattedDate = useMemo(
+    () => (post?.date ? post.date.toLocaleString("ja", opt) : ""),
+    [post]
+  );
+  if (!post) return null;
+
   return (
     <div className="mx-4 my-6">
-      {typeof post.pin === "number" ? (
+      {post.localDraft ? (
+        <div>
+          <EditLink>▼ 自動保存された下書き</EditLink>
+        </div>
+      ) : !detail && typeof post.pin === "number" ? (
         post.pin > 0 ? (
-          <div className="text-main-strong">
-            {fixedLabel ||
-              (post.localDraft ? "▼ 自動保存された下書き" : "▼ 固定された投稿")}
-          </div>
+          <div className="text-main-strong">▼ 固定された投稿</div>
         ) : null
       ) : null}
       {post.title ? (
-        <h3 className="text-2xl text-main-dark font-bold inline-block m-2">
-          <Link
-            href={{ pathname: "/blog", query: { postId: post.postId } }}
-            prefetch={false}
-          >
-            {post.title}
-          </Link>
-        </h3>
+        <MultiParser only={{ toTwemoji: true }} className="inline-block">
+          {detail ? (
+            <h1 className="text-4xl text-main-deep font-bold mx-2 my-4 inline-block">
+              {post.title}
+            </h1>
+          ) : (
+            <h3 className="text-2xl text-main-dark font-bold inline-block m-2">
+              {post.localDraft ? (
+                post.title
+              ) : (
+                <Link
+                  href={{ pathname: "/blog", query: { postId: post.postId } }}
+                  prefetch={false}
+                >
+                  {post.title}
+                </Link>
+              )}
+            </h3>
+          )}
+        </MultiParser>
       ) : (
         <></>
       )}
@@ -60,7 +96,9 @@ export default function OnePost({ post, fixedLabel }: Props) {
       ) : (
         <></>
       )}
-      <MultiParser className="blog">{post.body}</MultiParser>
+      <MultiParser className="blog" detailsOpen={detail}>
+        {post.body}
+      </MultiParser>
       <div className="text-right [&>*]:ml-4">
         {typeof post.date !== "undefined" ? (
           post.draft ? (
@@ -93,6 +131,10 @@ export default function OnePost({ post, fixedLabel }: Props) {
                   <>下書き（新規投稿）</>
                 )}
               </span>
+            </>
+          ) : detail ? (
+            <>
+              <span className="text-main-grayish">{formattedDate}</span>
             </>
           ) : (
             <Link
