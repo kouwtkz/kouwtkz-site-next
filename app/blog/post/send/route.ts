@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
       }
     } else {
       postId = postId || autoPostId();
-      const maxId = Math.max(...posts.map(post => post.id));
+      const maxId = Math.max(...posts.map(post => post.id || 0));
       const now = new Date();
       posts.push({
         ...{

@@ -11,12 +11,15 @@ export function getPostsFromYaml() {
   /** @type {Post[]} rawPosts */
   const rawPosts = yamlParse(String(readFileSync(postYamlPath)))
   const posts = rawPosts.filter(post => post);
-  posts.forEach(post => { post.date = new Date(post.date); post.updatedAt = post.updatedAt ? new Date(post.updatedAt) : null; })
+  posts.forEach(post => {
+    post.date = post.date ? new Date(post.date) : null;
+    post.updatedAt = post.updatedAt ? new Date(post.updatedAt) : null;
+  })
   return posts;
 }
 /** @param {Post[]} posts  */
 export function setPostsToYaml(posts) {
-  posts.forEach((post) => { post.body = post.body.replace(/\r\n/g, "\n") });
+  posts.forEach((post) => { post.body = post.body?.replace(/\r\n/g, "\n") });
   return writeFileSync(postYamlPath, yamlStringify(posts));
 }
 
@@ -25,11 +28,14 @@ export function getPostsFromJson() {
   /** @type {Post[]} rawPosts */
   const rawPosts = JSON.parse(String(readFileSync(postJsonPath)))
   const posts = rawPosts.filter(post => post);
-  posts.forEach(post => { post.date = new Date(post.date); post.updatedAt = post.updatedAt ? new Date(post.updatedAt) : null; })
+  posts.forEach(post => {
+    post.date = post.date ? new Date(post.date) : null;
+    post.updatedAt = post.updatedAt ? new Date(post.updatedAt) : null;
+  })
   return posts;
 }
 /** @param {Post[]} posts  */
 export function setPostsToJson(posts) {
-  posts.forEach((post) => { post.body = post.body.replace(/\r\n/g, "\n") });
+  posts.forEach((post) => { post.body = post.body?.replace(/\r\n/g, "\n") });
   return writeFileSync(postJsonPath, JSON.stringify(posts, null, "\t"));
 }

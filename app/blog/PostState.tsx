@@ -7,7 +7,7 @@ const defaultUrl = "/blog/posts.json";
 
 function parsePosts(posts: Post[]) {
   posts.forEach((post) => {
-    post.date = new Date(post.date);
+    post.date = post.date ? new Date(post.date) : null;
     post.updatedAt = post.updatedAt ? new Date(post.updatedAt) : null;
   });
   return posts;
