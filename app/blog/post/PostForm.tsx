@@ -14,7 +14,6 @@ import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   setAttached,
-  setCategory,
   setColorChange,
   setDecoration,
   setMedia,
@@ -25,8 +24,8 @@ import toast from "react-hot-toast";
 import { HotkeyRunEvent } from "@/app/components/form/event/EventSet";
 import * as z from "zod";
 import {
+  Controller,
   FieldValues,
-  RefCallBack,
   SubmitHandler,
   useForm,
 } from "react-hook-form";
@@ -80,29 +79,22 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     });
     return prev;
   }, {} as { [K: string]: number });
-  const categoryList = Object.entries(categoryCount).map(([name, count]) => ({
-    label: `${name} (${count})`,
-    value: name,
-  }));
-  const refFirstCategory = useRef(true);
-  const postCategories = postTarget
-    ? typeof postTarget.category === "string"
-      ? [postTarget.category]
-      : postTarget.category
-    : [];
-  const [categoryValues, setCategoryValues] = useState<labelValues>([]);
-  if (refFirstCategory.current && categoryList.length > 0) {
-    setCategoryValues(
-      (postTarget?.category
-        ? postCategories.map(
-            (category) => categoryList.find((_) => category === _.value) || []
-          )
-        : []) as labelValues
-    );
-    refFirstCategory.current = false;
-  }
+  const [categoryList, setCategoryList] = useState<labelValues>(
+    Object.entries(categoryCount).map(([name, count]) => ({
+      label: `${name} (${count})`,
+      value: name,
+    }))
+  );
+  const postCategories = useMemo(
+    () =>
+      postTarget
+        ? typeof postTarget.category === "string"
+          ? [postTarget.category]
+          : postTarget.category
+        : [],
+    [postTarget]
+  );
 
-  const [loading, setLoading] = useState(false);
   const { togglePreviewMode } = usePreviewMode();
 
   const formRef = useRef<HTMLFormElement>(null);
@@ -116,18 +108,22 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const postIdRef = useRef<HTMLInputElement | null>(null);
   const operationRef = useRef<HTMLSelectElement>(null);
 
-  const defaultValues: { [k: string]: any } = {
-    update: duplicationMode ? "" : postTarget?.postId || "",
-    postId: duplicationMode ? undefined : postTarget?.postId || "",
-    title: postTarget?.title || "",
-    body: postTarget?.body || "",
-    date:
-      postTarget?.date
-        .toLocaleString("sv-SE", { timeZone: "JST" })
-        .replace(" ", "T") || "",
-    pin: Number(postTarget?.pin || 0),
-    draft: Boolean(postTarget?.draft),
-  };
+  const defaultValues = useMemo(
+    () => ({
+      update: duplicationMode ? "" : postTarget?.postId || "",
+      postId: duplicationMode ? undefined : postTarget?.postId || "",
+      title: postTarget?.title || "",
+      body: postTarget?.body || "",
+      category: postCategories,
+      date:
+        postTarget?.date
+          .toLocaleString("sv-SE", { timeZone: "JST" })
+          .replace(" ", "T") || "",
+      pin: Number(postTarget?.pin || 0),
+      draft: Boolean(postTarget?.draft),
+    }),
+    [duplicationMode, postCategories, postTarget]
+  );
 
   const {
     register,
@@ -136,21 +132,24 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     getValues,
     setValue,
     reset,
+    control,
   } = useForm<FieldValues>({
     defaultValues,
     resolver: zodResolver(schema),
   });
 
   const firstCheck = useRef({ start: true, fix: false });
-  if (firstCheck.current.start) {
-    firstCheck.current.start = false;
-    if (!isSet) firstCheck.current.fix = true;
-  } else if (firstCheck.current.fix) {
-    if (isSet) {
-      reset(defaultValues);
-      firstCheck.current.fix = false;
+  useEffect(() => {
+    if (firstCheck.current.start) {
+      firstCheck.current.start = false;
+      if (!isSet) firstCheck.current.fix = true;
+    } else if (firstCheck.current.fix) {
+      if (isSet) {
+        reset(defaultValues);
+        firstCheck.current.fix = false;
+      }
     }
-  }
+  }, [defaultValues, isSet, reset]);
 
   const onChangePostId = () => {
     const answer = prompt("記事のID名の変更", getValues("postId"));
@@ -192,11 +191,11 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   });
   const { setImageFromUrl } = useMediaImageState();
 
-  const onSubmit: SubmitHandler<FieldValues> = async (data) => {
-    setLoading(true);
+  const onSubmit: SubmitHandler<FieldValues> = async () => {
     const formData = new FormData();
     let sendEnable = false;
     let attached = false;
+    let data = getValues();
     const append = (name: string, value: string | Blob, sendCheck = true) => {
       formData.append(name, value);
       if (sendCheck && !sendEnable) sendEnable = true;
@@ -204,7 +203,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
 
     try {
       Object.entries(data).forEach(([key, item]) => {
-        const defaultItem = defaultValues[key];
+        const defaultItem = (defaultValues as { [k: string]: any })[key];
         switch (key) {
           case "postId":
             append(key, item, item !== defaultItem);
@@ -215,6 +214,10 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
           case "date":
             if (item !== defaultItem)
               append(key, item ? new Date(`${item}+09:00`).toISOString() : "");
+            break;
+          case "category":
+            const value = item.join(",");
+            if (postCategories.join(",") !== value) append(key, value);
             break;
           case "attached":
             for (const _item of Array.from(item) as any[]) {
@@ -230,12 +233,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             break;
         }
       });
-
-      const categoryValuesValue = categoryValues
-        .map((item) => item.value)
-        .join(",");
-      if (postCategories.join(",") !== categoryValuesValue)
-        append("category", categoryValuesValue);
       if (sendEnable) {
         const res = await axios.post("post/send", formData);
         if (res.status === 200) {
@@ -258,8 +255,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     } catch (error) {
       toast.error("エラーが発生しました", { duration: 2000 });
       console.error(error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -294,6 +289,50 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     e.preventDefault();
   });
 
+  const CategorySelect = useCallback(
+    () => (
+      <Controller
+        name="category"
+        control={control}
+        rules={{ required: true }}
+        render={({ field }) => (
+          <ReactSelect
+            placeholder="カテゴリ"
+            instanceId="blogTagSelect"
+            className="flex-1"
+            styles={{
+              control: (provided) => ({
+                ...provided,
+                textAlign: "left",
+              }),
+            }}
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 10,
+              colors: {
+                ...theme.colors,
+                primary: "var(--main-color-deep)",
+                primary25: "var(--main-color-pale)",
+                primary50: "var(--main-color-soft)",
+                primary75: "var(--main-color)",
+              },
+            })}
+            isMulti
+            options={categoryList}
+            value={(field.value as string[]).map((fv) =>
+              categoryList.find((ci) => ci.value === fv)
+            )}
+            onChange={(newValues) => {
+              field.onChange(newValues.map((v) => v?.value));
+            }}
+            onBlur={field.onBlur}
+          />
+        )}
+      />
+    ),
+    [categoryList, control]
+  );
+
   return (
     <form
       method={"POST"}
@@ -316,50 +355,10 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         {...register("title")}
         type="text"
         placeholder="タイトル"
-        disabled={loading}
         className="block mx-auto text-lg h-9 px-3 py-2 w-[25rem] max-w-[80%]"
       />
       <div className="flex flex-row items-center min-w-[25rem] w-fit max-w-[80%] mx-auto">
-        <ReactSelect
-          placeholder="カテゴリ"
-          instanceId="blogTagSelect"
-          className="flex-1"
-          styles={{
-            control: (provided) => ({
-              ...provided,
-              textAlign: "left",
-            }),
-          }}
-          theme={(theme) => ({
-            ...theme,
-            borderRadius: 10,
-            colors: {
-              ...theme.colors,
-              primary: "var(--main-color-deep)",
-              primary25: "var(--main-color-pale)",
-              primary50: "var(--main-color-soft)",
-              primary75: "var(--main-color)",
-            },
-          })}
-          isMulti
-          options={categoryList}
-          onChange={(v, a) => {
-            if (a.option) setCategoryValues(categoryValues.concat(a.option));
-            else if (a.removedValue)
-              setCategoryValues(
-                categoryValues.filter(
-                  (item) => item.value !== a.removedValue?.value
-                )
-              );
-            else if (a.removedValues)
-              setCategoryValues(
-                categoryValues.filter((item) =>
-                  a.removedValues?.every((_item) => item.value !== _item.value)
-                )
-              );
-          }}
-          value={categoryValues}
-        />
+        <CategorySelect />
         <button
           title="新規カテゴリ"
           type="button"
@@ -368,8 +367,8 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             const answer = prompt("新規カテゴリーを入力してください");
             if (answer !== null) {
               const newCategory = { label: answer, value: answer };
-              setCategoryValues(categoryValues.concat(newCategory));
-              categoryList.push(newCategory);
+              setCategoryList(categoryList.concat(newCategory));
+              setValue("category", getValues("category").concat(answer));
             }
           }}
         >
@@ -386,13 +385,12 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             min="-128"
             max="127"
             placeholder="pin"
-            disabled={loading}
             className="w-12 text-center"
           />
           ピン
         </label>
         <label>
-          <input {...register("draft")} type="checkbox" disabled={loading} />
+          <input {...register("draft")} type="checkbox" />
           下書き
         </label>
         <input
@@ -402,12 +400,10 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
           title="日付"
           step={1}
           className="px-1"
-          disabled={loading}
         />
         <select
           title="操作"
           ref={operationRef}
-          disabled={loading}
           onChange={() =>
             setOperation({
               selectOperation: operationRef.current,
@@ -427,7 +423,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <select
           title="メディア"
           ref={selectMediaRef}
-          disabled={loading}
           onChange={() =>
             setMedia({
               selectMedia: selectMediaRef.current,
@@ -448,7 +443,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
           placeholder="色"
           title="色"
           ref={colorChangerRef}
-          disabled={loading}
           onChange={() => {
             colorChangeValueRef.current = colorChangerRef.current?.value || "";
           }}
@@ -456,7 +450,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <select
           title="装飾"
           ref={decorationRef}
-          disabled={loading}
           onChange={() =>
             setDecoration({
               selectDecoration: decorationRef.current,
@@ -483,7 +476,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <select
           title="追加"
           ref={InsertTextRef}
-          disabled={loading}
           onChange={() =>
             setPostInsert({
               selectInsert: InsertTextRef.current,
@@ -504,7 +496,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
       </div>
       <PostTextarea
         registed={SetRegister({ name: "body", ref: textareaRef, register })}
-        disabled={loading}
       />
       <input
         {...SetRegister({
@@ -522,7 +513,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         placeholder="画像選択"
         multiple
         style={{ display: "none" }}
-        disabled={loading}
       />
       <div className="pt-2">
         <button
