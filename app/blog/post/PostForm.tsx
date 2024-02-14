@@ -163,18 +163,25 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     }
   }, [reset, defaultValues, params]);
 
+  const saveLocalDraft = useCallback(() => {
+    const values = getValues();
+    values.date = dateJISOfromLocaltime(values.date);
+    localStorage.setItem(backupStorageKey, JSON.stringify(values));
+  }, [getValues]);
+  
   const refIsSubmitted = useRef(false);
   useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      if (isDirty) saveLocalDraft();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
       if (isDirty && !isSubmitted && !refIsSubmitted.current) {
-        const values = getValues();
-        values.date = dateJISOfromLocaltime(values.date);
-        localStorage.setItem(backupStorageKey, JSON.stringify(values));
-      } else if (isSubmitted && refIsSubmitted.current) {
-        removeLocalDraft();
+        saveLocalDraft();
       }
     };
-  }, [isDirty, isSubmitted, getValues, removeLocalDraft]);
+  }, [isDirty, isSubmitted, saveLocalDraft]);
 
   const onChangePostId = () => {
     const answer = prompt("記事のID名の変更", getValues("postId"));
