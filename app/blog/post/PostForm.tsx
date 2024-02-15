@@ -8,7 +8,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import PostTextarea, { usePreviewMode } from "./PostTextarea";
+import {
+  PostTextarea,
+  usePreviewMode,
+} from "@/app/components/form/input/PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -40,6 +43,7 @@ import {
   getLocalDraft,
   useLocalDraftPost,
 } from "./postLocalDraft";
+import { callReactSelectTheme } from "@/app/components/theme/main";
 
 type labelValues = { label: string; value: string }[];
 
@@ -74,8 +78,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const router = useRouter();
   const duplicationMode = Boolean(params.base);
   const targetPostId = params.target || params.base;
-  const { posts, setPostsFromUrl, isSet } = usePostState();
-  const { removeLocalDraft } = useLocalDraftPost();
+  const { posts, setPostsFromUrl } = usePostState();
   const postsUpdate = useRef(false);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId
@@ -144,7 +147,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty, isSubmitted, isSubmitting },
+    formState: { errors, isDirty, isSubmitted },
     getValues,
     setValue,
     reset,
@@ -158,6 +161,17 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     if ("draft" in params) {
       const draft = getLocalDraft() || {};
       reset({ ...defaultValues, ...draft, date: dateJISOfromDate(draft.date) });
+      setCategoryList((c) => {
+        const draftOnlyCategory =
+          draft.category?.filter((item) =>
+            c.every(({ value }) => value !== item)
+          ) || [];
+        if (draftOnlyCategory.length > 0)
+          return c.concat(
+            draftOnlyCategory.map((d) => ({ value: d, label: d }))
+          );
+        else return c;
+      });
     } else {
       reset(defaultValues);
     }
@@ -168,7 +182,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
     values.date = dateJISOfromLocaltime(values.date);
     localStorage.setItem(backupStorageKey, JSON.stringify(values));
   }, [getValues]);
-  
+
   const refIsSubmitted = useRef(false);
   useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
@@ -259,7 +273,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
       <Controller
         name="category"
         control={control}
-        rules={{ required: true }}
         render={({ field }) => (
           <ReactSelect
             placeholder="カテゴリ"
@@ -271,17 +284,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
                 textAlign: "left",
               }),
             }}
-            theme={(theme) => ({
-              ...theme,
-              borderRadius: 10,
-              colors: {
-                ...theme.colors,
-                primary: "var(--main-color-deep)",
-                primary25: "var(--main-color-pale)",
-                primary50: "var(--main-color-soft)",
-                primary75: "var(--main-color)",
-              },
-            })}
+            theme={callReactSelectTheme}
             isMulti
             options={categoryList}
             value={(field.value as string[]).map((fv) =>
@@ -407,8 +410,10 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             const answer = prompt("新規カテゴリーを入力してください");
             if (answer !== null) {
               const newCategory = { label: answer, value: answer };
-              setCategoryList(categoryList.concat(newCategory));
-              setValue("category", getValues("category").concat(answer));
+              setCategoryList((c) => c.concat(newCategory));
+              setValue("category", getValues("category").concat(answer), {
+                shouldDirty: true,
+              });
             }
           }}
         >
@@ -536,6 +541,9 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
       </div>
       <PostTextarea
         registed={SetRegister({ name: "body", ref: textareaRef, register })}
+        id="post_body_area"
+        placeholder="今何してる？"
+        className="mx-auto w-[85%] max-w-2xl min-h-[24em] p-2 text-start"
       />
       <input
         {...SetRegister({
@@ -558,15 +566,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <button
           className="mx-4 px-4 py-2 rounded-lg"
           type="button"
-          onClick={() =>
-            togglePreviewMode(
-              (
-                document.querySelector(
-                  "textarea#post_body_area"
-                ) as HTMLTextAreaElement
-              )?.value
-            )
-          }
+          onClick={() => togglePreviewMode(getValues("body"))}
         >
           プレビュー
         </button>

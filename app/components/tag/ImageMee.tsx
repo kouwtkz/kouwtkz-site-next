@@ -112,7 +112,7 @@ export default function ImageMee({
       }}
       onLoad={(e) => {
         if (showIndex.index < showIndex.max)
-          setShowIndex({ ...showIndex, index: showIndex.index + 1 });
+          setShowIndex((c) => ({ ...c, index: c.index + 1 }));
         else if (onLoad) onLoad(e);
       }}
       {...(hoverSrc

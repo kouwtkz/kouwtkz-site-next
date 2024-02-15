@@ -13,7 +13,6 @@ import ImageMee from "../components/tag/ImageMee";
 import CloseButton from "../components/svg/button/CloseButton";
 import { EmbedNode } from "../context/embed/EmbedState";
 import { useServerState } from "../components/System/ServerState";
-import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import ImageEditForm from "./ImageEditForm";
 import {
   defaultTags,
@@ -22,6 +21,7 @@ import {
 } from "./tag/GalleryTags";
 import { MakeURL } from "@/app/components/functions/MakeURL";
 import { RiFullscreenFill } from "react-icons/ri";
+import { useDataState } from "../context/start/DataState";
 
 const body = typeof window === "object" ? document?.body : null;
 const bodyLock = (m: boolean) => {
@@ -101,6 +101,7 @@ export default function ImageViewer() {
   const albumParam = query.album;
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
+  const { isComplete } = useDataState();
 
   const backAction = useCallback(() => {
     router.back();
@@ -174,7 +175,7 @@ export default function ImageViewer() {
     [image]
   );
 
-  const InfoCmp = useCallback(() => {
+  const InfoCmp = useMemo(() => {
     if ("pic" in query || !image?.album?.visible?.info) return <></>;
     return (
       <div className="window info">
@@ -280,7 +281,7 @@ export default function ImageViewer() {
               )}
             </>
           )}
-          {isServerMode ? <ImageEditForm /> : null}
+          {isComplete && isServerMode ? <ImageEditForm /> : null}
         </div>
         <div className="flex w-[100%] px-2 pb-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
           {beforeAfterImage?.before ? (
@@ -342,6 +343,7 @@ export default function ImageViewer() {
     tagsOptions,
     titleEqFilename,
     query,
+    isComplete,
   ]);
 
   return (
@@ -392,7 +394,7 @@ export default function ImageViewer() {
                   </>
                 ) : null}
               </div>
-              <InfoCmp />
+              {InfoCmp}
             </div>
           </div>
         </div>

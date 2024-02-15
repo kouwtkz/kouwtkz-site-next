@@ -1,11 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Link from "next/link";
-import {
-  SiteDataType,
-  SiteMenuItemType,
-} from "@/app/context/site/SiteData.mjs";
+import { SiteMenuItemType } from "@/app/context/site/SiteData.mjs";
 import MenuButton from "@/app/components/svg/button/MenuButton";
 import { create } from "zustand";
 import { useSiteState } from "@/app/context/site/SiteState";
