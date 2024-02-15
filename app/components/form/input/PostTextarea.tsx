@@ -28,12 +28,20 @@ export const usePreviewMode = create<PreviewModeStateType>((set) => ({
 }));
 
 type PostTextareaProps = {
-  registed: SetRegisterReturn;
+  registed?: SetRegisterReturn;
   disabled?: boolean;
+  id?: string;
+  title?: string;
+  placeholder?: string;
+  className?: string;
 };
-export default function PostTextarea({
+export function PostTextarea({
   registed,
   disabled,
+  id,
+  title,
+  placeholder,
+  className = "",
 }: PostTextareaProps) {
   const { previewMode, previewBody, togglePreviewMode, setPreviewMode } =
     usePreviewMode();
@@ -45,19 +53,20 @@ export default function PostTextarea({
       firstCheckMode.current = false;
     }
   });
-  const bodyClass = "mx-auto w-[85%] max-w-2xl min-h-[24em] p-2 text-start";
+  const bodyClass = (className ? `${className} ` : "") + "";
   return (
     <>
       <textarea
         {...registed}
         disabled={disabled}
-        id="post_body_area"
-        placeholder="今何してる？"
-        className={bodyClass + (previewMode ? " hidden" : " block")}
+        id={id}
+        title={title}
+        placeholder={placeholder}
+        className={bodyClass + (previewMode ? "hidden" : "block")}
       />
       <div
         className={
-          bodyClass + " preview-area" + (previewMode ? " block" : " hidden")
+          bodyClass + "preview-area " + (previewMode ? "block" : "hidden")
         }
       >
         <MultiParser className="blog">{previewBody}</MultiParser>

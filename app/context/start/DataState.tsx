@@ -27,14 +27,14 @@ function addMdate(url: string, values: { [k: string]: any }) {
 }
 
 type DataStateType = {
-  complete: boolean;
+  isComplete: boolean;
   setComplete: (value: boolean) => void;
 };
 
 export const useDataState = create<DataStateType>((set) => ({
-  complete: false,
+  isComplete: false,
   setComplete: (value) => {
-    set(() => ({ complete: value }));
+    set(() => ({ isComplete: value }));
   },
 }));
 
@@ -68,11 +68,11 @@ export default function DataState() {
     usePostState(),
     useEmbedState(),
   ];
-  const { complete, setComplete } = useDataState();
+  const { isComplete, setComplete } = useDataState();
   const first = useRef(true);
   const loading = useRef(true);
   const doSetComplete = () => {
-    if (!complete) {
+    if (!isComplete) {
       const comp = stateList.every((v) => v.isSet);
       if (comp) setComplete(true);
     }
@@ -81,20 +81,20 @@ export default function DataState() {
     doSetComplete();
     if (first.current) {
       setTimeout(() => {
-        if (!complete) setComplete(true);
+        if (!isComplete) setComplete(true);
       }, 5000);
       first.current = false;
     }
   });
   useLayoutEffect(() => {
-    if (loading.current && complete) {
+    if (loading.current && isComplete) {
       document.body.classList.remove("loading");
       loading.current = false;
     }
   });
   return (
     <>
-      {complete ? null : (
+      {isComplete ? null : (
         <>
           <div
             className={

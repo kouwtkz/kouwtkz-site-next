@@ -410,7 +410,7 @@ function Main({
                 <MoreButton
                   className="w-[24.532%] h-auto cursor-pointer m-[0.234%] p-0 fill-main-soft hover:fill-main-pale"
                   onClick={() => {
-                    setCurMax(curMax + step);
+                    setCurMax((c) => c + step);
                   }}
                 />
               ) : null}

@@ -17,15 +17,11 @@ import {
   defaultTags,
   getTagsOptions,
   autoFixTagsOptions,
+  GalleryTagsOption,
 } from "./tag/GalleryTags";
 import { useRouter } from "next/navigation";
 import { useEmbedState } from "../context/embed/EmbedState";
-import {
-  FieldValues,
-  RefCallBack,
-  SubmitHandler,
-  useForm,
-} from "react-hook-form";
+import { Controller, FieldValues, useForm } from "react-hook-form";
 import { MakeURL } from "../components/functions/MakeURL";
 import { AiFillEdit } from "react-icons/ai";
 import {
@@ -33,6 +29,13 @@ import {
   MdDeleteForever,
   MdOutlineContentCopy,
 } from "react-icons/md";
+import ReactSelect from "react-select";
+import { callReactSelectTheme } from "../components/theme/main";
+import {
+  PostTextarea,
+  usePreviewMode,
+} from "../components/form/input/PostTextarea";
+type labelValue = { label: string; value: string };
 
 interface Props extends HTMLAttributes<HTMLFormElement> {}
 
@@ -40,17 +43,23 @@ export default function ImageEditForm({ className, ...args }: Props) {
   const { setImageFromUrl, imageAlbumList, copyrightList } =
     useMediaImageState();
   const { data: embedData } = useEmbedState();
-  const { editMode, toggleEditMode } = useImageViewer();
   const router = useRouter();
-  const wasEdit = useRef(false);
   const refForm = useRef<HTMLFormElement>(null);
   const { charaList } = useCharaState();
-  const [charaTags, setCharaTags] = useState<string[]>([]);
-  const [otherTags, setOtherTags] = useState<string[]>([]);
-  const charaTagsSelect = useRef<HTMLSelectElement>(null);
-  const otherTagsSelect = useRef<HTMLSelectElement>(null);
+
+  const getCharaLabelValues = useCallback(() => {
+    return charaList.map(({ name, id }) => ({
+      label: name,
+      value: id,
+    }));
+  }, [charaList]);
+
+  const [charaTags, setCharaTags] = useState(getCharaLabelValues());
+  const [otherTags, setOtherTags] = useState(
+    autoFixTagsOptions(getTagsOptions(defaultTags))
+  );
   const { imageItemList } = useMediaImageState();
-  const { imageSrc, albumName } = useImageViewer();
+  const { editMode, toggleEditMode, imageSrc, albumName } = useImageViewer();
   const image = useMemo(() => {
     const albumItemList = albumName
       ? imageItemList.filter(({ album }) => album?.name === albumName)
@@ -60,12 +69,26 @@ export default function ImageEditForm({ className, ...args }: Props) {
       : null;
   }, [imageItemList, albumName, imageSrc]);
 
-  const defaultValues = useMemo(
-    () => ({
+  const getImageTagsObject = useCallback(
+    (image?: MediaImageItemType | null) => {
+      const imageCharaTags = (image?.tags || []).filter((tag) =>
+        charaTags.some((chara) => tag === chara.value)
+      );
+      const imageOtherTags = (image?.tags || []).filter((tag) =>
+        imageCharaTags.every((_tag) => tag !== _tag)
+      );
+      return { charaTags: imageCharaTags, otherTags: imageOtherTags };
+    },
+    [charaTags]
+  );
+
+  const getDefaultValues = useCallback(
+    (image?: MediaImageItemType | null) => ({
       name: image?.name || "",
       description: image?.description || "",
       topImage: image?.topImage || "",
       pickup: image?.pickup || "",
+      ...getImageTagsObject(image),
       time:
         image?.time
           ?.toLocaleString("sv-SE", { timeZone: "JST" })
@@ -76,16 +99,33 @@ export default function ImageEditForm({ className, ...args }: Props) {
       move: image?.album?.dir || "",
       rename: image?.originName || "",
     }),
-    [image]
+    [getImageTagsObject]
   );
 
-  const { register, handleSubmit, reset, getValues, setValue } =
-    useForm<FieldValues>({
-      defaultValues,
-    });
+  const defaultValues = getDefaultValues(image);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    getValues,
+    setValue,
+    control,
+    formState: { isDirty },
+  } = useForm<FieldValues>({
+    defaultValues,
+  });
 
   const sendUpdate = useCallback(
-    async (image: MediaImageItemType, deleteMode: boolean = false) => {
+    async ({
+      image,
+      deleteMode = false,
+      otherSubmit = false,
+    }: {
+      image: MediaImageItemType;
+      deleteMode?: boolean;
+      otherSubmit?: boolean;
+    }) => {
       const {
         album,
         resized,
@@ -108,7 +148,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
           duration: 2000,
         });
         setImageFromUrl();
-        if (move || rename) {
+        if (!otherSubmit && (move || rename)) {
           const query = Object.fromEntries(
             new URLSearchParams(location.search)
           );
@@ -126,132 +166,127 @@ export default function ImageEditForm({ className, ...args }: Props) {
     },
     [imageAlbumList, router, setImageFromUrl]
   );
-  const onSubmit = useCallback(
-    async (image?: MediaImageItemType) => {
-      if (image) {
-        const form = refForm.current;
-        let sendFlag = false;
-        if (form) {
-          const fmData = new FormData(form);
-          const data = Object.fromEntries(fmData) as { [k: string]: any };
-          const ftData = Object.entries(data).filter(([k, v]) => {
-            switch (k) {
-              case "time":
-                return image.time?.getTime() !== new Date(String(v)).getTime();
-              case "move":
-                return v !== image.album?.dir;
-              case "rename":
-                return v !== image.originName;
-              case "topImage":
-              case "pickup":
-                const flag = v !== String(image[k]);
-                return flag;
-              default:
-                return (image[k] || "") !== v;
-            }
-          });
-          if (ftData.length > 0) sendFlag = true;
-          ftData.forEach(([k, v]) => {
-            switch (k) {
-              case "time":
-                image.time = new Date(String(v));
-                break;
-              case "topImage":
-              case "pickup":
-                switch (v) {
-                  case "true":
-                  case "false":
-                    image[k] = v === "true";
-                    break;
-                  default:
-                    image[k] = null;
-                    break;
-                }
-                break;
-              default:
-                image[k] = v;
-                break;
-            }
-          });
-          const tags = charaTags.concat(otherTags);
-          if (tags.length === 0) {
-            if (image.tags) {
-              delete image.tags;
-              if (!sendFlag) sendFlag = true;
-            }
-          } else if (image.tags) {
-            const tagNotMatch =
-              image.tags.length !== tags.length ||
-              !image.tags.every((tag) => tags.some((_tag) => tag === _tag));
-            if (!sendFlag) sendFlag = tagNotMatch;
-            if (tagNotMatch) {
-              const _tags = image.tags.filter((tag) =>
-                tags.some((_tag) => tag === _tag)
-              );
-              tags
-                .filter((_tag) => _tags.every((tag) => tag !== _tag))
-                .forEach((tag) => {
-                  _tags.push(tag);
-                });
-              image.tags = _tags;
-            }
-          } else {
-            image.tags = tags;
-            if (!sendFlag) sendFlag = true;
+  const getCompareValues = (values: FieldValues) => {
+    const setValues: FieldValues = {};
+    Object.entries(values).forEach(([k, v]) => {
+      switch (k) {
+        case "charaTags":
+        case "otherTags":
+          setValues.tags = (setValues.tags || []).concat(v || []);
+          break;
+        default:
+          setValues[k] = v;
+          break;
+      }
+    });
+    return setValues;
+  };
+  const SubmitImage = useCallback(
+    async (image?: MediaImageItemType | null, otherSubmit = false) => {
+      if (!image || !isDirty) return;
+      const formValues = getCompareValues(getValues());
+      const formDefaultValues = getCompareValues(defaultValues);
+      const updateEntries = Object.entries(formValues).filter(([k, v]) => {
+        if (Array.isArray(v)) {
+          return formDefaultValues[k].join(",") !== v.join(",");
+        } else {
+          switch (k) {
+            case "move":
+              return v !== image.album?.dir;
+            case "rename":
+              return v !== image.originName;
+            default:
+              return formDefaultValues[k] !== v;
           }
         }
-        if (sendFlag) sendUpdate(image);
-      }
+      });
+      if (updateEntries.length === 0) return;
+      updateEntries.forEach(([k, v]) => {
+        switch (k) {
+          case "time":
+            image.time = new Date(String(v));
+            break;
+          case "topImage":
+          case "pickup":
+            switch (v) {
+              case "true":
+              case "false":
+                image[k] = v === "true";
+                break;
+              default:
+                image[k] = null;
+                break;
+            }
+            break;
+          default:
+            image[k] = v;
+            break;
+        }
+      });
+      sendUpdate({ image, otherSubmit });
     },
-    [charaTags, otherTags, sendUpdate]
+    [isDirty, getValues, defaultValues, sendUpdate]
   );
 
-  const onToggleEdit = async () => {
-    if (image) await onSubmit(image);
-    wasEdit.current = false;
-  };
-  if (editMode) {
-    wasEdit.current = true;
-  } else {
-    if (wasEdit.current) onToggleEdit();
-  }
-
-  const imageUrl = useRef("");
+  const refImage = useRef<MediaImageItemType | null>(null);
   useEffect(() => {
-    async function checkURL() {
-      if (
-        image?.URL &&
-        imageUrl.current !== image.URL &&
-        charaList.length > 0
-      ) {
-        if (editMode) {
-          await onSubmit(
-            imageItemList.find(({ URL }) => URL === imageUrl.current)
-          );
-        }
-        imageUrl.current = image.URL;
-        const _charaTags = (image.tags || []).filter((tag) =>
-          charaList.some((chara) => tag === chara.id)
-        );
-        reset(defaultValues);
-        setCharaTags(_charaTags);
-        setOtherTags(
-          (image.tags || []).filter((tag) =>
-            _charaTags.every((_tag) => tag !== _tag)
-          )
-        );
-      }
+    if (image && refImage.current?.URL !== image?.URL) {
+      (async () => {
+        if (editMode && isDirty) SubmitImage(refImage.current, true);
+        const imageDefaultValues = getDefaultValues(image);
+        reset(imageDefaultValues);
+        setOtherTags((t) => {
+          const imageOnlyOtherTags =
+            imageDefaultValues.otherTags.filter((item) =>
+              t.every(({ value }) => value !== item)
+            ) || [];
+          if (imageOnlyOtherTags.length > 0)
+            return t.concat(
+              imageOnlyOtherTags.map((d) => ({ value: d, label: d }))
+            );
+          else return t;
+        });
+        refImage.current = image;
+      })();
     }
-    checkURL();
   }, [
-    image,
-    charaList,
-    reset,
-    defaultValues,
-    onSubmit,
     editMode,
-    imageItemList,
+    getDefaultValues,
+    getValues,
+    image,
+    imageSrc,
+    isDirty,
+    SubmitImage,
+    reset,
+    otherTags,
   ]);
+
+  const CharaTagsLabel = useCallback(
+    ({ option }: { option?: labelValue }) => {
+      const chara = charaList.find((chara) => chara.id === option?.value);
+      return (
+        <div>
+          <span className="mr-1">
+            {chara?.media?.icon ? (
+              <ImageMee
+                imageItem={chara.media.icon}
+                mode="icon"
+                width={24}
+                height={24}
+                className="charaIcon"
+              />
+            ) : (
+              <>{chara?.defEmoji}</>
+            )}
+          </span>
+          <span>{chara?.name}</span>
+        </div>
+      );
+    },
+    [charaList]
+  );
+
+  const { togglePreviewMode, previewMode } = usePreviewMode();
 
   return (
     <>
@@ -260,7 +295,10 @@ export default function ImageEditForm({ className, ...args }: Props) {
           title="編集"
           type="button"
           className={"mr-2 mb-2 w-12 h-12 text-2xl rounded-full p-0"}
-          onClick={toggleEditMode}
+          onClick={() => {
+            if (editMode) SubmitImage(image);
+            toggleEditMode();
+          }}
         >
           {editMode ? (
             <MdSaveAlt className="w-7 h-7 mx-[0.6rem]" />
@@ -275,7 +313,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
             className="plain mr-2 mb-2 bg-red-400 hover:bg-red-500 text-white w-12 h-12 text-2xl rounded-full p-0"
             onClick={async () => {
               if (confirm("本当に削除しますか？")) {
-                if (image && (await sendUpdate(image, true))) {
+                if (image && (await sendUpdate({ image, deleteMode: true }))) {
                   router.back();
                   const href = location.href;
                   setTimeout(() => {
@@ -295,7 +333,9 @@ export default function ImageEditForm({ className, ...args }: Props) {
             className={"mr-2 mb-2 w-12 h-12 text-2xl rounded-full p-0"}
             onClick={() => {
               if (image) {
-                navigator.clipboard.writeText(`![](?image=${image.originName})`);
+                navigator.clipboard.writeText(
+                  `![](?image=${image.originName})`
+                );
                 toast("コピーしました", { duration: 1500 });
               }
             }}
@@ -325,142 +365,102 @@ export default function ImageEditForm({ className, ...args }: Props) {
               />
             </div>
           </label>
-          <label>
-            <p>説明文</p>
+          <div>
+            <div>
+              <span>説明文</span>
+              <button
+                title="プレビューモードの切り替え"
+                type="button"
+                className="plain inline-block text-main-strong hover:text-main-dark ml-2 px-2 rounded-lg"
+                onClick={() => togglePreviewMode(getValues("description"))}
+              >
+                {previewMode ? "編集に戻る" : "プレビュー"}
+              </button>
+            </div>
             <div className="px-1 w-[100%]">
-              <textarea
-                className="rounded-none w-[100%] px-1 min-h-[8rem] text-lg md:text-xl"
+              <PostTextarea
                 title="説明文"
-                {...register("description")}
+                className="rounded-none w-[100%] px-1 min-h-[8rem] text-lg md:text-xl"
+                registed={register("description")}
               />
             </div>
-          </label>
+          </div>
           <div>
-            <p>キャラクタータグ</p>
+            <div>キャラクタータグ</div>
             <div className="px-1 w-[100%]">
-              {charaTags.map((tag, i) => {
-                const chara = charaList.find((chara) => chara.id === tag);
-                return (
-                  <span
-                    className="m-1 inline-block hover:line-through hover:cursor-pointer"
-                    onClick={() => {
-                      setCharaTags(charaTags.filter((_tag) => _tag !== tag));
-                    }}
-                    key={i}
-                  >
-                    {chara?.media?.icon ? (
-                      <ImageMee
-                        imageItem={chara.media.icon}
-                        mode="icon"
-                        width={20}
-                        height={20}
-                        className="charaIcon mr-1"
-                      />
-                    ) : (
-                      <></>
+              <Controller
+                control={control}
+                name="charaTags"
+                render={({ field }) => (
+                  <ReactSelect
+                    instanceId="CharaTagSelect"
+                    theme={callReactSelectTheme}
+                    isMulti
+                    options={charaTags}
+                    value={(field.value as string[]).map((fv) =>
+                      charaTags.find((ci) => ci.value === fv)
                     )}
-                    {chara ? chara.name : tag}
-                  </span>
-                );
-              })}
-              {(() => {
-                const noUsedCharaList = charaList.filter((chara) =>
-                  charaTags.every((tag) => chara.id !== tag)
-                );
-                if (noUsedCharaList.length === 0) return null;
-                else
-                  return (
-                    <select
-                      title="キャラの追加"
-                      ref={charaTagsSelect}
-                      onChange={() => {
-                        const elm = charaTagsSelect.current;
-                        if (!elm) return;
-                        switch (elm.value) {
-                          case "":
-                            break;
-                          default:
-                            setCharaTags(charaTags.concat(elm.value));
-                            break;
-                        }
-                        elm.value = "";
-                      }}
-                    >
-                      <option>＋追加</option>
-                      {noUsedCharaList.map((chara, i) => (
-                        <option key={i} value={chara.id}>
-                          {(chara.defEmoji || "") +
-                            chara.name +
-                            (chara.honorific || "")}
-                        </option>
-                      ))}
-                    </select>
-                  );
-              })()}
+                    placeholder="キャラの選択"
+                    onChange={(newValues) => {
+                      field.onChange(newValues.map((v) => v?.value));
+                    }}
+                    onBlur={field.onBlur}
+                    formatOptionLabel={(option) => (
+                      <CharaTagsLabel option={option} />
+                    )}
+                  ></ReactSelect>
+                )}
+              />
             </div>
           </div>
-          <label>
-            <p>その他のタグ</p>
-            <div className="px-1 w-[100%]">
-              {(() => {
-                const otherTagCandidates = autoFixTagsOptions(
-                  getTagsOptions(defaultTags)
-                );
-                const noUsedCandidates = otherTagCandidates.filter(
-                  ({ value }) => otherTags.every((tag) => value !== tag)
-                );
-                return (
-                  <>
-                    {otherTags.map((tag, i) => {
-                      return (
-                        <span
-                          className="m-1 inline-block hover:line-through hover:cursor-pointer"
-                          onClick={() => {
-                            setOtherTags(
-                              otherTags.filter((_tag) => _tag !== tag)
-                            );
-                          }}
-                          key={i}
-                        >
-                          {otherTagCandidates.find(({ value }) => tag === value)
-                            ?.label || tag}
-                        </span>
-                      );
-                    })}
-                    <select
-                      title="タグの追加"
-                      ref={otherTagsSelect}
-                      onChange={() => {
-                        const elm = otherTagsSelect.current;
-                        if (!elm) return;
-                        switch (elm.value) {
-                          case "":
-                            break;
-                          case "_new":
-                            const tag =
-                              prompt("設定するタグを入力してください");
-                            if (tag) setOtherTags(otherTags.concat(tag));
-                            break;
-                          default:
-                            setOtherTags(otherTags.concat(elm.value));
-                            break;
-                        }
-                        elm.value = "";
-                      }}
-                    >
-                      <option value="">＋追加</option>
-                      <option value="_new">新規</option>
-                      {noUsedCandidates.map(({ value, label }, i) => (
-                        <option key={i} value={value}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </>
-                );
-              })()}
+          <div>
+            <div>
+              <span>その他のタグ</span>
+              <button
+                title="新規タグ"
+                type="button"
+                className="plain inline-block text-main-strong hover:text-main-dark ml-2 px-2 py-1 rounded-lg"
+                onClick={() => {
+                  const answer = prompt("追加するタグの名前を入力してください");
+                  if (answer !== null) {
+                    const newCategory = { label: answer, value: answer };
+                    setOtherTags((c) => c.concat(newCategory));
+                    setValue(
+                      "otherTags",
+                      getValues("otherTags").concat(answer),
+                      {
+                        shouldDirty: true,
+                      }
+                    );
+                  }
+                }}
+              >
+                ＋新規タグの追加
+              </button>
             </div>
-          </label>
+            <div className="px-1 w-[100%]">
+              <Controller
+                control={control}
+                name="otherTags"
+                render={({ field }) => (
+                  <ReactSelect
+                    instanceId="OtherTagsSelect"
+                    theme={callReactSelectTheme}
+                    isMulti
+                    options={otherTags}
+                    value={(field.value as string[]).map((fv) =>
+                      otherTags.find((ci) => ci.value === fv)
+                    )}
+                    placeholder="その他のタグ選択"
+                    onChange={(newValues) => {
+                      field.onChange(newValues.map((v) => v?.value));
+                    }}
+                    onBlur={field.onBlur}
+                  ></ReactSelect>
+                )}
+              />
+            </div>
+          </div>
           <div>
             <p>固定設定</p>
             <div className="px-1 w-[100%] flex justify-around">

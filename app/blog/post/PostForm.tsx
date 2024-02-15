@@ -8,7 +8,10 @@ import React, {
   useRef,
   useState,
 } from "react";
-import PostTextarea, { usePreviewMode } from "./PostTextarea";
+import {
+  PostTextarea,
+  usePreviewMode,
+} from "@/app/components/form/input/PostTextarea";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -40,6 +43,7 @@ import {
   getLocalDraft,
   useLocalDraftPost,
 } from "./postLocalDraft";
+import { callReactSelectTheme } from "@/app/components/theme/main";
 
 type labelValues = { label: string; value: string }[];
 
@@ -143,7 +147,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
   const {
     register,
     handleSubmit,
-    formState: { errors, isDirty, isSubmitted, isSubmitting },
+    formState: { errors, isDirty, isSubmitted },
     getValues,
     setValue,
     reset,
@@ -269,7 +273,6 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
       <Controller
         name="category"
         control={control}
-        rules={{ required: true }}
         render={({ field }) => (
           <ReactSelect
             placeholder="カテゴリ"
@@ -281,17 +284,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
                 textAlign: "left",
               }),
             }}
-            theme={(theme) => ({
-              ...theme,
-              borderRadius: 10,
-              colors: {
-                ...theme.colors,
-                primary: "var(--main-color-deep)",
-                primary25: "var(--main-color-pale)",
-                primary50: "var(--main-color-soft)",
-                primary75: "var(--main-color)",
-              },
-            })}
+            theme={callReactSelectTheme}
             isMulti
             options={categoryList}
             value={(field.value as string[]).map((fv) =>
@@ -418,7 +411,9 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
             if (answer !== null) {
               const newCategory = { label: answer, value: answer };
               setCategoryList((c) => c.concat(newCategory));
-              setValue("category", getValues("category").concat(answer));
+              setValue("category", getValues("category").concat(answer), {
+                shouldDirty: true,
+              });
             }
           }}
         >
@@ -546,6 +541,9 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
       </div>
       <PostTextarea
         registed={SetRegister({ name: "body", ref: textareaRef, register })}
+        id="post_body_area"
+        placeholder="今何してる？"
+        className="mx-auto w-[85%] max-w-2xl min-h-[24em] p-2 text-start"
       />
       <input
         {...SetRegister({
@@ -568,15 +566,7 @@ function Main({ params }: { params: { [k: string]: string | undefined } }) {
         <button
           className="mx-4 px-4 py-2 rounded-lg"
           type="button"
-          onClick={() =>
-            togglePreviewMode(
-              (
-                document.querySelector(
-                  "textarea#post_body_area"
-                ) as HTMLTextAreaElement
-              )?.value
-            )
-          }
+          onClick={() => togglePreviewMode(getValues("body"))}
         >
           プレビュー
         </button>

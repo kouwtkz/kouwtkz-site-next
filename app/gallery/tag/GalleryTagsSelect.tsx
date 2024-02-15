@@ -9,6 +9,7 @@ import { useServerState } from "@/app/components/System/ServerState";
 import { MakeURL } from "@/app/components/functions/MakeURL";
 import ReactSelect from "react-select";
 import { HTMLAttributes } from "react";
+import { callReactSelectTheme } from "@/app/components/theme/main";
 
 interface SelectAreaProps extends HTMLAttributes<HTMLDivElement> {}
 
@@ -50,17 +51,7 @@ export default function GalleryTagsSelect({ className }: SelectAreaProps) {
         placeholder="ソート / フィルタ"
         instanceId="galleryTagSelect"
         className="min-w-[18rem] text-left"
-        theme={(theme) => ({
-          ...theme,
-          borderRadius: 6,
-          colors: {
-            ...theme.colors,
-            primary: "var(--main-color-deep)",
-            primary25: "var(--main-color-pale)",
-            primary50: "var(--main-color-soft)",
-            primary75: "var(--main-color)",
-          },
-        })}
+        theme={callReactSelectTheme}
         styles={{ menuList: (style) => ({ ...style, minHeight: "22rem" }) }}
         onChange={(list) => {
           const listObj: { [k: string]: string[] } = {
