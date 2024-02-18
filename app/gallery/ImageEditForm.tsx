@@ -25,8 +25,8 @@ import { Controller, FieldValues, useForm } from "react-hook-form";
 import { MakeURL } from "../components/functions/MakeURL";
 import { AiFillEdit } from "react-icons/ai";
 import {
-  MdSaveAlt,
   MdDeleteForever,
+  MdLibraryAddCheck,
   MdOutlineContentCopy,
 } from "react-icons/md";
 import ReactSelect from "react-select";
@@ -292,7 +292,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
     <>
       <div className="fixed right-0 bottom-0 z-50 m-2 flex flex-row-reverse">
         <button
-          title="編集"
+          title={editMode ? "保存" : "編集"}
           type="button"
           className={"mr-2 mb-2 w-12 h-12 text-2xl rounded-full p-0"}
           onClick={() => {
@@ -301,7 +301,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
           }}
         >
           {editMode ? (
-            <MdSaveAlt className="w-7 h-7 mx-[0.6rem]" />
+            <MdLibraryAddCheck className="w-7 h-7 mx-[0.6rem]" />
           ) : (
             <AiFillEdit className="w-7 h-7 m-[0.55rem]" />
           )}
