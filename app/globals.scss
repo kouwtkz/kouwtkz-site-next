@@ -555,6 +555,7 @@ iframe {
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
         &:first-child {
           justify-content: flex-start;
         }
