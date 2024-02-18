@@ -178,7 +178,7 @@ export default function ImageViewer() {
   const InfoCmp = useMemo(() => {
     if ("pic" in query || !image?.album?.visible?.info) return <></>;
     return (
-      <div className="info">
+      <div className="info window">
         <div className="window text-center md:text-left">
           {editMode ? null : (
             <>
