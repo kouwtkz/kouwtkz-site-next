@@ -178,8 +178,8 @@ export default function ImageViewer() {
   const InfoCmp = useMemo(() => {
     if ("pic" in query || !image?.album?.visible?.info) return <></>;
     return (
-      <div className="window info">
-        <div className="text-center md:text-left flex-shrink-0">
+      <div className="info">
+        <div className="window text-center md:text-left">
           {editMode ? null : (
             <>
               {image.album.visible.title &&
@@ -283,10 +283,10 @@ export default function ImageViewer() {
           )}
           {isComplete && isServerMode ? <ImageEditForm /> : null}
         </div>
-        <div className="flex w-[100%] px-2 pb-2 h-16 mb-0 text-main-strong flex-shrink-0 select-none">
+        <div className="paging text-main-strong select-none">
           {beforeAfterImage?.before ? (
             <Link
-              className="px-2 flex-1 flex justify-start items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
+              className="hover:text-main-deep hover:bg-main-pale-fluo"
               href={{
                 query: {
                   ...Object.fromEntries(search),
@@ -308,7 +308,7 @@ export default function ImageViewer() {
           )}
           {beforeAfterImage?.after ? (
             <Link
-              className="px-2 flex-1 flex justify-end items-center cursor-pointer hover:text-main-deep hover:bg-main-pale-fluo"
+              className="hover:text-main-deep hover:bg-main-pale-fluo"
               href={{
                 query: {
                   ...Object.fromEntries(search),
