@@ -86,8 +86,8 @@ export default function ImageEditForm({ className, ...args }: Props) {
     (image?: MediaImageItemType | null) => ({
       name: image?.name || "",
       description: image?.description || "",
-      topImage: image?.topImage || "",
-      pickup: image?.pickup || "",
+      topImage: String(image?.topImage),
+      pickup: String(image?.pickup),
       ...getImageTagsObject(image),
       time:
         image?.time
@@ -102,8 +102,6 @@ export default function ImageEditForm({ className, ...args }: Props) {
     [getImageTagsObject]
   );
 
-  const defaultValues = getDefaultValues(image);
-
   const {
     register,
     handleSubmit,
@@ -111,9 +109,9 @@ export default function ImageEditForm({ className, ...args }: Props) {
     getValues,
     setValue,
     control,
-    formState: { isDirty },
+    formState: { isDirty, defaultValues },
   } = useForm<FieldValues>({
-    defaultValues,
+    defaultValues: getDefaultValues(image),
   });
 
   const sendUpdate = useCallback(
@@ -183,10 +181,11 @@ export default function ImageEditForm({ className, ...args }: Props) {
   };
   const SubmitImage = useCallback(
     async (image?: MediaImageItemType | null, otherSubmit = false) => {
-      if (!image || !isDirty) return;
-      const formValues = getCompareValues(getValues());
+      if (!image || !isDirty || !defaultValues) return;
+      const formValues = getValues();
+      const formValuesList = getCompareValues(formValues);
       const formDefaultValues = getCompareValues(defaultValues);
-      const updateEntries = Object.entries(formValues).filter(([k, v]) => {
+      const updateEntries = Object.entries(formValuesList).filter(([k, v]) => {
         if (Array.isArray(v)) {
           return formDefaultValues[k].join(",") !== v.join(",");
         } else {
@@ -201,6 +200,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
         }
       });
       if (updateEntries.length === 0) return;
+      reset(formValues);
       updateEntries.forEach(([k, v]) => {
         switch (k) {
           case "time":
@@ -225,7 +225,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
       });
       sendUpdate({ image, otherSubmit });
     },
-    [isDirty, getValues, defaultValues, sendUpdate]
+    [isDirty, getValues, defaultValues, reset, sendUpdate]
   );
 
   const refImage = useRef<MediaImageItemType | null>(null);
