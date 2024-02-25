@@ -33,7 +33,7 @@ const SetSiteMenu = React.memo(function SiteMenu({
     <div className="absolute right-0 bg-white bg-opacity-90 flex font-LuloClean flex-wrap justify-center flex-col text-right select-none">
       {nav.map((item, i) => {
         const base = {
-          className: "min-w-48 px-4 py-2 hover:bg-main-pale-fluo",
+          className: "min-w-[10em] px-4 py-2 hover:text-white hover:bg-main-soft",
         };
         if (item.url)
           return (
@@ -47,7 +47,7 @@ const SetSiteMenu = React.memo(function SiteMenu({
                 }, 350);
               }}
             >
-              {item.name}
+              {item.short || item.name}
             </Link>
           );
         else {
