@@ -13,7 +13,7 @@ export default function InPageMenu({
   list = [],
   firstTopRef,
   adjust = 16,
-  lastAdjust = 128,
+  lastAdjust = 8,
 }: {
   list?: InPageRefObject[];
   firstTopRef?: RefObject<HTMLElement>;
