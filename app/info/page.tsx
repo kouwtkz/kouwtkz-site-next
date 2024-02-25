@@ -25,11 +25,16 @@ export default function Info() {
       <MdSection title="プロフィール" mdSrc="info/profile.md" />
       <MdSection title="各種リンク" mdSrc="info/link.md" />
       <MdSection title="更新履歴" mdSrc="info/history.md" />
-      <h3 className="my-4">
-        <Link className="underline" href="/info/teck">
+      <h4 className="my-4">
+        <Link className="roundLink" href="/info/schedule">
+          スケジュール
+        </Link>
+      </h4>
+      <h4 className="my-4">
+        <Link className="roundLink" href="/info/teck">
           このサイトの技術スタック
         </Link>
-      </h3>
+      </h4>
     </div>
   );
 }

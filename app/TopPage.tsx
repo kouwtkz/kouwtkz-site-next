@@ -88,10 +88,7 @@ export default function TopPage() {
                 <Link href="sound">おんがく</Link>
               </li>
               <li>
-                <Link href="schedule">よてい</Link>
-              </li>
-              <li>
-                <Link href="about">じょうほう</Link>
+                <Link href="info">じょうほう</Link>
               </li>
             </ul>
           </div>
