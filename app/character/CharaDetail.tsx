@@ -50,8 +50,8 @@ export default function CharaDetail({ name }: DetailProps) {
     { chara, name: "goods" },
     { chara, name: "3D" },
     { chara, name: "picture" },
-    { chara, name: "fanart", label: "parody", max: 12 },
-    { chara, name: "given", label: "FAN ART", max: 40 },
+    { chara, name: "parody", label: "parody", max: 12 },
+    { chara, name: "given", label: "Fanart", max: 40 },
   ];
   const galleryRefList = galleryList.map(() => createRef<HTMLDivElement>());
   const otherMenuList = [{ name: "Profile" }];
