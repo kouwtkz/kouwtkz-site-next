@@ -83,7 +83,7 @@ function Main({
   h2: _h2,
   h4: _h4,
 }: GalleryListProps) {
-  const { setImageFromUrl } = useMediaImageState();
+  const { imageItemList, setImageFromUrl } = useMediaImageState();
   const { isServerMode } = useServerState();
   const { groupImages: albumImages, setGroupImages: setAlbumImages } =
     useImageViewer();
@@ -104,13 +104,14 @@ function Main({
       if (album)
         upload({
           isServerMode,
-          album,
+          images: imageItemList,
+          dir: album.dir,
           files: acceptedFiles,
           setImageFromUrl,
           tags,
         });
     },
-    [isServerMode, album, setImageFromUrl, tags]
+    [album, isServerMode, imageItemList, setImageFromUrl, tags]
   );
   const { getRootProps, getInputProps } = useDropzone({
     onDrop,
