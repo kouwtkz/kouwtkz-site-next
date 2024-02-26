@@ -40,9 +40,14 @@ export function HistoryPage() {
   return (
     <MdSection title="更新履歴" mdSrc="info/history.md">
       {log.length > 0 ? (
-        <details>
-          <summary className="mx-auto">Githubの更新履歴</summary>
-          <ul className="text-left">
+        <details className="">
+          <summary className="mx-auto max-w-fit">
+            Githubの更新履歴
+            <span className="text-sm ml-2">
+              (最終更新:<span className="ml-1">{log[0].date}</span>)
+            </span>
+          </summary>
+          <ul className="text-left max-w-2xl">
             {log.map((item, i) => (
               <li className="flex" key={i}>
                 <GitlogItem item={item} />
