@@ -16,14 +16,13 @@ function notfoundResponse() {
 }
 
 export async function GET(req: NextRequest) {
-  const pathname = decodeURI(req.nextUrl.pathname);
+  let pathname = decodeURI(req.nextUrl.pathname);
   try {
-    let filePath = resolve(`${ROOT}/public${pathname}`);
-    if (!existsSync(filePath)) {
-      filePath = resolve(`${ROOT}/_data${pathname}`);
-      if (!existsSync(filePath)) return notfoundResponse();
-    }
-    const file = readFileSync(filePath)
+    let filePath =
+      [`${ROOT}/public${pathname}`, `${ROOT}/_data${pathname}`, `${ROOT}/_data/_media${pathname}`]
+        .find(path => existsSync(path));
+    if (!filePath) return notfoundResponse();
+    const file = readFileSync(resolve(filePath))
     return new Response(file, {
       headers: {
         "Content-Type": contentType(extname(pathname)) || "application/octet-stream",
