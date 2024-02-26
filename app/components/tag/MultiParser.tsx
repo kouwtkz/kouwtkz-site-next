@@ -14,6 +14,8 @@ import Twemoji from "react-twemoji";
 import { GetUrlFlag, MakeURL, ToURL } from "../functions/MakeURL";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { GetImageItemFromSrc } from "./ImageMee";
+import { C } from "@fullcalendar/core/internal-common";
+import { useSiteState } from "@/app/context/site/SiteState";
 
 type MultiParserOptions = {
   markdown?: boolean;
@@ -50,6 +52,7 @@ function MultiParser({
 }: MultiParserProps) {
   const router = useRouter();
   const { imageItemList, isSet: imagesIsSet } = useMediaImageState();
+  const { site } = useSiteState();
   if (only) {
     markdown = only.markdown === undefined ? false : only.markdown;
     toTwemoji = only.toTwemoji === undefined ? false : only.toTwemoji;
@@ -120,6 +123,25 @@ function MultiParser({
                         [new NodeText("たたむ")]
                       )
                     );
+                  break;
+                case "ul":
+                  let ulAdd = "";
+                  if ("data-kind" in v.attribs) {
+                    switch (v.attribs["data-kind"]) {
+                      case "sns":
+                        ulAdd =
+                          site?.menu?.sns
+                            ?.filter(({ hidden, none }) => !(hidden || none))
+                            .map(
+                              (item) =>
+                                `<li><a href="${item.url}">${item.name}</a></li>`
+                            )
+                            .join("") || "";
+                        break;
+                    }
+                  }
+                  if (ulAdd)
+                    htmlToDOM(ulAdd).forEach((n) => v.children.push(n));
                   break;
                 default:
                   if (!(hashtag || linkPush)) return;
