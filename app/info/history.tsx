@@ -42,7 +42,7 @@ export function HistoryPage() {
       {log.length > 0 ? (
         <details className="">
           <summary className="mx-auto max-w-fit">
-            Githubの更新履歴
+            Gitの更新履歴
             <span className="text-sm ml-2">
               (最終更新:<span className="ml-1">{log[0].date}</span>)
             </span>
