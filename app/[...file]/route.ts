@@ -4,7 +4,7 @@ import { readFileSync, existsSync } from "fs";
 import { contentType } from "mime-types"
 import { NextRequest } from "next/server";
 import { extname, resolve } from "path";
-const ROOT = process.env.ROOT || "";
+const ROOT = process.env.ROOT || ".";
 
 function notfoundResponse() {
   return new Response("file not found", {
