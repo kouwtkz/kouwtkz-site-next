@@ -6,6 +6,7 @@ import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 import { UrlObject } from "url";
 import { GetUrlFlag, ToURL } from "../functions/MakeURL";
+import { useServerState } from "../System/ServerState";
 const blankImage =
   "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
@@ -45,8 +46,9 @@ export default function ImageMee({
   const refImg = useRef<HTMLImageElement | null>(null);
   const refImgSrc = useRef("");
   const refShowList = useRef<string[]>([]);
+  const { isStatic } = useServerState();
 
-  const src = _src || imageItem?.URL || "";
+  const src = _src || (isStatic ? imageItem?.URL : imageItem?.origin) || "";
   const alt = _alt || imageItem?.name || imageItem?.src || "";
 
   [width, height] = useMemo(() => {
@@ -71,12 +73,12 @@ export default function ImageMee({
   );
   const imageSrc = useMemo(
     () =>
-      mode === "simple"
+      mode === "simple" || !isStatic
         ? src
         : mode === "thumbnail" && thumbnail
         ? thumbnail
         : imageItem?.resized?.find((item) => item.mode === mode)?.src || src,
-    [imageItem, mode, src, thumbnail]
+    [imageItem, mode, src, thumbnail, isStatic]
   );
   const imageShowList = useMemo(() => {
     const list: string[] = [];
