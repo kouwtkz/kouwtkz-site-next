@@ -1,31 +1,33 @@
-import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
+import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 export async function upload({
   isServerMode,
   files,
-  album,
+  images,
+  dir,
   tags: _tags,
   setImageFromUrl,
 }: {
   isServerMode: boolean;
   files: File[];
-  album: MediaImageAlbumType;
+  images: MediaImageItemType[];
+  dir?: string;
   tags: string | string[];
   setImageFromUrl: Function;
 }) {
   const tags = typeof _tags === "string" ? [_tags] : _tags;
-  const checkTime = new Date().getTime() - 10;
+  const checkTime = new Date().getTime();
   const targetFiles = files.filter(
     (file) =>
-      file.lastModified < checkTime &&
-      !album?.list.some((image) => image.src === file.name)
+      Math.abs(checkTime - file.lastModified) > 200 ||
+      !images.some(({ src, originName }) => [src, originName].some(n => n === file.name))
   );
   if (targetFiles.length === 0) return;
   if (isServerMode) {
     const formData = new FormData();
-    formData.append("dir", album.dir || "");
+    formData.append("dir", dir || "");
     tags.forEach((tag) => {
       formData.append("tags[]", tag);
     });

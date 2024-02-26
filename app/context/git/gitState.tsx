@@ -23,7 +23,6 @@ export default function GitState({ url }: { url: string }) {
   const isSet = useRef(false);
   useEffect(() => {
     if (!isSet.current) {
-      console.log(url);
       axios(url).then((r) => {
         const data: reducedGitItemType[] = r.data;
         setLog(data);
