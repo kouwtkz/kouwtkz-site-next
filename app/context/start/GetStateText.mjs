@@ -2,7 +2,7 @@
 
 import { readFileSync, statSync } from "fs";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
-const updateDefPath = "app/data/updateDef.json";
+const updateDefPath = "app/context/start/updateDef.json";
 
 /**
  * @typedef {{ [k: string]: { json: string, data: string | undefined } | undefined }} updateDefType
