@@ -15,6 +15,7 @@ import MarkdownDataState, {
 } from "../md/MarkdownDataState";
 import { create } from "zustand";
 import { useLayoutEffect, useRef } from "react";
+import GitState from "../git/gitState";
 const loadingCheckID = "Element_DateState_Loading_NotEnd";
 const reloadFunction =
   process.env.NODE_ENV === "development"
@@ -52,6 +53,7 @@ function State() {
           <SoundState url={addMdate("/data/sound.json", values)} />
           <PostState url={addMdate("/blog/posts.json", values)} />
           <EmbedState url={addMdate("/data/embed.json", values)} />
+          <GitState url={addMdate("/data/gitlog.json", values)} />
         </>
       ) : null}
     </>

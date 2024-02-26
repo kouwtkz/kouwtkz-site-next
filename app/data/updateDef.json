@@ -10,6 +10,9 @@
   "md": {
     "json": "/data/md.json"
   },
+  "git": {
+    "json": "/data/gitlog.json"
+  },
   "image": {
     "json": "/data/images.json"
   },
