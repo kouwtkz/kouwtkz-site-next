@@ -1,33 +1,41 @@
-import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
+import { MediaImageAlbumType, MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import axios from "axios";
 import toast from "react-hot-toast";
 
 export async function upload({
   isServerMode,
   files,
-  images,
-  dir,
+  imageItemList,
+  album,
   tags: _tags,
   setImageFromUrl,
 }: {
   isServerMode: boolean;
   files: File[];
-  images: MediaImageItemType[];
-  dir?: string;
+  imageItemList: MediaImageItemType[];
+  album: MediaImageAlbumType;
   tags: string | string[];
   setImageFromUrl: Function;
 }) {
   const tags = typeof _tags === "string" ? [_tags] : _tags;
   const checkTime = new Date().getTime();
   const targetFiles = files.filter(
-    (file) =>
-      Math.abs(checkTime - file.lastModified) > 200 ||
-      !images.some(({ src, originName }) => [src, originName].some(n => n === file.name))
+    (file) => {
+      const findFunc = ({ src, originName }: MediaImageItemType) => [src, originName].some(n => n === file.name);
+      const fromBrowser = Math.abs(checkTime - file.lastModified) < 200;
+      if (fromBrowser) {
+        return !imageItemList.some(findFunc)
+      } else {
+        const existTime = album.list.find(findFunc)?.time?.getTime();
+        if (!existTime) return true;
+        return Math.floor(existTime / 1000) !== Math.floor(file.lastModified / 1000);
+      }
+    }
   );
   if (targetFiles.length === 0) return;
   if (isServerMode) {
     const formData = new FormData();
-    formData.append("dir", dir || "");
+    formData.append("dir", album.dir || "");
     tags.forEach((tag) => {
       formData.append("tags[]", tag);
     });

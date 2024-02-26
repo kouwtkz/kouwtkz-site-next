@@ -104,8 +104,8 @@ function Main({
       if (album)
         upload({
           isServerMode,
-          images: imageItemList,
-          dir: album.dir,
+          imageItemList,
+          album: album,
           files: acceptedFiles,
           setImageFromUrl,
           tags,
