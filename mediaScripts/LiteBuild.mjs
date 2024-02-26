@@ -27,6 +27,7 @@ import { soundAlbum } from "../app/sound/MediaSoundData.mjs";
 import { getPostsFromYaml } from "../app/blog/posts.json/postDataFunction.mjs";
 import getPosts from "../app/blog/functions/getPosts.mjs";
 import { GenerateRss, GetPostsRssOption } from "../app/blog/functions/GeneratePosts.mjs";
+import { getGitLog } from "../app/context/git/log.mjs";
 
 const updateDef = GetUpdateDef();
 /** @type { Map<string, string> } */
@@ -49,6 +50,7 @@ writeJsonOut("md", MarkdownDataObject("client"));
 writeJsonOut("image", await GetMediaImageAlbums({ ...fromto, readSize: true, filter: { archive: false } }));
 writeJsonOut("site", getSiteData());
 writeJsonOut("sound", soundAlbum);
+writeJsonOut("git", getGitLog());
 
 const rawPosts = getPostsFromYaml();
 const { posts } = getPosts({ posts: rawPosts, common: isStatic })
