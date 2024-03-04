@@ -101,7 +101,6 @@ button,
   &:not(.plain) {
     color: white;
     background-color: var(--main-color);
-    display: inline-block;
     cursor: pointer;
     font-weight: 700;
     border: 0;
@@ -418,15 +417,19 @@ iframe {
   }
 }
 
+.modal-background {
+  background-color: var(--lightbox-background);
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
 #image_viewer {
   $mobileWidth: 768px;
   .viewer {
-    background-color: var(--lightbox-background);
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    @extend .modal-background;
     // width: 100vw;
     // height: 100vh;
     display: flex;
