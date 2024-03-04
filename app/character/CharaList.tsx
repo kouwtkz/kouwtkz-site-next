@@ -12,7 +12,7 @@ export default function CharaList() {
         return (
           <Link
             key={index}
-            className="block p-4 w-[50%] sm:w-[33%] hover:bg-main-pale-fluo hover:text-main-deep"
+            className="flex flex-col justify-center p-4 w-[50%] sm:w-[33%] hover:bg-main-pale-fluo hover:text-main-deep"
             href={{ pathname: "/character", query: { name: chara.id } }}
             prefetch={false}
           >

@@ -11,6 +11,7 @@ type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
   isSet: boolean;
+  setIsSet: (flag: boolean) => void;
   setCharaObject: (list: CharaObjectType) => void;
 };
 
@@ -18,6 +19,7 @@ export const useCharaState = create<CharaStateType>((set) => ({
   charaObject: null,
   charaList: [],
   isSet: false,
+  setIsSet: (flag) => set(() => ({ isSet: flag })),
   setCharaObject: (data) => {
     set(() => ({
       charaList: Object.values(data),
@@ -28,16 +30,12 @@ export const useCharaState = create<CharaStateType>((set) => ({
 }));
 
 export default function CharaState({ url }: { url: string }) {
-  const charaData = useCharaState();
-  const isSet = useRef(false);
+  const { isSet, setCharaObject } = useCharaState();
+  // const isSet = useRef(false);
   const { imageItemList, imageAlbumList } = useMediaImageState();
   const { SoundItemList, defaultPlaylist } = useSoundState();
   useEffect(() => {
-    if (
-      !isSet.current &&
-      imageItemList.length > 0 &&
-      SoundItemList.length > 0
-    ) {
+    if (!isSet && imageItemList.length > 0 && SoundItemList.length > 0) {
       axios(url).then((r) => {
         const data: CharaObjectType = r.data;
         const charaList = Object.values(data);
@@ -87,9 +85,8 @@ export default function CharaState({ url }: { url: string }) {
             };
           }
         });
-        charaData.setCharaObject(data);
+        setCharaObject(data);
       });
-      isSet.current = true;
     }
   });
 

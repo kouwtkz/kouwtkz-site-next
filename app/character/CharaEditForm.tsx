@@ -10,10 +10,11 @@ import { CharaType } from "./CharaType";
 import { ImageMeeIcon } from "../components/tag/ImageMee";
 import { MakeURL } from "../components/functions/MakeURL";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 export default function CharaEditForm() {
   const search = useSearchParams();
-  const { charaObject } = useCharaState();
+  const { charaObject, setIsSet } = useCharaState();
   const router = useRouter();
   const name = search.get("name");
   const chara = charaObject && name ? charaObject[name] : null;
@@ -69,7 +70,13 @@ export default function CharaEditForm() {
       }
     });
     const res = await axios.post("/character/send", formData);
-    // router.push(MakeURL({ query: { name: formValues.id } }).toString());
+    if (res.status === 200) {
+      toast("更新しました", { duration: 2000 });
+      setIsSet(false);
+      setTimeout(() => {
+        router.push(MakeURL({ query: { name: formValues.id } }).toString());
+      }, 200);
+    }
   }
 
   return (

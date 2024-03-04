@@ -23,7 +23,8 @@ export interface CharaType {
     icon?: MediaImageItemType | null,
     image?: MediaImageItemType | null,
     headerImage?: MediaImageItemType | null,
-  }
+  },
+  [k: string]: any
 }
 
 export interface CharaObjectType {

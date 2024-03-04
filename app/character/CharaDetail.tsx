@@ -14,7 +14,7 @@ import GallerySearchArea from "../gallery/tag/GallerySearchArea";
 import GalleryTagsSelect from "../gallery/tag/GalleryTagsSelect";
 import InPageMenu from "../components/navigation/InPageMenu";
 import Link from "next/link";
-import { MdClientNode } from "../context/md/MarkdownDataClient";
+import MultiParser from "../components/tag/MultiParser";
 
 type DetailProps = {
   name: string;
@@ -112,7 +112,7 @@ export default function CharaDetail({ name }: DetailProps) {
               chara.honorific || ""
             }`}</span>
           </h1>
-          <div className="text-main text-xl">{chara.overview}</div>
+          <div className="text-main text-xl my-2">{chara.overview}</div>
         </div>
         {chara.media?.headerImage ? (
           <div>
@@ -138,7 +138,7 @@ export default function CharaDetail({ name }: DetailProps) {
             />
           </div>
         ) : null}
-        <MdClientNode name={`character/${chara.id}.md`} />
+        <MultiParser>{chara.description}</MultiParser>
         <EmbedNode className="my-8 mx-2 md:mx-8" embed={chara.embed} />
       </div>
       <div className="mt-4">

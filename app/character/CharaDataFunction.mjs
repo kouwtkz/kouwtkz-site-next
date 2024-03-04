@@ -1,25 +1,34 @@
 // @ts-check
 
-import { parse } from "yaml";
-import { readFileSync } from "fs";
 /** @typedef { import("./CharaType.d").CharaType } CharaType */
 /** @typedef { import("./CharaType.d").CharaObjectType } CharaObjectType */
 
+import { readFileSync, writeFileSync } from "fs";
+import { resolve } from "path";
+import { parse as yamlParse, stringify as yamlStringify } from "yaml";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 const dataDir = process.env.DATA_DIR || "";
-/** @type any */
-let rawData = {}
-try {
-  rawData = parse(readFileSync(`${cwd}/${dataDir}/characters.yaml`, "utf8"));
-} catch { }
+const charaYamlPath = resolve(`${cwd}/${dataDir}/characters.yaml`)
 
-/** @type CharaObjectType */
-export const charaObject = rawData;
-/** @type Array<CharaType> */
-export const charaList = Object.values(charaObject);
-/** @type Map<string, CharaType> */
-export const charaMap = new Map(Object.entries(charaObject));
+/** @param {CharaObjectType} charaObject  */
+function setCharaId(charaObject) {
+  Object.entries(charaObject).forEach(([key, chara]) => {
+    chara.id = key;
+  });
+}
 
-Object.entries(charaObject).forEach(([key, chara]) => {
-  chara.id = key;
-});
+export function getCharaObjectFromYaml(setId = true) {
+  try {
+    /** @type CharaObjectType */
+    const rawData = yamlParse(readFileSync(charaYamlPath, "utf8"));
+    if (setId) setCharaId(rawData);
+    return rawData;
+  } catch {
+    return {};
+  }
+}
+
+/** @param {CharaObjectType} charaObject  */
+export function setCharaObjectToYaml(charaObject) {
+  return writeFileSync(charaYamlPath, yamlStringify(charaObject));
+}
