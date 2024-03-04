@@ -2,8 +2,8 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCharaState } from "./CharaState";
-import { useCallback, useEffect } from "react";
-import { FieldValues, useForm } from "react-hook-form";
+import { useCallback, useEffect, useMemo } from "react";
+import { Controller, FieldValues, useForm } from "react-hook-form";
 import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CharaType } from "./CharaType";
@@ -12,11 +12,15 @@ import { MakeURL } from "../components/functions/MakeURL";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/image/MediaImageState";
+import ReactSelect from "react-select";
+import { callReactSelectTheme } from "../components/theme/main";
+import { useSoundState } from "../sound/SoundState";
 
 export default function CharaEditForm() {
   const search = useSearchParams();
   const { charaObject, setIsSet } = useCharaState();
   const imageState = useMediaImageState();
+  const soundState = useSoundState();
   const router = useRouter();
   const name = search.get("name");
   const chara = charaObject && name ? charaObject[name] : null;
@@ -31,8 +35,19 @@ export default function CharaEditForm() {
       icon: chara?.icon || "",
       image: chara?.image || "",
       headerImage: chara?.headerImage || "",
+      playlist: chara?.playlist || [],
     }),
     []
+  );
+  const playlistOptions = useMemo(
+    () =>
+      [{ label: "デフォルト", value: "default" }].concat(
+        soundState.SoundItemList.map((s) => ({
+          label: s.title,
+          value: s.src.slice(s.src.lastIndexOf("/") + 1),
+        }))
+      ),
+    [soundState.SoundItemList]
   );
   const schema = z.object({
     id: z
@@ -69,11 +84,22 @@ export default function CharaEditForm() {
     const formData = new FormData();
     if (chara?.id) formData.append("target", chara.id);
     Object.entries(formValues).forEach(([key, value]) => {
-      switch (key) {
-        default:
-          if (key in dirtyFields) formData.append(key, value);
-          break;
-      }
+      if (key in dirtyFields)
+        switch (key) {
+          case "playlist":
+            const arr = value as string[];
+            if (arr.length > 0) {
+              arr.forEach((v) => {
+                formData.append(`${key}[]`, v);
+              });
+            } else {
+              formData.append(`${key}`, "");
+            }
+            break;
+          default:
+            formData.append(key, value);
+            break;
+        }
     });
     const res = await axios.post("/character/send", formData);
     toast(res.data.message, { duration: 2000 });
@@ -158,6 +184,28 @@ export default function CharaEditForm() {
             {...register("image")}
           />
         </label>
+      </div>
+      <div className="my-2">
+        <Controller
+          control={control}
+          name="playlist"
+          render={({ field }) => (
+            <ReactSelect
+              instanceId="CharaTagSelect"
+              theme={callReactSelectTheme}
+              isMulti
+              options={playlistOptions}
+              value={(field.value as string[]).map((fv) =>
+                playlistOptions.find(({ value }) => value === fv)
+              )}
+              placeholder="プレイリスト"
+              onChange={(newValues) => {
+                field.onChange(newValues.map((v) => v?.value));
+              }}
+              onBlur={field.onBlur}
+            ></ReactSelect>
+          )}
+        />
       </div>
       <div className="my-2">
         <textarea

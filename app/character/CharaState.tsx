@@ -7,6 +7,7 @@ import axios from "axios";
 import { useMediaImageState } from "../context/image/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
 import GalleryList from "../gallery/GalleryList";
+import { PlaylistType, SoundItemType } from "../sound/MediaSoundType";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;
@@ -62,24 +63,28 @@ export default function CharaState({ url }: { url: string }) {
             }
           });
           if (typeof chara.time === "string") chara.time = new Date(chara.time);
-          let playlist: unknown = chara.playlist;
-          const playlistTitle = `${chara.name}のプレイリスト`;
-          if (typeof playlist === "string") {
-            if (playlist === "default") {
-              if (defaultPlaylist)
-                chara.playlist = {
-                  ...defaultPlaylist,
-                  title: playlistTitle,
-                };
-            } else playlist = [playlist];
-          }
-          if (Array.isArray(playlist)) {
-            chara.playlist = {
+          let playlist = chara.playlist;
+          if (playlist) {
+            const playlistTitle = `${chara.name}のプレイリスト`;
+            chara.media.playlist = {
               title: playlistTitle,
               list: playlist
-                .map((src) =>
-                  SoundItemList.findIndex((item) => item.src.endsWith(src))
-                )
+                .reduce((a, c) => {
+                  if (c === "default") {
+                    defaultPlaylist?.list.forEach(({ src }) => {
+                      const foundIndex = SoundItemList.findIndex(
+                        (item) => item.src === src
+                      );
+                      if (foundIndex >= 0) a.push(foundIndex);
+                    });
+                  } else {
+                    const foundIndex = SoundItemList.findIndex((item) =>
+                      item.src.endsWith(c)
+                    );
+                    if (foundIndex >= 0) a.push(foundIndex);
+                  }
+                  return a;
+                }, [] as number[])
                 .filter((i) => i >= 0)
                 .map((i) => SoundItemList[i]),
             };

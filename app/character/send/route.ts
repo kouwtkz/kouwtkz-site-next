@@ -24,8 +24,27 @@ export async function POST(req: NextRequest) {
   if (target) formData.delete("id");
   const charaIndex = target ? charaList.findIndex(([key]) => key === target) : -1;
   const chara = charaIndex >= 0 ? charaList[charaIndex][1] : {} as CharaType;
+  const formArray: { key: string, value: string | string[] }[] = [];
   formData.forEach((value, key) => {
-    chara[key] = value;
+    value = value.toString();
+    if (key.endsWith("[]")) {
+      const _key = key.slice(0, -2);
+      const found = formArray.find(({ key }) => key === _key);
+      if (found) {
+        if (Array.isArray(found.value)) found.value.push(value);
+        else found.value = [found.value, value];
+      } else formArray.push({ key: _key, value: [value] });
+    } else {
+      formArray.push({ key, value })
+    }
+    return formArray;
+  })
+  formArray.forEach(({ key, value }) => {
+    if (value !== "") {
+      chara[key] = value;
+    } else {
+      delete chara[key];
+    }
   })
   if (id) {
     if (charaIndex >= 0) {

@@ -28,13 +28,16 @@ export default function CharaDetail({ name }: DetailProps) {
   const chara = charaObject ? charaObject[name] : null;
   useEffect(() => {
     if (!isSetPlaylist.current) {
-      if (chara?.playlist && playlist.title !== chara.playlist.title) {
-        let foundIndex = chara.playlist.list.findIndex(
+      if (
+        chara?.media?.playlist &&
+        playlist.title !== chara.media.playlist.title
+      ) {
+        let foundIndex = chara.media.playlist.list.findIndex(
           (item) => item.src === playlist.list[current].src
         );
         if (foundIndex < 0) foundIndex = 0;
         RegistPlaylist({
-          playlist: chara.playlist,
+          playlist: chara.media.playlist,
           current: foundIndex,
         });
       }
