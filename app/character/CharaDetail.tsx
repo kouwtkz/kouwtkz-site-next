@@ -112,7 +112,7 @@ export default function CharaDetail({ name }: DetailProps) {
               chara.honorific || ""
             }`}</span>
           </h1>
-          <div className="text-main text-xl">{chara.description}</div>
+          <div className="text-main text-xl">{chara.overview}</div>
         </div>
         {chara.media?.headerImage ? (
           <div>
