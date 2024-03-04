@@ -11,10 +11,12 @@ import { ImageMeeIcon } from "../components/tag/ImageMee";
 import { MakeURL } from "../components/functions/MakeURL";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useMediaImageState } from "../context/image/MediaImageState";
 
 export default function CharaEditForm() {
   const search = useSearchParams();
   const { charaObject, setIsSet } = useCharaState();
+  const imageState = useMediaImageState();
   const router = useRouter();
   const name = search.get("name");
   const chara = charaObject && name ? charaObject[name] : null;
@@ -25,6 +27,10 @@ export default function CharaEditForm() {
       honorific: chara?.honorific || "",
       overview: chara?.overview || "",
       description: chara?.description || "",
+      defEmoji: chara?.defEmoji || "",
+      icon: chara?.icon || "",
+      image: chara?.image || "",
+      headerImage: chara?.headerImage || "",
     }),
     []
   );
@@ -70,9 +76,10 @@ export default function CharaEditForm() {
       }
     });
     const res = await axios.post("/character/send", formData);
+    toast(res.data.message, { duration: 2000 });
     if (res.status === 200) {
-      toast("更新しました", { duration: 2000 });
-      setIsSet(false);
+      if (res.data.update.chara) setIsSet(false);
+      if (res.data.update.image) imageState.setImageFromUrl();
       setTimeout(() => {
         router.push(MakeURL({ query: { name: formValues.id } }).toString());
       }, 200);
@@ -80,7 +87,10 @@ export default function CharaEditForm() {
   }
 
   return (
-    <form className="[&_input]:px-2" onSubmit={handleSubmit(onSubmit)}>
+    <form
+      className="[&_input]:px-2 max-w-md mx-auto"
+      onSubmit={handleSubmit(onSubmit)}
+    >
       <div className="my-2">
         {chara?.media?.icon ? (
           <ImageMeeIcon
@@ -100,13 +110,18 @@ export default function CharaEditForm() {
           <p className="text-red-400">{errors.id?.message?.toString()}</p>
         ) : null}
       </div>
-      <div className="my-2">
+      <div className="my-2 flex">
         <input
           placeholder="名前"
           className="w-auto min-w-fit"
           {...register("name")}
         />
         <input placeholder="敬称" {...register("honorific")} />
+        <input
+          className="w-16"
+          placeholder="絵文字"
+          {...register("defEmoji")}
+        />
         {"name" in errors ? (
           <p className="text-red-400">{errors.name?.message?.toString()}</p>
         ) : null}
@@ -118,7 +133,32 @@ export default function CharaEditForm() {
           {...register("overview")}
         />
       </div>
-      <div className="my-2"></div>
+      <div className="my-2 [&>*]:my-1 flex flex-col">
+        <label className="flex">
+          <span className="mr-2">アイコン</span>
+          <input
+            className="flex-1"
+            placeholder="自動設定"
+            {...register("icon")}
+          />
+        </label>
+        <label className="flex">
+          <span className="mr-2">ヘッダー画像</span>
+          <input
+            className="flex-1"
+            placeholder="ヘッダー画像"
+            {...register("headerImage")}
+          />
+        </label>
+        <label className="flex">
+          <span className="mr-2">メイン画像</span>
+          <input
+            className="flex-1"
+            placeholder="メイン画像"
+            {...register("image")}
+          />
+        </label>
+      </div>
       <div className="my-2">
         <textarea
           placeholder="詳細"
