@@ -4,7 +4,7 @@ import React from "react";
 import CharaList from "./CharaList";
 import { useSearchParams } from "next/navigation";
 import CharaDetail from "./CharaDetail";
-import CharaEditButton from "./CharaEditButton";
+import { CharaEditButton } from "./CharaEditButton";
 import CharaEditForm from "./CharaEditForm";
 
 interface CharaObjectProps {
