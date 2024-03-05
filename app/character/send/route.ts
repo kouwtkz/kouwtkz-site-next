@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
   const target = formData.get("target")?.toString();
   if (target) formData.delete("target");
   const id = formData.get("id")?.toString();
-  if (target) formData.delete("id");
+  if (id) formData.delete("id");
   const formArray: { key: string, value: string | string[] }[] = [];
   formData.forEach((value, key) => {
     value = value.toString();
