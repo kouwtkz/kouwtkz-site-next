@@ -20,7 +20,7 @@ import {
   autoFixTagsOptions,
 } from "./tag/GalleryTags";
 import { MakeURL } from "@/app/components/functions/MakeURL";
-import { RiFullscreenFill } from "react-icons/ri";
+import { RiBook2Fill, RiFullscreenFill } from "react-icons/ri";
 import { useDataState } from "../context/start/DataState";
 
 const body = typeof window === "object" ? document?.body : null;
@@ -269,16 +269,19 @@ export default function ImageViewer() {
                     {image.link}
                   </Link>
                 </div>
-              ) : (
-                <></>
-              )}
-              {image.time ? (
-                <div className="m-4 mr-8 text-main-grayish text-right">
-                  {image.time.toLocaleString("ja", opt)}
-                </div>
-              ) : (
-                <></>
-              )}
+              ) : null}
+              <div className="m-4 mr-8 text-neutral-500 text-right">
+                {image.time ? (
+                  <div className="m-2 text-main-grayish">
+                    {image.time.toLocaleString("ja", opt)}
+                  </div>
+                ) : null}
+                {image.type === "comics" ? (
+                  <div className="m-2">
+                    本のマークから読むことができる作品です！
+                  </div>
+                ) : null}
+              </div>
             </>
           )}
           {isComplete && isServerMode ? <ImageEditForm /> : null}
@@ -346,6 +349,52 @@ export default function ImageViewer() {
     isComplete,
   ]);
 
+  const previewArea = useMemo(() => {
+    if (!image) return <></>;
+    if (!isSet) return <></>;
+    let mode: "" | "embed" | "epub" = "";
+    if (image.embed) {
+      if (/\.epub$/i.test(image.embed)) mode = "epub";
+      else mode = "embed";
+    }
+    return (
+      <>
+        {mode === "embed" ? (
+          <EmbedNode className="wh-all-fill" embed={image.embed} />
+        ) : (
+          <div className="wh-fill">
+            <Link
+              title="別タブで画像を開く"
+              href={`${image.URL || image.src}`}
+              target="_blank"
+              className="fullscreen-button"
+              prefetch={false}
+            >
+              <RiFullscreenFill />
+            </Link>
+            {mode === "epub" ? (
+              <Link
+                title="よむ"
+                href={{ pathname: "/gallery", query: { epub: image.embed } }}
+                className="read-button"
+                prefetch={false}
+              >
+                <RiBook2Fill />
+              </Link>
+            ) : null}
+            <div className="wh-all-fill flex items-center flex-auto">
+              <ImageMee
+                imageItem={image}
+                title={image.name || image.src}
+                style={{ objectFit: "contain" }}
+              />
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }, [image, isSet]);
+
   return (
     <div className="fixed z-40" id="image_viewer">
       {isOpen && image ? (
@@ -366,34 +415,7 @@ export default function ImageViewer() {
               }}
             />
             <div className="window modal font-KosugiMaru">
-              <div className="preview relative">
-                {isSet ? (
-                  <>
-                    {image.embed ? (
-                      <EmbedNode className="wh-all-fill" embed={image.embed} />
-                    ) : (
-                      <div className="wh-fill">
-                        <Link
-                          title="別タブで画像を開く"
-                          href={`${image.URL || image.src}`}
-                          target="_blank"
-                          className="fullscreen-button"
-                          prefetch={false}
-                        >
-                          <RiFullscreenFill className="" />
-                        </Link>
-                        <div className="wh-all-fill flex items-center flex-auto">
-                          <ImageMee
-                            imageItem={image}
-                            title={image.name || image.src}
-                            style={{ objectFit: "contain" }}
-                          />
-                        </div>
-                      </div>
-                    )}
-                  </>
-                ) : null}
-              </div>
+              <div className="preview relative">{previewArea}</div>
               {InfoCmp}
             </div>
           </div>

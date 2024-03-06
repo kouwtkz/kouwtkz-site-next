@@ -20,6 +20,13 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
       item.album = album;
       item.time = item.time ? new Date(item.time) : undefined;
       imageList.push(item);
+      if (!item.type) {
+        if (item.embed && /\.epub$/i.test(item.embed)) {
+          item.type = "comics";
+        } else {
+          item.type = "illust";
+        }
+      }
     });
   });
   return imageList;

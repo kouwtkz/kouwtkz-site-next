@@ -1,9 +1,13 @@
 import { Metadata } from "next";
-import GalleryObject from "./GalleryObject";
+import { GalleryPage } from "./GalleryPage";
+import { Suspense } from "react";
 const title = "GALLERY";
 export const metadata: Metadata = { title };
-import { site } from "@/app/context/site/SiteData.mjs";
 
 export default function page() {
-  return <GalleryObject items={site.gallery?.default} />;
+  return (
+    <Suspense>
+      <GalleryPage />
+    </Suspense>
+  );
 }

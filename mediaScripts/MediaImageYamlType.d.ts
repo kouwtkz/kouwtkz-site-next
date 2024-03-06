@@ -28,6 +28,7 @@ export type YamlDataType = {
   auto?: null | "year"
   copyright?: string;
   format?: GroupFormat;
+  direction?: "ltr" | "rtl";
   time?: string;
   list?: YamlDataImageType[];
   notfound?: YamlDataImageType[];
