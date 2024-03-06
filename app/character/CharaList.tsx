@@ -20,6 +20,7 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import {
+  CSSProperties,
   Dispatch,
   FC,
   SetStateAction,
@@ -58,7 +59,7 @@ function CharaItem({ chara }: Props) {
 function SortableItem({ chara }: Props) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: chara.id });
-  const style = {
+  const style: CSSProperties = {
     cursor: "move",
     listStyle: "none",
     transform: CSS.Transform.toString(transform),
@@ -85,22 +86,42 @@ function SortableObject({
   setItems: Dispatch<SetStateAction<CharaType[]>>;
 }) {
   const { charaList, setIsSet } = useCharaState();
-  const { sortable } = useEditSwitchState();
+  const {
+    sortable,
+    save: saveFlag,
+    reset: resetFlag,
+    set,
+  } = useEditSwitchState();
   useEffect(() => {
-    if (charaList.length && !sortable) {
-      const isDirty = !items.every(({ id }, i) => charaList[i].id === id);
-      if (isDirty) {
-        const formData = new FormData();
-        items.forEach(({ id }) => formData.append("sorts[]", id));
-        axios.post("/character/send", formData).then((res) => {
-          toast(res.data.message, { duration: 2000 });
-          if (res.status === 200) {
-            if (res.data.update.chara) setIsSet(false);
-          }
-        });
+    if (!sortable) {
+      if (saveFlag) {
+        const isDirty = !items.every(({ id }, i) => charaList[i].id === id);
+        if (isDirty) {
+          const formData = new FormData();
+          items.forEach(({ id }) => formData.append("sorts[]", id));
+          axios.post("/character/send", formData).then((res) => {
+            toast(res.data.message, { duration: 2000 });
+            if (res.status === 200) {
+              if (res.data.update.chara) setIsSet(false);
+            }
+          });
+        }
+        set({ save: false });
+      } else if (resetFlag) {
+        setItems(charaList);
+        set({ reset: false });
       }
     }
-  }, [charaList, items, setIsSet, setItems, sortable]);
+  }, [
+    charaList,
+    items,
+    resetFlag,
+    saveFlag,
+    set,
+    setIsSet,
+    setItems,
+    sortable,
+  ]);
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
