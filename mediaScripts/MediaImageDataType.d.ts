@@ -14,6 +14,7 @@ export type MediaImageAlbumType = {
   group?: string;
   listup?: boolean;
   link?: string;
+  direction?: "ltr" | "rtl";
   time?: Date | null;
   description?: string;
   visible?: AlbumVisibleType;
@@ -48,6 +49,7 @@ export type MediaImageItemType = {
   mtime?: Date;
   origin?: string;
   originName?: string;
-  size?: {w: number; h: number}
+  size?: { w: number; h: number }
+  type?: string;
   [name: string]: any;
 }

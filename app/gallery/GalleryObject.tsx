@@ -54,7 +54,7 @@ function GalleryItem({ item, ...args }: GalleryItemProps) {
         ...(album.list.find((image) => image.src.startsWith("thumbnail")) ||
           album.list[0]),
       };
-      thumbnail.direct = `/gallery/comics?name=${basename(album.name)}`;
+      thumbnail.direct = `/gallery?comics=${basename(album.name)}`;
       return thumbnail;
     });
     const album: MediaImageAlbumType = { name, list: thumbnails };

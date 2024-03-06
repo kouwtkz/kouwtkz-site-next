@@ -504,7 +504,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
           <label>
             <div className="inline-block mr-4">埋め込み</div>
             <input
-              className="py-1 px-2 text-lg md:text-xl rounded-md"
+              className="py-1 px-2 text-lg md:text-xl rounded-md flex-1"
               title="埋め込み"
               type="text"
               list="galleryEditEmbedList"

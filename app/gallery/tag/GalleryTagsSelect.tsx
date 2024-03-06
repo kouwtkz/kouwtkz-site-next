@@ -17,6 +17,11 @@ export default function GalleryTagsSelect({ className }: SelectAreaProps) {
   const router = useRouter();
   const search = useSearchParams();
   const searchTags = search.get("tag")?.split(",") || [];
+  const searchType =
+    search
+      .get("type")
+      ?.split(",")
+      .map((v) => `type:${v}`) || [];
   const searchMonth =
     search
       .get("month")
@@ -32,7 +37,12 @@ export default function GalleryTagsSelect({ className }: SelectAreaProps) {
       .get("sort")
       ?.split(",")
       .map((v) => `sort:${v}`) || [];
-  const searchQuery = searchTags.concat(searchMonth, searchFilters, searchSort);
+  const searchQuery = searchTags.concat(
+    searchType,
+    searchMonth,
+    searchFilters,
+    searchSort
+  );
   const { isServerMode } = useServerState();
   const tags = defaultSortTags.concat(
     isServerMode ? defaultFilterTags : [],
@@ -56,6 +66,7 @@ export default function GalleryTagsSelect({ className }: SelectAreaProps) {
         onChange={(list) => {
           const listObj: { [k: string]: string[] } = {
             sort: [],
+            type: [],
             filter: [],
             tag: [],
             month: [],
@@ -65,6 +76,9 @@ export default function GalleryTagsSelect({ className }: SelectAreaProps) {
             switch (values[0]) {
               case "sort":
                 listObj.sort = [values[1]];
+                break;
+              case "type":
+                listObj.type = [values[1]];
                 break;
               case "filter":
                 listObj.filter.push(values[1]);

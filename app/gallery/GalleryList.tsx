@@ -24,6 +24,7 @@ import { MakeURL } from "@/app/components/functions/MakeURL";
 import { filterImagesTags } from "./FilterImages";
 import { filterMonthList } from "./tag/GalleryTags";
 import { useImageViewer } from "./ImageViewer";
+import { RiBook2Fill } from "react-icons/ri";
 
 export interface GalleryListPropsBase {
   size?: number;
@@ -147,40 +148,42 @@ function Main({
       }
     }
   }
+  const itemType = search.get("type");
+  if (itemType) {
+    if (hideWhenFilter) return <></>;
+    afterFilter = true;
+    albumList = albumList.filter(({ type }) => type === itemType);
+  }
   const month = search.get("month");
   if (month) {
     if (hideWhenFilter) return <></>;
-    else {
-      afterFilter = true;
-      const filterMonthly = filterMonthList.find(
-        (v) => String(v.month) === month
-      );
-      if (filterMonthly) {
-        if (monthlyEventMode) {
-          albumList = filterImagesTags({
-            images: albumList,
-            tags: filterMonthly.tags,
-            every: false,
-          });
-        } else {
-          albumList = filterImagesTags({
-            images: albumList,
-            tags: filterMonthly.tags.filter((v, i) => i === 0),
-          });
-        }
+    afterFilter = true;
+    const filterMonthly = filterMonthList.find(
+      (v) => String(v.month) === month
+    );
+    if (filterMonthly) {
+      if (monthlyEventMode) {
+        albumList = filterImagesTags({
+          images: albumList,
+          tags: filterMonthly.tags,
+          every: false,
+        });
+      } else {
+        albumList = filterImagesTags({
+          images: albumList,
+          tags: filterMonthly.tags.filter((v, i) => i === 0),
+        });
       }
     }
   }
   const searchTag = search.get("tag");
   if (searchTag) {
     if (hideWhenFilter) return <></>;
-    else {
-      afterFilter = true;
-      albumList = filterImagesTags({
-        images: albumList,
-        tags: searchTag.split(","),
-      });
-    }
+    afterFilter = true;
+    albumList = filterImagesTags({
+      images: albumList,
+      tags: searchTag.split(","),
+    });
   }
   const searches = search
     .get("q")
@@ -399,12 +402,22 @@ function Main({
                           scroll: false,
                         })}
                   >
-                    <ImageMeeThumbnail
-                      imageItem={image}
-                      style={{ objectFit: "cover" }}
-                      className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition"
-                      loadingScreen={true}
-                    />
+                    <div className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition">
+                      {image.type === "comics" ? (
+                        <div
+                          style={{ backgroundColor: "rgb(100 110 88 / 74%)" }}
+                          className="translucent-button z-10 right-0 bottom-0 pointer-events-none"
+                        >
+                          <RiBook2Fill className="" />
+                        </div>
+                      ) : null}
+                      <ImageMeeThumbnail
+                        imageItem={image}
+                        style={{ objectFit: "cover" }}
+                        className="absolute w-[100%] h-[100%]"
+                        loadingScreen={true}
+                      />
+                    </div>
                   </Link>
                 ))}
               {showMoreButton ? (

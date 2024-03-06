@@ -12,6 +12,12 @@ export interface GalleryTagsOption {
 
 export const defaultTags: GalleryTagsOption[] = [
   {
+    label: "タイプ", name: "type", options: [
+      { value: "type:illust", label: "🎨イラスト" },
+      { value: "type:comics", label: "📖コミック" },
+    ]
+  },
+  {
     label: "マンスリー", name: "monthly", options: [
       { value: "filter:monthlyOnly", label: "🔎マンスリータグ", editable: false },
       { value: "month:1", label: "🎍1月" },

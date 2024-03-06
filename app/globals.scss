@@ -426,6 +426,36 @@ iframe {
   right: 0;
 }
 
+$translucent-button-default-color: rgba(255, 255, 255, 0.7);
+$translucent-button-default-bg: rgba(0, 0, 0, 0.1);
+$translucent-button-hover-color: rgba(255, 255, 255, 0.8);
+$translucent-button-hover-bg: rgba(0, 0, 0, 0.15);
+.translucent-button {
+  display: flex;
+  width: 5rem;
+  height: 5rem;
+  margin: 0.75rem;
+  padding: 1rem;
+  position: absolute;
+  border-radius: 8rem;
+  justify-content: center;
+  align-items: center;
+  color: $translucent-button-default-color;
+  background-color: $translucent-button-default-bg;
+  transition: color 200ms, background-color 200ms;
+  > * {
+    width: 100%;
+    height: 100%;
+  }
+  &:hover {
+    color: $translucent-button-hover-color;
+    background-color: $translucent-button-hover-bg;
+  }
+}
+.translucent-button-hide {
+  
+}
+
 #image_viewer {
   $mobileWidth: 768px;
   .viewer {
@@ -494,32 +524,26 @@ iframe {
       min-height: 64vh;
     }
     &:hover .fullscreen-button {
-      color: rgba(255, 255, 255, 0.4);
-      background-color: rgba(0, 0, 0, 0.05);
+      color: $translucent-button-default-color;
+      background-color: $translucent-button-default-bg;
     }
     .fullscreen-button {
-      display: flex;
-      width: 5rem;
-      height: 5rem;
-      margin: 0.75rem;
-      padding: 1rem;
-      position: absolute;
-      top: 0;
-      right: 0;
-      border-radius: 8rem;
-      justify-content: center;
-      align-items: center;
+      @extend .translucent-button;
       color: transparent;
       background-color: transparent;
-      transition: color 200ms, background-color 200ms;
-      > * {
-        width: 100%;
-        height: 100%;
-      }
       &:hover {
-        color: rgba(255, 255, 255, 0.7);
-        background-color: rgba(0, 0, 0, 0.125);
+        color: $translucent-button-hover-color;
+        background-color: $translucent-button-hover-bg;
       }
+      top: 0;
+      right: 0;
+    }
+    .read-button {
+      @extend .translucent-button;
+      bottom: 0;
+      right: 0;
+      width: 8rem;
+      height: 8rem;
     }
     img,
     iframe {
