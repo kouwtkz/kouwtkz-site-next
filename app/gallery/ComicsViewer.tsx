@@ -55,7 +55,7 @@ export function EPubViewer({ url }: { url: string }) {
     const book = ePub(url);
     const rendition = book.renderTo("area");
     rendition.display().then(() => {
-      setMetadata({ ...book.packaging.metadata, direction: "rtl" });
+      setMetadata(book.packaging.metadata);
       const resources = book.resources as any;
       if ("assets" in resources) {
         const assets = resources.assets as any[];
