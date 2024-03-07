@@ -7,7 +7,7 @@ import { fromto } from "./UpdateOption.mjs";
 await UpdateImageYaml({ ...fromto });
 
 // 電子書籍ファイルのコピー
-CopyDirDiff("_data/epub", "public", { identical: true })
+CopyDirDiff("_data/ebook", "public", { identical: true })
 
 // 音楽ファイルのコピー
 CopyDirDiff("_data/sound", "public", { identical: true, ignore: "_data.yaml" })
