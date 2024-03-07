@@ -133,7 +133,6 @@ function Viewer({
     if (mt?.direction === "ltr") toNext();
     else toPrev();
   });
-  console.log(pages, mt);
   return (
     <>
       <div className="react-comic-viewer">
