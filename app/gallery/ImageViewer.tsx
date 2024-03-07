@@ -270,14 +270,14 @@ export default function ImageViewer() {
                   </Link>
                 </div>
               ) : null}
-              <div className="m-4 mr-8 text-neutral-500 text-right">
+              <div className="mt-4 mb-2 text-neutral-500 text-right">
                 {image.time ? (
-                  <div className="m-2 text-main-grayish">
+                  <div className="mr-8 text-main-grayish">
                     {image.time.toLocaleString("ja", opt)}
                   </div>
                 ) : null}
                 {image.type === "comics" ? (
-                  <div className="m-2">
+                  <div className="m-2 text-sm">
                     本のマークから読むことができる作品です！
                   </div>
                 ) : null}
