@@ -14,7 +14,7 @@ export const defaultTags: GalleryTagsOption[] = [
   {
     label: "タイプ", name: "type", options: [
       { value: "type:illust", label: "🎨イラスト" },
-      { value: "type:comics", label: "📖コミック" },
+      { value: "type:comics", label: "📖コミックス" },
     ]
   },
   {

@@ -34,6 +34,12 @@ interface ePubMetadataType {
   spread?: string;
 }
 
+export function ComicsViewer({ src }: { src: string }) {
+  if (/\.epub$/i.test(src)) {
+    return <EPubViewer url={src} />;
+  } else return <AlbumComicsViewer name={src} />;
+}
+
 export function AlbumComicsViewer({ name }: { name: string }) {
   const { imageAlbumList } = useMediaImageState();
   const album: MediaImageAlbumType | undefined = useMemo(
@@ -127,6 +133,7 @@ function Viewer({
     if (mt?.direction === "ltr") toNext();
     else toPrev();
   });
+  console.log(pages, mt);
   return (
     <>
       <div className="react-comic-viewer">
@@ -142,13 +149,17 @@ function Viewer({
           }}
         />
       </div>
-      {mt && (mt.title || mt.creator) ? (
-        <div className="mt-6 [&_*]:mx-2">
-          {mt.title ? <span>{mt.title}</span> : null}
-          {mt.title && mt.creator ? <span>-</span> : null}
-          {mt.creator ? <span>{mt.creator}</span> : null}
-        </div>
-      ) : null}
+      <div className="mt-6 [&_*]:mx-2">
+        {mt === null ? (
+          <span>よみこみちゅう…</span>
+        ) : mt ? (
+          <>
+            {mt.title ? <span>{mt.title}</span> : null}
+            {mt.title && mt.creator ? <span>-</span> : null}
+            {mt.creator ? <span>{mt.creator}</span> : null}
+          </>
+        ) : null}
+      </div>
       <div className="mt-6">
         <p>
           Powered by{" "}
