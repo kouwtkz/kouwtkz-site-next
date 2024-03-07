@@ -372,10 +372,10 @@ export default function ImageViewer() {
             >
               <RiFullscreenFill />
             </Link>
-            {mode === "epub" ? (
+            {image.type === "comics" ? (
               <Link
                 title="よむ"
-                href={{ pathname: "/gallery", query: { epub: image.embed } }}
+                href={{ pathname: "/gallery", query: { comics: image.embed } }}
                 className="read-button"
                 prefetch={false}
               >

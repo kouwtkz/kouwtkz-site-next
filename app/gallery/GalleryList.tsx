@@ -402,10 +402,14 @@ function Main({
                           scroll: false,
                         })}
                   >
-                    <div className="absolute w-[100%] h-[100%] top-0 hover:scale-[1.03] transition">
+                    <div className="absolute w-[100%] h-[100%] top-0">
                       {image.type === "comics" ? (
                         <div
-                          style={{ backgroundColor: "rgb(100 110 88 / 74%)" }}
+                          style={{
+                            backgroundColor: "rgb(100 110 88 / 74%)",
+                            maxWidth: "50%",
+                            maxHeight: "50%",
+                          }}
                           className="translucent-button z-10 right-0 bottom-0 pointer-events-none"
                         >
                           <RiBook2Fill className="" />
@@ -414,7 +418,7 @@ function Main({
                       <ImageMeeThumbnail
                         imageItem={image}
                         style={{ objectFit: "cover" }}
-                        className="absolute w-[100%] h-[100%]"
+                        className="absolute w-[100%] h-[100%] hover:scale-[1.03] transition"
                         loadingScreen={true}
                       />
                     </div>
