@@ -23,9 +23,5 @@
   "posts": {
     "json": "/blog/posts.json",
     "data": "_data/post.yaml"
-  },
-  "embed": {
-    "json": "/data/embed.json",
-    "data": "_data/embed.yaml"
   }
 }

@@ -37,6 +37,8 @@ interface ePubMetadataType {
 export function ComicsViewer({ src }: { src: string }) {
   if (/\.epub$/i.test(src)) {
     return <EPubViewer url={src} />;
+  } else if (/\.pdf$/i.test(src)) {
+    return <Viewer pages={[]} type="epub" />;
   } else return <AlbumComicsViewer name={src} />;
 }
 
@@ -52,7 +54,7 @@ export function AlbumComicsViewer({ name }: { name: string }) {
       .map((image) => image.URL || "") || [];
   const metadata: ePubMetadataType = {};
   if (album?.direction) metadata.direction = album.direction;
-  return <Viewer pages={pages} metadata={metadata} />;
+  return <Viewer pages={pages} metadata={metadata} type="album" />;
 }
 export function EPubViewer({ url }: { url: string }) {
   const [srcList, setSrcList] = useState<any[]>([]);
@@ -90,16 +92,18 @@ export function EPubViewer({ url }: { url: string }) {
   return (
     <>
       <div id="area" style={{ display: "none" }} />
-      <Viewer pages={srcList} metadata={metadata} />
+      <Viewer pages={srcList} metadata={metadata} type="epub" />
     </>
   );
 }
 
 function Viewer({
   pages,
+  type,
   metadata: mt,
 }: {
   pages: any[];
+  type?: "epub" | "pdf" | "album";
   metadata?: ePubMetadataType | null;
 }) {
   const nRef = useRef(0);
@@ -168,10 +172,14 @@ function Viewer({
           >
             react-comic-viewer
           </Link>
-          {" & "}
-          <Link href="https://www.npmjs.com/package/epubjs" target="_blank">
-            Epub.js
-          </Link>
+          {type === "epub" ? (
+            <>
+              {" & "}
+              <Link href="https://www.npmjs.com/package/epubjs" target="_blank">
+                Epub.js
+              </Link>
+            </>
+          ) : null}
         </p>
       </div>
     </>
