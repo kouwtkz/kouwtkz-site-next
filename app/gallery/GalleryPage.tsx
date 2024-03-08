@@ -11,6 +11,6 @@ export function GalleryPage() {
   const galleryDefault = useSiteState().site?.gallery?.default;
   const { isComplete } = useDataState();
   if (!isComplete) return <></>;
-  if (s.has("comics")) return <ComicsViewer src={s.get("comics") || ""} />;
+  if (s.has("ebook")) return <ComicsViewer src={s.get("ebook") || ""} />;
   return <GalleryObject items={galleryDefault} />;
 }

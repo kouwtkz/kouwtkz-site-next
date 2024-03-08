@@ -14,7 +14,6 @@ import Twemoji from "react-twemoji";
 import { GetUrlFlag, MakeURL, ToURL } from "../functions/MakeURL";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { GetImageItemFromSrc } from "./ImageMee";
-import { C } from "@fullcalendar/core/internal-common";
 import { useSiteState } from "@/app/context/site/SiteState";
 
 type MultiParserOptions = {

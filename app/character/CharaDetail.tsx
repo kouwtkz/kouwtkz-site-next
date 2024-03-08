@@ -9,7 +9,7 @@ import {
 } from "./CharaState";
 import { useSoundPlayer } from "@/app/sound/SoundPlayer";
 import { createRef, useEffect, useRef } from "react";
-import { EmbedNode } from "@/app/context/embed/EmbedState";
+import { EmbedNode } from "@/app/context/embed/Embed";
 import GallerySearchArea from "../gallery/tag/GallerySearchArea";
 import GalleryTagsSelect from "../gallery/tag/GalleryTagsSelect";
 import InPageMenu from "../components/navigation/InPageMenu";

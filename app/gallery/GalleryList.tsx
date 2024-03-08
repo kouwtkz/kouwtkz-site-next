@@ -328,7 +328,7 @@ function Main({
           {_h4 ? <h4 className="text-main-soft">{_h4}</h4> : null}
         </div>
       ) : null}
-      <div className="pt-6 pb-6 w-[100%]" {...getRootProps()}>
+      <div className="gallery-list pt-6 pb-6 w-[100%]" {...getRootProps()}>
         <input name="upload" {...getInputProps()} />
         <div className="mx-2 relative">
           {filterButton ? (
@@ -379,10 +379,7 @@ function Main({
                 .map((image, i) => (
                   <Link
                     key={i}
-                    className={
-                      `w-[24.532%] pt-[24.532%] m-[0.234%] relative overflow-hidden` +
-                      ` hover:brightness-90 transition cursor-pointer`
-                    }
+                    className="gallery-item"
                     prefetch={false}
                     {...(image.direct
                       ? { href: image.direct }
@@ -402,23 +399,14 @@ function Main({
                           scroll: false,
                         })}
                   >
-                    <div className="absolute w-[100%] h-[100%] top-0">
-                      {image.type === "comics" ? (
-                        <div
-                          style={{
-                            backgroundColor: "rgb(100 110 88 / 74%)",
-                            maxWidth: "50%",
-                            maxHeight: "50%",
-                          }}
-                          className="translucent-button z-10 right-0 bottom-0 pointer-events-none"
-                        >
-                          <RiBook2Fill className="" />
+                    <div>
+                      {image.type === "ebook" ? (
+                        <div className="translucent-comics-button">
+                          <RiBook2Fill />
                         </div>
                       ) : null}
                       <ImageMeeThumbnail
                         imageItem={image}
-                        style={{ objectFit: "cover" }}
-                        className="absolute w-[100%] h-[100%] hover:scale-[1.03] transition"
                         loadingScreen={true}
                       />
                     </div>
@@ -426,7 +414,7 @@ function Main({
                 ))}
               {showMoreButton ? (
                 <MoreButton
-                  className="w-[24.532%] h-auto cursor-pointer m-[0.234%] p-0 fill-main-soft hover:fill-main-pale"
+                  className="gallery-button-more"
                   onClick={() => {
                     setCurMax((c) => c + step);
                   }}

@@ -21,8 +21,16 @@ function parseImageItems(imageAlbums: MediaImageAlbumType[]) {
       item.time = item.time ? new Date(item.time) : undefined;
       imageList.push(item);
       if (!item.type) {
-        if (item.embed && /\.epub$/i.test(item.embed)) {
-          item.type = "comics";
+        if (item.embed) {
+          if (/\.(epub|pdf)$/i.test(item.embed)) {
+            item.type = "ebook";
+          } else if (/^3d\//i.test(item.embed)) {
+            item.type = "3d";
+          } else {
+            item.type = "embed";
+          }
+        } else if (album.type) {
+          item.type = album.type;
         } else {
           item.type = "illust";
         }

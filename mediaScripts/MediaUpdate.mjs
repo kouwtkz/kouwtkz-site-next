@@ -6,8 +6,8 @@ import { fromto } from "./UpdateOption.mjs";
 // yamlを管理するメディアディレクトリ
 await UpdateImageYaml({ ...fromto });
 
-// 電子書籍ファイルのコピー
-CopyDirDiff("_data/epub", "public", { identical: true })
+// 埋め込みや電子書籍ファイルのコピー
+CopyDirDiff("_data/embed", "public", { identical: true })
 
 // 音楽ファイルのコピー
 CopyDirDiff("_data/sound", "public", { identical: true, ignore: "_data.yaml" })

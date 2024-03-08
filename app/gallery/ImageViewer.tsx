@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
 import ImageMee from "../components/tag/ImageMee";
 import CloseButton from "../components/svg/button/CloseButton";
-import { EmbedNode } from "../context/embed/EmbedState";
+import { EmbedNode } from "../context/embed/Embed";
 import { useServerState } from "../components/System/ServerState";
 import ImageEditForm from "./ImageEditForm";
 import {
@@ -270,14 +270,14 @@ export default function ImageViewer() {
                   </Link>
                 </div>
               ) : null}
-              <div className="m-4 mr-8 text-neutral-500 text-right">
+              <div className="mt-4 mb-2 text-neutral-500 text-right">
                 {image.time ? (
-                  <div className="m-2 text-main-grayish">
+                  <div className="mr-8 text-main-grayish">
                     {image.time.toLocaleString("ja", opt)}
                   </div>
                 ) : null}
-                {image.type === "comics" ? (
-                  <div className="m-2">
+                {image.type === "ebook" ? (
+                  <div className="m-2 text-sm">
                     本のマークから読むことができる作品です！
                   </div>
                 ) : null}
@@ -352,14 +352,9 @@ export default function ImageViewer() {
   const previewArea = useMemo(() => {
     if (!image) return <></>;
     if (!isSet) return <></>;
-    let mode: "" | "embed" | "epub" = "";
-    if (image.embed) {
-      if (/\.epub$/i.test(image.embed)) mode = "epub";
-      else mode = "embed";
-    }
     return (
       <>
-        {mode === "embed" ? (
+        {image.type === "embed" || image.type === "3d" ? (
           <EmbedNode className="wh-all-fill" embed={image.embed} />
         ) : (
           <div className="wh-fill">
@@ -372,10 +367,10 @@ export default function ImageViewer() {
             >
               <RiFullscreenFill />
             </Link>
-            {image.type === "comics" ? (
+            {image.type === "ebook" ? (
               <Link
                 title="よむ"
-                href={{ pathname: "/gallery", query: { comics: image.embed } }}
+                href={{ pathname: "/gallery", query: { ebook: image.embed } }}
                 className="read-button"
                 prefetch={false}
               >
