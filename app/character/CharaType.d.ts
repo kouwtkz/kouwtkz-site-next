@@ -2,7 +2,6 @@
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { PlaylistType } from "../sound/MediaSoundType";
 import { ReactNode } from "react";
-import { EmbedTextType } from "../context/embed/EmbedState";
 
 export interface CharaType {
   id: string
@@ -17,7 +16,7 @@ export interface CharaType {
   image?: string,
   time?: Date,
   headerImage?: string,
-  embed?: EmbedTextType,
+  embed?: string,
   playlist?: string[],
   media?: {
     icon?: MediaImageItemType | null,

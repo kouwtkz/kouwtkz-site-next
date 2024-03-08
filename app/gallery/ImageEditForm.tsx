@@ -20,7 +20,7 @@ import {
   GalleryTagsOption,
 } from "./tag/GalleryTags";
 import { useRouter } from "next/navigation";
-import { useEmbedState } from "../context/embed/EmbedState";
+import { useEmbedState } from "../context/embed/Embed";
 import { Controller, FieldValues, useForm } from "react-hook-form";
 import { MakeURL } from "../components/functions/MakeURL";
 import { AiFillEdit } from "react-icons/ai";
@@ -42,7 +42,7 @@ interface Props extends HTMLAttributes<HTMLFormElement> {}
 export default function ImageEditForm({ className, ...args }: Props) {
   const { setImageFromUrl, imageAlbumList, copyrightList } =
     useMediaImageState();
-  const { data: embedData } = useEmbedState();
+  const { list: embedList } = useEmbedState();
   const router = useRouter();
   const refForm = useRef<HTMLFormElement>(null);
   const { charaList } = useCharaState();
@@ -132,6 +132,7 @@ export default function ImageEditForm({ className, ...args }: Props) {
         move,
         rename,
         size,
+        type,
         ..._image
       } = image;
       const res = await axios.patch("/gallery/send", {
@@ -183,6 +184,11 @@ export default function ImageEditForm({ className, ...args }: Props) {
     async (image?: MediaImageItemType | null, otherSubmit = false) => {
       if (!image || !isDirty || !defaultValues) return;
       const formValues = getValues();
+      if (formValues.embed.includes(".")) {
+        formValues.embed = formValues.embed
+          .replaceAll("\\", "/")
+          .replace(/^_data/i, "");
+      }
       const formValuesList = getCompareValues(formValues);
       const formDefaultValues = getCompareValues(defaultValues);
       const updateEntries = Object.entries(formValuesList).filter(([k, v]) => {
@@ -511,13 +517,13 @@ export default function ImageEditForm({ className, ...args }: Props) {
               {...register("embed")}
             />
             <datalist id="galleryEditEmbedList">
-              {embedData
-                ? Object.keys(embedData).map((embed, i) => (
-                    <option key={i} value={embed}>
-                      {embed}
-                    </option>
-                  ))
-                : null}
+              {embedList.map((embed, i) => {
+                return (
+                  <option key={i} value={embed}>
+                    {embed}
+                  </option>
+                );
+              })}
             </datalist>
           </label>
           <label>

@@ -21,6 +21,9 @@ import DataState from "./context/start/DataState";
 import { WithContext, WebSite } from "schema-dts";
 import { Suspense } from "react";
 import { ThemeState } from "./context/ThemeSetter";
+import { EmbedState } from "./context/embed/Embed";
+import isStatic from "./components/System/isStatic.mjs";
+const isServerMode = !(isStatic && process.env.NODE_ENV === "production");
 const currentDate = new Date();
 
 export const metadata: Metadata = {
@@ -79,6 +82,7 @@ export default async function RootLayout({
           <ImageViewer />
         </Suspense>
         <DataState />
+        {isServerMode ? <EmbedState /> : null}
         <Header title={site.title} />
         <div className="pt-16 pb-8 text-center font-KosugiMaru">
           <div className="mx-auto min-h-[70vh]">

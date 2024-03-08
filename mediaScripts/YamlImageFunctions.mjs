@@ -484,7 +484,7 @@ export async function UpdateImageYaml({ yamls: _yamls, readImage = true, makeIma
  */
 export function GetMediaImageAlbumFromYamls(yamls) {
   return yamls.map((y) => {
-    const { list: ydList, name: ydName, description = "", visible = {}, direction, time: ydTime = null, listup } = y.data;
+    const { list: ydList, name: ydName, description = "", visible = {}, type, direction, time: ydTime = null, listup } = y.data;
     const list = y.list.map((item) => {
       const { time = null, ..._item } = item
       /** @type MediaImageItemType */
@@ -493,7 +493,7 @@ export function GetMediaImageAlbumFromYamls(yamls) {
     });
     const name = ydName || y.dir;
     const time = ydTime ? new Date(ydTime) : null;
-    return { dir: y.dir, list, name, description, listup, visible, time, direction }
+    return { dir: y.dir, list, name, description, listup, visible, time, type, direction }
   })
 }
 

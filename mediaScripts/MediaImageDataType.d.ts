@@ -18,6 +18,7 @@ export type MediaImageAlbumType = {
   time?: Date | null;
   description?: string;
   visible?: AlbumVisibleType;
+  type?: string;
   list: MediaImageItemType[];
 }
 

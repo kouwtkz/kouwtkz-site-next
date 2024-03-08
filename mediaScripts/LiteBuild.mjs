@@ -14,14 +14,13 @@ const publicDir = "public";
 import CopyDirDiff from "../scripts/CopyDirDiff.mjs";
 CopyDirDiff(`${publicDir}/_media`, outputDir, { identical: true })
 CopyDirDiff(`${publicDir}/sound`, outputDir, { identical: true })
-CopyDirDiff(`${publicDir}/ebook`, outputDir, { identical: true })
+CopyDirDiff(`${publicDir}/embed`, outputDir, { identical: true })
 
 import { GetStateText, GetUpdateDef } from "../app/context/start/GetStateText.mjs";
 import { resolve } from "path";
 import { writeFileSync } from "fs";
 
 import { getCharaObjectFromYaml } from "../app/character/CharaDataFunction.mjs";
-import { GetEmbed } from "../app/context/embed/GetEmbed.mjs"
 import { MarkdownDataObject } from "../app/context/md/MarkdownData.mjs";
 import { getSiteData } from "../app/context/site/SiteData.mjs";
 import { soundAlbum } from "../app/sound/MediaSoundData.mjs";
@@ -46,7 +45,6 @@ function writeJsonOut(key, obj) {
 console.log("簡易ビルド中…");
 
 writeJsonOut("character", getCharaObjectFromYaml());
-writeJsonOut("embed", GetEmbed());
 writeJsonOut("md", MarkdownDataObject("client"));
 writeJsonOut("image", await GetMediaImageAlbums({ ...fromto, readSize: true, filter: { archive: false } }));
 writeJsonOut("site", getSiteData());

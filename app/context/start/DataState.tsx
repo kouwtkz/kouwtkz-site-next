@@ -9,7 +9,6 @@ import SiteState, { useSiteState } from "@/app/context/site/SiteState";
 import PostState, { usePostState } from "@/app/blog/PostState";
 import SoundState, { useSoundState } from "@/app/sound/SoundState";
 import DataTextState, { useDataTextState } from "./DataTextState";
-import EmbedState, { useEmbedState } from "../embed/EmbedState";
 import MarkdownDataState, {
   useMarkdownDataState,
 } from "../md/MarkdownDataState";
@@ -52,7 +51,6 @@ function State() {
           <MediaImageState url={addMdate("/data/images.json", values)} />
           <SoundState url={addMdate("/data/sound.json", values)} />
           <PostState url={addMdate("/blog/posts.json", values)} />
-          <EmbedState url={addMdate("/data/embed.json", values)} />
           <GitState url={addMdate("/data/gitlog.json", values)} />
         </>
       ) : null}
@@ -68,7 +66,6 @@ export default function DataState() {
     useMediaImageState(),
     useSoundState(),
     usePostState(),
-    useEmbedState(),
   ];
   const { isComplete, setComplete } = useDataState();
   const first = useRef(true);

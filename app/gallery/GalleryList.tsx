@@ -400,7 +400,7 @@ function Main({
                         })}
                   >
                     <div>
-                      {image.type === "comics" ? (
+                      {image.type === "ebook" ? (
                         <div className="translucent-comics-button">
                           <RiBook2Fill />
                         </div>

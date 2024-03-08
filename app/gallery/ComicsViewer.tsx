@@ -1,7 +1,6 @@
 "use client";
 
 import React, {
-  Suspense,
   useCallback,
   useEffect,
   useMemo,
@@ -15,6 +14,7 @@ import ePub from "epubjs";
 import useWindowSize from "@/app/components/hook/useWindowSize";
 import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import { useHotkeys } from "react-hotkeys-hook";
+import { getEmbedURL } from "../context/embed/Embed";
 
 interface ePubMetadataType {
   title?: string;
@@ -58,7 +58,7 @@ export function EPubViewer({ url }: { url: string }) {
   const [srcList, setSrcList] = useState<any[]>([]);
   const [metadata, setMetadata] = useState<ePubMetadataType | null>(null);
   useEffect(() => {
-    const book = ePub(url);
+    const book = ePub(getEmbedURL(url));
     const rendition = book.renderTo("area");
     rendition.display().then(() => {
       setMetadata(book.packaging.metadata);

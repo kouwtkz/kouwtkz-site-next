@@ -3,7 +3,7 @@
 # コピーや生成するメディアの出力先
 /public/_media
 /public/sound
-/public/ebook
+/public/embed
 
 # シークレットキーなど
 .secret/

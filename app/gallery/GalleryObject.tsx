@@ -55,7 +55,7 @@ function GalleryItem({ item, ...args }: GalleryItemProps) {
           album.list[0]),
       };
       thumbnail.embed = basename(album.name);
-      thumbnail.type = "comics";
+      thumbnail.type = "ebook";
       return thumbnail;
     });
     const album: MediaImageAlbumType = { name, list: thumbnails };
