@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import React, {
@@ -101,43 +102,9 @@ export function EPubViewer({ url }: { url: string }) {
     </>
   );
 }
-function PdfPage({ page: p_page }: { page: Promise<PDFPageProxy> }) {
-  const [page, setPage] = useState<PDFPageProxy>();
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  p_page.then((page) => {
-    setPage(page);
-  });
-  const scale = 1.0;
-  const viewport = page?.getViewport({ scale });
-  useEffect(() => {
-    if (page && viewport && canvasRef.current) {
-      const context = canvasRef.current.getContext("2d");
-      if (context) {
-        const renderContext = {
-          canvasContext: context,
-          viewport,
-        };
-        page.render(renderContext);
-      }
-    }
-  }, [page, viewport]);
-  if (!page || !viewport) return;
-  const outputScale = window.devicePixelRatio || 1;
-  return (
-    <canvas
-      ref={canvasRef}
-      width={Math.floor(viewport.width * outputScale)}
-      height={Math.floor(viewport.height * outputScale)}
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "contain",
-      }}
-    />
-  );
-}
+
 function PdfViewer({ url }: { url: string }) {
-  const [pages, setPages] = useState<Promise<PDFPageProxy>[]>([]);
+  const [list, setList] = useState<string[]>([]);
   const [metadata, setMetadata] = useState<ePubMetadataType | null>(null);
   useEffect(() => {
     pdfjs.getDocument(getEmbedURL(url)).promise.then((pdf) => {
@@ -150,15 +117,47 @@ function PdfViewer({ url }: { url: string }) {
           description: info.Subject,
         });
       });
-      setPages(
+      Promise.all(
         new Array(pdf.numPages).fill(0).map((n, i) => pdf.getPage(i + 1))
-      );
+      ).then((pages) => {
+        const outputScale = window.devicePixelRatio || 1;
+        Promise.all(
+          pages.map((page) => {
+            return new Promise<string>((resolve) => {
+              const scale = 1.0;
+              const viewport = page.getViewport({ scale });
+              const canvasElm = document.createElement("canvas");
+              const context = canvasElm.getContext("2d");
+              canvasElm.width = Math.floor(viewport.width * outputScale);
+              canvasElm.height = Math.floor(viewport.height * outputScale);
+
+              if (context) {
+                const renderContext = {
+                  canvasContext: context,
+                  viewport,
+                };
+                page.render(renderContext).promise.then(() => {
+                  canvasElm.toBlob((blob) => {
+                    if (blob) resolve(URL.createObjectURL(blob));
+                  });
+                });
+              }
+            });
+          })
+        ).then((urls) => {
+          setList(urls);
+        });
+      });
     });
   }, [url]);
-  const srcList = useMemo(() => {
-    return pages.map((page, i) => <PdfPage page={page} key={i} />);
-  }, [pages]);
-  return <Viewer pages={srcList} metadata={metadata} type="pdf" fix={false} />;
+  useEffect(() => {
+    return () => {
+      list.forEach((url) => {
+        URL.revokeObjectURL(url);
+      });
+    };
+  }, [list]);
+  return <Viewer pages={list} metadata={metadata} type="pdf" fix={false} />;
 }
 
 function Viewer({
