@@ -157,17 +157,27 @@ function PdfViewer({ url }: { url: string }) {
       });
     };
   }, [list]);
-  return <Viewer pages={list} metadata={metadata} type="pdf" fix={false} />;
+  return (
+    <Viewer
+      pages={list}
+      metadata={metadata}
+      type="pdf"
+      fix={false}
+      pageShow={list.length > 0}
+    />
+  );
 }
 
 function Viewer({
   pages,
   type,
   fix = true,
+  pageShow = true,
   metadata,
 }: {
   pages: any[];
   fix?: boolean;
+  pageShow?: boolean;
   type?: "epub" | "pdf" | "album";
   metadata?: ePubMetadataType | null;
 }) {
@@ -205,12 +215,12 @@ function Viewer({
         if (setedFix) setSetedFixCover(true);
       }
     };
-    updateSize(true);
+    updateSize(pageShow);
     window.addEventListener("resize", () => updateSize());
     return () => {
       window.removeEventListener("resize", () => updateSize());
     };
-  }, [divHeight, divElm]);
+  }, [divHeight, divElm, pageShow]);
   const [setedMetadata, setSetedMetadata] = useState(false);
   useEffect(() => {
     if (metadata) setSetedMetadata(true);
