@@ -67,6 +67,13 @@ const nextConfig = {
   ...envConfig,
   ...imageConfig,
   ...exportConfig,
+  webpack: (config) => {
+    // Avoid: Can't resolve 'canvas'
+    config.externals.push({
+      canvas: 'canvas',
+    });
+    return config
+  },
 }
 
 module.exports = nextConfig

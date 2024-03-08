@@ -202,11 +202,13 @@ style {
   max-width: none !important;
   -webkit-user-select: none;
   user-select: none;
+  &.loading div[direction] {
+    display: none;
+  }
   button {
     color: lightgray;
     background-color: transparent;
     display: inherit;
-    // padding: 0 0.5rem;
     &:hover {
       color: lightgray;
       background-color: var(--main-color-fluo);
