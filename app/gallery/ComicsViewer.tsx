@@ -120,17 +120,15 @@ function PdfViewer({ url }: { url: string }) {
       Promise.all(
         new Array(pdf.numPages).fill(0).map((n, i) => pdf.getPage(i + 1))
       ).then((pages) => {
-        const outputScale = window.devicePixelRatio || 1;
+        const scale = window.devicePixelRatio || 1;
         Promise.all(
           pages.map((page) => {
             return new Promise<string>((resolve) => {
-              const scale = 1.0;
               const viewport = page.getViewport({ scale });
               const canvasElm = document.createElement("canvas");
               const context = canvasElm.getContext("2d");
-              canvasElm.width = Math.floor(viewport.width * outputScale);
-              canvasElm.height = Math.floor(viewport.height * outputScale);
-
+              canvasElm.width = viewport.width;
+              canvasElm.height = viewport.height;
               if (context) {
                 const renderContext = {
                   canvasContext: context,
