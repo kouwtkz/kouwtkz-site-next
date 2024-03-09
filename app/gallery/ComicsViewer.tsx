@@ -16,7 +16,6 @@ import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getEmbedURL } from "../context/embed/Embed";
 import { pdfjs } from "react-pdf";
-import { PDFPageProxy } from "pdfjs-dist";
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.js",
   import.meta.url
@@ -65,39 +64,48 @@ export function AlbumComicsViewer({ name }: { name: string }) {
 export function EPubViewer({ url }: { url: string }) {
   const [srcList, setSrcList] = useState<any[]>([]);
   const [metadata, setMetadata] = useState<ePubMetadataType | null>(null);
+  const backRenderElm = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    if (!backRenderElm.current) return;
     const book = ePub(getEmbedURL(url));
-    const rendition = book.renderTo("area");
+    const rendition = book.renderTo(backRenderElm.current);
     rendition.display().then(() => {
       setMetadata(book.packaging.metadata);
       const resources = book.resources as any;
       if ("assets" in resources) {
         const assets = resources.assets as any[];
-        const newAssets = assets
-          .map((asset, i) => ({
-            url: resources.replacementUrls[i] as string,
-            ...asset,
-          }))
-          .filter(({ type }) => type.startsWith("image"));
-        const pages = newAssets.map(({ type, url, href }, i) =>
-          type.startsWith("image") ? (
-            url
-          ) : (
-            <iframe
-              style={{ width: "100%", height: "100%", margin: "auto" }}
-              title={href}
-              key={i}
-              src={url}
-            />
-          )
-        );
-        setSrcList(pages);
+        Promise.all(
+          assets
+            .filter(({ type }) => type !== "text/css")
+            .map(
+              (item) =>
+                new Promise<any>((resolve) => {
+                  (resources.get(item.href) as Promise<string>).then((url) => {
+                    resolve({ url, ...item });
+                  });
+                })
+            )
+        ).then((newAssets) => {
+          const pages = newAssets.map(({ type, url, href }, i) =>
+            type.startsWith("image") ? (
+              url
+            ) : (
+              <iframe
+                style={{ width: "100%", height: "100%", margin: "auto" }}
+                title={href}
+                key={i}
+                src={url}
+              />
+            )
+          );
+          setSrcList(pages);
+        });
       }
     });
   }, [url]);
   return (
     <>
-      <div id="area" style={{ display: "none" }} />
+      <div ref={backRenderElm} style={{ display: "none" }} />
       <Viewer pages={srcList} metadata={metadata} type="epub" />
     </>
   );
