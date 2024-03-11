@@ -14,12 +14,12 @@ export default function Info() {
       </h2>
       <MdSection title="プロフィール" mdSrc="info/profile.md" />
       <MdSection title="各種リンク" mdSrc="info/link.md" />
-      <HistoryPage />
       <h4 className="my-4">
         <Link className="roundLink" href="/info/schedule">
           スケジュール
         </Link>
       </h4>
+      <HistoryPage />
       <h4 className="my-4">
         <Link className="roundLink" href="/info/teck">
           このサイトの技術スタック

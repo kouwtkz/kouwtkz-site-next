@@ -55,7 +55,7 @@ export default function Footer({
   currentDate,
 }: FooterProps) {
   return (
-    <footer className="pt-8 pb-12">
+    <footer className="mt-8 pb-12">
       <div className="font-Mandali">
         © {since}-
         {
