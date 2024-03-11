@@ -11,14 +11,93 @@ import PostDetailFixed from "./fixed/PostDetailFixed";
 import { useServerState } from "../components/System/ServerState";
 import { getLocalDraft, useLocalDraftPost } from "./post/postLocalDraft";
 import { useEffect, useMemo } from "react";
+import { TbRss } from "react-icons/tb";
+import type { UrlObject } from "url";
+import { queryCheck, useBreakcrumb } from "../components/navigation/breadcrumb";
+import { MdClientNode } from "../context/md/MarkdownDataClient";
 
-export default function PostsPage() {
-  const { posts } = usePostState();
+export function BlogPage({
+  blogEnable,
+}: {
+  title?: string;
+  blogEnable?: boolean;
+}) {
+  const { setBackUrl } = useBreakcrumb();
   const search = useSearchParams();
-  const { isServerMode } = useServerState();
-  const page = Number(search.get("p") || 1);
+  const p = search.get("p") || undefined;
   const q = search.get("q") || undefined;
   const postId = search.get("postId") || undefined;
+  const postpageQuery = { p, q, postId };
+  const { queryEnable, queryJoin } = queryCheck({
+    query: postpageQuery,
+  });
+  const arc = "archive";
+  const blogShowMode =
+    blogEnable || Boolean(search.get("show") === arc) || queryEnable;
+  const arcEnable1 = !blogEnable && queryEnable;
+  useEffect(() => {
+    if (arcEnable1 && queryJoin) setBackUrl({ query: { show: arc } });
+  }, [arcEnable1, queryJoin, setBackUrl]);
+  const blogTopLink: UrlObject = { pathname: "/blog" };
+  if (arcEnable1 && queryJoin) {
+    blogTopLink.query = { show: arc };
+  }
+
+  return (
+    <>
+      <div className="mt-6 pt-8 mb-12 flex justify-center items-baseline align-text-bottom">
+        <Link href={blogTopLink} className="inline-block" title="ブログトップ">
+          <h2 className="font-LuloClean text-3xl sm:text-4xl text-center text-main">
+            MINI BLOG
+          </h2>
+        </Link>
+        {blogEnable ? (
+          <Link
+            title="RSSフィード"
+            className="inline-block text-lg ml-3 sm:text-xl sm:ml-4"
+            target="_blank"
+            href="/blog/rss.xml"
+            prefetch={false}
+          >
+            <TbRss />
+          </Link>
+        ) : null}
+      </div>
+      {blogShowMode ? (
+        <PostsPage {...postpageQuery} />
+      ) : (
+        <>
+          <h2 className="my-4">このブログは更新停止しました！</h2>
+          <div className="my-4 flex flex-col items-center">
+            <MdClientNode
+              name="info/linkBlog.md"
+              className="mx-2 [&_ul]:text-left flex flex-col max-w-2xl"
+            />
+          </div>
+          <h4 className="my-8">
+            ブログのアーカイブは
+            <Link href={{ query: { show: arc } }} prefetch={false}>
+              こちら
+            </Link>
+          </h4>
+        </>
+      )}
+    </>
+  );
+}
+
+export function PostsPage({
+  p = "1",
+  q,
+  postId,
+}: {
+  p?: string;
+  q?: string;
+  postId?: string;
+}) {
+  const page = Number(p);
+  const { posts } = usePostState();
+  const { isServerMode } = useServerState();
   const take = postId ? undefined : 10;
   const { localDraft, setLocalDraft } = useLocalDraftPost();
 

@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link";
 import MultiParser from "@/app/components/tag/MultiParser";
 import { usePostState } from "../PostState";
@@ -10,7 +12,7 @@ type PostListWindowProps = {
   options?: findManyProps<Post>;
 } & HTMLAttributes<HTMLDivElement>;
 
-export default function PostListWindow({
+export function PostListWindow({
   heading = null,
   options,
   ...attributes

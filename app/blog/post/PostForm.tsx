@@ -44,6 +44,10 @@ import {
   useLocalDraftPost,
 } from "./postLocalDraft";
 import { callReactSelectTheme } from "@/app/components/theme/main";
+import {
+  queryCheck,
+  useBreakcrumb,
+} from "@/app/components/navigation/breadcrumb";
 
 type labelValues = { label: string; value: string }[];
 
@@ -58,10 +62,22 @@ const schema = z.object({
   attached: z.custom<FileList>().nullish(),
 });
 
-export default function PostForm() {
+export default function PostForm({ blogEnable }: { blogEnable?: boolean }) {
   const search = useSearchParams();
   const params = Object.fromEntries(search);
   const Content = useCallback(() => <Main params={{ ...params }} />, [params]);
+  const { setBackUrl } = useBreakcrumb();
+  const { queryJoin } = queryCheck({
+    query: params,
+  });
+  const arc = "archive";
+  useEffect(() => {
+    if (queryJoin || !blogEnable) {
+      const addQuery = blogEnable ? {} : { query: { show: arc } };
+      setBackUrl({ pathname: "/blog", ...addQuery });
+    }
+  }, [blogEnable, queryJoin, setBackUrl]);
+
   return <Content />;
 }
 
