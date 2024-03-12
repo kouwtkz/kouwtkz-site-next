@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useRef } from "react";
 import { Post } from "./Post.d";
 import { create } from "zustand";
@@ -17,7 +18,7 @@ type PostStateType = {
   isSet: boolean;
   url: string;
   setPosts: (value: any) => void;
-  setUrl: (url?: string, setPosts?: boolean) => void;
+  setUrl: (url?: string, setFlag?: boolean) => void;
   setPostsFromUrl: (url?: string) => void;
   isSetCheck: () => void;
 };
@@ -28,8 +29,8 @@ export const usePostState = create<PostStateType>((set) => ({
   setPosts(value) {
     set(() => ({ posts: parsePosts(value), isSet: true }));
   },
-  setUrl(url = defaultUrl, setPostsFlag = true) {
-    if (setPostsFlag) {
+  setUrl(url = defaultUrl, setFlag = true) {
+    if (setFlag) {
       set((state) => {
         state.setPostsFromUrl(url);
         return state;
@@ -58,16 +59,16 @@ export const usePostState = create<PostStateType>((set) => ({
 
 export default function PostState({
   url,
-  dataSet,
+  setFlag,
 }: {
   url: string;
-  dataSet?: boolean;
+  setFlag?: boolean;
 }) {
-  const postsData = usePostState();
+  const { setUrl } = usePostState();
   const isSet = useRef(false);
   useEffect(() => {
     if (!isSet.current) {
-      postsData.setUrl(url, dataSet);
+      setUrl(url, setFlag);
       isSet.current = true;
     }
   });

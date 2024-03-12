@@ -52,7 +52,7 @@ function State() {
           <SoundState url={addMdate("/data/sound.json", values)} />
           <PostState
             url={addMdate("/blog/posts.json", values)}
-            dataSet={false}
+            setFlag={false}
           />
           <GitState url={addMdate("/data/gitlog.json", values)} />
         </>
