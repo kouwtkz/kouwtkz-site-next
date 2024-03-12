@@ -10,7 +10,7 @@ import PostsPageFixed from "./fixed/PostsPageFixed";
 import PostDetailFixed from "./fixed/PostDetailFixed";
 import { useServerState } from "../components/System/ServerState";
 import { getLocalDraft, useLocalDraftPost } from "./post/postLocalDraft";
-import { useEffect, useMemo } from "react";
+import { useEffect, useLayoutEffect, useMemo } from "react";
 import { TbRss } from "react-icons/tb";
 import type { UrlObject } from "url";
 import { queryCheck, useBreakcrumb } from "../components/navigation/breadcrumb";
@@ -42,7 +42,6 @@ export function BlogPage({
   if (arcEnable1 && queryJoin) {
     blogTopLink.query = { show: arc };
   }
-
   return (
     <>
       <div className="mt-6 pt-8 mb-12 flex justify-center items-baseline align-text-bottom">
@@ -95,12 +94,15 @@ export function PostsPage({
   q?: string;
   postId?: string;
 }) {
+  const { isSetCheck, isSet: postsIsSet } = usePostState();
+  useLayoutEffect(() => {
+    isSetCheck();
+  }, [isSetCheck]);
   const page = Number(p);
   const { posts } = usePostState();
   const { isServerMode } = useServerState();
   const take = postId ? undefined : 10;
   const { localDraft, setLocalDraft } = useLocalDraftPost();
-
   useEffect(() => {
     if (!isServerMode) return;
     const item = getLocalDraft();
@@ -165,8 +167,10 @@ export function PostsPage({
                 </div>
               ) : null}
             </>
-          ) : (
+          ) : postsIsSet ? (
             <div className="text-center">投稿はありません</div>
+          ) : (
+            <div className="text-center">よみこみちゅう…</div>
           )}
         </div>
       </>
