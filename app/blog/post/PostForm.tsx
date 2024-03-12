@@ -4,6 +4,7 @@ import React, {
   RefCallback,
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -91,10 +92,14 @@ function dateJISOfromDate(date?: Date | null) {
 }
 
 function Main({ params }: { params: { [k: string]: string | undefined } }) {
+  const { isSetCheck } = usePostState();
+  useLayoutEffect(() => {
+    isSetCheck();
+  }, [isSetCheck]);
   const router = useRouter();
   const duplicationMode = Boolean(params.base);
   const targetPostId = params.target || params.base;
-  const { posts, setPostsFromUrl } = usePostState();
+  const { posts, setUrl: setPostsFromUrl } = usePostState();
   const postsUpdate = useRef(false);
   postsUpdate.current = posts.length > 0;
   const postTarget = targetPostId

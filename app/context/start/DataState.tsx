@@ -50,7 +50,10 @@ function State() {
           <MarkdownDataState url={addMdate("/data/md.json", values)} />
           <MediaImageState url={addMdate("/data/images.json", values)} />
           <SoundState url={addMdate("/data/sound.json", values)} />
-          <PostState url={addMdate("/blog/posts.json", values)} />
+          <PostState
+            url={addMdate("/blog/posts.json", values)}
+            dataSet={false}
+          />
           <GitState url={addMdate("/data/gitlog.json", values)} />
         </>
       ) : null}
@@ -65,15 +68,18 @@ export default function DataState() {
     useMarkdownDataState(),
     useMediaImageState(),
     useSoundState(),
-    usePostState(),
   ];
   const { isComplete, setComplete } = useDataState();
   const first = useRef(true);
   const loading = useRef(true);
+  const isFirsIncomplete = useRef(true);
   const doSetComplete = () => {
-    if (!isComplete) {
+    if (isFirsIncomplete.current && !isComplete) {
       const comp = stateList.every((v) => v.isSet);
-      if (comp) setComplete(true);
+      if (comp) {
+        setComplete(true);
+        isFirsIncomplete.current = false;
+      }
     }
   };
   useLayoutEffect(() => {
