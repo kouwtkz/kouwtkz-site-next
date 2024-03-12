@@ -262,11 +262,10 @@ a {
 }
 
 .emoji {
-  $emoji-size: 1.25em;
-  min-width: $emoji-size;
-  height: $emoji-size;
+  min-width: 1em;
+  height: 1em;
+  vertical-align: baseline;
   display: inline-block;
-  vertical-align: -0.12em;
   margin: 0;
 }
 
@@ -498,9 +497,13 @@ iframe {
   margin-top: 2rem;
   margin-bottom: 1.5rem;
   font-family: var(--font-KosugiMaru);
+  font-size: 2em;
   h1 {
-    font-size: 2rem;
+    font-size: 0.9em;
     margin: 1rem 0;
+    display: inline-flex;
+    flex-wrap: wrap;
+    justify-content: center;
   }
   ul {
     display: flex;
@@ -508,11 +511,13 @@ iframe {
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    margin: 0.5rem 0;
     li {
-      margin: 0.5rem 1rem;
+      margin: 0 1rem;
     }
-    @media (min-width: $tabletWidth) {
+  }
+  @media (min-width: $tabletWidth) {
+    ul {
       flex-direction: row;
     }
   }
