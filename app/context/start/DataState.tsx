@@ -54,7 +54,10 @@ function State() {
             url={addMdate("/blog/posts.json", values)}
             setFlag={false}
           />
-          <GitState url={addMdate("/data/gitlog.json", values)} />
+          <GitState
+            url={addMdate("/data/gitlog.json", values)}
+            setFlag={false}
+          />
         </>
       ) : null}
     </>

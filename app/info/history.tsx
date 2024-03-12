@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { useGitState } from "../context/git/gitState";
 import { reducedGitItemType } from "../context/git/gitType";
 import { MdSection } from "./Section";
@@ -52,29 +52,43 @@ function GitlogItem({ item }: { item: reducedGitItemType }) {
   );
 }
 
+export function GitDetails() {
+  const { log, isSetCheck, isSet } = useGitState();
+  useLayoutEffect(() => {
+    isSetCheck();
+  });
+  return (
+    <details className="">
+      <summary className="mx-auto max-w-fit">
+        Gitの更新履歴
+        <span className="text-sm ml-2">
+          {log.length > 0 ? (
+            <>
+              <span>最終更新:</span>
+              <span className="ml-1">{log[0].date}</span>
+            </>
+          ) : isSet ? (
+            "(データなし)"
+          ) : (
+            "よみこみちゅう…"
+          )}
+        </span>
+      </summary>
+      <ul className="text-left max-w-2xl">
+        {log.map((item, i) => (
+          <li className="flex" key={i}>
+            <GitlogItem item={item} />
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
+}
+
 export function HistoryPage() {
-  const { log } = useGitState();
   return (
     <MdSection title="更新履歴" mdSrc="info/history.md">
-      {log.length > 0 ? (
-        <details className="">
-          <summary className="mx-auto max-w-fit">
-            Gitの更新履歴
-            {log[0] ? (
-              <span className="text-sm ml-2">
-                (最終更新:<span className="ml-1">{log[0].date}</span>)
-              </span>
-            ) : null}
-          </summary>
-          <ul className="text-left max-w-2xl">
-            {log.map((item, i) => (
-              <li className="flex" key={i}>
-                <GitlogItem item={item} />
-              </li>
-            ))}
-          </ul>
-        </details>
-      ) : null}
+      <GitDetails />
     </MdSection>
   );
 }
