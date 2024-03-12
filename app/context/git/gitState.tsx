@@ -3,6 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { create } from "zustand";
 import axios from "axios";
 import { reducedGitItemType } from "./gitType";
+const defaultUrl = "/data/gitlog.json";
 
 type GitStateType = {
   log: reducedGitItemType[];

@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import { Post } from "./Post.d";
 import { create } from "zustand";
 import axios from "axios";
-export const defaultUrl = "/blog/posts.json";
+const defaultUrl = "/blog/posts.json";
 
 function parsePosts(posts: Post[]) {
   posts.forEach((post) => {
