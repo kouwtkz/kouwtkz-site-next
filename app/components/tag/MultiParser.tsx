@@ -1,7 +1,10 @@
 "use client";
 
-import React, { MutableRefObject, useLayoutEffect, useRef } from "react";
-import HTMLReactParser, { htmlToDOM } from "html-react-parser";
+import React from "react";
+import HTMLReactParser, {
+  HTMLReactParserOptions,
+  htmlToDOM,
+} from "html-react-parser";
 import {
   ChildNode,
   Element as NodeElement,
@@ -24,15 +27,16 @@ type MultiParserOptions = {
   linkPush?: boolean;
   hashtag?: boolean;
 };
-type MultiParserProps = MultiParserOptions & {
-  only?: MultiParserOptions;
-  className?: string;
-  detailsOpen?: boolean;
-  twemojiTag?: string;
-  tag?: string;
-  children?: React.ReactNode | string;
-  parsedClassName?: string;
-};
+type MultiParserProps = MultiParserOptions &
+  HTMLReactParserOptions & {
+    only?: MultiParserOptions;
+    className?: string;
+    detailsOpen?: boolean;
+    twemojiTag?: string;
+    tag?: string;
+    children?: React.ReactNode | string;
+    parsedClassName?: string;
+  };
 
 function MultiParser({
   markdown = true,
@@ -47,6 +51,11 @@ function MultiParser({
   twemojiTag,
   tag = "div",
   parsedClassName = "parsed",
+  trim = true,
+  replace,
+  htmlparser2,
+  library,
+  transform,
   children,
 }: MultiParserProps) {
   const router = useRouter();
@@ -68,6 +77,10 @@ function MultiParser({
     if (toDom) {
       let currentTag = "";
       children = HTMLReactParser(childString, {
+        trim,
+        htmlparser2,
+        library,
+        transform,
         replace: (v) => {
           switch (v.type) {
             case "tag":
@@ -143,7 +156,8 @@ function MultiParser({
                     htmlToDOM(ulAdd).forEach((n) => v.children.push(n));
                   break;
                 default:
-                  if (!(hashtag || linkPush)) return;
+                  if (typeof location === "undefined" || !(hashtag || linkPush))
+                    return;
                   const newChildren = v.children.reduce((a, n) => {
                     if (hashtag && n.type === "text") {
                       if (!/^a$/.test(currentTag) && !/^\s*$/.test(n.data)) {
@@ -216,6 +230,7 @@ function MultiParser({
                   break;
               }
           }
+          if (replace) replace(v);
         },
       });
     } else children = childString;
