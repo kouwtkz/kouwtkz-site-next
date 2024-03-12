@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { HistoryPage } from "./history";
 import { MdSection } from "./Section";
 const title = "Info";
 const label = "Information";
@@ -19,10 +18,9 @@ export default function Info() {
           スケジュール
         </Link>
       </h4>
-      <HistoryPage />
       <h4 className="my-4">
         <Link className="roundLink" href="/info/teck">
-          このサイトの技術スタック
+          更新履歴や技術スタック
         </Link>
       </h4>
     </div>

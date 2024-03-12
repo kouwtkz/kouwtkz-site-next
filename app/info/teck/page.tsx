@@ -1,4 +1,6 @@
 import { Metadata } from "next";
+import { MdSection } from "../Section";
+import { GitDetails } from "@/app/context/git/gitState";
 const title = "TECK - ABOUT";
 export const metadata: Metadata = { title };
 
@@ -6,8 +8,12 @@ export default function About() {
   return (
     <div>
       <h2 className="font-LuloClean text-3xl sm:text-4xl text-main pt-8 mb-12">
-        Technology Stack
+        History & Tech.Stack
       </h2>
+      <MdSection title="更新履歴" mdSrc="info/history.md">
+        <GitDetails />
+      </MdSection>
+
       <ul className="text-left max-w-sm mx-auto">
         <li>
           <h2 className="my-6 text-main-deep">このサイトの技術スタック</h2>
