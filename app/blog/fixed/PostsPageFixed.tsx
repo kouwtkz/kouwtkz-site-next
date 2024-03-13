@@ -4,7 +4,7 @@ import React, { Suspense } from "react";
 import PagingArea from "./PagingArea";
 import SearchArea from "./SearchArea";
 import PostButton from "./PostButton";
-import { useServerState } from "@/app/components/System/ServerState";
+import { useServerState } from "@/app/context/system/ServerState";
 import HandsClapButton from "./HandsClapButton";
 
 type props = { max?: number };

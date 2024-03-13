@@ -1,8 +1,8 @@
 import { Post } from "@/app/blog/Post.d";
 import MultiParser from "@/app/components/tag/MultiParser";
 import Link from "next/link";
-import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
-import { useServerState } from "../components/System/ServerState";
+import { BlogDateOptions as opt } from "@/app/context/system/DateTimeFormatOptions";
+import { useServerState } from "../context/system/ServerState";
 import { useCallback, useMemo } from "react";
 import { MakeURL } from "../components/functions/MakeURL";
 import { backupStorageKey, useLocalDraftPost } from "./post/postLocalDraft";

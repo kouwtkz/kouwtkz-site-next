@@ -1,6 +1,6 @@
 "use client";
 
-import { useServerState } from "@/app/components/System/ServerState";
+import { useServerState } from "@/app/context/system/ServerState";
 import { useDataState } from "@/app/context/start/DataState";
 import Link from "next/link";
 import { CSSProperties } from "react";

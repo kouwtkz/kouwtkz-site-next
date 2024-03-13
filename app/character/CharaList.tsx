@@ -31,7 +31,7 @@ import {
 import { CharaType } from "./CharaType";
 import { CSS } from "@dnd-kit/utilities";
 import { useEditSwitchState } from "./CharaEditButton";
-import { useServerState } from "../components/System/ServerState";
+import { useServerState } from "../context/system/ServerState";
 import axios from "axios";
 import toast from "react-hot-toast";
 

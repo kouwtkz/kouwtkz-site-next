@@ -8,11 +8,11 @@ import MultiParser from "@/app/components/tag/MultiParser";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { useRouter } from "next/navigation";
-import { BlogDateOptions as opt } from "@/app/components/System/DateTimeFormatOptions";
+import { BlogDateOptions as opt } from "@/app/context/system/DateTimeFormatOptions";
 import ImageMee from "../components/tag/ImageMee";
 import CloseButton from "../components/svg/button/CloseButton";
 import { EmbedNode } from "../context/embed/Embed";
-import { useServerState } from "../components/System/ServerState";
+import { useServerState } from "../context/system/ServerState";
 import ImageEditForm from "./ImageEditForm";
 import {
   defaultTags,

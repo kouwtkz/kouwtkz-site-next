@@ -6,7 +6,7 @@ import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 import { UrlObject } from "url";
 import { GetUrlFlag, ToURL } from "../functions/MakeURL";
-import { useServerState } from "../System/ServerState";
+import { useServerState } from "@/app/context/system/ServerState";
 const blankImage =
   "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
 
@@ -19,7 +19,6 @@ interface ImageMeeProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   size?: number;
   loadingScreen?: boolean;
 }
-
 export default function ImageMee({
   imageItem,
   mode = "simple",

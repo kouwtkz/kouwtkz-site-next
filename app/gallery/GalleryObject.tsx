@@ -7,7 +7,7 @@ import { GroupFormat } from "@/mediaScripts/MediaImageYamlType";
 import { basename } from "path";
 import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import InPageMenu from "../components/navigation/InPageMenu";
-import { useServerState } from "../components/System/ServerState";
+import { useServerState } from "../context/system/ServerState";
 import ArrowUpButton from "../components/svg/button/arrow/ArrowUpButton";
 import GalleryTagsSelect from "./tag/GalleryTagsSelect";
 import { filterPickFixed } from "./FilterImages";

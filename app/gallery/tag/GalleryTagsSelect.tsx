@@ -5,7 +5,7 @@ import {
   defaultTags,
   getTagsOptions,
 } from "./GalleryTags";
-import { useServerState } from "@/app/components/System/ServerState";
+import { useServerState } from "@/app/context/system/ServerState";
 import { MakeURL } from "@/app/components/functions/MakeURL";
 import ReactSelect from "react-select";
 import { HTMLAttributes } from "react";

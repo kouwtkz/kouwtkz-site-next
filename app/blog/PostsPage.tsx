@@ -8,7 +8,7 @@ import { findMany } from "./functions/findMany.mjs";
 import getPosts from "./functions/getPosts.mjs";
 import PostsPageFixed from "./fixed/PostsPageFixed";
 import PostDetailFixed from "./fixed/PostDetailFixed";
-import { useServerState } from "../components/System/ServerState";
+import { useServerState } from "../context/system/ServerState";
 import { getLocalDraft, useLocalDraftPost } from "./post/postLocalDraft";
 import { useEffect, useLayoutEffect, useMemo } from "react";
 import { TbRss } from "react-icons/tb";

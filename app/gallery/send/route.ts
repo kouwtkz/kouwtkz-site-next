@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import isStatic from "@/app/components/System/isStatic.mjs";
+import isStatic from "@/app/context/system/isStatic.mjs";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { uploadAttached } from "./uploadAttached";
 import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
