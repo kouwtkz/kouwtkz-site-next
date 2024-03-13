@@ -102,6 +102,7 @@ export default function ImageViewer() {
   const { isServerMode } = useServerState();
   const tagsOptions = autoFixTagsOptions(getTagsOptions(defaultTags));
   const { isComplete } = useDataState();
+  const { isStatic } = useServerState();
 
   const backAction = useCallback(() => {
     router.back();
@@ -360,7 +361,7 @@ export default function ImageViewer() {
           <div className="wh-fill">
             <Link
               title="別タブで画像を開く"
-              href={`${image.URL || image.src}`}
+              href={(isStatic ? image.URL : image.origin) || image.src}
               target="_blank"
               className="fullscreen-button"
               prefetch={false}
@@ -388,7 +389,7 @@ export default function ImageViewer() {
         )}
       </>
     );
-  }, [image, isSet]);
+  }, [image, isSet, isStatic]);
 
   return (
     <div className="fixed z-40" id="image_viewer">
