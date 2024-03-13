@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import isStatic from "@/app/context/system/isStatic.mjs";
+const isStatic = process.env.OUTPUT_MODE === "export";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { getPostsFromYaml, setPostsToYaml } from "../../posts.json/postDataFunction.mjs";
 import { site } from "@/app/context/site/SiteData.mjs";

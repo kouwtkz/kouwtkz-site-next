@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import isStatic from "@/app/context/system/isStatic.mjs";
+const isStatic = process.env.OUTPUT_MODE === "export";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { getCharaObjectFromYaml, setCharaObjectToYaml } from "../CharaDataFunction.mjs";
 import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";

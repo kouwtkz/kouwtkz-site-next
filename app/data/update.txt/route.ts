@@ -1,6 +1,6 @@
 import { GetStateText } from "@/app/context/start/GetStateText.mjs";
 
-import isStatic from "@/app/context/system/isStatic.mjs";
+const isStatic = process.env.OUTPUT_MODE === "export";
 export const dynamic = isStatic ? "auto" : "force-dynamic";
 
 export async function GET() {

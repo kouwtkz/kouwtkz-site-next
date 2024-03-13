@@ -1,4 +1,4 @@
-import isStatic from "@/app/context/system/isStatic.mjs";
+const isStatic = process.env.OUTPUT_MODE === "export";
 export const dynamic = isStatic ? "auto" : "force-dynamic";
 import { readFileSync, existsSync } from "fs";
 import { contentType } from "mime-types"
