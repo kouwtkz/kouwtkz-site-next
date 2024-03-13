@@ -2,7 +2,7 @@
 
 import React, { Suspense } from "react";
 import PostButton from "./PostButton";
-import { useServerState } from "@/app/components/System/ServerState";
+import { useServerState } from "@/app/context/system/ServerState";
 import SearchArea from "./SearchArea";
 import { Post } from "../Post";
 import BackForwardPost from "./BackForwardPost";

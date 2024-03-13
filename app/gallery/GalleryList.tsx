@@ -17,7 +17,7 @@ import { ImageMeeThumbnail } from "../components/tag/ImageMee";
 import MoreButton from "../components/svg/button/MoreButton";
 import Link from "next/link";
 import { useDropzone } from "react-dropzone";
-import { useServerState } from "../components/System/ServerState";
+import { useServerState } from "../context/system/ServerState";
 import { useMediaImageState } from "../context/image/MediaImageState";
 import { upload } from "./send/uploadFunction";
 import { MakeURL } from "@/app/components/functions/MakeURL";

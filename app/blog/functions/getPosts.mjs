@@ -1,7 +1,7 @@
 // @ts-check
 
 /** @typedef { import("../Post.d").Post } Post */
-import { AutoAllotDate } from "../../components/System/DateFunctions.mjs";
+import { AutoAllotDate } from "../../context/system/DateFunctions.mjs";
 import { findMany } from "./findMany.mjs";
 
 /**

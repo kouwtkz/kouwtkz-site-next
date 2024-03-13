@@ -1,6 +1,6 @@
 "use client";
 
-import { useServerState } from "@/app/components/System/ServerState";
+import { useServerState } from "@/app/context/system/ServerState";
 import ImageMee, { ImageMeeIcon } from "@/app/components/tag/ImageMee";
 import {
   CharaGalleryAlbum,

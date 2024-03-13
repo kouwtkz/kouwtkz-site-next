@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import getPosts from "../functions/getPosts.mjs";
 import { getPostsFromYaml } from "./postDataFunction.mjs";
-import isStatic from "@/app/components/System/isStatic.mjs";
+import isStatic from "@/app/context/system/isStatic.mjs";
 export const dynamic = isStatic ? "auto" : "force-dynamic";
 
 export async function GET() {

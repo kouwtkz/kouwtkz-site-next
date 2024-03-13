@@ -1,6 +1,6 @@
 // @ts-check
 
-import isStatic from "../app/components/System/isStatic.mjs";
+import isStatic from "../app/context/system/isStatic.mjs";
 if (!isStatic) process.exit();
 
 import { GetMediaImageAlbums, UpdateImageYaml } from "../mediaScripts/YamlImageFunctions.mjs";
