@@ -15,11 +15,6 @@ import ePub from "epubjs";
 import { MediaImageAlbumType } from "@/mediaScripts/MediaImageDataType";
 import { useHotkeys } from "react-hotkeys-hook";
 import { getEmbedURL } from "../context/embed/Embed";
-import { pdfjs } from "react-pdf";
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.js",
-  import.meta.url
-).toString();
 
 interface ePubMetadataType {
   title?: string;
@@ -42,8 +37,6 @@ interface ePubMetadataType {
 export function ComicsViewer({ src }: { src: string }) {
   if (/\.epub$/i.test(src)) {
     return <EPubViewer url={src} />;
-  } else if (/\.pdf$/i.test(src)) {
-    return <PdfViewer url={src} />;
   } else return <AlbumComicsViewer name={src} />;
 }
 
@@ -111,69 +104,6 @@ export function EPubViewer({ url }: { url: string }) {
   );
 }
 
-function PdfViewer({ url }: { url: string }) {
-  const [list, setList] = useState<string[]>([]);
-  const [metadata, setMetadata] = useState<ePubMetadataType | null>(null);
-  useEffect(() => {
-    pdfjs.getDocument(getEmbedURL(url)).promise.then((pdf) => {
-      pdf.getMetadata().then(({ info: _info }) => {
-        const info = _info as { [k: string]: string | undefined };
-        setMetadata({
-          creator: info.Author,
-          title: info.Title,
-          direction: "ltr",
-          description: info.Subject,
-        });
-      });
-      Promise.all(
-        new Array(pdf.numPages).fill(0).map((n, i) => pdf.getPage(i + 1))
-      ).then((pages) => {
-        const scale = window.devicePixelRatio || 1;
-        Promise.all(
-          pages.map((page) => {
-            return new Promise<string>((resolve) => {
-              const viewport = page.getViewport({ scale });
-              const canvasElm = document.createElement("canvas");
-              const context = canvasElm.getContext("2d");
-              canvasElm.width = viewport.width;
-              canvasElm.height = viewport.height;
-              if (context) {
-                const renderContext = {
-                  canvasContext: context,
-                  viewport,
-                };
-                page.render(renderContext).promise.then(() => {
-                  canvasElm.toBlob((blob) => {
-                    if (blob) resolve(URL.createObjectURL(blob));
-                  });
-                });
-              }
-            });
-          })
-        ).then((urls) => {
-          setList(urls);
-        });
-      });
-    });
-  }, [url]);
-  useEffect(() => {
-    return () => {
-      list.forEach((url) => {
-        URL.revokeObjectURL(url);
-      });
-    };
-  }, [list]);
-  return (
-    <Viewer
-      pages={list}
-      metadata={metadata}
-      type="pdf"
-      fix={false}
-      pageShow={list.length > 0}
-    />
-  );
-}
-
 function Viewer({
   pages,
   type,
@@ -184,7 +114,7 @@ function Viewer({
   pages: any[];
   fix?: boolean;
   pageShow?: boolean;
-  type?: "epub" | "pdf" | "album";
+  type?: "epub" | "album";
   metadata?: ePubMetadataType | null;
 }) {
   const nRef = useRef(0);
@@ -305,17 +235,6 @@ function Viewer({
               {" & "}
               <Link href="https://www.npmjs.com/package/epubjs" target="_blank">
                 Epub.js
-              </Link>
-            </>
-          ) : null}
-          {type === "pdf" ? (
-            <>
-              {" & "}
-              <Link
-                href="https://www.npmjs.com/package/react-pdf"
-                target="_blank"
-              >
-                react-pdf
               </Link>
             </>
           ) : null}
