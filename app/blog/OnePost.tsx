@@ -1,12 +1,11 @@
 import { Post } from "@/app/blog/Post.d";
-import MultiParser from "@/app/components/tag/MultiParser";
+import MultiParser from "@/app/components/doc/MultiParser";
 import Link from "next/link";
 import { BlogDateOptions as opt } from "@/app/context/system/DateTimeFormatOptions";
 import { useServerState } from "../context/system/ServerState";
-import { useCallback, useMemo } from "react";
-import { MakeURL } from "../components/functions/MakeURL";
+import { HTMLAttributes, useCallback, useMemo } from "react";
+import { MakeURL } from "../components/doc/MakeURL";
 import { backupStorageKey, useLocalDraftPost } from "./post/postLocalDraft";
-import { HTMLAttributes } from "preact/compat";
 import { useHotkeys } from "react-hotkeys-hook";
 import { useRouter } from "next/navigation";
 type Props = { post?: Post; detail?: boolean };
@@ -54,7 +53,7 @@ export default function OnePost({ post, detail = false }: Props) {
         ) : null
       ) : null}
       {post.title ? (
-        <MultiParser only={{ toTwemoji: true }} className="inline-block">
+        <MultiParser className="inline-block">
           {detail ? (
             <h1 className="text-4xl text-main-deep font-bold mx-2 my-4 inline-block">
               {post.title}

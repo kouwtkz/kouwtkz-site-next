@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
-import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
+import { GetYamlImageList } from "@/mediaScripts/GetImageList.mjs";
+// import { UpdateImageYaml } from "@/mediaScripts/UpdateImage.mjs";
+import { ReadImageFromYamls as readImageHandle } from "@/mediaScripts/ReadImage.mjs";
 import { fromto } from "@/mediaScripts/UpdateOption.mjs";
 const cwd = `${process.cwd()}/${process.env.ROOT || ""}`;
 
@@ -33,25 +35,25 @@ export async function uploadAttached({ attached, attached_mtime = [], tags = [],
         fs.utimesSync(filePath, now, new Date(mTime));
       })
     })
-    await new Promise<void>((resolve, reject) => {
-      setTimeout(async () => {
-        UpdateImageYaml({ ...fromto }).then(async () => {
-          const tagsFlag = tags.length > 0;
-          if (tagsFlag) {
-            const yamls = await GetYamlImageList({ ...fromto, readImage: false, filter: { group: uploadDir, endsWith: true } });
-            yamls.forEach(album => {
-              attached.forEach(file => {
-                const imageItem = album.list.find(item => item.src === file.name)
-                if (imageItem) imageItem.tags = Array.from(new Set((imageItem.tags || []).concat(tags)));
-              })
-            })
-            UpdateImageYaml({ yamls, deleteImage: false, ...fromto }).then(() => resolve());
-          } else {
-            resolve()
-          }
-        });
-      }, 10);
-    });
+    // await new Promise<void>((resolve, reject) => {
+    //   setTimeout(async () => {
+    //     UpdateImageYaml({ ...fromto }).then(async () => {
+    //       const tagsFlag = tags.length > 0;
+    //       if (tagsFlag) {
+    //         const yamls = await GetYamlImageList({ ...fromto, readImageHandle, filter: { group: uploadDir, endsWith: true } });
+    //         yamls.forEach(album => {
+    //           attached.forEach(file => {
+    //             const imageItem = album.list.find(item => item.src === file.name)
+    //             if (imageItem) imageItem.tags = Array.from(new Set((imageItem.tags || []).concat(tags)));
+    //           })
+    //         })
+    //         UpdateImageYaml({ yamls, deleteImage: false, ...fromto }).then(() => resolve());
+    //       } else {
+    //         resolve()
+    //       }
+    //     });
+    //   }, 10);
+    // });
     return retVal;
   }
   return retVal;

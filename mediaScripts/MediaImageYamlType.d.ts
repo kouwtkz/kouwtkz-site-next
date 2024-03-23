@@ -1,14 +1,16 @@
 import { MediaImageItemType, AlbumVisibleType } from "./MediaImageDataType";
 
-export interface YamlDataImageType extends MediaImageItemType {
+export interface MediaImageInYamlType extends MediaImageItemType {
   time?: string;
+  fullPath?: string;
+  resizeOptions?: ResizeOptionType[];
 }
 
 export type GroupFormat = "image" | "comic";
 export type ResizeMode = "icon" | "thumbnail" | "simple";
 export type FitMethod = "fill" | "contain" | "cover" | "outside" | "inside";
 
-export type ResizeOptionType = {
+export interface ResizeOptionType {
   mode?: ResizeMode;
   ext?: string;
   size?: number | {
@@ -17,9 +19,10 @@ export type ResizeOptionType = {
   };
   quality?: number;
   fit?: FitMethod;
+  url?: string;
 }
 
-export type YamlDataType = {
+export interface YamlDataType {
   recursive?: boolean;
   listup?: boolean;
   name?: string;
@@ -31,8 +34,8 @@ export type YamlDataType = {
   type?: string;
   direction?: "ltr" | "rtl";
   time?: string;
-  list?: YamlDataImageType[];
-  notfound?: YamlDataImageType[];
+  list?: MediaImageInYamlType[];
+  notfound?: MediaImageInYamlType[];
   output?: OutputOptionType;
   resizeOption?: ResizeOptionType | ResizeOptionType[];
 }
@@ -43,7 +46,7 @@ export type YamlGroupType = {
   to?: string;
   dir: string;
   data: YamlDataType;
-  list: YamlDataImageType[];
+  list: MediaImageInYamlType[];
   already: boolean;
   mtime?: Date;
 };
@@ -69,8 +72,8 @@ export type GetYamlImageListProps = {
   publicDir?: string;
   selfRoot?: boolean;
   filter?: GetYamlImageFilterType;
-  readImage?: boolean;
-  makeImage?: boolean;
+  readImageHandle?: (readImageHandleProps) => void;
+  retouchImageHandle?: (retouchImageHandleProps) => void;
   deleteImage?: boolean;
   /** @default false */
   readSize?: boolean;
@@ -85,4 +88,17 @@ export type OutputOptionType = {
   webp?: boolean;
   time?: boolean;
   info?: boolean;
+}
+
+export interface readImageHandleProps {
+  yamls: YamlGroupType[];
+  readSize?: boolean;
+  resizedDir?: string;
+}
+
+export interface retouchImageHandleProps {
+  yamls: YamlGroupType[];
+  publicDir?: string;
+  deleteImage?: boolean;
+  selfRoot?: boolean;
 }

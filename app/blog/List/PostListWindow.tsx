@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link";
-import MultiParser from "@/app/components/tag/MultiParser";
+import MultiParser from "@/app/components/doc/MultiParser";
 import { usePostState } from "../PostState";
 import { findMany, findManyProps } from "../functions/findMany.mjs";
 import { HTMLAttributes, ReactNode } from "react";
@@ -36,7 +36,7 @@ export function PostListWindow({
               <div className="text-right mr-2 min-w-[5em]">
                 {post.date.toLocaleDateString("ja")}
               </div>
-              <MultiParser className="text-left" only={{ toTwemoji: true }}>
+              <MultiParser className="text-left">
                 {post.title}
               </MultiParser>
             </Link>

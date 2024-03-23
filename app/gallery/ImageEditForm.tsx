@@ -22,7 +22,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useEmbedState } from "../context/embed/Embed";
 import { Controller, FieldValues, useForm } from "react-hook-form";
-import { MakeURL } from "../components/functions/MakeURL";
+import { MakeURL } from "../components/doc/MakeURL";
 import { AiFillEdit } from "react-icons/ai";
 import {
   MdDeleteForever,

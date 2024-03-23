@@ -14,7 +14,7 @@ import GallerySearchArea from "../gallery/tag/GallerySearchArea";
 import GalleryTagsSelect from "../gallery/tag/GalleryTagsSelect";
 import InPageMenu from "../components/navigation/InPageMenu";
 import Link from "next/link";
-import MultiParser from "../components/tag/MultiParser";
+import MultiParser from "@/app/components/doc/MultiParser";
 
 type DetailProps = {
   name: string;

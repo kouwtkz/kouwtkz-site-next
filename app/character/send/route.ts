@@ -2,7 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 const isStatic = process.env.OUTPUT_MODE === "export";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { getCharaObjectFromYaml, setCharaObjectToYaml } from "../CharaDataFunction.mjs";
-import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
+import { GetYamlImageList } from "@/mediaScripts/GetImageList.mjs";
+// import { UpdateImageYaml } from "@/mediaScripts/UpdateImage.mjs";
+import { ReadImageFromYamls as readImageHandle } from "@/mediaScripts/ReadImage.mjs";
 import { fromto } from "@/mediaScripts/UpdateOption.mjs";
 import { CharaType } from "../CharaType";
 
@@ -66,7 +68,7 @@ export async function POST(req: NextRequest) {
     if (id) {
       if (charaIndex >= 0) {
         charaList[charaIndex][0] = id;
-        const yamls = await GetYamlImageList({ ...fromto, readImage: false, filter: { listup: true } });
+        const yamls = await GetYamlImageList({ ...fromto, readImageHandle, filter: { listup: true } });
         const symls = yamls.filter(({ data }) => data.list?.some(({ tags }) => tags?.some(t => t === target)))
         symls.forEach(({ data }) => data.list?.forEach(({ tags }) => {
           if (tags) {
@@ -75,7 +77,7 @@ export async function POST(req: NextRequest) {
           }
         }))
         res.update.image = true;
-        await UpdateImageYaml({ yamls: symls, deleteImage: false, ...fromto })
+        // await UpdateImageYaml({ yamls: symls, deleteImage: false, ...fromto })
       }
       else charaList.push([id, chara]);
     }

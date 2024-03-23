@@ -3,7 +3,7 @@
 import React, { HTMLAttributes, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import { MakeURL } from "@/app/components/functions/MakeURL";
+import { MakeURL } from "@/app/components/doc/MakeURL";
 
 interface SearchAreaProps extends HTMLAttributes<HTMLFormElement> {}
 
@@ -64,7 +64,7 @@ export default function GallerySearchArea({
         placeholder="ギャラリー検索"
         defaultValue={q}
         ref={searchRef}
-        className="w-56 py-1 px-2"
+        className="gallerySearch"
       />
     </form>
   );

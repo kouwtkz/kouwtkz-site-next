@@ -1,13 +1,5 @@
 import type { Metadata } from "next";
 import "./globals.scss";
-import {
-  KosugiMaruFont,
-  MochiyPopOneFont,
-  MandaliFont,
-  // ZenMaruFont,
-  LuloCleanFont,
-  MPLUS1pFont,
-} from "@/app/fonts/list";
 import Header from "@/app/components/navigation/header";
 import Footer from "@/app/components/navigation/footer";
 import { site } from "@/app/context/site/SiteData.mjs";
@@ -57,17 +49,7 @@ export default async function RootLayout({
   };
   return (
     <html lang="ja">
-      <body
-        className={[
-          KosugiMaruFont.variable,
-          MochiyPopOneFont.variable,
-          MandaliFont.variable,
-          // ZenMaruFont.variable,
-          LuloCleanFont.variable,
-          MPLUS1pFont.variable,
-          "loading",
-        ].join(" ")}
-      >
+      <body className={["loading"].join(" ")}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -76,11 +58,11 @@ export default async function RootLayout({
         <ToasterContext />
         <ClientSetup />
         <EmbedSync />
-        <ServerStateMake />
-        <SoundPlayer />
+        {/* <ServerStateMake /> */}
+        {/* <SoundPlayer />
         <Suspense>
           <ImageViewer />
-        </Suspense>
+        </Suspense> */}
         <DataState />
         {isServerMode ? <EmbedState /> : null}
         <Header title={site.title} />

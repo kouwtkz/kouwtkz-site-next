@@ -3,7 +3,8 @@
 import isStatic from "../app/context/system/isStatic.mjs";
 if (!isStatic) process.exit();
 
-import { GetMediaImageAlbums, UpdateImageYaml } from "../mediaScripts/YamlImageFunctions.mjs";
+import { GetMediaImageAlbums } from "../mediaScripts/GetImageList.mjs";
+import { UpdateImageYaml } from "./UpdateImage.mjs";
 import { fromto } from "./UpdateOption.mjs";
 await UpdateImageYaml({ ...fromto });
 

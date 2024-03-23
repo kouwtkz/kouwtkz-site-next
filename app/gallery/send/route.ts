@@ -2,7 +2,9 @@ import { NextRequest } from "next/server";
 const isStatic = process.env.OUTPUT_MODE === "export";
 const isServerMode = !(isStatic && process.env.NODE_ENV === "production")
 import { uploadAttached } from "./uploadAttached";
-import { GetYamlImageList, UpdateImageYaml } from "@/mediaScripts/YamlImageFunctions.mjs";
+import { GetYamlImageList } from "@/mediaScripts/GetImageList.mjs";
+// import { UpdateImageYaml } from "@/mediaScripts/UpdateImage.mjs";
+import { ReadImageFromYamls as readImageHandle } from "@/mediaScripts/ReadImage.mjs";
 import { fromto } from "@/mediaScripts/UpdateOption.mjs";
 import { resolve } from "path";
 import { mkdirSync, renameSync, unlinkSync } from "fs";
@@ -29,7 +31,7 @@ export async function PATCH(req: NextRequest) {
   const { albumDir, src, origin, dir, time, deleteMode, move, rename, ...image } = data;
   const group = [albumDir];
   if (move) group.push(move);
-  const yamls = await GetYamlImageList({ ...fromto, readImage: false, filter: { group, endsWith: true } });
+  const yamls = await GetYamlImageList({ ...fromto, readImageHandle, filter: { group, endsWith: true } });
   const imageTime = time ? new Date(time) : null;
   const editYaml = yamls.find(album => album.dir === albumDir);
   if (editYaml) {
@@ -65,9 +67,9 @@ export async function PATCH(req: NextRequest) {
       }
     }
   }
-  await UpdateImageYaml({ yamls, deleteImage: false, ...fromto }).then(() => {
-    UpdateImageYaml({ ...fromto });
-  })
+  // await UpdateImageYaml({ yamls, deleteImage: false, ...fromto }).then(() => {
+  //   UpdateImageYaml({ ...fromto });
+  // })
   console.log("メディアの更新しました");
 
   return new Response("");

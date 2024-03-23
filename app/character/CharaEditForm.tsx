@@ -8,7 +8,7 @@ import * as z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CharaType } from "./CharaType";
 import { ImageMeeIcon } from "../components/tag/ImageMee";
-import { MakeURL } from "../components/functions/MakeURL";
+import { MakeURL } from "../components/doc/MakeURL";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useMediaImageState } from "../context/image/MediaImageState";

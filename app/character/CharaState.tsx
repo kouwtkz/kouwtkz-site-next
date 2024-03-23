@@ -7,7 +7,6 @@ import axios from "axios";
 import { useMediaImageState } from "../context/image/MediaImageState";
 import { useSoundState } from "../sound/SoundState";
 import GalleryList from "../gallery/GalleryList";
-import { PlaylistType, SoundItemType } from "../sound/MediaSoundType";
 type CharaStateType = {
   charaList: Array<CharaType>;
   charaObject: CharaObjectType | null;

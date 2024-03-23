@@ -20,7 +20,7 @@ import { useDropzone } from "react-dropzone";
 import { useServerState } from "../context/system/ServerState";
 import { useMediaImageState } from "../context/image/MediaImageState";
 import { upload } from "./send/uploadFunction";
-import { MakeURL } from "@/app/components/functions/MakeURL";
+import { MakeURL } from "@/app/components/doc/MakeURL";
 import { filterImagesTags } from "./FilterImages";
 import { filterMonthList } from "./tag/GalleryTags";
 import { useImageViewer } from "./ImageViewer";

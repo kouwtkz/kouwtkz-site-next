@@ -1,6 +1,6 @@
 // @ts-check
 import CopyDirDiff from "../scripts/CopyDirDiff.mjs";
-import { UpdateImageYaml } from "./YamlImageFunctions.mjs";
+import { UpdateImageYaml } from "./UpdateImage.mjs";
 import { fromto } from "./UpdateOption.mjs";
 
 // yamlを管理するメディアディレクトリ

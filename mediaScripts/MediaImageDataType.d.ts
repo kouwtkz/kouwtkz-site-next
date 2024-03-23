@@ -1,6 +1,6 @@
 import { ResizeMode, ResizeOptionType } from "./MediaImageYamlType";
 
-export type getImageListType = {
+export interface getImageListType {
   filter?: string | FilterOptionProps;
   doMakeImage?: boolean;
   onceAlbum?: boolean;
@@ -8,7 +8,7 @@ export type getImageListType = {
 }
 
 /** @comments ひとつのアルバムの変数 */
-export type MediaImageAlbumType = {
+export interface MediaImageAlbumType {
   dir?: string;
   name: string;
   group?: string;
@@ -22,11 +22,11 @@ export type MediaImageAlbumType = {
   list: MediaImageItemType[];
 }
 
-export type AlbumVisibleType = { info?: boolean, title?: boolean, filename?: boolean };
-export type ResizedType = { src: string, mode: ResizeMode };
+export interface AlbumVisibleType { info?: boolean, title?: boolean, filename?: boolean };
+export interface ResizedType { src: string, mode: ResizeMode };
 
 /** @comments ひとつの画像用の変数 */
-export type MediaImageItemType = {
+export interface MediaImageItemType {
   name: string;
   src: string;
   dir?: string;
@@ -46,7 +46,6 @@ export type MediaImageItemType = {
   resizeOption?: ResizeOptionType | ResizeOptionType[];
   resized?: ResizedType[]
   album?: MediaImageAlbumType;
-  fullPath?: string;
   mtime?: Date;
   origin?: string;
   originName?: string;

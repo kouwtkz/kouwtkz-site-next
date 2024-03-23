@@ -5,7 +5,7 @@ import React, { useMemo, useRef, useState } from "react";
 import { MediaImageItemType } from "@/mediaScripts/MediaImageDataType";
 import { ResizeMode } from "@/mediaScripts/MediaImageYamlType";
 import { UrlObject } from "url";
-import { GetUrlFlag, ToURL } from "../functions/MakeURL";
+import { GetUrlFlag, ToURL } from "../doc/MakeURL";
 import { useServerState } from "@/app/context/system/ServerState";
 const blankImage =
   "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==";
@@ -28,7 +28,6 @@ export default function ImageMee({
   hoverImageItem,
   loading,
   srcSet,
-  placeholder,
   unoptimized,
   size,
   width,
@@ -66,6 +65,7 @@ export default function ImageMee({
       return [width, height];
     }
   }, [imageItem, size, width, height]);
+  console.log(imageItem);
   const thumbnail = useMemo(
     () => imageItem?.resized?.find((item) => item.mode === "thumbnail")?.src,
     [imageItem]

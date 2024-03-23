@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { create } from "zustand";
 import { useCharaState } from "@/app/character/CharaState";
 import Link from "next/link";
-import MultiParser from "@/app/components/tag/MultiParser";
+import MultiParser from "@/app/components/doc/MultiParser";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useMediaImageState } from "@/app/context/image/MediaImageState";
 import { useRouter } from "next/navigation";
@@ -19,7 +19,7 @@ import {
   getTagsOptions,
   autoFixTagsOptions,
 } from "./tag/GalleryTags";
-import { MakeURL } from "@/app/components/functions/MakeURL";
+import { MakeURL } from "@/app/components/doc/MakeURL";
 import { RiBook2Fill, RiFullscreenFill } from "react-icons/ri";
 import { useDataState } from "../context/start/DataState";
 
@@ -250,12 +250,7 @@ export default function ImageViewer() {
                         className="align-middle inline-block mx-2 my-1 text-main-dark hover:text-main-strong"
                         key={i}
                       >
-                        <MultiParser
-                          only={{ toTwemoji: true }}
-                          className="align-middle [&_.emoji]:mr-1"
-                        >
-                          <span>{item.label}</span>
-                        </MultiParser>
+                        <span>{item.label}</span>
                       </Link>
                     );
                   })}

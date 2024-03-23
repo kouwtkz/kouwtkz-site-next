@@ -3,7 +3,7 @@
 import React, { HTMLAttributes, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useHotkeys } from "react-hotkeys-hook";
-import { MakeURL } from "@/app/components/functions/MakeURL";
+import { MakeURL } from "@/app/components/doc/MakeURL";
 import { AiFillCaretLeft, AiFillCaretRight } from "react-icons/ai";
 
 interface PagingAreaProps extends HTMLAttributes<HTMLFormElement> {
